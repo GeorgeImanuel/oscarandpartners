@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('insurance_id')->constrained('insurance_companies')->onDelete('cascade');
-            $table->foreignId('previous_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK (Self-Join)');
+            $table->foreignId('previous_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK');
             $table->string('reg_number')->unique()->comment('Auto-Gen (e.g. REG/2025/001)');
             $table->string('policy_number')->comment('No Polis Fisik');
             $table->date('period_start');
