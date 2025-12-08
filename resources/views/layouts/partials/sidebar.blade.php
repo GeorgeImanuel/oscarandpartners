@@ -183,6 +183,8 @@
                             <li><a href="{{ route('radio-checkbox-control') }}" class="{{routeActive('radio-checkbox-control')}}">Checkbox & Radio</a></li>
                             <li><a href="{{ route('input-group') }}" class="{{routeActive('input-group')}}">Input Groups</a></li>
                             <li><a href="{{ route('megaoptions') }}" class="{{routeActive('megaoptions')}}">Mega Options </a></li>
+                            <li><a href="{{ route('edit-kartuproduksi') }}" class="{{routeActive('edit-kartuproduksi')}}">Edit Kartu Produksi</a></li>
+                            <li><a href="{{ route('detail-kartuproduksi') }}" class="{{routeActive('detail-kartuproduksi')}}">Detail Kartu Produksi</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -234,6 +236,7 @@
                             <li><a href="{{ route('datatable-plugin') }}" class="{{routeActive('datatable-plugin')}}">Plug-in</a></li>
                             <li><a href="{{ route('datatable-API') }}" class="{{routeActive('datatable-API')}}">API</a></li>
                             <li><a href="{{ route('datatable-data-source') }}" class="{{routeActive('datatable-data-source')}}">Data Sources</a></li>
+                            <li><a href="{{ route('datatable-view-kartuproduksi') }}" class="{{routeActive('atatable-view-kartuproduksi')}}">Kartu Produksi</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
