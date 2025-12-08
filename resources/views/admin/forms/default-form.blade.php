@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')Default Forms
- {{ $title }}
+
 @endsection
 
 @push('css')

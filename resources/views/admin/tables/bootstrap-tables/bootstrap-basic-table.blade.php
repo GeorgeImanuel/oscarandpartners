@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')Basic Tables
- {{ $title }}
+
 @endsection
 
 @push('css')
