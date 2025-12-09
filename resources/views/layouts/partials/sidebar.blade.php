@@ -234,6 +234,8 @@
                             <li><a href="{{ route('datatable-plugin') }}" class="{{routeActive('datatable-plugin')}}">Plug-in</a></li>
                             <li><a href="{{ route('datatable-API') }}" class="{{routeActive('datatable-API')}}">API</a></li>
                             <li><a href="{{ route('datatable-data-source') }}" class="{{routeActive('datatable-data-source')}}">Data Sources</a></li>
+                            <li><a href="{{ route('client-list') }}" class="{{routeActive('client-list')}}">Client List</a></li>
+                            <li><a href="{{ route('user-list') }}" class="{{routeActive('user-list')}}">User List</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

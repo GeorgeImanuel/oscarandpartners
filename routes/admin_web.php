@@ -151,6 +151,8 @@ Route::prefix('data-tables')->group( function(){
 	Route::view('datatable-plugin', 'admin.tables.data-tables.datatable-plugin')->name('datatable-plugin');
 	Route::view('datatable-API', 'admin.tables.data-tables.datatable-API')->name('datatable-API');
 	Route::view('datatable-data-source', 'admin.tables.data-tables.datatable-data-source')->name('datatable-data-source');
+	Route::view('client-list', 'admin.tables.data-tables.client-list')->name('client-list');
+	Route::view('user-list', 'admin.tables.data-tables.user-list')->name('user-list');
 });
 
 Route::prefix('ex-data-tables')->group( function(){

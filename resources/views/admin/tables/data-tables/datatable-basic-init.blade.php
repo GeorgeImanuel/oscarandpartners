@@ -1,7 +1,6 @@
 @extends('layouts.master')
 
 @section('title')Basic Init
- {{ $title }}
 @endsection
 
 @push('css')
