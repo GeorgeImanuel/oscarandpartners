@@ -14,6 +14,13 @@ Route::prefix('widgets')->group(function () {
 	Route::view('chart-widget', 'admin.widgets.chart-widget')->name('chart-widget');
 });
 
+Route::prefix('kartuproduksi')->group(function () {
+	Route::view('datatable-view-kartuproduksi', 'production-cards.datatable-view-kartuproduksi')->name('datatable-view-kartuproduksi');
+	Route::view('detail-kartuproduksi', 'production-cards.detail-kartuproduksi')->name('detail-kartuproduksi');
+	Route::view('create-kartuproduksi', 'production-cards.create-kartuproduksi')->name('create-kartuproduksi');
+	Route::view('edit-kartuproduksi', 'production-cards.edit-kartuproduksi')->name('edit-kartuproduksi');
+});
+
 Route::prefix('ui-kits')->group(function () {
 	Route::view('state-color', 'admin.ui-kits.state-color')->name('state-color');
 	Route::view('typography', 'admin.ui-kits.typography')->name('typography');
@@ -113,8 +120,7 @@ Route::prefix('form-controls')->group( function(){
 	Route::view('radio-checkbox-control', 'admin.forms.radio-checkbox-control')->name('radio-checkbox-control');
 	Route::view('input-group', 'admin.forms.input-group')->name('input-group');
 	Route::view('megaoptions', 'admin.forms.megaoptions')->name('megaoptions');
-	Route::view('edit-kartuproduksi', 'admin.forms.edit-kartuproduksi')->name('edit-kartuproduksi');
-	Route::view('detail-kartuproduksi', 'admin.forms.detail-kartuproduksi')->name('detail-kartuproduksi');
+	
 });
 
 Route::prefix('form-widgets')->group( function(){
@@ -153,7 +159,6 @@ Route::prefix('data-tables')->group( function(){
 	Route::view('datatable-plugin', 'admin.tables.data-tables.datatable-plugin')->name('datatable-plugin');
 	Route::view('datatable-API', 'admin.tables.data-tables.datatable-API')->name('datatable-API');
 	Route::view('datatable-data-source', 'admin.tables.data-tables.datatable-data-source')->name('datatable-data-source');
-	Route::view('datatable-view-kartuproduksi', 'admin.tables.data-tables.datatable-view-kartuproduksi')->name('datatable-view-kartuproduksi');
 });
 
 Route::prefix('ex-data-tables')->group( function(){

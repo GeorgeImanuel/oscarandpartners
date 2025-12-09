@@ -40,7 +40,7 @@
 	                            </thead>
 								<tbody>
 									<tr>
-	                                    <td>01</td>
+	                                    <td>22</td>
 	                                    <td>02</td>
 	                                    <td>coba</td>
 	                                    <td>1111</td>
