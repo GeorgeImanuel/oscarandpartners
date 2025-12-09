@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
@@ -17,7 +18,7 @@ class UserSeeder extends Seeder
             'username' => 'owner',
             'name'     => 'Owner User',
             'email'    => 'owner@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $owner->assignRole('owner');
 
@@ -25,7 +26,7 @@ class UserSeeder extends Seeder
             'username' => 'admin',
             'name'     => 'Administrator',
             'email'    => 'admin@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]); 
         $admin->assignRole('admin');
 
@@ -33,7 +34,7 @@ class UserSeeder extends Seeder
             'username' => 'finance',
             'name'     => 'Finance User',
             'email'    => 'finance@example.com',        
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $finance->assignRole('finance');
 
@@ -41,7 +42,7 @@ class UserSeeder extends Seeder
             'username' => '08123/Budi',
             'name'     => 'Budi Client',
             'email'    => 'budi@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $client->assignRole('client');
     }
