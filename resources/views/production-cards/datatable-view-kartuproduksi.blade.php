@@ -29,13 +29,15 @@
 	                        <table class="display" id="basic-1">
 	                            <thead>
 	                                <tr>
-	                                    <th>No Reg</th>
-	                                    <th>No Polis</th>
-	                                    <th>Nama</th>
-	                                    <th>Tagihan Netto</th>
-	                                    <th>Komisi Bersih</th>
-	                                    <th>Status</th>
-										<th>Aksi</th>
+	                                    <th>ID</th>
+	                                    <th>Client ID</th>
+	                                    <th>Policy ID</th>
+	                                    <th>Card Status ID</th>
+	                                    <th>Created By</th>
+	                                    <th>Start Date</th>
+										<th>End Date</th>
+										<th>Created At</th>
+										<th>Updated At</th>
 	                                </tr>
 	                            </thead>
 								<tbody>
@@ -47,6 +49,8 @@
 	                                    <td>333</td>
 	                                    <td>byr</td>
 										<td>done</td>
+										<td>13/12/2025 12:39</td>
+										<td>13/01/2026 10:07</td>
 	                                </tr>
 								</tbody>
 	                        </table>
