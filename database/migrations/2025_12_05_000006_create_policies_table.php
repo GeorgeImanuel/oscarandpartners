@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('insurance_id')->constrained('insurances')->onDelete('cascade');
             $table->foreignId('parent_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK (Self-Join)');
             $table->foreignId('object_type_id')->constrained('object_types');
-            $table->string('reg_number')->unique()->comment('Auto-Gen (e.g. REG/2025/001)');
             $table->string('policy_number')->comment('No Polis Fisik');
             $table->text('object')->comment('Nama Objek');
             $table->text('object_address')->comment('Alamat Objek');

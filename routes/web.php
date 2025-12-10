@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RelationController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,8 +34,11 @@ Route::group(['middleware' => ['auth:web']], function () {
         }
         return view('dashboard');
     })->name('dashboard');  
-
+    
     Route::resource('relations', RelationController::class);
+    Route::resource('clients', ClientController::class);
+    Route::resource('users', UserController::class);
+    Route::view('user-profile', 'user-profile')->name('user-profile');
 });
 
 
@@ -43,6 +48,7 @@ Route::prefix('dashboard')->group(function () {
     // Route::view('/', 'admin.dashboard.default')->name('index');
     Route::view('default', 'admin.dashboard.default')->name('dashboard.index');
 });
+
 
 Route::view('default-layout', 'multiple.default-layout')->name('default-layout');
 Route::view('compact-layout', 'multiple.compact-layout')->name('compact-layout');

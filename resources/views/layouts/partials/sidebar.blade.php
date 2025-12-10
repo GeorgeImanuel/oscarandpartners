@@ -42,6 +42,12 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('relations') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
                     </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('clients') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('users') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Users</span></a>
+                    </li>
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
