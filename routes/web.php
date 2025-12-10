@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RelationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,8 @@ Route::group(['middleware' => ['auth:web']], function () {
         }
         return view('dashboard');
     })->name('dashboard');  
+
+    Route::resource('relations', RelationController::class);
 });
 
 

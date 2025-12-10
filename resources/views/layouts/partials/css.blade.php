@@ -7,6 +7,9 @@
 {{-- <link rel="stylesheet" type="text/css" href="{{asset('assets/css/flag-icon.css')}}"> --}}
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/feather-icon.css')}}">
+<!-- Alert -->
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/sweetalert2.css') }}">
+<script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
 <!-- Plugins css start-->
 @stack('css')
 <!-- Plugins css Ends-->
@@ -14,6 +17,6 @@
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap.css')}}">
 <!-- App css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
-{{-- <link id="color" rel="stylesheet" href="{{asset('assets/css/color-7.css')}}" media="screen"> --}}
+<link id="color" rel="stylesheet" href="{{asset('assets/css/color-5.css')}}" media="screen">
 <!-- Responsive css-->
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/responsive.css')}}">
