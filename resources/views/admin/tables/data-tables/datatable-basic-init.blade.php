@@ -5,19 +5,19 @@
 @endsection
 
 @push('css')
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
 @endpush
 
 @section('content')
 	@component('components.breadcrumb')
-		@slot('breadcrumb_title')
-			<h3>Basic DataTables</h3>
-		@endslot
-		<li class="breadcrumb-item">Tables</li>
-		<li class="breadcrumb-item">Data Tables</li>
-		<li class="breadcrumb-item active">Basic Init</li>
+	@slot('breadcrumb_title')
+	<h3>Basic DataTables</h3>
+	@endslot
+	<li class="breadcrumb-item">Tables</li>
+	<li class="breadcrumb-item">Data Tables</li>
+	<li class="breadcrumb-item active">Basic Init</li>
 	@endcomponent
-	
+
 	<div class="container-fluid">
 	    <div class="row">
 	        <!-- Zero Configuration  Starts-->
@@ -6844,10 +6844,10 @@
 	    </div>
 	</div>
 
-	
+
 	@push('scripts')
-	<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+		<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
+		<script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
 	@endpush
 
 @endsection
