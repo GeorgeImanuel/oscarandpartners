@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RelationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +18,29 @@ use Illuminate\Support\Facades\Route;
 @include_once('admin_web.php');
 
 Route::get('/', function () {
-    return redirect()->route('index');
-})->name('/');
+    return redirect()->route('dashboard');
+})->name('index');
+
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'auth'])->name('auth');
+
+Route::group(['middleware' => ['auth:web']], function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('dashboard', function () {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+        return view('dashboard');
+    })->name('dashboard');  
+
+    Route::resource('relations', RelationController::class);
+});
+
 
 Route::view('sample-page', 'admin.pages.sample-page')->name('sample-page');
 
 Route::prefix('dashboard')->group(function () {
-    Route::view('/', 'admin.dashboard.default')->name('index');
+    // Route::view('/', 'admin.dashboard.default')->name('index');
     Route::view('default', 'admin.dashboard.default')->name('dashboard.index');
 });
 

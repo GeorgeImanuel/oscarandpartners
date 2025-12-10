@@ -56,5 +56,6 @@
     </div>
     <!-- latest jquery-->
     @includeIf('layouts.partials.js')
+    @include('layouts.partials.alert')
   </body>
 </html>

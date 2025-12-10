@@ -14,22 +14,15 @@ return new class extends Migration
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-            $table->foreignId('insurance_id')->constrained('insurance_companies')->onDelete('cascade');
-            $table->foreignId('previous_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK');
+            $table->foreignId('insurance_id')->constrained('insurances')->onDelete('cascade');
+            $table->foreignId('parent_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK (Self-Join)');
+            $table->foreignId('object_type_id')->constrained('object_types');
             $table->string('reg_number')->unique()->comment('Auto-Gen (e.g. REG/2025/001)');
             $table->string('policy_number')->comment('No Polis Fisik');
-            $table->date('period_start');
-            $table->date('period_end')->comment('Trigger Alert Jatuh Tempo');
-            $table->enum('status', ['ACTIVE', 'EXPIRED', 'CANCELLED'])->default('ACTIVE');
-            $table->foreignId('created_by_user_id')->constrained('users')->onDelete('cascade')->comment('Staff Inputter');
+            $table->text('object')->comment('Nama Objek');
+            $table->text('object_address')->comment('Alamat Objek');
+            $table->decimal('object_value', 15, 2)->comment('Nilai Objek');
             $table->timestamps();
-            
-            $table->index('client_id');
-            $table->index('insurance_id');
-            $table->index('reg_number');
-            $table->index('policy_number');
-            $table->index('status');
-            $table->index('period_end');
         });
     }
 
