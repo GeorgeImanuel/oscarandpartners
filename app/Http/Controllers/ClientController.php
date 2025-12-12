@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
 use App\Models\Relation;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use App\Services\Client\ClientService;
+use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
+    private $clientService;
+
+    public function __construct(ClientService $clientService)
+    {
+        $this->clientService = $clientService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $clients = Client::with(['relation', 'user'])->get();
+        $clients = $this->clientService->getAllWithRelations();
         return view('clients.index', compact('clients'));
     }
 
@@ -32,57 +37,30 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreClientRequest $request)
     {
-        $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'address' => 'nullable|string',
-            'id_card_number' => 'nullable|string|max:255',
-            'relation_id' => 'nullable|exists:relations,id',
-        ]);
-
-        // Create user first
-        $user = User::create([
-            'username' => $validated['username'],
-            'name' => $validated['name'],
-            'email' => $validated['email'] ?? $validated['username'] . '@client.local',
-            'password' => Hash::make($validated['password']),
-            'is_active' => true,
-        ]);
-
-        // Assign client role
-        $user->assignRole('client');
-
-        // Create client
-        Client::create([
-            'user_id' => $user->id,
-            'relation_id' => $validated['relation_id'],
-            'name' => $validated['name'],
-            'phone' => $validated['phone'],
-            'email' => $validated['email'],
-            'address' => $validated['address'],
-            'id_card_number' => $validated['id_card_number'],
-        ]);
-
-        return redirect()->route('clients.index')->with('success', 'Client created successfully.');
+        $client = $this->clientService->createClient($request->all());
+        
+        if (!$client) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menambah client.');
+        }
+        
+        return redirect()->route('clients.index')->with('success', 'Berhasil menambah client.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Client $client)
+    public function show(string $id)
     {
+        $client = $this->clientService->findOrFail($id);
         return view('clients.show', compact('client'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Client $client)
+    public function edit(\App\Models\Client $client)
     {
         $relations = Relation::all();
         return view('clients.form', compact('client', 'relations'));
@@ -91,50 +69,23 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Client $client)
+    public function update(UpdateClientRequest $request, \App\Models\Client $client)
     {
-        $validated = $request->validate([
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($client->user_id)],
-            'password' => 'nullable|string|min:8|confirmed',
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'address' => 'nullable|string',
-            'id_card_number' => 'nullable|string|max:255',
-            'relation_id' => 'nullable|exists:relations,id',
-        ]);
-
-        // Update user
-        $user = $client->user;
-        $user->username = $validated['username'];
-        $user->name = $validated['name'];
-        $user->email = $validated['email'] ?? $validated['username'] . '@client.local';
+        $updated = $this->clientService->updateClient($client->id, $request->all());
         
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+        if (!$updated) {
+            return redirect()->back()->withInput()->with('error', 'Gagal mengubah client.');
         }
         
-        $user->save();
-
-        // Update client
-        $client->update([
-            'relation_id' => $validated['relation_id'],
-            'name' => $validated['name'],
-            'phone' => $validated['phone'],
-            'email' => $validated['email'],
-            'address' => $validated['address'],
-            'id_card_number' => $validated['id_card_number'],
-        ]);
-
-        return redirect()->route('clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('clients.index')->with('success', 'Berhasil mengubah client.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $client)
+    public function destroy(\App\Models\Client $client)
     {
-        $client->user->delete(); // This will cascade delete the client
-        return redirect()->route('clients.index')->with('success', 'Client deleted successfully.');
+        $this->clientService->deleteClient($client->id);
+        return redirect()->route('clients.index')->with('success', 'Berhasil menghapus client.');
     }
 }

@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use App\Services\User\UserService;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
+    private $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = User::whereHas('roles', function($query) {
-            $query->whereIn('name', ['admin', 'finance']);
-        })->with('roles')->get();
-        
+        $users = $this->userService->getAllAdminFinance();
         return view('users.index', compact('users'));
     }
 
@@ -32,34 +35,21 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,finance',
-            'is_active' => 'boolean',
-        ]);
-
-        $user = User::create([
-            'username' => $validated['username'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'is_active' => $request->has('is_active'),
-        ]);
-
-        $user->assignRole($validated['role']);
-
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        $user = $this->userService->createUser($request->all());
+        
+        if (!$user) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menambah user.');
+        }
+        
+        return redirect()->route('users.index')->with('success', 'Berhasil menambah user.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(\App\Models\User $user)
     {
         return view('users.show', compact('user'));
     }
@@ -67,7 +57,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(\App\Models\User $user)
     {
         return view('users.form', compact('user'));
     }
@@ -75,39 +65,23 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, \App\Models\User $user)
     {
-        $validated = $request->validate([
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:admin,finance',
-            'is_active' => 'boolean',
-        ]);
-
-        $user->update([
-            'username' => $validated['username'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'is_active' => $request->has('is_active'),
-        ]);
-
-        if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($validated['password'])]);
+        $updated = $this->userService->updateUser($user->id, $request->all());
+        
+        if (!$updated) {
+            return redirect()->back()->withInput()->with('error', 'Gagal mengubah user.');
         }
-
-        $user->syncRoles([$validated['role']]);
-
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        
+        return redirect()->route('users.index')->with('success', 'Berhasil mengubah user.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(\App\Models\User $user)
     {
-        $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        $this->userService->deleteUser($user->id);
+        return redirect()->route('users.index')->with('success', 'Berhasil menghapus user.');
     }
 }
