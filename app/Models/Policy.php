@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Policy extends Model
 {
     protected $fillable = [
-        'client_id',
+        'id',
         'insurance_id',
         'parent_policy_id',
         'object_type_id',
