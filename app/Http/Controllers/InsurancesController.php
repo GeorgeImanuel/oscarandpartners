@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\Insurances\InsurancesService;
-use App\Http\Requests\storeInsurancesRequest;
+use App\Http\Requests\StoreInsurancesRequest;
 use App\Http\Requests\UpdateInsurancesRequest;
 
 class InsurancesController extends Controller

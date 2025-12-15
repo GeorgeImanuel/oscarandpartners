@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Policies</h5>
-                        <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end">Tambah Policies</a>
+                        <a href="{{ route('policies.create') }}" class="btn btn-primary mb-3 float-end">Tambah Policies</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -36,15 +36,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($insurances as $insurances)
+                                    @forelse ($policies as $policy)
                                         <tr>
-                                            <td>{{ $insurances->name }}</td>
-                                            <td>{{ $insurances->bank_account }}</td>
-                                            <td>{{ $insurances->va_number }}</td>
-                                            <td>{{ $insurances->default_commission_pct }}</td>
+                                            <td>{{ $policy->id }}</td>
+                                            <td>{{ $policy->insurance_id }}</td>
+                                            <td>{{ $policy->parent_policy_id }}</td>
+                                            <td>{{ $policy->object_type_id }}</td>
+                                            <td>{{ $policy->policy_number }}</td>
+                                            <td>{{ $policy->object }}</td>
+                                            <td>{{ $policy->object_address }}</td>
+                                            <td>{{ $policy->object_value }}</td>
                                             <td>
-                                                <a href="{{ route('insurances.edit', $insurances->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                <form action="{{ route('insurances.destroy', $insurances->id) }}" method="POST" style="display:inline;">
+                                                <a href="{{ route('policies.edit', $policy->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <br><form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
@@ -54,7 +58,7 @@
 
                                     @empty
                                         <tr></tr>
-                                        <td colspan="3" class="text-center">No insurances found.</td>
+                                        <td colspan="3" class="text-center">No policies found.</td>
                                         
                                     @endforelse
                                 </tbody>

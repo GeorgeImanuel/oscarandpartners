@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InsurancesController;
 use App\Http\Controllers\RelationController;
+use App\Http\Controllers\PoliciesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Route::group(['middleware' => ['auth:web']], function () {
 
     Route::resource('relations', RelationController::class);
     Route::resource('insurances', InsurancesController::class);
+    Route::resource('policies', PoliciesController::class);
 });
 
 

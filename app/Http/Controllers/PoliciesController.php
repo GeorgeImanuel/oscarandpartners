@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\Policies\PoliciesService;
-use App\Http\Requests\storePoliciesRequest;
+use App\Http\Requests\StorePoliciesRequest;
 use App\Http\Requests\UpdatePoliciesRequest;
 
 class PoliciesController extends Controller

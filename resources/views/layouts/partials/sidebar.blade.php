@@ -45,6 +45,9 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('insurances') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Insurances</span></a>
                     </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('policies') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Policies</span></a>
+                    </li>
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
