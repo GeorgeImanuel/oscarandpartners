@@ -11,7 +11,7 @@
     @yield('breadcrumb-list')
     <!-- Container-fluid starts-->
     <div class="container-fluid dashboard-default-sec">
-        <form class="needs-validation" novalidate="" method="POST" action="{{ isset($policies) ? route('policies.update', $policies->id) : route('policies.store') }}">
+        <form class="needs-validation" novalidate="" method="POST" action="{{ isset($policy) ? route('policies.update', $policy->id) : route('policies.store') }}">
             <div class="card">
                 <div class="card-header">
                     <h5 style="display: inline">Tambah Policies</h5>
@@ -25,7 +25,12 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label" for="inputinsurance_id">Insurance ID</label>
-                            <input class="form-control @error('insurance_id') is-invalid @enderror" id="inputinsurance_id" name="insurance_id" type="text" value="{{ isset($policies) ? $policies->insurance_id : old('insurance_id', '') }}" required="" />
+                            <select class="form-control error(insurance_id)" name="insurance_id">
+                                    <option value="" selected disabled>- Pilih ID -</option>
+                                    @foreach ($insurances as $insurances)
+                                        <option value="{{ $insurances->id }}" {{ isset($policies) ? $insurances->id == $policies->insurances_id ? "selected" : "" : "" }}>{{ $insurances->name }}</option>                                        
+                                    @endforeach
+                                </select>
                             @error('insurance_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -34,7 +39,13 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label" for="inputparent_policy_id">Parent Policy ID</label>
-                            <input class="form-control @error('parent_policy_id') is-invalid @enderror" id="inputparent_policy_id" name="parent_policy_id" type="text" value="{{ isset($policies) ? $policies->parent_policy_id : old('parent_policy_id', '') }}" required="" />
+                            <select class="form-control error(parent_policy_id)" name="parent_policy_id">
+                                <option value="" selected disabled>- Pilih ID -</option>
+                                {{-- Mengubah $policies sebagai variabel loop ke $allPolicies dan $singlePolicy --}}
+                                @foreach ($allPolicies as $singlePolicy)
+                                    <option value="{{ $singlePolicy->id }}" {{ isset($policy) ? $singlePolicy->id == $policy->parent_policy_id	 ? "selected" : "" : "" }}>{{ $singlePolicy->policy_number }}</option>                                        
+                                @endforeach
+                            </select>
                             @error('parent_policy_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -43,7 +54,12 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label" for="inputobject_type_id">Object Type ID</label>
-                            <input class="form-control @error('object_type_id') is-invalid @enderror" id="inputobject_type_id" name="object_type_id" type="text" value="{{ isset($policies) ? $policies->object_type_id : old('object_type_id', '') }}" required="" />
+                            <select class="form-control error(object_type_id)" name="object_type_id">
+                                    <option value="" selected disabled>- Pilih ID -</option>
+                                    @foreach ($object_types as $object_types)
+                                        <option value="{{ $object_types->id }}" {{ isset($policies) ? $object_types->id == $policies->object_types_id ? "selected" : "" : "" }}>{{ $object_types->name }}</option>                                        
+                                    @endforeach
+                                </select>
                             @error('object_type_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Services\Policies\PoliciesService;
 use App\Http\Requests\StorePoliciesRequest;
 use App\Http\Requests\UpdatePoliciesRequest;
+use App\Models\Insurances;
+use App\Models\ObjectType;
+use App\Models\Policy;
 
 class PoliciesController extends Controller
 {
@@ -33,7 +36,11 @@ class PoliciesController extends Controller
      */
     public function create(Request $request)
     {
-        return view('policies.form');
+        $insurances = Insurances::all();
+        $object_types = ObjectType::all();
+        $allPolicies = Policy::all();
+        $policies = new Policy();
+        return view('policies.form', compact('policies','insurances', 'object_types', 'allPolicies'));
     }
 
     /**
@@ -54,7 +61,10 @@ class PoliciesController extends Controller
     public function edit(string $id)
     {
         $policies = $this->policiesService->findOrFail($id);
-        return view('policies.form', compact('policies'));
+        $insurances = Insurances::all();
+        $object_types = ObjectType::all();
+        $allPolicies = Policy::all();
+        return view('policies.form', compact('policies', 'insurances', 'object_types', 'allPolicies'));
     }
 
     /**
@@ -62,6 +72,7 @@ class PoliciesController extends Controller
      */
     public function update(UpdatePoliciesRequest $request, string $id)
     {
+
         $policies = $this->policiesService->update($id, $request->all());
         if(!$policies){
             return redirect()->back()->withInput()->with('error', 'Gagal mengubah data policies.');
