@@ -4,6 +4,7 @@ namespace App\Services\Policies;
 
 use LaravelEasyRepository\Service;
 use App\Repositories\Policies\PoliciesRepository;
+use App\Services\Policies\PoliciesService;
 
 class PoliciesServiceImplement extends Service implements PoliciesService{
 
