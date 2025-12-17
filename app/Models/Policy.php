@@ -16,4 +16,24 @@ class Policy extends Model
         'object_address',
         'object_value'
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function insurance()
+    {
+        return $this->belongsTo(Insurance::class);
+    }
+
+    public function objectType()
+    {
+        return $this->belongsTo(ObjectType::class);
+    }
+
+    public function parentPolicy()
+    {
+        return $this->belongsTo(Policy::class, 'parent_policy_id');
+    }
 }

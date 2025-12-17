@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InsurancesController;
 use App\Http\Controllers\RelationController;
-use App\Http\Controllers\PoliciesController;
+use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 
@@ -38,6 +38,17 @@ Route::group(['middleware' => ['auth:web']], function () {
     })->name('dashboard');  
     
     Route::resource('relations', RelationController::class);
+
+    // Production Cards Routes
+    Route::prefix('kartuproduksi')->group(function () {
+        Route::get('view', [ProductionCardController::class, 'index'])->name('cards.view');
+        Route::get('create', [ProductionCardController::class, 'create'])->name('cards.create');
+        Route::post('store', [ProductionCardController::class, 'store'])->name('cards.store');
+        Route::get('detail/{productionCard}', [ProductionCardController::class, 'show'])->name('cards.detail');
+        Route::get('edit/{productionCard}', [ProductionCardController::class, 'edit'])->name('cards.edit');
+        Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
+        Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
+    });
     Route::resource('insurances', InsurancesController::class);
     Route::resource('policies', PoliciesController::class);
     Route::resource('clients', ClientController::class);

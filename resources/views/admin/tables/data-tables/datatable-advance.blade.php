@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')Advance init
- {{ $title }}
+
 @endsection
 
 @push('css')

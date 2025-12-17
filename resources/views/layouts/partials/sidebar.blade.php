@@ -34,13 +34,12 @@
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title {{ prefixActive('/dashboard') }}" href="javascript:void(0)"><i data-feather="home"></i><span>Dashboard</span></a>                  
-                        <ul class="nav-submenu menu-content" style="display: {{ prefixBlock('/dashboard') }};">
-                            <li><a href="{{route('index')}}" class="{{routeActive('index')}}">Default</a></li>
-                            <li><a href="{{route('dashboard-02')}}" class="{{routeActive('dashboard-02')}}">Ecommerce</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('relations') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
+                        <a class="nav-link menu-title {{ prefixActive('/kartuproduksi') }}" href="javascript:void(0)"><i data-feather="file-text"></i><span>Kartu Produksi</span></a>
+                        <ul class="nav-submenu menu-content"  style="display: {{ prefixBlock('/kartuproduksi') }};">
+                            <li><a href="{{ route('cards.view') }}" class="{{routeActive('cards.view')}}">View Tabel</a></li>
+                            <li><a href="{{ route('cards.create') }}" class="{{routeActive('cards.create')}}">Create</a></li>
+                        </ul>
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('insurances') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Insurances</span></a>
