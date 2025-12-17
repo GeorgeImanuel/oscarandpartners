@@ -43,6 +43,12 @@
                         <a class="nav-link menu-title link-nav {{ routeActive('relations') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
                     </li>
                     <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('insurances') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Insurances</span></a>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('policies') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Policies</span></a>
+                    </li>
+                    <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('clients') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
                     </li>
                     <li class="dropdown">

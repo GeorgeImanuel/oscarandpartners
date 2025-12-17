@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InsurancesController;
 use App\Http\Controllers\RelationController;
+use App\Http\Controllers\PoliciesController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 
@@ -36,6 +38,8 @@ Route::group(['middleware' => ['auth:web']], function () {
     })->name('dashboard');  
     
     Route::resource('relations', RelationController::class);
+    Route::resource('insurances', InsurancesController::class);
+    Route::resource('policies', PoliciesController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::view('user-profile', 'user-profile')->name('user-profile');
