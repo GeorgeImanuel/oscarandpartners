@@ -3,7 +3,7 @@
 namespace App\Repositories\Insurances;
 
 use LaravelEasyRepository\Implementations\Eloquent;
-use App\Models\Insurances;
+use App\Models\Insurance;
 
 class InsurancesRepositoryImplement extends Eloquent implements InsurancesRepository{
 
@@ -12,9 +12,9 @@ class InsurancesRepositoryImplement extends Eloquent implements InsurancesReposi
     * Don't remove or change $this->model variable name
     * @property Model|mixed $model;
     */
-    protected Insurances $model;
+    protected Insurance $model;
 
-    public function __construct(Insurances $model)
+    public function __construct(Insurance $model)
     {
         $this->model = $model;
     }

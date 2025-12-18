@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Relasi</h5>
-                        <a href="{{ route('relations.create') }}" class="btn btn-primary mb-3 float-end">Tambah Relasi</a>
+                        <a href="{{ route('relations.create') }}" class="btn btn-primary float-end">Tambah Relasi</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
