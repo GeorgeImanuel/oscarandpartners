@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Insurances;
+namespace App\Services\Insurance;
 
 use LaravelEasyRepository\BaseService;
 
-interface InsurancesService extends BaseService{
+interface InsuranceService extends BaseService{
 
     // Write something awesome :)
 }

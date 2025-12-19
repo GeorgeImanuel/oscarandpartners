@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Repositories\Insurances;
+namespace App\Repositories\Insurance;
 
 use LaravelEasyRepository\Implementations\Eloquent;
-use App\Models\Insurances;
+use App\Models\Insurance;
 
-class InsurancesRepositoryImplement extends Eloquent implements InsurancesRepository{
+class InsuranceRepositoryImplement extends Eloquent implements InsuranceRepository{
 
     /**
     * Model class to be used in this repository for the common methods inside Eloquent
     * Don't remove or change $this->model variable name
     * @property Model|mixed $model;
     */
-    protected Insurances $model;
+    protected Insurance $model;
 
-    public function __construct(Insurances $model)
+    public function __construct(Insurance $model)
     {
         $this->model = $model;
     }
