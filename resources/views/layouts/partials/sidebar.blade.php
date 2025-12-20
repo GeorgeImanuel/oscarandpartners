@@ -53,6 +53,9 @@
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('users') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Users</span></a>
                     </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('settings') }}" href="{{ route('settings.index') }}"><i data-feather="user"></i><span>Setting</span></a>
+                    </li>
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\RelationController;
 use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('policies', PoliciesController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
+    Route::resource('settings', SettingController::class);
     Route::view('user-profile', 'user-profile')->name('user-profile');
 });
 
