@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\Insurances;
+namespace App\Repositories\Insurance;
 
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\Insurance;
 
-class InsurancesRepositoryImplement extends Eloquent implements InsurancesRepository{
+class InsuranceRepositoryImplement extends Eloquent implements InsuranceRepository{
 
     /**
     * Model class to be used in this repository for the common methods inside Eloquent

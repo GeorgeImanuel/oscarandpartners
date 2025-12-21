@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Insurances;
+namespace App\Services\Insurance;
 
 use LaravelEasyRepository\Service;
-use App\Repositories\Insurances\InsurancesRepository;
+use App\Repositories\Insurance\InsuranceRepository;
 
-class InsurancesServiceImplement extends Service implements InsurancesService{
+class InsuranceServiceImplement extends Service implements InsuranceService{
 
     /**
      * set title message api for CRUD
@@ -23,9 +23,9 @@ class InsurancesServiceImplement extends Service implements InsurancesService{
      * don't change $this->mainRepository variable name
      * because used in extends service class
      */
-     protected InsurancesRepository $mainRepository;
+     protected InsuranceRepository $mainRepository;
 
-    public function __construct(InsurancesRepository $mainRepository)
+    public function __construct(InsuranceRepository $mainRepository)
     {
       $this->mainRepository = $mainRepository;
     }

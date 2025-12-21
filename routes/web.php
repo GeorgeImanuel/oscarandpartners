@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\InsurancesController;
+use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
 use App\Http\Controllers\ClientController;
@@ -50,7 +50,7 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
         Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
     });
-    Route::resource('insurances', InsurancesController::class);
+    Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PoliciesController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
