@@ -22,11 +22,10 @@ class StorePoliciesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|string|max:10',
             'insurance_id' => 'required|string|max:255|exists:insurances,id',
             'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
             'object_type_id' => 'required|string|max:255|exists:object_types,id',
-            'policy_number' => 'required|string|max:255|unique:insurances,policy_number',
+            'policy_number' => 'required|string|max:255|unique:policies,policy_number',
             'object' => 'required|string|max:255',
             'object_address' => 'required|string|max:255',
             'object_value' => 'required|numeric|min:0',
@@ -41,10 +40,6 @@ class StorePoliciesRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required' => 'ID wajib diisi.',
-            'id.string' => 'ID harus berupa teks.',
-            'id.max' => 'ID maksimal 10 karakter.',
-
             'insurance_id.required' => 'ID Asuransi wajib diisi.',
             'insurance_id.string' => 'ID Asuransi harus berupa teks.',
             'insurance_id.max' => 'ID Asuransi maksimal 255 karakter.',

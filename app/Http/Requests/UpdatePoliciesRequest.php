@@ -22,18 +22,13 @@ class UpdatePoliciesRequest extends FormRequest
      */
     public function rules(): array
     {
-        $policyId = $this->route('policy'); 
+        $id = $this->route('policy'); // Assuming the route parameter is named 'policy'
 
         return [
             'insurance_id' => 'required|string|max:255|exists:insurances,id',
             'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
             'object_type_id' => 'required|string|max:255|exists:object_types,id',
-            'policy_number' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('policies', 'policy_number')->ignore($policyId),
-            ],
+            'policy_number' => 'required|string|max:255|unique:policies,policy_number,' . ($id->id ?? 'NULL'),
             'object' => 'required|string|max:255',
             'object_address' => 'required|string|max:255',
             'object_value' => 'required|numeric|min:0',

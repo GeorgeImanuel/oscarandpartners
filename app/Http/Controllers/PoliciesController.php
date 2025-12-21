@@ -60,11 +60,11 @@ class PoliciesController extends Controller
      */
     public function edit(string $id)
     {
-        $policies = $this->policiesService->findOrFail($id);
+        $policy = $this->policiesService->findOrFail($id);
         $insurances = Insurances::all();
         $object_types = ObjectType::all();
-        $allPolicies = Policy::all();
-        return view('policies.form', compact('policies', 'insurances', 'object_types', 'allPolicies'));
+        $policies = Policy::all();
+        return view('policies.form', compact('policy', 'insurances', 'object_types', 'policies'));
     }
 
     /**
