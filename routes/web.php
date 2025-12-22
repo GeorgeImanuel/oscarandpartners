@@ -2,12 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\InsuranceController;
-use App\Http\Controllers\RelationController;
-use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
-use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\RelationController;
+use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,7 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
     });
     Route::resource('insurances', InsuranceController::class);
-    Route::resource('policies', PoliciesController::class);
+    Route::resource('policies', PolicyController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Policies;
+namespace App\Services\Policy;
 
 use LaravelEasyRepository\BaseService;
 
-interface PoliciesService extends BaseService{
+interface PolicyService extends BaseService{
 
     // Write something awesome :)
 }

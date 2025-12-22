@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Services\Policies;
+namespace App\Services\Policy;
 
-use LaravelEasyRepository\Service;
-use App\Repositories\Policies\PoliciesRepository;
-use App\Services\Policies\PoliciesService;
+use LaravelEasyRepository\ServiceApi;
+use App\Repositories\Policy\PolicyRepository;
 
-class PoliciesServiceImplement extends Service implements PoliciesService{
+class PolicyServiceImplement extends ServiceApi implements PolicyService{
 
     /**
      * set title message api for CRUD
@@ -24,9 +23,9 @@ class PoliciesServiceImplement extends Service implements PoliciesService{
      * don't change $this->mainRepository variable name
      * because used in extends service class
      */
-     protected PoliciesRepository $mainRepository;
+     protected PolicyRepository $mainRepository;
 
-    public function __construct(PoliciesRepository $mainRepository)
+    public function __construct(PolicyRepository $mainRepository)
     {
       $this->mainRepository = $mainRepository;
     }

@@ -33,6 +33,7 @@
                                         <th>Nama Objek</th>
                                         <th>Alamat Objek</th>
                                         <th>Nilai Object</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -1,10 +1,10 @@
 @extends('layouts.master')
 
-@section('title', 'Policies')
+@section('title', 'policy')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item">Policies</li>
-    <li class="breadcrumb-item active">{{ isset($policy) ? 'Ubah' : 'Tambah'  }} Policies</li>
+    <li class="breadcrumb-item">policy</li>
+    <li class="breadcrumb-item active">{{ isset($policy) ? 'Ubah' : 'Tambah'  }} policy</li>
 @endpush
 
 @section('content')
@@ -14,7 +14,7 @@
         <form class="needs-validation" novalidate="" method="POST" action="{{ isset($policy) ? route('policies.update', $policy->id) : route('policies.store') }}">
             <div class="card">
                 <div class="card-header">
-                    <h5 style="display: inline">{{ isset($policy) ? 'Ubah' : 'Tambah'  }} Policies</h5>
+                    <h5 style="display: inline">{{ isset($policy) ? 'Ubah' : 'Tambah'  }} policy</h5>
                 </div>
                 <div class="card-body">
                     @csrf
@@ -41,9 +41,9 @@
                             <label class="form-label" for="inputparent_policy_id">Parent Policy ID</label>
                             <select class="form-control error(parent_policy_id)" name="parent_policy_id">
                                 <option value="" selected disabled>- Pilih ID -</option>
-                                {{-- Mengubah $policies sebagai variabel loop ke $allPolicies dan $singlePolicy --}}
-                                @foreach ($policies as $singlePolicy)
-                                    <option value="{{ $singlePolicy->id }}" {{ (isset($policy) && isset($policy->parent_policy_id)) ? $singlePolicy->id == $policy->parent_policy_id ? "selected" : "" : "" }}>{{ $singlePolicy->policy_number }}</option>                                        
+                                {{-- Mengubah $policy sebagai variabel loop ke $allpolicy dan $singlePolicy --}}
+                                @foreach ($parent_policies as $parent_policy)
+                                    <option value="{{ $parent_policy->id }}" {{ (isset($policy) && isset($policy->parent_policy_id)) ? $parent_policy->id == $policy->parent_policy_id ? "selected" : "" : "" }}>{{ $parent_policy->policy_number }}</option>                                        
                                 @endforeach
                             </select>
                             @error('parent_policy_id')
