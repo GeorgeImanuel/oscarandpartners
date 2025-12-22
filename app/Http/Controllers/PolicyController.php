@@ -47,11 +47,11 @@ class PolicyController extends Controller
      */
     public function create(Request $request)
     {
-        $insurances   = $this->insuranceService->all();
-        $object_types = $this->objectTypeService->all();
-        $allPolicies  = $this->policyService->all();
+        $insurances      = $this->insuranceService->all();
+        $object_types    = $this->objectTypeService->all();
+        $parent_policies = $this->policyService->all();
     
-        return view('policies.form', compact('insurances', 'object_types', 'allPolicies'));
+        return view('policies.form', compact('insurances', 'object_types', 'parent_policies'));
     }
 
     /**

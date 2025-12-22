@@ -41,14 +41,14 @@
                                         <tr>
                                             <td>{{ $policy->id }}</td>
                                             <td>{{ $policy->insurance_id }}</td>
-                                            <td>{{ $policy->parent_policy_id }}</td>
+                                            <td>{{ $policy->parent_policy_id ?? '-' }}</td>
                                             <td>{{ $policy->object_type_id }}</td>
                                             <td>{{ $policy->policy_number }}</td>
                                             <td>{{ $policy->object }}</td>
                                             <td>{{ $policy->object_address }}</td>
-                                            <td>{{ $policy->object_value }}</td>
+                                            <td>{{ numberFormat($policy->object_value) }}</td>
                                             <td>
-                                                <a href="{{ route('policies.edit', $policy->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('policies.edit', $policy->id) }}">Edit</a>
                                                 <br><form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

@@ -2,10 +2,10 @@
 
 namespace App\Services\ObjectType;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\ObjectType\ObjectTypeRepository;
 
-class ObjectTypeServiceImplement extends ServiceApi implements ObjectTypeService{
+class ObjectTypeServiceImplement extends Service implements ObjectTypeService{
 
     /**
      * set title message api for CRUD

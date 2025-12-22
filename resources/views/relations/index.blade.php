@@ -36,7 +36,7 @@
                                             <td>{{ $relation->code }}</td>
                                             <td>{{ $relation->name }}</td>
                                             <td>
-                                                <a href="{{ route('relations.edit', $relation->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('relations.edit', $relation->id) }}">Edit</a>
                                                 <form action="{{ route('relations.destroy', $relation->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

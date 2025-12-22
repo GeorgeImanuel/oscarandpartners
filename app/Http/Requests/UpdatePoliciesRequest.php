@@ -28,7 +28,12 @@ class UpdatePoliciesRequest extends FormRequest
             'insurance_id' => 'required|string|max:255|exists:insurances,id',
             'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
             'object_type_id' => 'required|string|max:255|exists:object_types,id',
-            'policy_number' => 'required|string|max:255|unique:policies,policy_number,' . ($id->id ?? 'NULL'),
+            'policy_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('policies', 'policy_number')->ignore($id)
+            ],
             'object' => 'required|string|max:255',
             'object_address' => 'required|string|max:255',
             'object_value' => 'required|numeric|min:0',
