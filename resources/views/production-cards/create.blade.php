@@ -24,7 +24,7 @@
 						<h5>Form Create Kartu Produksi</h5>
 					</div>
 					<div class="card-body">
-						<form action="{{ route('cards.store') }}" method="POST" class="needs-validation" novalidate="">
+						<form action="{{ route('production-cards.store') }}" method="POST" class="needs-validation" novalidate="">
 							@csrf
 							
 							{{-- SECTION: Dropdown dari Table --}}
@@ -284,7 +284,7 @@
 							
 							<div class="mb-3">
 								<button class="btn btn-primary" type="submit">Create</button>
-								<a href="{{ route('cards.view') }}" class="btn btn-secondary">Cancel</a>
+								<a href="{{ route('production-cards.index') }}" class="btn btn-secondary">Cancel</a>
 							</div>
 						</form>
 					</div>

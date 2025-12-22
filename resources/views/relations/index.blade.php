@@ -3,7 +3,7 @@
 @section('title', 'Relasi')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item active">Insuracn</li>
+    <li class="breadcrumb-item active">Insurance</li>
 @endpush
 
 @push('css')

@@ -8,7 +8,7 @@ use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\InsuranceController;
-use App\Http\Controllers\ProductionCardController;use App\Http\Controllers\PoliciesController;
+use App\Http\Controllers\ProductionCardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,15 +42,16 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('relations', RelationController::class);
 
     // Production Cards Routes
-    Route::prefix('kartuproduksi')->group(function () {
-        Route::get('view', [ProductionCardController::class, 'index'])->name('cards.view');
-        Route::get('create', [ProductionCardController::class, 'create'])->name('cards.create');
-        Route::post('store', [ProductionCardController::class, 'store'])->name('cards.store');
-        Route::get('detail/{productionCard}', [ProductionCardController::class, 'show'])->name('cards.detail');
-        Route::get('edit/{productionCard}', [ProductionCardController::class, 'edit'])->name('cards.edit');
-        Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
-        Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
-    });
+    // Route::prefix('kartuproduksi')->group(function () {
+    //     Route::get('view', [ProductionCardController::class, 'index'])->name('cards.view');
+    //     Route::get('create', [ProductionCardController::class, 'create'])->name('cards.create');
+    //     Route::post('store', [ProductionCardController::class, 'store'])->name('cards.store');
+    //     Route::get('detail/{productionCard}', [ProductionCardController::class, 'show'])->name('cards.detail');
+    //     Route::get('edit/{productionCard}', [ProductionCardController::class, 'edit'])->name('cards.edit');
+    //     Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
+    //     Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
+    // });
+    Route::resource('production-cards', ProductionCardController::class);
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
     Route::resource('clients', ClientController::class);

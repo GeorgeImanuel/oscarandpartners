@@ -24,8 +24,8 @@
                         
                         <a class="nav-link menu-title {{ prefixActive('/kartuproduksi') }}" href="javascript:void(0)"><i data-feather="file-text"></i><span>Kartu Produksi</span></a>
                         <ul class="nav-submenu menu-content"  style="display: {{ prefixBlock('/kartuproduksi') }};">
-                            <li><a href="{{ route('cards.view') }}" class="{{prefixActive('cards.view')}}">View Tabel</a></li>
-                            <li><a href="{{ route('cards.create') }}" class="{{prefixActive('cards.create')}}">Create</a></li>
+                            <li><a href="{{ route('production-cards.index') }}" class="{{prefixActive('cards.view')}}">View Tabel</a></li>
+                            <li><a href="{{ route('production-cards.create') }}" class="{{prefixActive('cards.create')}}">Create</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

@@ -55,7 +55,7 @@ class ProductionCardController extends Controller
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }
         
-        return redirect()->route('cards.view')->with('success', 'Berhasil menambah kartu produksi.');
+        return redirect()->route('production-cards.index')->with('success', 'Berhasil menambah kartu produksi.');
     }
 
     /**
@@ -94,7 +94,7 @@ class ProductionCardController extends Controller
             return redirect()->back()->withInput()->with('error', 'Gagal mengubah kartu produksi.');
         }
         
-        return redirect()->route('cards.view')->with('success', 'Berhasil mengubah kartu produksi.');
+        return redirect()->route('production-cards.index')->with('success', 'Berhasil mengubah kartu produksi.');
     }
 
     /**
@@ -103,6 +103,6 @@ class ProductionCardController extends Controller
     public function destroy(ProductionCard $productionCard)
     {
         $this->productionCardService->deleteCard($productionCard->id);
-        return redirect()->route('cards.view')->with('success', 'Berhasil menghapus kartu produksi.');
+        return redirect()->route('production-cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
     }
 }
