@@ -53,7 +53,8 @@
     <script src="{{ asset('assets/js/form-validation.js') }}"></script>
     <script>
         initializeFormValidation({
-            formSelector: '.needs-validation'
+            formSelector: '.needs-validation',
+            showConfirmDialog: true
         });
     </script>
 @endpush

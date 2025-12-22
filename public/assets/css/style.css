@@ -103,6 +103,11 @@
 /**=====================
      01. General CSS Start
 ==========================**/
+@font-face {
+  font-family: Rubik;
+  src: url(../fonts/rubik/rubik.ttf);
+}
+
 html {
   max-width: 100vw;
   overflow-x: hidden; }
@@ -110,7 +115,7 @@ html {
 body {
   font-size: 14px;
   overflow-x: hidden;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", sans-serif;
   color: #242934;
   background-color: #f5f7fb; }
 
@@ -196,12 +201,6 @@ svg {
 
 input:focus {
   outline-color: transparent; }
-
-.font-nunito {
-  font-family: Nunito, sans-serif; }
-
-.font-roboto {
-  font-family: "Roboto", sans-serif; }
 
 .font-rubik {
   font-family: "Rubik", sans-serif, sans-serif; }
@@ -2344,7 +2343,7 @@ table tbody .border-bottom-warning td {
   border-radius: 0;
   background-color: #fff; }
   .card .card-header {
-    padding: 30px;
+    padding: 30px 15px;
     border-bottom: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -2377,7 +2376,7 @@ table tbody .border-bottom-warning td {
     .card .card-header.bg-primary > span, .card .card-header.bg-secondary > span, .card .card-header.bg-success > span, .card .card-header.bg-danger > span, .card .card-header.bg-warning > span {
       color: #fff; }
   .card .card-body {
-    padding: 30px;
+    padding: 30px 15px;
     background-color: transparent; }
     .card .card-body p:last-child {
       margin-bottom: 0; }
@@ -4424,7 +4423,7 @@ table tbody .border-bottom-warning td {
     .page-main-header .main-header-right .left-menu-header ul li i {
       color: #24695c; }
     .page-main-header .main-header-right .left-menu-header ul li .search-form {
-      font-family: "Roboto", sans-serif; }
+      font-family: "Rubik", sans-serif; }
       .page-main-header .main-header-right .left-menu-header ul li .search-form input {
         padding: 0 20px;
         border: none;
@@ -5197,7 +5196,7 @@ table tbody .border-bottom-warning td {
         margin-bottom: 0; }
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .sidebar-user p {
         color: #999;
-        font-family: "Roboto", sans-serif;
+        font-family: "Rubik", sans-serif;
         font-size: 13px; }
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .sidebar-user .badge-bottom {
         position: absolute;
@@ -5209,7 +5208,7 @@ table tbody .border-bottom-warning td {
           padding: 4px 6px 3px;
           -webkit-box-shadow: 0px 7px 10px rgba(36, 105, 92, 0.3);
                   box-shadow: 0px 7px 10px rgba(36, 105, 92, 0.3);
-          font-family: "Roboto", sans-serif; }
+          font-family: "Rubik", sans-serif; }
       .page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .sidebar-user ul {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -13459,7 +13458,7 @@ body {
   .landing-wrraper .landing-header ul.landing-menu li.nav-item a.nav-link {
     font-size: 16px;
     font-weight: 600;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Rubik", sans-serif;
     color: #2b2b2b;
     padding: 10px 20px; }
   .landing-wrraper .landing-header ul.landing-menu li.nav-item:hover a.nav-link {
@@ -24611,7 +24610,7 @@ body.dark-sidebar .main-navbar ul.nav-pills {
   font-weight: 500; }
 
 .list-persons p {
-  font-family: "Roboto", sans-serif, sans-serif; }
+  font-family: "Rubik", sans-serif, sans-serif; }
 
 .list-persons .profile-mail {
   padding: 30px 0; }
@@ -25875,7 +25874,7 @@ body.dark-sidebar .main-navbar ul.nav-pills {
     color: rgba(255, 255, 255, 0.7);
     font-weight: 400;
     text-align: center;
-    font-family: "Roboto", sans-serif;
+    font-family: "Rubik", sans-serif;
     padding: 0 15px;
     margin-bottom: 15px; }
   .profile-greeting .btn {
@@ -26065,7 +26064,7 @@ body.dark-sidebar .main-navbar ul.nav-pills {
   font-size: 13px;
   line-height: 18px;
   color: #717171;
-  font-family: "Roboto";
+  font-family: "Rubik";
   font-weight: 400; }
 
 .latest-update-sec .recent-order-sec table th, .recent-order-sec .recent-order-sec table th {
@@ -26077,7 +26076,7 @@ body.dark-sidebar .main-navbar ul.nav-pills {
   font-size: 13px;
   line-height: 18px;
   color: #717171;
-  font-family: "Roboto", sans-serif;
+  font-family: "Rubik", sans-serif;
   font-weight: 400; }
 
 .latest-update-sec .rate-sec .card .card-header, .recent-order-sec .rate-sec .card .card-header {
@@ -26142,7 +26141,7 @@ body.dark-sidebar .main-navbar ul.nav-pills {
   #chart-dashbord .apexcharts-legend-series .apexcharts-legend-marker {
     display: none;
     text-align: right;
-    font-family: "Roboto", sans-serif; }
+    font-family: "Rubik", sans-serif; }
 
 #yearly-overview-chart {
   max-width: 650px;
@@ -27353,7 +27352,7 @@ span.twitter-typeahead .tt-suggestion {
       font-weight: 600; }
     .top-dealer-sec .card .top-dealerbox p {
       font-size: 11px;
-      font-family: "Roboto", sans-serif;
+      font-family: "Rubik", sans-serif;
       margin-bottom: 12px;
       color: #999; }
     .top-dealer-sec .card .top-dealerbox .btn {
@@ -27363,7 +27362,7 @@ span.twitter-typeahead .tt-suggestion {
       font-size: 11px;
       font-weight: 400;
       border-radius: 15px;
-      font-family: "Roboto", sans-serif;
+      font-family: "Rubik", sans-serif;
       line-height: 1; }
     .top-dealer-sec .card .top-dealerbox:hover {
       background-color: #fff; }
@@ -27542,7 +27541,7 @@ span.twitter-typeahead .tt-suggestion {
 .activity-sec .activity-timeline.update-line .media .media-body p {
   font-size: 14px;
   font-weight: 400;
-  font-family: "Roboto", sans-serif;
+  font-family: "Rubik", sans-serif;
   color: #717171; }
 
 .activity-sec .activity-timeline.update-line .media .media-body ul.timeline-pro {
@@ -27574,7 +27573,7 @@ span.twitter-typeahead .tt-suggestion {
 .activity-sec .activity-timeline.update-line .media .media-body .tomorrow-sec {
   margin: auto;
   font-weight: 500;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", sans-serif;
   position: relative;
   z-index: 1; }
   .activity-sec .activity-timeline.update-line .media .media-body .tomorrow-sec:before {

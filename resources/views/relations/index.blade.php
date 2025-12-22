@@ -3,7 +3,7 @@
 @section('title', 'Relasi')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item active">Relasi</li>
+    <li class="breadcrumb-item active">Insuracn</li>
 @endpush
 
 @push('css')
@@ -46,7 +46,7 @@
                                         </tr>
 
                                     @empty
-                                        <tr></tr>
+                                        <tr>
                                         <td colspan="3" class="text-center">No relations found.</td>
                                         </tr>
                                     @endforelse

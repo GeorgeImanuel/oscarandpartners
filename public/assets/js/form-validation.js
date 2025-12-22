@@ -23,6 +23,7 @@
         options = options || {};
         var formSelector = options.formSelector || '.needs-validation';
         var customValidator = options.customValidator || null;
+        var form = options.form || document.querySelectorAll(formSelector);
         var onSubmit = options.onSubmit || function(form) {
             form.submit();
         };
@@ -104,10 +105,14 @@
 
                     // Show confirmation dialog or submit directly
                     if (showConfirmDialog && typeof alertConfirm === 'function') {
-                        alertConfirm(confirmTitle, confirmMessage, function() {
-                            // Execute submit callback if provided
-                            if (onSubmit && typeof onSubmit === 'function') {
-                                onSubmit(form);
+                        alertConfirm({
+                            title: confirmTitle,
+                            text: confirmMessage,
+                            onConfirm: () => {
+                                showLoading("Menyimpan...");
+                                if (onSubmit && typeof onSubmit === 'function') {
+                                    onSubmit(form);
+                                }
                             }
                         });
                     } else {

@@ -3,7 +3,7 @@
 @section('title', 'Insurances')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item active">Insurances</li>
+    <li class="breadcrumb-item active">Asuransi</li>
 @endpush
 
 @push('css')
@@ -17,7 +17,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 style="display: inline">Daftar Insurance</h5>
+                        <h5 style="display: inline">Daftar Asuransi</h5>
                         <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end">Tambah Insurance</a>
                     </div>
                     <div class="card-body">
@@ -25,14 +25,15 @@
                             <table class="display" id="basic-1">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nama Bank</th>
+                                        <th>No</th>
+                                        <th>Nama Asuransi</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($insurances as $insurance)
                                         <tr>
-                                            <td>{{ $insurance->id }}</td>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $insurance->name }}</td>
                                             <td>
                                                 <a href="{{ route('insurances.edit', $insurance->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -45,9 +46,9 @@
                                         </tr>
 
                                     @empty
-                                        <tr></tr>
+                                        <tr>
                                         <td colspan="3" class="text-center">No insurances found.</td>
-                                        
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>

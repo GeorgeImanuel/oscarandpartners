@@ -110,7 +110,7 @@ html {
 body {
   font-size: 14px;
   overflow-x: hidden;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", sans-serif;
   color: #242934;
   background-color: #f5f7fb; }
 
@@ -196,13 +196,7 @@ svg {
 
 input:focus {
   outline-color: transparent; }
-
-.font-nunito {
-  font-family: Nunito, sans-serif; }
-
-.font-roboto {
-  font-family: "Roboto", sans-serif; }
-
+  
 .font-rubik {
   font-family: "Rubik", sans-serif, sans-serif; }
 
@@ -2344,7 +2338,7 @@ table tbody .border-bottom-warning td {
   border-radius: 0;
   background-color: #fff; }
   .card .card-header {
-    padding: 30px;
+    padding: 30px 30px 10px 30px;
     border-bottom: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -2377,7 +2371,7 @@ table tbody .border-bottom-warning td {
     .card .card-header.bg-primary > span, .card .card-header.bg-secondary > span, .card .card-header.bg-success > span, .card .card-header.bg-danger > span, .card .card-header.bg-warning > span {
       color: #fff; }
   .card .card-body {
-    padding: 30px;
+    padding: 10px 30px 10px 30px;
     background-color: transparent; }
     .card .card-body p:last-child {
       margin-bottom: 0; }
@@ -2391,7 +2385,7 @@ table tbody .border-bottom-warning td {
   .card .card-footer {
     background-color: transparent;
     border-top: 1px solid #e6edef;
-    padding: 30px;
+    padding: 10px 30px 30px 30px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0; }
     .card .card-footer.bg-primary, .card .card-footer.bg-secondary, .card .card-footer.bg-success, .card .card-footer.bg-danger, .card .card-footer.bg-warning {
@@ -13459,7 +13453,7 @@ body {
   .landing-wrraper .landing-header ul.landing-menu li.nav-item a.nav-link {
     font-size: 16px;
     font-weight: 600;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Rubik", sans-serif;
     color: #2b2b2b;
     padding: 10px 20px; }
   .landing-wrraper .landing-header ul.landing-menu li.nav-item:hover a.nav-link {
@@ -27574,7 +27568,7 @@ span.twitter-typeahead .tt-suggestion {
 .activity-sec .activity-timeline.update-line .media .media-body .tomorrow-sec {
   margin: auto;
   font-weight: 500;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Rubik", sans-serif;
   position: relative;
   z-index: 1; }
   .activity-sec .activity-timeline.update-line .media .media-body .tomorrow-sec:before {

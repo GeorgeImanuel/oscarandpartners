@@ -3,7 +3,8 @@
 if(! function_exists('prefixActive')){
 	function prefixActive($prefixName)
 	{ 
-		return	request()->route()->getPrefix() == $prefixName ? 'active' : '';
+		return request()->route()->getPrefix();
+		// return	request()->route()->getPrefix() == $prefixName ? 'active' : '';
 	}
 }
 

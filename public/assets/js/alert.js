@@ -148,8 +148,6 @@ function hideLoading() {
 }
 
 function confirmDelete(that) {
-    console.log("qwe");
-    // $(that).preventDefault();
     var title = that.getAttribute("data-title");
     if (title == undefined) {
         title = "Yakin ingin menghapus?";
@@ -160,8 +158,8 @@ function confirmDelete(that) {
         title: title,
         text: $(that).attr("data-message"),
         showCancelButton: true,
-        confirmButtonText: "Yes",
-        denyButtonText: "No",
+        confirmButtonText: "Yakin",
+        denyButtonText: "Batal",
     }).then((result) => {
         if (result.isConfirmed) {
             showLoading("Menghapus...");
@@ -169,3 +167,66 @@ function confirmDelete(that) {
         }
     });
 }
+
+function alertConfirm(options = {}) {
+    const title = options.title || "Apakah Anda yakin?";
+    const text = options.text || options.message || "";
+    const icon = options.icon || "question";
+    const confirmButtonText = options.confirmButtonText || "Ya";
+    const cancelButtonText = options.cancelButtonText || "Batal";
+    const onConfirm = options.onConfirm || null;
+    const onCancel = options.onCancel || null;
+
+    Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        showCancelButton: true,
+        confirmButtonText: confirmButtonText,
+        cancelButtonText: cancelButtonText,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (onConfirm && typeof onConfirm === "function") {
+                onConfirm();
+            }
+        } else if (result.isDismissed && onCancel && typeof onCancel === "function") {
+            onCancel();
+        }
+    });
+}
+
+// Usage examples:
+
+// Basic usage
+// alertConfirm({
+//     title: "Konfirmasi Hapus",
+//     text: "Data yang dihapus tidak dapat dikembalikan",
+//     onConfirm: () => {
+//         console.log("User confirmed");
+//         // Your delete logic here
+//     }
+// });
+
+// With custom button text and cancel callback
+// alertConfirm({
+//     title: "Simpan Perubahan?",
+//     text: "Perubahan akan disimpan secara permanen",
+//     icon: "warning",
+//     confirmButtonText: "Simpan",
+//     cancelButtonText: "Tidak",
+//     onConfirm: () => {
+//         showLoading("Menyimpan...");
+//         // Save logic here
+//     },
+//     onCancel: () => {
+//         console.log("User cancelled");
+//     }
+// });
+
+// Simple confirmation without callbacks
+// alertConfirm({
+//     title: "Lanjutkan?",
+//     text: "Proses ini akan memakan waktu beberapa menit"
+// });

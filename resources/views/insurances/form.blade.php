@@ -3,8 +3,8 @@
 @section('title', 'Insurance')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item">Insurance</li>
-    <li class="breadcrumb-item active">{{ isset($insurance) ? 'Edit' : 'Tambah'  }} Insurance</li>
+    <li class="breadcrumb-item">Asuransi</li>
+    <li class="breadcrumb-item active">{{ isset($insurance) ? 'Edit' : 'Tambah'  }} Asuransi</li>
 @endpush
 
 @section('content')
@@ -14,7 +14,7 @@
         <form class="needs-validation" novalidate="" method="POST" action="{{ isset($insurance) ? route('insurances.update', $insurance->id) : route('insurances.store') }}">
             <div class="card">
                 <div class="card-header">
-                    <h5 style="display: inline">{{ isset($insurance) ? 'Edit' : 'Tambah' }} Insurance</h5>
+                    <h5 style="display: inline">{{ isset($insurance) ? 'Edit' : 'Tambah' }} Asuransi</h5>
                 </div>
                 <div class="card-body">
                     @csrf
@@ -24,7 +24,7 @@
 
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label" for="inputName">Nama Bank</label>
+                            <label class="form-label" for="inputName">Nama Asuransi</label>
                             <input class="form-control @error('name') is-invalid @enderror" id="inputName" name="name" type="text" value="{{ isset($insurance) ? $insurance->name : old('name', '') }}" required="" />
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -45,7 +45,8 @@
     <script src="{{ asset('assets/js/form-validation.js') }}"></script>
     <script>
         initializeFormValidation({
-            formSelector: '.needs-validation'
+            formSelector: '.needs-validation',
+            showConfirmDialog: true
         });
     </script>
 @endpush
