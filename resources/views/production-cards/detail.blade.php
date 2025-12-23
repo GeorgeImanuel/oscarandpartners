@@ -116,6 +116,9 @@
 		flex: 1;
 		min-height: 100px;
 	}
+	.signature-box:first-child {
+		flex: 2.5;
+	}
 	.signature-box p {
 		margin: 5px 0;
 		font-size: 13px;
@@ -409,11 +412,11 @@
 												<span>- Premi Total</span>
 												<span>= Rp {{ number_format($productionCard->total_premi, 0, ',', '.') }}</span>
 											</div>
-											<div class="payment-item">
-												<span>- Discon/ Agen</span>
-												<span>= Rp {{ number_format($productionCard->discount ?? 0, 0, ',', '.') }}</span>
-											</div>
-											<div class="payment-item">
+										<div class="payment-item" style="border-bottom: 1px solid #000; padding-bottom: 5px;">
+											<span>- Discount/Agen</span>
+											<span>= Rp {{ number_format($productionCard->discount ?? 0, 0, ',', '.') }}</span>
+										</div>
+										<div class="payment-item" style="padding-top: 5px;">
 												<span>- Netto Tagihan</span>
 												<span>= Rp {{ number_format($productionCard->tagihan_ke_nasabah, 0, ',', '.') }}</span>
 											</div>
@@ -431,11 +434,11 @@
 												<span>- Premi Total</span>
 												<span>= Rp {{ number_format($productionCard->total_premi, 0, ',', '.') }}</span>
 											</div>
-											<div class="payment-item">
-												<span>- Komisi</span>
-												<span>= Rp {{ number_format($productionCard->komisi_bersih_awal, 0, ',', '.') }}</span>
-											</div>
-											<div class="payment-item">
+										<div class="payment-item" style="border-bottom: 1px solid #000; padding-bottom: 5px;">
+											<span>- Komisi</span>
+											<span>= Rp {{ number_format($productionCard->komisi_bersih_awal, 0, ',', '.') }}</span>
+										</div>
+										<div class="payment-item" style="padding-top: 5px;">
 												<span>- Netto bayar</span>
 												<span>= Rp {{ number_format($productionCard->netto_bayar_asuransi, 0, ',', '.') }}</span>
 											</div>
@@ -452,21 +455,23 @@
 							<div class="signature-boxes">
 								<div class="signature-box">
 									<p>Semarang,</p>
-									<p style="margin-top: 60px;">( Bag. Ad )</p>
-									<p>( Bag Keu )</p>
-									<p>( Pimpinan )</p>
+									<div style="display: flex; justify-content: flex-start; gap: 80px; margin-top: 60px;">
+										<p style="margin: 0;">( Bag. Ad )</p>
+										<p style="margin: 0;">( Bag Keu )</p>
+										<p style="margin: 0;">( Pimpinan )</p>
+									</div>
 								</div>
 
 								<div class="signature-box">
 									<p><strong>Pelunasan Tagihan</strong></p>
-									<p>Tgl : {{ $productionCard->insurance_paid_at ? $productionCard->insurance_paid_at->format('d/m/Y') : '..................' }}</p>
-									<p>No.bukti : {{ $productionCard->insurance_evident_number ?? '..................' }}</p>
+									<p>Tgl : {{ $productionCard->insurance_paid_at ? $productionCard->insurance_paid_at->format('d/m/Y') : '' }}</p>
+									<p>No.bukti : {{ $productionCard->insurance_evident_number ?? '' }}</p>
 								</div>
 
 								<div class="signature-box">
 									<p><strong>Lunas Komisi / Ass</strong></p>
-									<p>Tgl : ..................</p>
-									<p>No.bukti : ..................</p>
+									<p>Tgl : </p>
+									<p>No.bukti : </p>
 								</div>
 							</div>
 
