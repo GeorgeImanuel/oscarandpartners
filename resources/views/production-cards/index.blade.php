@@ -71,7 +71,7 @@
 											</td>
 											<td>{{ $card->start_date ? $card->start_date->format('d/m/Y') : '-' }}</td>
 											<td>{{ $card->end_date ? $card->end_date->format('d/m/Y') : '-' }}</td>
-											<td>Rp {{ number_format($card->premium_gross, 0, ',', '.') }}</td>
+											<td>{{ numberFormat($card->premium_gross) }}</td>
 											<td>
 												@if($card->insurancePaymentStatus)
 													<span class="badge" style="background-color: {{ $card->insurancePaymentStatus->color }}">
@@ -83,20 +83,18 @@
 											</td>
 											<td>
 												<div style="white-space: nowrap;">
-													<a href="{{ route('production-cards.detail', $card->id) }}" class="btn btn-info btn-xs me-1" style="padding: 2px 8px; font-size: 11px; display: inline-block;" title="Detail">
+													<a href="{{ route('production-cards.show', $card->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
 														<i class="fa fa-eye"></i> Detail
 													</a>
-													<a href="{{ route('production-cards.edit', $card->id) }}" class="btn btn-warning btn-xs me-1" style="padding: 2px 8px; font-size: 11px; display: inline-block;" title="Edit">
+													<a href="{{ route('production-cards.edit', $card->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
 														<i class="fa fa-edit"></i> Edit
 													</a>
-													<button type="button" class="btn btn-danger btn-xs" style="padding: 2px 8px; font-size: 11px; display: inline-block;" title="Delete" onclick="deleteCard({{ $card->id }})">
-														<i class="fa fa-trash"></i> Delete
-													</button>
+													<form action="{{ route('production-cards.destroy', $card->id) }}" method="POST" style="display: inline">
+														@csrf
+														@method('DELETE')
+														<button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+													</form>
 												</div>
-												<form id="delete-form-{{ $card->id }}" action="{{ route('production-cards.destroy', $card->id) }}" method="POST" style="display: none;">
-													@csrf
-													@method('DELETE')
-												</form>
 											</td>
 										</tr>
 									@empty
@@ -112,18 +110,9 @@
 			</div>
 		</div>
 	</div>
-
-
 	@push('scripts')
 		<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
 		<script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
-		<script>
-			function deleteCard(id) {
-				if (confirm('Yakin ingin menghapus kartu produksi ini?')) {
-					document.getElementById('delete-form-' + id).submit();
-				}
-			}
-		</script>
 	@endpush
 
 @endsection

@@ -38,12 +38,14 @@ class UserSeeder extends Seeder
         ]);
         $finance->assignRole('finance');
 
-        $client = User::create([
-            'username' => '08123/Budi',
-            'name'     => 'Budi Client',
-            'email'    => 'budi@example.com',
-            'password' => Hash::make('password'),
-        ]);
-        $client->assignRole('client');
+        for ($i = 1; $i <= 10; $i++) {
+            $dummyClient = User::create([
+                'username' => sprintf('client%02d', $i),
+                'name'     => 'Client User ' . $i,
+                'email'    => 'client' . $i . '@example.com',
+                'password' => Hash::make('password'),
+            ]);
+            $dummyClient->assignRole('client');
+        }
     }
 }
