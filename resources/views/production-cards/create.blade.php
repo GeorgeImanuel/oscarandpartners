@@ -301,6 +301,17 @@
 	<script src="{{ asset('assets/js/datepicker/date-time-picker/moment.min.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/date-time-picker/tempusdominus-bootstrap-4.min.js') }}"></script>
     <script src="{{ asset('assets/js/datepicker/date-time-picker/datetimepicker.custom.js') }}"></script>
+    <script>
+        // Add confirmation on submit
+        document.querySelector('.needs-validation').addEventListener('submit', function(e) {
+            if (this.checkValidity()) {
+                if (!confirm('Apakah Anda yakin ingin menyimpan kartu produksi ini?')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        });
+    </script>
 	@endpush
 
 @endsection

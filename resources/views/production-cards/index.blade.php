@@ -49,12 +49,12 @@
 	                                <tr>
 	                                    <th>No</th>
 	                                    <th>Client</th>
-	                                    <th>Policy</th>
+	                                    <th>Polis</th>
 	                                    <th>Status</th>
-	                                    <th>Start Date</th>
-										<th>End Date</th>
-										<th>Premium Gross</th>
-										<th>Payment Status</th>
+	                                    <th>Tanggal Awal</th>
+										<th>Tanggal Akhir</th>
+										<th>Premi Bruto</th>
+										<th>Status Pembayaran</th>
 										<th>Actions</th>
 	                                </tr>
 	                            </thead>
@@ -88,6 +88,12 @@
 												   style="padding: 2px 8px; font-size: 11px; display: inline-block;"
 												   title="Detail">
 													<i class="fa fa-eye"></i> Detail
+												</a>
+												<a href="{{ route('cards.preview', $card->id) }}" 
+												   class="btn btn-success btn-xs me-1" 
+												   style="padding: 2px 8px; font-size: 11px; display: inline-block;"
+												   title="Preview Kartu">
+													<i class="fa fa-file-text"></i> Preview
 												</a>
 												<a href="{{ route('cards.edit', $card->id) }}" 
 												   class="btn btn-warning btn-xs me-1" 

@@ -35,15 +35,23 @@ Route::group(['middleware' => ['auth:web']], function () {
 
     Route::resource('relations', RelationController::class);
 
-    // Production Cards Routes
-    Route::prefix('kartuproduksi')->group(function () {
-        Route::get('view', [ProductionCardController::class, 'index'])->name('cards.view');
-        Route::get('create', [ProductionCardController::class, 'create'])->name('cards.create');
-        Route::post('store', [ProductionCardController::class, 'store'])->name('cards.store');
-        Route::get('detail/{productionCard}', [ProductionCardController::class, 'show'])->name('cards.detail');
-        Route::get('edit/{productionCard}', [ProductionCardController::class, 'edit'])->name('cards.edit');
-        Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
-        Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
+    // Production Cards Routes (Resource)
+    Route::prefix('kartuproduksi')->name('cards.')->group(function () {
+        // Custom route untuk preview (harus diatas resource)
+        Route::get('{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('preview');
+        
+        // Resource routes
+        Route::resource('/', ProductionCardController::class)
+            ->parameters(['' => 'productionCard'])
+            ->names([
+                'index' => 'view',
+                'create' => 'create',
+                'store' => 'store',
+                'show' => 'detail',
+                'edit' => 'edit',
+                'update' => 'update',
+                'destroy' => 'destroy'
+            ]);
     });
 });
 
