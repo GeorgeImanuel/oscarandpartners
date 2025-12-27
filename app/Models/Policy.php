@@ -10,7 +10,6 @@ class Policy extends Model
     use HasFactory;
     protected $fillable = [
         'id',
-        'insurance_id',
         'parent_policy_id',
         'object_type_id',
         'policy_number',
@@ -24,9 +23,9 @@ class Policy extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function insurance()
+    public function policyInsurances()
     {
-        return $this->belongsTo(Insurance::class);
+        return $this->hasMany(PolicyInsurance::class);
     }
 
     public function objectType()

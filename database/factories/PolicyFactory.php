@@ -28,7 +28,6 @@ class PolicyFactory extends Factory
         }
 
         return [
-            'insurance_id'     => Insurance::factory(),
             'parent_policy_id' => $parentPolicyId,
             'object_type_id'   => ObjectType::factory(),
             'policy_number'    => 'POL-' . fake()->unique()->numerify('######'),
