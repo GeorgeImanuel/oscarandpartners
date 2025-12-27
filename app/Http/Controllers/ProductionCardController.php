@@ -2,23 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductionCard;
 use App\Models\Client;
 use App\Models\Policy;
 use App\Models\CardStatus;
-use App\Models\PaymentStatus;
 use App\Models\PaymentType;
-use App\Services\ProductionCard\ProductionCardService;
+use App\Models\PaymentStatus;
+use App\Models\ProductionCard;
+use App\Services\Client\ClientService;
+use App\Services\Policy\PolicyService;
+use App\Services\CardStatus\CardStatusService;
+use App\Services\PaymentType\PaymentTypeService;
 use App\Http\Requests\StoreProductionCardRequest;
 use App\Http\Requests\UpdateProductionCardRequest;
+use App\Services\PaymentStatus\PaymentStatusService;
+use App\Services\ProductionCard\ProductionCardService;
 
 class ProductionCardController extends Controller
 {
     private $productionCardService;
+    private $clientService;
+    private $policyService;
+    private $cardStatusService;
+    private $paymentStatusService;
+    private $paymentTypeService;
 
-    public function __construct(ProductionCardService $productionCardService)
-    {
+    public function __construct(
+        ProductionCardService $productionCardService,
+        ClientService $clientService,
+        PolicyService $policyService,
+        CardStatusService $cardStatusService,
+        PaymentStatusService $paymentStatusService,
+        PaymentTypeService $paymentTypeService
+    ) {
         $this->productionCardService = $productionCardService;
+        $this->clientService = $clientService;
+        $this->policyService = $policyService;
+        $this->cardStatusService = $cardStatusService;
+        $this->paymentStatusService = $paymentStatusService;
+        $this->paymentTypeService = $paymentTypeService;
     }
 
     /**
@@ -35,13 +56,13 @@ class ProductionCardController extends Controller
      */
     public function create()
     {
-        $clients = Client::all();
-        $policies = Policy::all();
-        $cardStatuses = CardStatus::all();
-        $paymentStatuses = PaymentStatus::all();
-        $paymentTypes = PaymentType::all();
+        $clients         = $this->clientService->all();
+        $policies        = $this->policyService->all();
+        $cardStatuses    = $this->cardStatusService->all();
+        $paymentStatuses = $this->paymentStatusService->all();
+        $paymentTypes    = $this->paymentTypeService->all();
         
-        return view('production-cards.create', compact('clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
+        return view('production-cards.form', compact('clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace App\Services\ProductionCard;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\ProductionCard\ProductionCardRepository;
 
-class ProductionCardServiceImplement extends ServiceApi implements ProductionCardService{
+class ProductionCardServiceImplement extends Service implements ProductionCardService{
 
     /**
      * set title message api for CRUD

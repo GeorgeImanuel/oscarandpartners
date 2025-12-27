@@ -2,10 +2,10 @@
 
 namespace App\Services\User;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\User\UserRepository;
 
-class UserServiceImplement extends ServiceApi implements UserService{
+class UserServiceImplement extends Service implements UserService{
 
     /**
      * set title message api for CRUD
