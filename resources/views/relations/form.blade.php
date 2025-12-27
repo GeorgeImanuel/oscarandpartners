@@ -56,5 +56,15 @@
             formSelector: '.needs-validation',
             showConfirmDialog: true
         });
+        
+        // Add confirmation on submit
+        document.querySelector('.needs-validation').addEventListener('submit', function(e) {
+            if (this.checkValidity()) {
+                if (!confirm('Apakah Anda yakin ingin menyimpan data ini?')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        });
     </script>
 @endpush

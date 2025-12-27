@@ -48,13 +48,13 @@
 								<thead>
 									<tr>
 										<th>No</th>
-										<th>Client</th>
-										<th>Policy</th>
-										<th>Status</th>
-										<th>Start Date</th>
-										<th>End Date</th>
-										<th>Premium Gross</th>
-										<th>Payment Status</th>
+	                                    <th>Client</th>
+	                                    <th>Polis</th>
+	                                    <th>Status</th>
+	                                    <th>Tanggal Awal</th>
+										<th>Tanggal Akhir</th>
+										<th>Premi Bruto</th>
+										<th>Status Pembayaran</th>
 										<th>Actions</th>
 									</tr>
 								</thead>

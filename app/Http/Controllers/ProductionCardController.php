@@ -85,7 +85,7 @@ class ProductionCardController extends Controller
     public function show(ProductionCard $productionCard)
     {
         $productionCard->load([
-            'client',
+            'client.relation',
             'policy.insurance',
             'cardStatus',
             'insurancePaymentStatus',
@@ -97,11 +97,34 @@ class ProductionCardController extends Controller
     }
 
     /**
+     * Display the preview of production card.
+     */
+    public function preview(ProductionCard $productionCard)
+    {
+        $productionCard->load([
+            'client.relation',
+            'policy.insurance',
+            'cardStatus',
+            'insurancePaymentStatus',
+            'paymentType',
+            'creator'
+        ]);
+        
+        return view('production-cards.preview', compact('productionCard'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(ProductionCard $productionCard)
     {
-        return view('production-cards.edit', compact('productionCard'));
+        $clients = Client::all();
+        $policies = Policy::all();
+        $cardStatuses = CardStatus::all();
+        $paymentStatuses = PaymentStatus::all();
+        $paymentTypes = PaymentType::all();
+        
+        return view('production-cards.edit', compact('productionCard', 'clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
     }
 
     /**
