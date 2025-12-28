@@ -7,6 +7,11 @@
     <li class="breadcrumb-item active">{{ isset($policy) ? 'Ubah' : 'Tambah'  }} policy</li>
 @endpush
 
+@push('css')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+@endpush
+
+
 @section('content')
     @yield('breadcrumb-list')
     <!-- Container-fluid starts-->
@@ -22,13 +27,15 @@
                         @method('PUT')
                     @endif
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="inputinsurance_id">Insurance ID </label>
-                        <select class="form-control error(insurance_id)" name="insurance_id">
-                                <option value="" selected disabled>- Pilih Data -</option>
-                                @foreach ($insurances as $insurance)
-                                    <option value="{{ $insurance->id }}" {{ isset($policy) ? $insurance->id == $policy->insurance_id ? "selected" : "" : "" }}>{{ $insurance->name }}</option>                                        
-                                @endforeach
-                            </select>
+                        <label class="form-label col-form-label" for="inputinsurance_id">Insurance ID</label>
+                        <select class="form-control js-example-placeholder-multiple error(insurance_id) col-sm-12" name="insurance_id[]"multiple="multiple" id="inputinsurance_id">
+                            @foreach ($insurances as $insurance)
+                                <option value="{{ $insurance->id }}" 
+                                        {{ isset($policy) && in_array($insurance->id, (array)$policy->insurance_id) ? 'selected' : '' }}>
+                                    {{ $insurance->name }}
+                                </option>                                        
+                            @endforeach
+                        </select>
                         @error('insurance_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -101,6 +108,8 @@
 @endsection
 @push('scripts')
     <script src="{{ asset('assets/js/form-validation.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <script>
         initializeFormValidation({
             formSelector: '.needs-validation'
