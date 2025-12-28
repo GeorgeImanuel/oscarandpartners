@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class PolicyInsurance extends Model
 {
+
+    protected $primaryKey = ['policy_id', 'insurance_id'];
+        
+    public $incrementing = false;
+
     protected $fillable = [
         'policy_id',
         'insurance_id',

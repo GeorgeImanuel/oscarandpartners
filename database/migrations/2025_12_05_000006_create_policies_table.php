@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_policy_id')->nullable()->constrained('policies')->onDelete('set null')->comment('RENEWAL LINK (Self-Join)');
-            $table->foreignId('object_type_id')->constrained('object_types');
             $table->string('policy_number')->comment('No Polis Fisik');
-            $table->text('object')->comment('Nama Objek');
-            $table->text('object_address')->comment('Alamat Objek');
-            $table->decimal('object_value', 15, 2)->comment('Nilai Objek');
+            $table->foreignId('object_id')->constrained('objects')->onDelete('cascade')->comment('Link ke Objek Asuransi');
+            $table->string('coverage_code');
+            $table->foreign('coverage_code')->references('code')->on('coverages')->onDelete('cascade')->comment('Link ke Coverage');
+            $table->decimal('coverage_percentage', 3, 2)->comment('Persentase coverage');
+            $table->date('started_date')->comment('Periode mulai polis');
+            $table->date('ended_date')->comment('Periode berakhir polis');
             $table->timestamps();
         });
     }

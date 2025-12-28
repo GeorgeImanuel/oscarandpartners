@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('policy_insurances', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('policy_id')->constrained()->onDelete('cascade');
             $table->foreignId('insurance_id')->constrained()->onDelete('cascade');
             $table->boolean('is_main')->default(true);
             $table->double('percentage')->default(0);
             $table->timestamps();
+
+            $table->primary(['policy_id', 'insurance_id']);
         });
     }
 
