@@ -330,7 +330,7 @@
 						<!-- Action Buttons -->
 						<div class="no-print mb-3">
 							<div class="d-flex justify-content-between align-items-center">
-								<a href="{{ route('cards.detail', $productionCard->id) }}" class="btn btn-secondary btn-sm">
+								<a href="{{ route('production-cards.show', $productionCard->id) }}" class="btn btn-secondary btn-sm">
 									<i class="fa fa-arrow-left"></i> Kembali ke Detail
 								</a>
 								<button onclick="window.print()" class="btn btn-info btn-sm">
@@ -372,7 +372,7 @@
 									<span class="info-value">{{ $productionCard->policy->policy_number ?? '-' }}</span>
 									<span style="width: 150px; text-align: right;">Asuransi</span>
 									<span class="info-separator">:</span>
-									<span class="info-value">{{ $productionCard->policy->insurance->name ?? '-' }}</span>
+									<span class="info-value">{{ $productionCard->policy->policyInsurances->firstWhere('is_main', true)?->insurance->name ?? '-' }}</span>
 								</div>
 								<div class="info-row">
 									<span class="section-number">2</span>

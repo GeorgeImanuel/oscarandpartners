@@ -28,6 +28,21 @@ class Policy extends Model
         return $this->hasMany(PolicyInsurance::class);
     }
 
+    public function insurances()
+    {
+        return $this->belongsToMany(Insurance::class, 'policy_insurances')
+            ->withPivot('is_main', 'percentage')
+            ->withTimestamps();
+    }
+
+    public function insurance()
+    {
+        return $this->belongsToMany(Insurance::class, 'policy_insurances')
+            ->wherePivot('is_main', true)
+            ->withPivot('is_main', 'percentage')
+            ->withTimestamps();
+    }
+
     public function objectType()
     {
         return $this->belongsTo(ObjectType::class);

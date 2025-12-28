@@ -24,11 +24,8 @@
                         <a class="nav-link menu-title {{ routeActive('dashboard') }}" href="javascript:void(0)"><i data-feather="home"></i><span>Dashboard</span></a>
                         <a class="nav-link menu-title {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations {{ routeActive('relations') }}</span></a>
 
-                        <a class="nav-link menu-title {{ prefixActive('/production-cards') }}" href="javascript:void(0)"><i data-feather="file-text"></i><span>Kartu Produksi {{ prefixActive('dashboard') }}</span></a>
-                        <ul class="nav-submenu menu-content" style="display: {{ prefixBlock('kartuproduksi') }};">
-                            <li><a href="{{ route('production-cards.index') }}" class="{{routeActive('cards.view')}}">View Tabel</a></li>
-                            <li><a href="{{ route('production-cards.create') }}" class="{{routeActive('cards.create')}}">Create</a></li>
-                        </ul>
+                        <a class="nav-link menu-title {{ routeActive('production-cards.index') }}" href="{{ route('production-cards.index') }}"><i data-feather="file-text"></i><span>Kartu Produksi {{ prefixActive('dashboard') }}</span></a>
+                        
                         <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Insurances</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Policies</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>

@@ -30,10 +30,10 @@
 									<i class="fa fa-arrow-left"></i> Kembali
 								</a>
 								<div>
-									<a href="{{ route('cards.preview', $productionCard->id) }}" class="btn btn-success btn-sm">
-										<i class="fa fa-file-text"></i> Preview Kartu
-									</a>
-									<a href="{{ route('cards.edit', $productionCard->id) }}" class="btn btn-warning btn-sm">
+								<a href="{{ route('production-cards.preview', $productionCard->id) }}" class="btn btn-success btn-sm">
+									<i class="fa fa-file-text"></i> Preview Kartu
+								</a>
+								<a href="{{ route('production-cards.edit', $productionCard->id) }}" class="btn btn-warning btn-sm">
 										<i class="fa fa-edit"></i> Edit
 									</a>
 								</div>
@@ -65,7 +65,7 @@
 										<tr>
 											<td class="fw-bold">Nama Asuransi</td>
 											<td>:</td>
-											<td>{{ $productionCard->policy->insurance->name ?? '-' }}</td>
+											<td>{{ $productionCard->policy->policyInsurances->firstWhere('is_main', true)?->insurance->name ?? '-' }}</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Nama Tertanggung</td>
@@ -268,6 +268,135 @@
 									</tbody>
 								</table>
 							</div>
+						</div>
+
+						<!-- Riwayat Pembayaran -->
+						<h6 class="mb-3 mt-4">Riwayat Pembayaran</h6>
+						@php
+						// Generate sample payment data - Contoh Cicilan 3x (Lunas)
+						$insuranceCode = $productionCard->policy->policyInsurances->firstWhere('is_main', true)?->insurance->code ?? 'BINTANG';
+						$sharePercentage = $productionCard->policy->policyInsurances->firstWhere('is_main', true)?->percentage ?? 50.025;
+						
+						// Bagi menjadi 3 cicilan
+						$totalPremi = $productionCard->premi_amount;
+						$cicilan1 = $totalPremi * 0.4; // 40%
+						$cicilan2 = $totalPremi * 0.35; // 35%
+						$cicilan3 = $totalPremi * 0.25; // 25%
+						
+						$payments = collect([
+							[
+								'payment_number' => 1,
+								'payment_date' => $productionCard->start_date,
+								'insurance_code' => $insuranceCode,
+								'share_percentage' => $sharePercentage,
+								'premium_commission' => $productionCard->commission_amount * 0.4,
+								'policy_fee' => $productionCard->polis_amount * 0.4,
+								'commission_amount' => $productionCard->commission_total * 0.4,
+								'tax_amount' => $productionCard->tax_amount * 0.4,
+								'premi_amount' => $cicilan1,
+								'status' => 'paid',
+								'notes' => 'Cicilan 1 (40%) - Lunas'
+							],
+							[
+								'payment_number' => 2,
+								'payment_date' => \Carbon\Carbon::parse($productionCard->start_date)->addMonths(1),
+								'insurance_code' => $insuranceCode,
+								'share_percentage' => $sharePercentage,
+								'premium_commission' => $productionCard->commission_amount * 0.35,
+								'policy_fee' => $productionCard->polis_amount * 0.35,
+								'commission_amount' => $productionCard->commission_total * 0.35,
+								'tax_amount' => $productionCard->tax_amount * 0.35,
+								'premi_amount' => $cicilan2,
+								'status' => 'paid',
+								'notes' => 'Cicilan 2 (35%) - Lunas'
+							],
+							[
+								'payment_number' => 3,
+								'payment_date' => \Carbon\Carbon::parse($productionCard->start_date)->addMonths(2),
+								'insurance_code' => $insuranceCode,
+								'share_percentage' => $sharePercentage,
+								'premium_commission' => $productionCard->commission_amount * 0.25,
+								'policy_fee' => $productionCard->polis_amount * 0.25,
+								'commission_amount' => $productionCard->commission_total * 0.25,
+								'tax_amount' => $productionCard->tax_amount * 0.25,
+								'premi_amount' => $cicilan3,
+								'status' => 'paid',
+								'notes' => 'Cicilan 3 (25%) - Lunas'
+							]
+						]);
+						@endphp
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped table-hover">
+								<thead class="table-light">
+									<tr>
+										<th class="text-center">Pembayaran Ke-</th>
+										<th class="text-center">Tanggal</th>
+										@if(!auth()->user()->hasRole('client'))
+										<th class="text-center">No. Polis & Pol. Note</th>
+										<th class="text-center">Kode Asuransi</th>
+										<th class="text-center">Share %</th>
+										<th class="text-end">Ko. Premi</th>
+										<th class="text-end">Biaya Polis</th>
+										<th class="text-end">Komisi</th>
+										<th class="text-end">Pajak</th>
+										@endif
+										<th class="text-end">Premi</th>
+										@if(!auth()->user()->hasRole('client'))
+										<th class="text-center">Status</th>
+										<th>Keterangan</th>
+										@endif
+									</tr>
+								</thead>
+								<tbody>
+									@forelse($payments as $payment)
+									<tr>
+										<td class="text-center">{{ $payment['payment_number'] }}</td>
+										<td class="text-center">{{ $payment['payment_date'] ? \Carbon\Carbon::parse($payment['payment_date'])->format('d/m/Y') : '-' }}</td>
+										@if(!auth()->user()->hasRole('client'))
+										<td>{{ $productionCard->policy->policy_number ?? '-' }}</td>
+										<td class="text-center">{{ $payment['insurance_code'] ?? '-' }}</td>
+										<td class="text-center">{{ number_format($payment['share_percentage'] ?? 0, 2) }}%</td>
+										<td class="text-end">{{ number_format($payment['premium_commission'] ?? 0, 0, ',', '.') }}</td>
+										<td class="text-end">{{ number_format($payment['policy_fee'] ?? 0, 0, ',', '.') }}</td>
+										<td class="text-end">{{ number_format($payment['commission_amount'] ?? 0, 0, ',', '.') }}</td>
+										<td class="text-end">{{ number_format($payment['tax_amount'] ?? 0, 0, ',', '.') }}</td>
+										@endif
+										<td class="text-end"><strong>{{ number_format($payment['premi_amount'] ?? 0, 0, ',', '.') }}</strong></td>
+										@if(!auth()->user()->hasRole('client'))
+										<td class="text-center">
+											@if($payment['status'] == 'paid')
+												<span class="badge bg-success">PAID</span>
+											@elseif($payment['status'] == 'pending')
+												<span class="badge bg-warning">PENDING</span>
+											@else
+												<span class="badge bg-secondary">UNPAID</span>
+											@endif
+										</td>
+										<td>{{ $payment['notes'] ?? '-' }}</td>
+										@endif
+									</tr>
+									@empty
+									<tr>
+										<td colspan="{{ auth()->user()->hasRole('client') ? '3' : '13' }}" class="text-center text-muted">
+											<em>Belum ada data pembayaran</em>
+										</td>
+									</tr>
+									@endforelse
+								</tbody>
+								@if($payments->isNotEmpty() && !auth()->user()->hasRole('client'))
+								<tfoot class="table-light">
+									<tr>
+										<th colspan="5" class="text-end">Total:</th>
+										<th class="text-end">{{ number_format($payments->sum('premium_commission'), 0, ',', '.') }}</th>
+										<th class="text-end">{{ number_format($payments->sum('policy_fee'), 0, ',', '.') }}</th>
+										<th class="text-end">{{ number_format($payments->sum('commission_amount'), 0, ',', '.') }}</th>
+										<th class="text-end">{{ number_format($payments->sum('tax_amount'), 0, ',', '.') }}</th>
+										<th class="text-end"><strong>{{ number_format($payments->sum('premi_amount'), 0, ',', '.') }}</strong></th>
+										<th colspan="2"></th>
+									</tr>
+								</tfoot>
+								@endif
+							</table>
 						</div>
 					</div>
 				</div>
