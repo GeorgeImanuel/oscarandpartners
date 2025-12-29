@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Insurance;
-use App\Models\ObjectType;
 use App\Models\Policy;
+use App\Models\Coverage;
+use App\Models\ObjectModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,20 +21,15 @@ class PolicyFactory extends Factory
      */
     public function definition(): array
     {
-        // Randomly assign parent policy from existing policies (30% chance)
-        $parentPolicyId = null;
-        if (Policy::count() > 0 && fake()->boolean(30)) {
-            $parentPolicyId = Policy::inRandomOrder()->first()->id;
-        }
+        $startDate = fake()->dateTimeBetween('-1 year', 'now');
 
         return [
-            'parent_policy_id' => $parentPolicyId,
-            'object_type_id'   => ObjectType::factory(),
-            'policy_number'    => 'POL-' . fake()->unique()->numerify('######'),
-            'object'           => fake()->words(3, true) . ' ' . fake()->randomElement(['Building', 'Vehicle', 'Property', 'Equipment']),
-            'object_address'   => fake()->address(),
-            'object_value'     => fake()->randomFloat(2, 50000000, 5000000000),
+            'policy_number' => 'POL-' . fake()->unique()->numerify('######'),
+            'object_id' => ObjectModel::inRandomOrder()->first()?->id ?? ObjectModel::factory(),
+            'coverage_code' => Coverage::inRandomOrder()->first()?->code ?? Coverage::factory(),
+            'coverage_percentage' => fake()->randomFloat(2, 0.01, 0.99),
+            'started_date' => $startDate,
+            'ended_date' => fake()->dateTimeBetween($startDate, '+2 years'),
         ];
     }
-
 }

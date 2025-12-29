@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('object_parts', function (Blueprint $table) {
             $table->foreignId('object_id')->constrained('objects')->onDelete('cascade');
             $table->foreignId('part_id')->constrained('parts')->onDelete('cascade');
+            $table->decimal('value', 20, 2);
             $table->primary(['object_id', 'part_id']);
         });
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model
 {
     protected $fillable = [
-        'card_id',
+        'production_card_id',
         'sequence',
         'created_by',
         'collected_by',
@@ -28,7 +28,7 @@ class Payment extends Model
         'paid_at' => 'datetime',
     ];
 
-    public function card(): BelongsTo
+    public function productionCard(): BelongsTo
     {
         return $this->belongsTo(ProductionCard::class);
     }

@@ -6,7 +6,7 @@ use App\Models\ProductionCard;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class CardSeeder extends Seeder
+class ProductionCardSeeder extends Seeder
 {
     /**
      * Run the database seeds.

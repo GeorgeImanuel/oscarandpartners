@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('username')->unique()->comment('Staff: admin, Client: 08123/Budi');
             $table->string('password');
             $table->string('name');
-            $table->string('phone')->unique();
+            $table->string('phone')->unique()->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true)->comment('True=Active, False=Block');

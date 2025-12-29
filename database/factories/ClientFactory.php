@@ -22,13 +22,11 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'relation_id' => Relation::inRandomOrder()->first()?->id ?? null,
-            'name' => fake()->name(),
-            'phone' => fake()->phoneNumber(),
-            'email' => fake()->unique()->safeEmail(),
-            'address' => fake()->address(),
-            'id_card_number' => fake()->numerify('################'),
+            'user_id' => User::factory(),
+            'relation_id' => fake()->boolean(70) ? (Relation::inRandomOrder()->first()?->id ?? null) : null,
+            'id_name' => fake()->name(),
+            'id_number' => fake()->optional()->numerify('################'),
+            'id_address' => fake()->optional()->address(),
         ];
     }
 }
