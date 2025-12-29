@@ -26,7 +26,7 @@ class Policy extends Model
 
     public function insurance()
     {
-        return $this->belongsTo(Insurance::class);
+        return $this->belongsToMany(Insurance::class);
     }
 
     public function objectType()

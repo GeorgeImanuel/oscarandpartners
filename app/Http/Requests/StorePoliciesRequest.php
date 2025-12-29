@@ -22,7 +22,8 @@ class StorePoliciesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'insurance_id' => 'required|string|max:255|exists:insurances,id',
+            'insurance_id' => 'required|array|min:1',
+            'insurance_id.*' => 'exists:insurances,id',
             'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
             'object_type_id' => 'required|string|max:255|exists:object_types,id',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
@@ -41,7 +42,7 @@ class StorePoliciesRequest extends FormRequest
     {
         return [
             'insurance_id.required' => 'ID Asuransi wajib diisi.',
-            'insurance_id.string' => 'ID Asuransi harus berupa teks.',
+            'insurance_id.array' => 'ID Asuransi harus berupa array.',
             'insurance_id.max' => 'ID Asuransi maksimal 255 karakter.',
             'insurance_id.exists' => 'ID Asuransi yang dipilih tidak valid atau tidak ditemukan.',
 
