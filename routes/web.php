@@ -9,6 +9,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\ProductionCardController;
+use App\Http\Controllers\CoverageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
+    Route::resource('coverages', CoverageController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);
