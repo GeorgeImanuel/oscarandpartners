@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique()->comment('Staff: admin, Client: 08123/Budi');
-            $table->string('name');
-            $table->string('email')->unique();
             $table->string('password');
+            $table->string('name');
+            $table->string('phone')->unique()->nullable();
+            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true)->comment('True=Active, False=Block');
             $table->rememberToken();
@@ -24,6 +25,8 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index('username');
+            $table->index('phone');
+            $table->index('email');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

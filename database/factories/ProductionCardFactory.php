@@ -25,77 +25,49 @@ class ProductionCardFactory extends Factory
      */
     public function definition(): array
     {
-        $startDate = fake()->dateTimeBetween('-1 year', 'now');
-        $endDate = (clone $startDate)->modify('+1 year');
+        // Parameter Input
+        $premiPercentages = fake()->randomFloat(2, 0.5, 5.0);
+        $taxPercentages = fake()->randomFloat(2, 2, 5);
+        $commisionPercentages = fake()->randomFloat(2, 10, 30);
+        $objectValue = fake()->randomFloat(2, 10000000, 500000000);
+        $discount = fake()->randomFloat(2, 0, 1000000);
 
-        // Base calculations
-        $premiumGross = fake()->randomFloat(2, 10000000, 500000000);
-        $commissionPct = fake()->randomFloat(3, 0.5, 5.0);
-        $commissionPercentage = fake()->randomFloat(2, 10, 30);
-        $taxPercentage = fake()->randomFloat(2, 2, 5);
-        $discount = fake()->randomFloat(2, 0, 10);
-        $adminFee = fake()->randomFloat(2, 50000, 500000);
-
-        // Calculate premi_amount (premi produksi)
-        $premiAmount = $premiumGross * ($commissionPct / 100);
-
-        // Calculate polis_amount
-        $polisAmount = $adminFee;
-
-        // Calculate client_total
-        $clientTotal = $premiAmount + $polisAmount;
-
-        // Calculate commission_amount_initial
-        $commissionAmountInitial = $clientTotal * ($commissionPercentage / 100);
-
-        // Calculate tax_amount
-        $taxAmount = $commissionAmountInitial * ($taxPercentage / 100);
-
-        // Calculate discount_amount
-        $discountAmount = $commissionAmountInitial * ($discount / 100);
-
-        // Calculate commission_total
-        $commissionTotal = $commissionAmountInitial - $taxAmount - $discountAmount;
-
-        // Calculate net_to_insurance
-        $netToInsurance = $clientTotal - $commissionTotal;
-
-        // Calculate commission_amount (same as initial for simplicity)
-        $commissionAmount = $commissionAmountInitial;
+        // Calculated Values
+        $productionValue = $objectValue * ($premiPercentages / 100);
+        $premi           = $productionValue;
+        $commisionBruto  = $productionValue * ($commisionPercentages / 100);
+        $tax             = $commisionBruto * ($taxPercentages / 100);
+        $commisionNetto  = $commisionBruto - $tax;
+        $insurancePay    = $premi - $commisionNetto;
 
         return [
-            'client_id'      => Client::inRandomOrder()->first()?->id,
-            'policy_id'      => Policy::inRandomOrder()->first()?->id,
+            'client_id' => Client::inRandomOrder()->first()?->id ?? Client::factory(),
+            'policy_id' => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
             'card_status_id' => CardStatus::inRandomOrder()->first()?->id,
-            'created_by'     => User::inRandomOrder()->first()?->id,
-            'start_date'     => $startDate,
-            'end_date'       => $endDate,
-
-            'commission_percentage' => $commissionPercentage,
-            'tax_percentage'        => $taxPercentage,
-
-            'premium_gross'     => $premiumGross,
-            'discount'          => $discount,
-            'admin_fee'         => $adminFee,
-            'commission_pct'    => $commissionPct,
-            'commission_amount' => $commissionAmount,
-            'net_to_insurance'  => $netToInsurance,
-
-            'premi_amount' => $premiAmount,
-            'polis_amount' => $polisAmount,
-            'client_total' => $clientTotal,
-
-            'commission_amount_initial' => $commissionAmountInitial,
-            'tax_amount'                => $taxAmount,
-            'discount_amount'           => $discountAmount,
-            'commission_total'          => $commissionTotal,
-
-            'insurance_payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id,
-            'insurance_paid_at'           => fake()->boolean(60) ? fake()->dateTimeBetween($startDate, 'now') : null,
-            'insurance_evident_file'      => fake()->boolean(60) ? 'evidence_' . fake()->uuid() . '.pdf' : null,
-            'insurance_evident_number'    => fake()->boolean(60) ? 'TRF-' . fake()->numerify('##########') : null,
-
+            'parent_card_id' => null,
             'payment_type_id' => PaymentType::inRandomOrder()->first()?->id,
+            'created_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
+
+            // Parameter Input
+            'premi_percentages' => $premiPercentages,
+            'tax_percentages' => $taxPercentages,
+            'commision_percentages' => $commisionPercentages,
+            'object_value' => $objectValue,
+            'discount' => $discount,
+
+            // Calculated Values
+            'production_value' => $productionValue,
+            'premi' => $premi,
+            'commision_bruto' => $commisionBruto,
+            'commision_netto' => $commisionNetto,
+            'tax' => $tax,
+            'insurance_pay' => $insurancePay,
+
+            // Insurance Payment
+            'insurance_payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id,
+            'insurance_paid_at' => fake()->boolean(60) ? fake()->dateTimeBetween('-6 months', 'now') : null,
+            'insurance_evident_file' => fake()->boolean(60) ? 'evidence_' . fake()->uuid() . '.pdf' : null,
+            'insurance_evident_number' => fake()->boolean(60) ? 'TRF-' . fake()->numerify('##########') : null,
         ];
     }
 

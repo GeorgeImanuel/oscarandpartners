@@ -6,7 +6,10 @@ use App\Models\User;
 use App\Models\Policy;
 use Illuminate\Database\Seeder;
 use Database\Seeders\CardSeeder;
+use Database\Seeders\PartSeeder;
+use Database\Seeders\ObjectSeeder;
 use Database\Seeders\PolicySeeder;
+use Database\Seeders\CoverageSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -29,11 +32,15 @@ class DatabaseSeeder extends Seeder
         $this->call(BankSeeder::class);
 
         // Application Data Seeders
+        $this->call(PartSeeder::class);
+        $this->call(CoverageSeeder::class);
+        $this->call(ObjectSeeder::class);
+        
         $this->call(InsuranceSeeder::class);
         $this->call(PolicySeeder::class);
         $this->call(RelationSeeder::class);
         $this->call(ClientSeeder::class);
-        $this->call(PolicySeeder::class);
-        $this->call(CardSeeder::class);        
+        $this->call(ProductionCardSeeder::class);        
+        $this->call(PaymentSeeder::class);
     }
 }

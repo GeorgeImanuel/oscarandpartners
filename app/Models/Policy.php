@@ -4,38 +4,56 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Policy extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
-        'id',
-        'insurance_id',
-        'parent_policy_id',
-        'object_type_id',
         'policy_number',
-        'object',
-        'object_address',
-        'object_value'
+        'object_id',
+        'coverage_code',
+        'coverage_percentage',
+        'started_date',
+        'ended_date',
     ];
 
-    public function client()
+    protected $casts = [
+        'started_date' => 'date',
+        'ended_date' => 'date',
+        'coverage_percentage' => 'decimal:2',
+    ];
+
+    public function object(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(ObjectModel::class);
     }
 
-    public function insurance()
+    public function coverage(): BelongsTo
     {
-        return $this->belongsToMany(Insurance::class);
+        return $this->belongsTo(Coverage::class, 'coverage_code', 'code');
     }
 
-    public function objectType()
+    public function policyInsurances(): HasMany
     {
-        return $this->belongsTo(ObjectType::class);
+        return $this->hasMany(PolicyInsurance::class);
     }
 
-    public function parentPolicy()
+    public function insurances(): BelongsToMany
     {
-        return $this->belongsTo(Policy::class, 'parent_policy_id');
+        return $this->belongsToMany(Insurance::class, 'policy_insurances')
+            ->withPivot('is_main', 'percentage')
+            ->withTimestamps();
+    }
+
+    public function mainInsurance(): BelongsToMany
+    {
+        return $this->belongsToMany(Insurance::class, 'policy_insurances')
+            ->wherePivot('is_main', true)
+            ->withPivot('is_main', 'percentage')
+            ->withTimestamps();
     }
 }

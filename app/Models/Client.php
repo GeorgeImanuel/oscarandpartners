@@ -11,11 +11,9 @@ class Client extends Model
     protected $fillable = [
         'user_id',
         'relation_id',
-        'name',
-        'phone',
-        'email',
-        'address',
-        'id_card_number',
+        'id_name',
+        'id_number',
+        'id_address',
     ];
 
     public function user()

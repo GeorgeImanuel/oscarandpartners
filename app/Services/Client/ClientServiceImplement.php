@@ -2,10 +2,10 @@
 
 namespace App\Services\Client;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\Client\ClientRepository;
 
-class ClientServiceImplement extends ServiceApi implements ClientService{
+class ClientServiceImplement extends Service implements ClientService{
 
     /**
      * set title message api for CRUD

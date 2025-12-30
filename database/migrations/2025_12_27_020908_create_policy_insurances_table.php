@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('policy_insurances', function (Blueprint $table) {
+            $table->foreignId('policy_id')->constrained()->onDelete('cascade');
+            $table->foreignId('insurance_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_main')->default(true);
+            $table->double('percentage')->default(0);
+            $table->timestamps();
+
+            $table->primary(['policy_id', 'insurance_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('policy_insurances');
+    }
+};

@@ -19,14 +19,12 @@ class ClientSeeder extends Seeder
                 
         foreach ($users as $user) {
             Client::create([
-                'user_id'        => $user->id,
-                'relation_id'    => Relation::inRandomOrder()->first()->id,
-                'name'           => $user->name,
-                'phone'          => $user->phone ?? fake()->phoneNumber(),
-                'email'          => $user->email,
-                'address'        => fake()->address(),
-                'id_card_number' => fake()->numerify('################'),
+                'user_id' => $user->id,
+                'relation_id' => fake()->boolean(70) ? (Relation::inRandomOrder()->first()?->id ?? null) : null,
+                'id_name' => $user->name,
+                'id_number' => fake()->optional()->numerify('################'),
+                'id_address' => fake()->optional()->address(),
             ]);
-        };
+        }
     }
 }

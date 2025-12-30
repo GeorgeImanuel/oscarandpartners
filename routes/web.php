@@ -41,23 +41,15 @@ Route::group(['middleware' => ['auth:web']], function () {
     
     Route::resource('relations', RelationController::class);
 
-    // Production Cards Routes
-    // Route::prefix('kartuproduksi')->group(function () {
-    //     Route::get('view', [ProductionCardController::class, 'index'])->name('cards.view');
-    //     Route::get('create', [ProductionCardController::class, 'create'])->name('cards.create');
-    //     Route::post('store', [ProductionCardController::class, 'store'])->name('cards.store');
-    //     Route::get('detail/{productionCard}', [ProductionCardController::class, 'show'])->name('cards.detail');
-    //     Route::get('edit/{productionCard}', [ProductionCardController::class, 'edit'])->name('cards.edit');
-    //     Route::put('update/{productionCard}', [ProductionCardController::class, 'update'])->name('cards.update');
-    //     Route::delete('delete/{productionCard}', [ProductionCardController::class, 'destroy'])->name('cards.destroy');
-    // });
+    Route::get('production-cards/{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('production-cards.preview');
     Route::resource('production-cards', ProductionCardController::class);
+
+    // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);
-    Route::view('user-profile', 'user-profile')->name('user-profile');
 });
 
 
