@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     
     Route::resource('relations', RelationController::class);
 
-    Route::get('production-cards/{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('production-cards.preview');
+    Route::get('production-cards/{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('production-cards/preview');
     Route::resource('production-cards', ProductionCardController::class);
 
     // Add missing resources referenced in sidebar

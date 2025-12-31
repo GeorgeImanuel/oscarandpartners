@@ -56,4 +56,9 @@ class Policy extends Model
             ->withPivot('is_main', 'percentage')
             ->withTimestamps();
     }
+
+    public function insurance(): BelongsToMany
+    {
+        return $this->mainInsurance();
+    }
 }
