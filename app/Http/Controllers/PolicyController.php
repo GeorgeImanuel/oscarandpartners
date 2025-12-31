@@ -59,11 +59,17 @@ class PolicyController extends Controller
      */
     public function store(StorePoliciesRequest $request)
     {
-        $policies = $this->policyService->create($request->all());
-        if(!$policies){
-            return redirect()->back()->withInput()->with('error', 'Gagal menambah data policies.');
+        $data = $request->validated(); // Ambil data yang sudah divalidasi
+
+        // Simpan policy dulu
+        $policy = $this->policyService->create($data);
+
+        // Attach multiple insurances (asumsi relasi many-to-many)
+        if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+            $policy->insurances()->sync($data['insurance_id']); // Sync untuk attach/detach
         }
-        return redirect()->route('policies.index')->with('success', 'Berhasil menambah data policies.');
+
+        return redirect()->route('policies.index')->with('success', 'Policy created successfully!');
     }
 
     /**
