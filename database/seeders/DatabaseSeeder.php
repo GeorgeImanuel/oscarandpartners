@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PolicySeeder::class);
         $this->call(RelationSeeder::class);
         $this->call(ClientSeeder::class);
-        $this->call(ProductionCardSeeder::class);        
+        $this->call(CardSeeder::class);        
         $this->call(PaymentSeeder::class);
     }
 }

@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Payment;
-use App\Models\ProductionCard;
+use App\Models\Card;
 use App\Models\User;
 use App\Models\CollectorType;
 use App\Models\PaymentStatus;
@@ -24,7 +24,7 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         return [
-            'production_card_id' => ProductionCard::inRandomOrder()->first()?->id ?? ProductionCard::factory(),
+            'production_card_id' => Card::inRandomOrder()->first()?->id ?? Card::factory(),
             'sequence' => 1,
             'created_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'collected_by' => User::inRandomOrder()->first()?->id ?? User::factory(),

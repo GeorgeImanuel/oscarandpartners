@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('production_cards', function (Blueprint $table) {
+        Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
             $table->foreignId('card_status_id')->constrained('card_statuses')->onDelete('cascade');
-            $table->foreignId('parent_card_id')->nullable()->constrained('production_cards')->onDelete('cascade')->comment('RENEWAL LINK (Self-Join)');
+            $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('cascade')->comment('RENEWAL LINK (Self-Join)');
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade')->comment('Staff Inputter');
 
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->decimal('insurance_pay', 15, 2)->comment('Bayar Asuransi');
 
             // INSURANCE PAYMENT (TIMER STOP)
-            $table->foreignId('insurance_payment_status_id')->constrained('payment_statuses')->onDelete('cascade');
+            $table->foreignId('insurance_payment_status_id')->default(1)->constrained('payment_statuses')->onDelete('cascade');
             $table->dateTime('insurance_paid_at')->nullable()->comment('STOP TIMER 24 JAM');
             $table->string('insurance_evident_file')->nullable()->comment('Bukti Transfer Asurasi');
             $table->string('insurance_evident_number')->nullable()->comment('Nomer Bukti Transfer Asurasi');
@@ -50,6 +50,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('production_cards');
+        Schema::dropIfExists('cards');
     }
 };

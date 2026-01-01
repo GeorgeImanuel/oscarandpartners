@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Payment;
-use App\Models\ProductionCard;
+use App\Models\Card;
 use App\Models\User;
 use App\Models\CollectorType;
 use App\Models\PaymentStatus;
@@ -16,7 +16,7 @@ class PaymentSeeder extends Seeder
      */
     public function run(): void
     {
-        $productionCards = ProductionCard::all();
+        $productionCards = Card::all();
 
         foreach ($productionCards as $card) {
             // If payment_type_id = 1, create 1 payment, otherwise create multiple (2-4)

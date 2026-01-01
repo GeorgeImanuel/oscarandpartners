@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\ProductionCard;
+use App\Models\Card;
 use App\Models\Client;
 use App\Models\Policy;
 use App\Models\CardStatus;
@@ -12,11 +12,11 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductionCard>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Card>
  */
-class ProductionCardFactory extends Factory
+class CardFactory extends Factory
 {
-    protected $model = ProductionCard::class;
+    protected $model = Card::class;
 
     /**
      * Define the model's default state.

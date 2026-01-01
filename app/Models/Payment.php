@@ -30,7 +30,7 @@ class Payment extends Model
 
     public function productionCard(): BelongsTo
     {
-        return $this->belongsTo(ProductionCard::class);
+        return $this->belongsTo(Card::class);
     }
 
     public function creator(): BelongsTo

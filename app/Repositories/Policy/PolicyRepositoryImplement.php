@@ -5,13 +5,14 @@ namespace App\Repositories\Policy;
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\Policy;
 
-class PolicyRepositoryImplement extends Eloquent implements PolicyRepository{
+class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
+{
 
     /**
-    * Model class to be used in this repository for the common methods inside Eloquent
-    * Don't remove or change $this->model variable name
-    * @property Model|mixed $model;
-    */
+     * Model class to be used in this repository for the common methods inside Eloquent
+     * Don't remove or change $this->model variable name
+     * @property Model|mixed $model;
+     */
     protected Policy $model;
 
     public function __construct(Policy $model)
@@ -19,5 +20,8 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository{
         $this->model = $model;
     }
 
-    // Write something awesome :)
+    public function getFreePolicies()
+    {
+        return $this->model->whereDoesntHave('productionCard')->get();
+    }
 }

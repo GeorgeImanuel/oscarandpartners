@@ -23,7 +23,7 @@
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
 							<h5>Kartu Produksi</h5>
-							<a href="{{ route('production-cards.create') }}" class="btn btn-primary">
+							<a href="{{ route('cards.create') }}" class="btn btn-primary">
 								<i class="fa fa-plus"></i> Tambah Kartu Produksi
 							</a>
 						</div>
@@ -83,13 +83,13 @@
 											</td>
 											<td>
 												<div style="white-space: nowrap;">
-													<a href="{{ route('production-cards.show', $card->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
+													<a href="{{ route('cards.show', $card->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
 														<i class="fa fa-eye"></i> Detail
 													</a>
-													<a href="{{ route('production-cards.edit', $card->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
+													<a href="{{ route('cards.edit', $card->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
 														<i class="fa fa-edit"></i> Edit
 													</a>
-													<form action="{{ route('production-cards.destroy', $card->id) }}" method="POST" style="display: inline">
+													<form action="{{ route('cards.destroy', $card->id) }}" method="POST" style="display: inline">
 														@csrf
 														@method('DELETE')
 														<button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>

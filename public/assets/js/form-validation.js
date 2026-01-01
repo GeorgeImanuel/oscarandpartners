@@ -20,11 +20,11 @@
      */
     function initializeFormValidation(options) {
         // Default options
-        options = options || {};
-        var formSelector = options.formSelector || '.needs-validation';
+            options         = options || {};
+        var formSelector    = options.formSelector || '.needs-validation';
         var customValidator = options.customValidator || null;
-        var form = options.form || document.querySelectorAll(formSelector);
-        var onSubmit = options.onSubmit || function(form) {
+        var form            = options.form || document.querySelectorAll(formSelector);
+        var onSubmit        = options.onSubmit || function(form) {
             form.submit();
         };
         var onSuccess = options.onSuccess || null;

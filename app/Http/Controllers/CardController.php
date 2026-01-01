@@ -7,17 +7,17 @@ use App\Models\Policy;
 use App\Models\CardStatus;
 use App\Models\PaymentType;
 use App\Models\PaymentStatus;
-use App\Models\ProductionCard;
+use App\Models\Card;
 use App\Services\Client\ClientService;
 use App\Services\Policy\PolicyService;
 use App\Services\CardStatus\CardStatusService;
 use App\Services\PaymentType\PaymentTypeService;
-use App\Http\Requests\StoreProductionCardRequest;
-use App\Http\Requests\UpdateProductionCardRequest;
+use App\Http\Requests\StoreCardRequest;
+use App\Http\Requests\UpdateCardRequest;
 use App\Services\PaymentStatus\PaymentStatusService;
-use App\Services\ProductionCard\ProductionCardService;
+use App\Services\Card\CardService;
 
-class ProductionCardController extends Controller
+class CardController extends Controller
 {
     private $productionCardService;
     private $clientService;
@@ -27,7 +27,7 @@ class ProductionCardController extends Controller
     private $paymentTypeService;
 
     public function __construct(
-        ProductionCardService $productionCardService,
+        CardService $productionCardService,
         ClientService $clientService,
         PolicyService $policyService,
         CardStatusService $cardStatusService,
@@ -48,7 +48,7 @@ class ProductionCardController extends Controller
     public function index()
     {
         $cards = $this->productionCardService->getAllWithRelations();
-        return view('production-cards.index', compact('cards'));
+        return view('cards.index', compact('cards'));
     }
 
     /**
@@ -56,33 +56,32 @@ class ProductionCardController extends Controller
      */
     public function create()
     {
-        $clients         = $this->clientService->all();
-        $policies        = $this->policyService->all();
-        $cardStatuses    = $this->cardStatusService->all();
-        $paymentStatuses = $this->paymentStatusService->all();
-        $paymentTypes    = $this->paymentTypeService->all();
-        
-        return view('production-cards.form', compact('clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
+        $clients               = $this->clientService->all();
+        $policies              = $this->policyService->getFreePolicies();
+        $cardStatuses          = $this->cardStatusService->all();
+        $parentCards = $this->productionCardService->getAllParent();
+
+        return view('cards.form', compact('clients', 'policies', 'cardStatuses','parentCards'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductionCardRequest $request)
+    public function store(StoreCardRequest $request)
     {
         $card = $this->productionCardService->createCard($request->all());
-        
+
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }
-        
-        return redirect()->route('production-cards.index')->with('success', 'Berhasil menambah kartu produksi.');
+
+        return redirect()->route('cards.index')->with('success', 'Berhasil menambah kartu produksi.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ProductionCard $productionCard)
+    public function show(Card $productionCard)
     {
         $productionCard->load([
             'client.relation',
@@ -92,14 +91,14 @@ class ProductionCardController extends Controller
             'paymentType',
             'creator'
         ]);
-        
-        return view('production-cards.detail', compact('productionCard'));
+
+        return view('cards.detail', compact('productionCard'));
     }
 
     /**
      * Display the preview of production card.
      */
-    public function preview(ProductionCard $productionCard)
+    public function preview(Card $productionCard)
     {
         $productionCard->load([
             'client.relation',
@@ -109,44 +108,44 @@ class ProductionCardController extends Controller
             'paymentType',
             'creator'
         ]);
-        
-        return view('production-cards.preview', compact('productionCard'));
+
+        return view('cards.preview', compact('productionCard'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductionCard $productionCard)
+    public function edit(Card $productionCard)
     {
         $clients = Client::all();
         $policies = Policy::all();
         $cardStatuses = CardStatus::all();
         $paymentStatuses = PaymentStatus::all();
         $paymentTypes = PaymentType::all();
-        
-        return view('production-cards.edit', compact('productionCard', 'clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
+
+        return view('cards.edit', compact('productionCard', 'clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductionCardRequest $request, ProductionCard $productionCard)
+    public function update(UpdateCardRequest $request, Card $productionCard)
     {
         $updated = $this->productionCardService->updateCard($productionCard->id, $request->all());
-        
+
         if (!$updated) {
             return redirect()->back()->withInput()->with('error', 'Gagal mengubah kartu produksi.');
         }
-        
-        return redirect()->route('production-cards.index')->with('success', 'Berhasil mengubah kartu produksi.');
+
+        return redirect()->route('cards.index')->with('success', 'Berhasil mengubah kartu produksi.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductionCard $productionCard)
+    public function destroy(Card $productionCard)
     {
         $this->productionCardService->deleteCard($productionCard->id);
-        return redirect()->route('production-cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
+        return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
     }
 }

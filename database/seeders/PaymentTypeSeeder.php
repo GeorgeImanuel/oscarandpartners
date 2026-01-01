@@ -14,8 +14,8 @@ class PaymentTypeSeeder extends Seeder
     public function run(): void
     {
         PaymentType::insert([
-            ['name' => 'Penuh'],
-            ['name' => 'Cicilan'],
+            ['id'=>1, 'name' => 'Penuh'],
+            ['id'=>2, 'name' => 'Cicilan'],
         ]);
     }
 }

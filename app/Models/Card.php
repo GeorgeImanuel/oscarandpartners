@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class ProductionCard extends Model
+class Card extends Model
 {
     use HasFactory;
     
@@ -64,9 +65,14 @@ class ProductionCard extends Model
         return $this->belongsTo(CardStatus::class);
     }
 
-    public function parentCard(): BelongsTo
+    public function parent(): BelongsTo
     {
-        return $this->belongsTo(ProductionCard::class, 'parent_card_id');
+        return $this->belongsTo(Card::class, 'parent_card_id');
+    }
+
+    public function child(): HasOne
+    {
+        return $this->HasOne(Card::class, 'parent_card_id');
     }
 
     public function paymentType(): BelongsTo

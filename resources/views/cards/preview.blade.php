@@ -330,7 +330,7 @@
 						<!-- Action Buttons -->
 						<div class="no-print mb-3">
 							<div class="d-flex justify-content-between align-items-center">
-								<a href="{{ route('production-cards.show', $productionCard->id) }}" class="btn btn-secondary btn-sm">
+								<a href="{{ route('cards.show', $productionCard->id) }}" class="btn btn-secondary btn-sm">
 									<i class="fa fa-arrow-left"></i> Kembali ke Detail
 								</a>
 								<button onclick="window.print()" class="btn btn-info btn-sm">

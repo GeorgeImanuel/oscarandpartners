@@ -1,33 +1,44 @@
 <?php
 
-namespace App\Services\ProductionCard;
+namespace App\Services\Card;
 
-use LaravelEasyRepository\Service;
-use App\Repositories\ProductionCard\ProductionCardRepository;
+use LaravelEasyRepository\ServiceApi;
+use App\Repositories\Card\CardRepository;
 
-class ProductionCardServiceImplement extends Service implements ProductionCardService{
+class CardServiceImplement extends ServiceApi implements CardService
+{
 
     /**
      * set title message api for CRUD
      * @param string $title
      */
-     protected string $title = "";
-     /**
+    protected string $title = "";
+    /**
      * uncomment this to override the default message
      * protected string $create_message = "";
      * protected string $update_message = "";
      * protected string $delete_message = "";
      */
 
-     /**
+    /**
      * don't change $this->mainRepository variable name
      * because used in extends service class
      */
-     protected ProductionCardRepository $mainRepository;
+    protected CardRepository $mainRepository;
 
-    public function __construct(ProductionCardRepository $mainRepository)
+    public function __construct(CardRepository $mainRepository)
     {
-      $this->mainRepository = $mainRepository;
+        $this->mainRepository = $mainRepository;
+    }
+
+    public function __construct(CardRepository $mainRepository)
+    {
+        $this->mainRepository = $mainRepository;
+    }
+
+    public function getAllParent()
+    {
+        return $this->mainRepository->getAllParent();
     }
 
     /**
@@ -45,7 +56,7 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
     {
         // Add created_by from auth user
         $data['created_by'] = auth()->id();
-        
+
         // Get input values
         $premium_gross = $data['harga_pertanggungan'] ?? 0;
         $commission_pct = $data['tarif_premi'] ?? 0;
@@ -53,7 +64,7 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
         $commission_percentage = $data['persentase_komisi'] ?? 0;
         $tax_percentage = $data['pajak_komisi'] ?? 0;
         $discount = $data['diskon_dari_komisi'] ?? 0;
-        
+
         // Calculate all fields
         $nilai_produksi = $premium_gross * ($commission_pct / 100);
         $total_premi = $nilai_produksi + $admin_fee;
@@ -63,18 +74,18 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
         $tagihan_ke_nasabah = $total_premi - $discount;
         $sisa_komisi_agen = $komisi_bersih_awal - $discount;
         $netto_bayar_asuransi = $total_premi - $komisi_bersih_awal;
-        
+
         // Map form fields to database columns
         $mappedData = [
             'client_id' => $data['client_id'],
             'policy_id' => $data['policy_id'],
             'card_status_id' => $data['card_status_id'],
             'created_by' => $data['created_by'],
-            
+
             // Date mapping
             'start_date' => $data['periode_mulai'] ?? null,
             'end_date' => $data['periode_akhir'] ?? null,
-            
+
             // Input fields
             'premium_gross' => $premium_gross,
             'commission_pct' => $commission_pct,
@@ -82,7 +93,7 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
             'commission_percentage' => $commission_percentage,
             'tax_percentage' => $tax_percentage,
             'discount' => $discount,
-            
+
             // Calculated fields
             'commission_amount' => $komisi_bruto,
             'net_to_insurance' => $netto_bayar_asuransi,
@@ -93,14 +104,14 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
             'tax_amount' => $nilai_pajak,
             'discount_amount' => $discount,
             'commission_total' => $sisa_komisi_agen,
-            
+
             // Payment info
             'insurance_payment_status_id' => $data['insurance_payment_status_id'] ?? null,
             'payment_type_id' => $data['payment_type_id'],
             'insurance_paid_at' => $data['insurance_paid_at'] ?? null,
             'insurance_evident_number' => $data['insurance_evident_number'] ?? null,
         ];
-        
+
         return $this->mainRepository->create($mappedData);
     }
 
@@ -116,7 +127,7 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
         $commission_percentage = $data['persentase_komisi'] ?? 0;
         $tax_percentage = $data['pajak_komisi'] ?? 0;
         $discount = $data['diskon_dari_komisi'] ?? 0;
-        
+
         // Calculate all fields
         $nilai_produksi = $premium_gross * ($commission_pct / 100);
         $total_premi = $nilai_produksi + $admin_fee;
@@ -126,17 +137,17 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
         $tagihan_ke_nasabah = $total_premi - $discount;
         $sisa_komisi_agen = $komisi_bersih_awal - $discount;
         $netto_bayar_asuransi = $total_premi - $komisi_bersih_awal;
-        
+
         // Map form fields to database columns
         $mappedData = [
             'client_id' => $data['client_id'],
             'policy_id' => $data['policy_id'],
             'card_status_id' => $data['card_status_id'],
-            
+
             // Date mapping
             'start_date' => $data['periode_mulai'] ?? null,
             'end_date' => $data['periode_akhir'] ?? null,
-            
+
             // Input fields
             'premium_gross' => $premium_gross,
             'commission_pct' => $commission_pct,
@@ -144,7 +155,7 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
             'commission_percentage' => $commission_percentage,
             'tax_percentage' => $tax_percentage,
             'discount' => $discount,
-            
+
             // Calculated fields
             'commission_amount' => $komisi_bruto,
             'net_to_insurance' => $netto_bayar_asuransi,
@@ -155,14 +166,14 @@ class ProductionCardServiceImplement extends Service implements ProductionCardSe
             'tax_amount' => $nilai_pajak,
             'discount_amount' => $discount,
             'commission_total' => $sisa_komisi_agen,
-            
+
             // Payment info
             'insurance_payment_status_id' => $data['insurance_payment_status_id'] ?? null,
             'payment_type_id' => $data['payment_type_id'],
             'insurance_paid_at' => $data['insurance_paid_at'] ?? null,
             'insurance_evident_number' => $data['insurance_evident_number'] ?? null,
         ];
-        
+
         return $this->mainRepository->update($id, $mappedData);
     }
 

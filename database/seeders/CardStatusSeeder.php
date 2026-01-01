@@ -6,7 +6,7 @@ use App\Models\CardStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class CardStatusesSeeder extends Seeder
+class CardStatusSeeder extends Seeder
 {
     /**
      * Run the database seeds.

@@ -26,14 +26,14 @@
 						<!-- Action Buttons -->
 						<div class="mb-3">
 							<div class="d-flex justify-content-between align-items-center">
-								<a href="{{ route('production-cards.index') }}" class="btn btn-secondary btn-sm">
+								<a href="{{ route('cards.index') }}" class="btn btn-secondary btn-sm">
 									<i class="fa fa-arrow-left"></i> Kembali
 								</a>
 								<div>
-								<a href="{{ route('production-cards.preview', $productionCard->id) }}" class="btn btn-success btn-sm">
+								<a href="{{ route('cards.preview', $productionCard->id) }}" class="btn btn-success btn-sm">
 									<i class="fa fa-file-text"></i> Preview Kartu
 								</a>
-								<a href="{{ route('production-cards.edit', $productionCard->id) }}" class="btn btn-warning btn-sm">
+								<a href="{{ route('cards.edit', $productionCard->id) }}" class="btn btn-warning btn-sm">
 										<i class="fa fa-edit"></i> Edit
 									</a>
 								</div>

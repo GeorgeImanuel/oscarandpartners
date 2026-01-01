@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Policy extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'policy_number',
         'object_id',
@@ -26,6 +27,11 @@ class Policy extends Model
         'ended_date' => 'date',
         'coverage_percentage' => 'decimal:2',
     ];
+
+    public function productionCard(): HasOne
+    {
+        return $this->hasOne(Card::class);
+    }
 
     public function object(): BelongsTo
     {

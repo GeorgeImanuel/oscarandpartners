@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\ProductionCard;
+namespace App\Services\Card;
 
 use LaravelEasyRepository\BaseService;
 
-interface ProductionCardService extends BaseService{
-
+interface CardService extends BaseService
+{
+    public function getAllParent();
     public function getAllWithRelations();
     public function createCard(array $data);
     public function updateCard($id, array $data);
