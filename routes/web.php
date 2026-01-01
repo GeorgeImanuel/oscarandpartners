@@ -10,6 +10,7 @@ use App\Http\Controllers\RelationController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\ProductionCardController;
 use App\Http\Controllers\CoverageController;
+use App\Http\Controllers\ObjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,13 +43,14 @@ Route::group(['middleware' => ['auth:web']], function () {
     
     Route::resource('relations', RelationController::class);
 
-    Route::get('production-cards/{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('production-cards/preview');
+    Route::get('production-cards/{productionCard}/preview', [ProductionCardController::class, 'preview'])->name('production-cards.preview');
     Route::resource('production-cards', ProductionCardController::class);
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
     Route::resource('coverages', CoverageController::class);
+    Route::resource('objects', ObjectController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);
