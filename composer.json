@@ -12,6 +12,7 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "livewire/livewire": "^3.7",
         "spatie/laravel-permission": "^6.23",
         "yaza/laravel-repository-service": "^6.0"
     },
@@ -30,7 +31,11 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": ["app/Helpers/RouteHelper.php", "app/Helpers/FormatHelper.php"]
+        "files": [
+            "app/Helpers/RouteHelper.php", 
+            "app/Helpers/FormatHelper.php",
+            "app/Helpers/FormulaHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

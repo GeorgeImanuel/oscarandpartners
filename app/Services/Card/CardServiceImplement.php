@@ -2,10 +2,10 @@
 
 namespace App\Services\Card;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\Card\CardRepository;
 
-class CardServiceImplement extends ServiceApi implements CardService
+class CardServiceImplement extends Service implements CardService
 {
 
     /**
@@ -31,18 +31,13 @@ class CardServiceImplement extends ServiceApi implements CardService
         $this->mainRepository = $mainRepository;
     }
 
-    public function __construct(CardRepository $mainRepository)
-    {
-        $this->mainRepository = $mainRepository;
-    }
-
     public function getAllParent()
     {
         return $this->mainRepository->getAllParent();
     }
 
     /**
-     * Get all cards with relations
+     * Get all cards with relatiocns
      */
     public function getAllWithRelations()
     {

@@ -22,4 +22,13 @@ class ObjectModel extends Model
     {
         return $this->belongsTo(ObjectType::class);
     }
+
+    public function policies()
+    {
+        return $this->hasMany(Policy::class, 'object_id');
+    }
+
+    public function objectPart(){
+        return $this->hasMany(ObjectPart::class, 'object_id');
+    }
 }

@@ -31,8 +31,13 @@ class PolicyServiceImplement extends Service implements PolicyService
         $this->mainRepository = $mainRepository;
     }
 
-    public function getFreePolicies()
+    public function getAllFreePolicies()
     {
-        return $this->mainRepository->getFreePolicies();
+        return $this->mainRepository->getAllFreePolicies();
+    }
+
+    public function findPoliciesWithRelations($policyId)
+    {
+        return $this->mainRepository->findPoliciesWithRelations($policyId);
     }
 }

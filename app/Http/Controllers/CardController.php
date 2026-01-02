@@ -19,7 +19,7 @@ use App\Services\Card\CardService;
 
 class CardController extends Controller
 {
-    private $productionCardService;
+    private $cardService;
     private $clientService;
     private $policyService;
     private $cardStatusService;
@@ -27,14 +27,14 @@ class CardController extends Controller
     private $paymentTypeService;
 
     public function __construct(
-        CardService $productionCardService,
+        CardService $cardService,
         ClientService $clientService,
         PolicyService $policyService,
         CardStatusService $cardStatusService,
         PaymentStatusService $paymentStatusService,
         PaymentTypeService $paymentTypeService
     ) {
-        $this->productionCardService = $productionCardService;
+        $this->cardService = $cardService;
         $this->clientService = $clientService;
         $this->policyService = $policyService;
         $this->cardStatusService = $cardStatusService;
@@ -47,7 +47,7 @@ class CardController extends Controller
      */
     public function index()
     {
-        $cards = $this->productionCardService->getAllWithRelations();
+        $cards = $this->cardService->getAllWithRelations();
         return view('cards.index', compact('cards'));
     }
 
@@ -56,10 +56,10 @@ class CardController extends Controller
      */
     public function create()
     {
-        $clients               = $this->clientService->all();
-        $policies              = $this->policyService->getFreePolicies();
-        $cardStatuses          = $this->cardStatusService->all();
-        $parentCards = $this->productionCardService->getAllParent();
+        $clients      = $this->clientService->all();
+        $policies     = $this->policyService->getAllFreePolicies();
+        $cardStatuses = $this->cardStatusService->all();
+        $parentCards  = $this->cardService->getAllParent();
 
         return view('cards.form', compact('clients', 'policies', 'cardStatuses','parentCards'));
     }
@@ -69,7 +69,7 @@ class CardController extends Controller
      */
     public function store(StoreCardRequest $request)
     {
-        $card = $this->productionCardService->createCard($request->all());
+        $card = $this->cardService->createCard($request->all());
 
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
@@ -131,7 +131,7 @@ class CardController extends Controller
      */
     public function update(UpdateCardRequest $request, Card $productionCard)
     {
-        $updated = $this->productionCardService->updateCard($productionCard->id, $request->all());
+        $updated = $this->cardService->updateCard($productionCard->id, $request->all());
 
         if (!$updated) {
             return redirect()->back()->withInput()->with('error', 'Gagal mengubah kartu produksi.');
@@ -145,7 +145,7 @@ class CardController extends Controller
      */
     public function destroy(Card $productionCard)
     {
-        $this->productionCardService->deleteCard($productionCard->id);
+        $this->cardService->deleteCard($productionCard->id);
         return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
     }
 }

@@ -10,6 +10,7 @@ use Database\Seeders\PartSeeder;
 use Database\Seeders\ObjectSeeder;
 use Database\Seeders\PolicySeeder;
 use Database\Seeders\CoverageSeeder;
+use Database\Seeders\CardStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
@@ -27,7 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ObjectTypeSeeder::class);
         $this->call(PaymentTypeSeeder::class);
         $this->call(PaymentStatusSeeder::class);
-        $this->call(CardStatusesSeeder::class);
+        $this->call(CardStatusSeeder::class);
         $this->call(CollectorTypeSeeder::class);
         $this->call(BankSeeder::class);
 

@@ -28,7 +28,7 @@ class PaymentSeeder extends Seeder
 
             for ($i = 1; $i <= $paymentCount; $i++) {
                 Payment::create([
-                    'production_card_id'       => $card->id,
+                    'card_id'                  => $card->id,
                     'sequence'                 => $i,
                     'created_by'               => User::inRandomOrder()->first()->id,
                     'collected_by'             => User::inRandomOrder()->first()->id,
