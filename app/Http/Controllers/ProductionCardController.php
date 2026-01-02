@@ -62,7 +62,7 @@ class ProductionCardController extends Controller
         $paymentStatuses = $this->paymentStatusService->all();
         $paymentTypes    = $this->paymentTypeService->all();
         
-        return view('production-cards.form', compact('clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
+        return view('production-cards.create', compact('clients', 'policies', 'cardStatuses', 'paymentStatuses', 'paymentTypes'));
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductionCardController extends Controller
     {
         $productionCard->load([
             'client.relation',
-            'policy.insurance',
+            'policy.insurances',
             'cardStatus',
             'insurancePaymentStatus',
             'paymentType',
