@@ -26,27 +26,25 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Insurance ID</th>
-                                        <th>Parent Policy ID</th>
-                                        <th>Object Type ID</th>
-                                        <th>Nomor Polis</th>
-                                        <th>Nama Objek</th>
-                                        <th>Alamat Objek</th>
-                                        <th>Nilai Object</th>
+                                        <th>No Polis</th>
+                                        <th>ID Objek</th>
+                                        <th>ID Coverage</th>
+                                        <th>Presentase Coverage</th>
+                                        <th>Tanggal Mulai</th>
+                                        <th>Tanggal Selesai</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($policies as $policy)
                                         <tr>
-                                            <td>{{ $policy->id }}</td>
-                                            <td>{{ $policy->insurance_id }}</td>
-                                            <td>{{ $policy->parent_policy_id ?? '-' }}</td>
-                                            <td>{{ $policy->object_type_id }}</td>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $policy->policy_number }}</td>
-                                            <td>{{ $policy->object }}</td>
-                                            <td>{{ $policy->object_address }}</td>
-                                            <td>{{ numberFormat($policy->object_value) }}</td>
+                                            <td>{{ $policy->object_id }}</td>
+                                            <td>{{ $policy->coverage_code }}</td>
+                                            <td>{{ $policy->coverage_percentage }}</td>
+                                            <td>{{ $policy->started_date }}</td>
+                                            <td>{{ $policy->ended_date }}</td>
                                             <td>
                                                 <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('policies.edit', $policy->id) }}">Edit</a>
                                                 <br><form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
