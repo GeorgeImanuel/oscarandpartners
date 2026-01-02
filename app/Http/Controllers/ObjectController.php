@@ -73,12 +73,6 @@ class ObjectController extends Controller
             return redirect()->back()->withInput()->with('error', 'Tipe objek harus dipilih atau diisi.');
         }
 
-        // Validate duplicates using service
-        $duplicateError = $this->objectService->validateDuplicates($validated);
-        if ($duplicateError) {
-            return redirect()->back()->withInput()->with('error', $duplicateError);
-        }
-
         $object = $this->objectService->createWithParts($validated);
         
         if (!$object) {
@@ -148,12 +142,6 @@ class ObjectController extends Controller
         // Validate that either object_type_id or object_type_name is provided
         if (empty($validated['object_type_id']) && empty($validated['object_type_name'])) {
             return redirect()->back()->withInput()->with('error', 'Tipe objek harus dipilih atau diisi.');
-        }
-
-        // Validate duplicates using service
-        $duplicateError = $this->objectService->validateDuplicates($validated);
-        if ($duplicateError) {
-            return redirect()->back()->withInput()->with('error', $duplicateError);
         }
 
         $updated = $this->objectService->updateWithParts($id, $validated);

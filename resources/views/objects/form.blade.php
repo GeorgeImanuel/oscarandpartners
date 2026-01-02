@@ -160,25 +160,6 @@
                 allowClear: true
             });
 
-            // Show error message as SweetAlert if exists (after all initialization)
-            @if(session('error'))
-                Swal.fire({
-                    title: 'Error!',
-                    text: {!! json_encode(session('error')) !!},
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-
-            @if(session('success'))
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: {!! json_encode(session('success')) !!},
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-
             // Toggle Object Type: Select <=> Input
             $('#toggle-object-type').on('click', function() {
                 const $select = $('#object_type_id');

@@ -58,37 +58,6 @@ class ObjectServiceImplement extends Service implements ObjectService{
     }
 
     /**
-     * Validate if object type name or part names already exist
-     * Returns error message if duplicate found, null if valid
-     */
-    public function validateDuplicates(array $data): ?string
-    {
-        // Check if object_type_name already exists
-        if (!empty($data['object_type_name'])) {
-            $existingType = ObjectType::where('name', $data['object_type_name'])->first();
-            if ($existingType) {
-                return 'Tipe objek ' . htmlspecialchars($data['object_type_name'], ENT_QUOTES, 'UTF-8') . ' sudah ada. Silakan pilih dari daftar yang tersedia.';
-            }
-        }
-
-        // Check if any part_name already exists
-        if (isset($data['part_name']) && is_array($data['part_name'])) {
-            foreach ($data['part_name'] as $index => $partName) {
-                $partId = $data['part_id'][$index] ?? '';
-                // Only check if user is adding new part (not selecting existing)
-                if (empty($partId) && !empty($partName) && trim($partName) !== '') {
-                    $existingPart = Part::where('name', $partName)->first();
-                    if ($existingPart) {
-                        return 'Part ' . htmlspecialchars($partName, ENT_QUOTES, 'UTF-8') . ' sudah ada. Silakan pilih dari daftar yang tersedia.';
-                    }
-                }
-            }
-        }
-
-        return null; // No duplicates found
-    }
-
-    /**
      * Create object with parts
      */
     public function createWithParts(array $data)

@@ -11,5 +11,4 @@ interface ObjectService extends BaseService{
     public function getParts();
     public function createWithParts(array $data);
     public function updateWithParts($id, array $data);
-    public function validateDuplicates(array $data): ?string;
 }

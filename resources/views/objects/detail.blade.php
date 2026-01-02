@@ -38,10 +38,6 @@
 								<table class="table table-borderless">
 									<tbody>
 										<tr>
-											<th width="200">ID</th>
-											<td>{{ $object->id }}</td>
-										</tr>
-										<tr>
 											<th>Tipe Objek</th>
 											<td>{{ $object->objectType->name ?? '-' }}</td>
 										</tr>
@@ -52,20 +48,6 @@
 										<tr>
 											<th>Alamat</th>
 											<td>{{ $object->address }}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-							<div class="col-md-6">
-								<table class="table table-borderless">
-									<tbody>
-										<tr>
-											<th width="200">Dibuat Pada</th>
-											<td>{{ $object->created_at->format('d/m/Y H:i') }}</td>
-										</tr>
-										<tr>
-											<th>Diperbarui Pada</th>
-											<td>{{ $object->updated_at->format('d/m/Y H:i') }}</td>
 										</tr>
 									</tbody>
 								</table>
