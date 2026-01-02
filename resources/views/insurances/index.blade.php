@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Asuransi</h5>
-                        <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end">Tambah Insurance</a>
+                        <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end">Tambah Asuransi</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

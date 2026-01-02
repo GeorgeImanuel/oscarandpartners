@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
-@section('title', 'Policies')
+@section('title', 'Polis')
 
 @push('breadcrumb')
-    <li class="breadcrumb-item active">Policies</li>
+    <li class="breadcrumb-item active">polis</li>
 @endpush
 
 @push('css')
@@ -17,8 +17,8 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 style="display: inline">Daftar Policies</h5>
-                        <a href="{{ route('policies.create') }}" class="btn btn-primary mb-3 float-end">Tambah Policies</a>
+                        <h5 style="display: inline">Daftar Polis</h5>
+                        <a href="{{ route('policies.create') }}" class="btn btn-primary mb-3 float-end">Tambah Polis</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
