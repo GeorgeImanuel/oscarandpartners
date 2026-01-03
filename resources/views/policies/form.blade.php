@@ -4,6 +4,17 @@
 
 @push('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+<style>
+    .percentage-error {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    .percentage-error.show {
+        display: block;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -95,12 +106,21 @@
             <!-- Insurances Section -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Asuransi</h5>
+                    <div>
+                        <h5>Asuransi</h5>
+                        <small class="text-muted">Total persentase harus 100%</small>
+                    </div>
                     <button type="button" class="btn btn-primary btn-sm" id="add-insurance-btn">
                         <i class="fa fa-plus"></i> Tambah Asuransi
                     </button>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert" id="percentage-info" style="display: none;">
+                        <span>Total Persentase: <strong id="total-percentage">0</strong>%</span>
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="percentage-error" style="display: none;">
+                        Total persentase asuransi harus tepat 100%
+                    </div>
                     <div id="insurances-container">
                         @if(isset($policyInsurances) && $policyInsurances->count() > 0)
                             @foreach($policyInsurances as $index => $policyInsurance)
@@ -119,12 +139,12 @@
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Persentase (%)</label>
-                                            <input type="number" class="form-control" name="percentage[]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.01">
+                                            <input type="number" class="form-control insurance-percentage" name="percentage[]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.01">
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Asuransi Utama</label>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="is_main[]" value="1" id="is_main_{{ $index }}" {{ $policyInsurance->is_main ? 'checked' : '' }}>
+                                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1" id="is_main_{{ $index }}" {{ $policyInsurance->is_main ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="is_main_{{ $index }}">Ya</label>
                                             </div>
                                         </div>
@@ -151,7 +171,7 @@
                     <a href="{{ route('policies.index') }}" class="btn btn-secondary">
                         <i class="fa fa-times"></i> Batal
                     </a>
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-primary" type="submit" id="submit-btn">
                         <i class="fa fa-save"></i> Simpan
                     </button>
                 </div>
@@ -182,12 +202,12 @@
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Persentase (%)</label>
-                            <input type="number" class="form-control" name="percentage[]" placeholder="0" min="0" max="100" step="0.01">
+                            <input type="number" class="form-control insurance-percentage" name="percentage[]" placeholder="0" min="0" max="100" step="0.01">
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Asuransi Utama</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_main[]" value="1" id="is_main_${insuranceIndex}">
+                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1" id="is_main_${insuranceIndex}">
                                 <label class="form-check-label" for="is_main_${insuranceIndex}">Ya</label>
                             </div>
                         </div>
@@ -203,6 +223,116 @@
             document.getElementById('empty-state').style.display = 'none';
             insuranceIndex++;
             initializeSelect2();
+            initializeMainCheckboxes();
+            initializePercentageValidation();
+        }
+
+        // Function to handle single main insurance selection
+        function initializeMainCheckboxes() {
+            const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
+            mainCheckboxes.forEach(checkbox => {
+                checkbox.removeEventListener('change', mainCheckboxHandler);
+                checkbox.addEventListener('change', mainCheckboxHandler);
+            });
+        }
+
+        function mainCheckboxHandler() {
+            if (this.checked) {
+                const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
+                mainCheckboxes.forEach(cb => {
+                    if (cb !== this) {
+                        cb.checked = false;
+                    }
+                });
+            }
+        }
+
+        // Function to validate percentage total
+        function initializePercentageValidation() {
+            const percentageInputs = document.querySelectorAll('.insurance-percentage');
+            percentageInputs.forEach(input => {
+                input.removeEventListener('input', updatePercentageTotal);
+                input.addEventListener('input', updatePercentageTotal);
+            });
+        }
+
+        function updatePercentageTotal() {
+            const percentageInputs = document.querySelectorAll('.insurance-percentage');
+            let total = 0;
+            
+            percentageInputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                total += value;
+            });
+
+            // Round to 2 decimal places
+            total = Math.round(total * 100) / 100;
+
+            const infoDiv = document.getElementById('percentage-info');
+            const errorDiv = document.getElementById('percentage-error');
+            const totalPercentageSpan = document.getElementById('total-percentage');
+
+            // Show info if there are insurances
+            if (percentageInputs.length > 0) {
+                infoDiv.style.display = 'flex';
+                totalPercentageSpan.textContent = total;
+                
+                if (total > 100) {
+                    infoDiv.classList.add('alert-danger');
+                    infoDiv.classList.remove('alert-warning');
+                    infoDiv.classList.remove('alert-info');
+                    infoDiv.classList.remove('alert-success');
+                } else if (total !== 100) {
+                    infoDiv.classList.add('alert-warning');
+                    infoDiv.classList.remove('alert-danger');
+                    infoDiv.classList.remove('alert-info');
+                    infoDiv.classList.remove('alert-success');
+                } else {
+                    infoDiv.classList.remove('alert-warning');
+                    infoDiv.classList.remove('alert-danger');
+                    infoDiv.classList.add('alert-success');
+                }
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+
+        // Form submission validation
+        function validatePercentageBeforeSubmit(e) {
+            const percentageInputs = document.querySelectorAll('.insurance-percentage');
+            
+            if (percentageInputs.length === 0) {
+                return true;
+            }
+
+            let total = 0;
+            percentageInputs.forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                total += value;
+            });
+
+            total = Math.round(total * 100) / 100;
+
+            if (total !== 100) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                let errorMessage = '';
+                if (total > 100) {
+                    errorMessage = `Total persentase asuransi tidak boleh lebih dari 100% (Saat ini: ${total}%)`;
+                } else {
+                    errorMessage = `Total persentase asuransi harus tepat 100% (Saat ini: ${total}%)`;
+                }
+                
+                const errorDiv = document.getElementById('percentage-error');
+                errorDiv.textContent = errorMessage;
+                errorDiv.style.display = 'block';
+                document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            } else {
+                document.getElementById('percentage-error').style.display = 'none';
+                return true;
+            }
         }
 
         document.getElementById('add-insurance-btn').addEventListener('click', function(e) {
@@ -216,7 +346,9 @@
                 const rows = document.querySelectorAll('.insurance-row');
                 if (rows.length === 0) {
                     document.getElementById('empty-state').style.display = 'block';
+                    document.getElementById('percentage-info').style.display = 'none';
                 }
+                updatePercentageTotal();
             }
         });
 
@@ -229,6 +361,13 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeSelect2();
+            initializeMainCheckboxes();
+            initializePercentageValidation();
+            updatePercentageTotal();
+            
+            // Add submit validation
+            document.querySelector('.needs-validation').addEventListener('submit', validatePercentageBeforeSubmit);
+            
             initializeFormValidation({
                 formSelector: '.needs-validation'
             });
