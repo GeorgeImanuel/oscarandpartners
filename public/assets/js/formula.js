@@ -35,20 +35,20 @@ function calculate_payment(
     discount
 ) {
     const productionValue = production_value(object_value, premi_percentage);
-    const premiValue = premi_value(productionValue, policy_fee);
-    const commisionBruto = commision_bruto(productionValue, commision_percentage);
-    const taxValue = tax_value(commisionBruto, tax_percentage);
-    const commisionNetto = commision_netto(commisionBruto, taxValue, discount);
-    const clientPay = client_pay(premiValue, discount);
-    const insurancePay = insurance_pay(premiValue, taxValue, discount);
+    const premiValue      = premi_value(productionValue, policy_fee);
+    const commisionBruto  = commision_bruto(productionValue, commision_percentage);
+    const taxValue        = tax_value(commisionBruto, tax_percentage);
+    const commisionNetto  = commision_netto(commisionBruto, taxValue, discount);
+    const clientPay       = client_pay(premiValue, discount);
+    const insurancePay    = insurance_pay(premiValue, taxValue, discount);
 
     return {
         production_value: productionValue,
-        premi_value: premiValue,
-        commision_bruto: commisionBruto,
-        tax_value: taxValue,
-        commision_netto: commisionNetto,
-        client_pay: clientPay,
-        insurance_pay: insurancePay
+        premi_value     : premiValue,
+        commision_bruto : commisionBruto,
+        tax_value       : taxValue,
+        commision_netto : commisionNetto,
+        client_pay      : clientPay,
+        insurance_pay   : insurancePay
     };
 }
