@@ -30,5 +30,11 @@ class ObjectTypeServiceImplement extends Service implements ObjectTypeService{
       $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Get all object types
+     */
+    public function getAll()
+    {
+        return $this->mainRepository->all();
+    }
 }
