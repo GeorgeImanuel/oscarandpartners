@@ -15,25 +15,50 @@
                     <li class="back-btn">
                         <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
                     </li>
-                    {{-- <li class="sidebar-main-title">
-                        <div>
-                            <h6>General</h6>
-                        </div>
-                    </li> --}}
                     <li class="dropdown">
                         <a class="nav-link menu-title {{ routeActive('dashboard') }}" href="javascript:void(0)"><i data-feather="home"></i><span>Dashboard</span></a>
-                        <a class="nav-link menu-title active {{ routeActive('cards.index') }}" href="{{ route('cards.index') }}"><i data-feather="file-text"></i><span>Kartu Produksi {{ prefixActive('dashboard') }}</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Asuransi</span></a>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Kartu Produksi</h6>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive(['cards.index','cards.create']) }}" href="{{ route('cards.index') }}"><i data-feather="file-text"></i><span>Kartu Produksi</span></a>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div><h6>Polis</h6></div>
+                    </li>
+                    <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Polis</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Asuransi</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}" href="{{ route('coverages.index') }}"><i data-feather="airplay"></i><span>Coverages</span></a>
-                        
                         <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objects</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('object-types.index') }}" href="{{ route('object-types.index') }}"><i data-feather="layers"></i><span>Object Types</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('parts.index') }}" href="{{ route('parts.index') }}"><i data-feather="box"></i><span>Parts</span></a>
+                    </li>
+
+                    <li class="sidebar-main-title">
+                        <div><h6>Objek</h6></div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('object-types.index') }}" href="{{ route('object-types.index') }}"><i data-feather="layers"></i><span>Tipe Objek</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('parts.index') }}" href="{{ route('parts.index') }}"><i data-feather="box"></i><span>Bagian Objek</span></a>
+                    </li>
+
+                    <li class="sidebar-main-title">
+                        <div><h6>Pengguna</h6></div>
+                    </li>
+                    <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Users</span></a>
-                        <a class="nav-link menu-title link-nav {{ routeActive('settings.index') }}" href="{{ route('settings.index') }}"><i data-feather="settings"></i><span>Setting</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi Client</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Staff</span></a>
+                    </li>
+
+                    <li class="sidebar-main-title">
+                        <div><h6>Pengaturan</h6></div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('settings.index') }}" href="{{ route('settings.index') }}"><i data-feather="settings"></i><span>Presentase</span></a>
                     </li>
                 </ul>
             </div>

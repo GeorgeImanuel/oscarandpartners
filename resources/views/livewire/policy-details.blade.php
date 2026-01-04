@@ -59,7 +59,7 @@
         </div>
     @else
         <div wire:loading.remove class="alert alert-secondary" role="alert">
-            Pilih policy untuk melihat detail!
+            Pilih nomor polis untuk melihat detail!
         </div>
     @endif
 

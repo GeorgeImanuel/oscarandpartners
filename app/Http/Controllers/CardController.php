@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use App\Models\Client;
 use App\Models\Policy;
 use App\Models\CardStatus;
 use App\Models\PaymentType;
+use Illuminate\Http\Request;
 use App\Models\PaymentStatus;
-use App\Models\Card;
+use App\Services\Card\CardService;
 use App\Services\Client\ClientService;
 use App\Services\Policy\PolicyService;
-use App\Services\CardStatus\CardStatusService;
-use App\Services\PaymentType\PaymentTypeService;
 use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
+use App\Services\CardStatus\CardStatusService;
+use App\Services\PaymentType\PaymentTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
-use App\Services\Card\CardService;
 
 class CardController extends Controller
 {
@@ -67,8 +68,9 @@ class CardController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCardRequest $request)
+    public function store(Request $request)
     {
+        return $request->all();
         $card = $this->cardService->createCard($request->all());
 
         if (!$card) {
