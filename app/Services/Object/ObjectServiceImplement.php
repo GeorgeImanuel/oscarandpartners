@@ -4,8 +4,8 @@ namespace App\Services\Object;
 
 use LaravelEasyRepository\Service;
 use App\Repositories\Object\ObjectRepository;
-use App\Models\ObjectType;
-use App\Models\Part;
+use App\Repositories\ObjectType\ObjectTypeRepository;
+use App\Repositories\Part\PartRepository;
 use App\Models\ObjectPart;
 
 class ObjectServiceImplement extends Service implements ObjectService{
@@ -27,10 +27,18 @@ class ObjectServiceImplement extends Service implements ObjectService{
      * because used in extends service class
      */
      protected ObjectRepository $mainRepository;
+     protected ObjectTypeRepository $objectTypeRepository;
+     protected PartRepository $partRepository;
 
-    public function __construct(ObjectRepository $mainRepository)
+    public function __construct(
+        ObjectRepository $mainRepository,
+        ObjectTypeRepository $objectTypeRepository,
+        PartRepository $partRepository
+    )
     {
       $this->mainRepository = $mainRepository;
+      $this->objectTypeRepository = $objectTypeRepository;
+      $this->partRepository = $partRepository;
     }
 
     /**
@@ -42,60 +50,13 @@ class ObjectServiceImplement extends Service implements ObjectService{
     }
 
     /**
-     * Get all object types
-     */
-    public function getObjectTypes()
-    {
-        return ObjectType::all();
-    }
-
-    /**
-     * Get all parts
-     */
-    public function getParts()
-    {
-        return Part::all();
-    }
-
-    /**
-     * Validate if object type name or part names already exist
-     * Returns error message if duplicate found, null if valid
-     */
-    public function validateDuplicates(array $data): ?string
-    {
-        // Check if object_type_name already exists
-        if (!empty($data['object_type_name'])) {
-            $existingType = ObjectType::where('name', $data['object_type_name'])->first();
-            if ($existingType) {
-                return 'Tipe objek ' . htmlspecialchars($data['object_type_name'], ENT_QUOTES, 'UTF-8') . ' sudah ada. Silakan pilih dari daftar yang tersedia.';
-            }
-        }
-
-        // Check if any part_name already exists
-        if (isset($data['part_name']) && is_array($data['part_name'])) {
-            foreach ($data['part_name'] as $index => $partName) {
-                $partId = $data['part_id'][$index] ?? '';
-                // Only check if user is adding new part (not selecting existing)
-                if (empty($partId) && !empty($partName) && trim($partName) !== '') {
-                    $existingPart = Part::where('name', $partName)->first();
-                    if ($existingPart) {
-                        return 'Part ' . htmlspecialchars($partName, ENT_QUOTES, 'UTF-8') . ' sudah ada. Silakan pilih dari daftar yang tersedia.';
-                    }
-                }
-            }
-        }
-
-        return null; // No duplicates found
-    }
-
-    /**
      * Create object with parts
      */
     public function createWithParts(array $data)
     {
         // Handle new object type
         if (!empty($data['object_type_name'])) {
-            $objectType = ObjectType::firstOrCreate(
+            $objectType = $this->objectTypeRepository->firstOrCreate(
                 ['name' => $data['object_type_name']]
             );
             $data['object_type_id'] = $objectType->id;
@@ -109,51 +70,23 @@ class ObjectServiceImplement extends Service implements ObjectService{
 
         // Save parts if provided
         if (isset($data['part_id']) && is_array($data['part_id'])) {
-            \Log::info('Processing parts', ['part_ids' => $data['part_id'], 'part_names' => $data['part_name'] ?? [], 'part_values' => $data['part_value'] ?? []]);
-            
             foreach ($data['part_id'] as $index => $partId) {
-                // Trim and clean part_id
-                $partId = is_string($partId) ? trim($partId) : $partId;
-                $partName = isset($data['part_name'][$index]) ? trim($data['part_name'][$index]) : '';
-                $partValue = isset($data['part_value'][$index]) ? trim($data['part_value'][$index]) : '';
-                $finalPartId = null;
+                $partName = $data['part_name'][$index] ?? null;
+                $partValue = $data['part_value'][$index] ?? 0;
                 
-                \Log::info("Processing part index {$index}", ['part_id' => $partId, 'part_name' => $partName, 'part_value' => $partValue]);
-                
-                // If part_id is selected from dropdown (must be numeric and > 0)
-                if (!empty($partId) && $partId !== '' && $partId !== '0' && is_numeric($partId) && intval($partId) > 0) {
+                // If part_id is not null, use part_id; else use part_name
+                if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
                     $finalPartId = intval($partId);
-                    \Log::info("Using existing part", ['part_id' => $finalPartId]);
-                }
-                // If part_name is provided (new part) - only if part_id is empty or not numeric
-                elseif ((empty($partId) || !is_numeric($partId)) && !empty($partName) && $partName !== '') {
-                    $part = Part::firstOrCreate(['name' => $partName]);
+                } else {
+                    $part = $this->partRepository->firstOrCreate(['name' => $partName]);
                     $finalPartId = $part->id;
-                    \Log::info("Created/found new part", ['part_name' => $partName, 'part_id' => $finalPartId]);
                 }
                 
-                // Only insert if we have a valid part_id
-                if ($finalPartId && is_numeric($finalPartId) && intval($finalPartId) > 0) {
-                    // Sanitize value - ensure it's a valid number
-                    $sanitizedValue = 0;
-                    if (!empty($partValue) && is_numeric($partValue)) {
-                        $sanitizedValue = floatval($partValue);
-                        // Ensure value is within reasonable range
-                        if ($sanitizedValue < 0) {
-                            $sanitizedValue = 0;
-                        }
-                        if ($sanitizedValue > 999999999999999999) {
-                            $sanitizedValue = 999999999999999999;
-                        }
-                    }
-                    
-                    ObjectPart::create([
-                        'object_id' => $object->id,
-                        'part_id' => intval($finalPartId),
-                        'value' => $sanitizedValue,
-                    ]);
-                    \Log::info("ObjectPart created", ['object_id' => $object->id, 'part_id' => $finalPartId, 'value' => $sanitizedValue]);
-                }
+                ObjectPart::create([
+                    'object_id' => $object->id,
+                    'part_id' => $finalPartId,
+                    'value' => floatval($partValue),
+                ]);
             }
         }
 
@@ -173,7 +106,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
 
         // Handle new object type
         if (!empty($data['object_type_name'])) {
-            $objectType = ObjectType::firstOrCreate(
+            $objectType = $this->objectTypeRepository->firstOrCreate(
                 ['name' => $data['object_type_name']]
             );
             $data['object_type_id'] = $objectType->id;
@@ -190,43 +123,22 @@ class ObjectServiceImplement extends Service implements ObjectService{
 
         if (isset($data['part_id']) && is_array($data['part_id'])) {
             foreach ($data['part_id'] as $index => $partId) {
-                // Trim and clean part_id
-                $partId = is_string($partId) ? trim($partId) : $partId;
-                $partName = isset($data['part_name'][$index]) ? trim($data['part_name'][$index]) : '';
-                $partValue = isset($data['part_value'][$index]) ? trim($data['part_value'][$index]) : '';
-                $finalPartId = null;
+                $partName = $data['part_name'][$index] ?? null;
+                $partValue = $data['part_value'][$index] ?? 0;
                 
-                // If part_id is selected from dropdown (must be numeric and > 0)
-                if (!empty($partId) && $partId !== '' && $partId !== '0' && is_numeric($partId) && intval($partId) > 0) {
+                // If part_id is not null, use part_id; else use part_name
+                if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
                     $finalPartId = intval($partId);
-                }
-                // If part_name is provided (new part) - only if part_id is empty or not numeric
-                elseif ((empty($partId) || !is_numeric($partId)) && !empty($partName) && $partName !== '') {
-                    $part = Part::firstOrCreate(['name' => $partName]);
+                } else {
+                    $part = $this->partRepository->firstOrCreate(['name' => $partName]);
                     $finalPartId = $part->id;
                 }
                 
-                // Only insert if we have a valid part_id
-                if ($finalPartId && is_numeric($finalPartId) && intval($finalPartId) > 0) {
-                    // Sanitize value - ensure it's a valid number
-                    $sanitizedValue = 0;
-                    if (!empty($partValue) && is_numeric($partValue)) {
-                        $sanitizedValue = floatval($partValue);
-                        // Ensure value is within reasonable range
-                        if ($sanitizedValue < 0) {
-                            $sanitizedValue = 0;
-                        }
-                        if ($sanitizedValue > 999999999999999999) {
-                            $sanitizedValue = 999999999999999999;
-                        }
-                    }
-                    
-                    ObjectPart::create([
-                        'object_id' => $id,
-                        'part_id' => intval($finalPartId),
-                        'value' => $sanitizedValue,
-                    ]);
-                }
+                ObjectPart::create([
+                    'object_id' => $id,
+                    'part_id' => $finalPartId,
+                    'value' => floatval($partValue),
+                ]);
             }
         }
 

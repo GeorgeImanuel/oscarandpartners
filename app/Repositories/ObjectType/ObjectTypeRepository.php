@@ -6,5 +6,8 @@ use LaravelEasyRepository\Repository;
 
 interface ObjectTypeRepository extends Repository{
 
-    // Write something awesome :)
+    /**
+     * Find or create an object type by name
+     */
+    public function firstOrCreate(array $attributes);
 }

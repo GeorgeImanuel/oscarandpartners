@@ -5,14 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ObjectType;
 use App\Services\Object\ObjectService;
+use App\Services\ObjectType\ObjectTypeService;
+use App\Services\Part\PartService;
+use App\Http\Requests\StoreObjectRequest;
+use App\Http\Requests\UpdateObjectRequest;
 
 class ObjectController extends Controller
 {
     private $objectService;
+    private $objectTypeService;
+    private $partService;
 
-    public function __construct(ObjectService $objectService)
+    public function __construct(
+        ObjectService $objectService,
+        ObjectTypeService $objectTypeService,
+        PartService $partService
+    )
     {
         $this->objectService = $objectService;
+        $this->objectTypeService = $objectTypeService;
+        $this->partService = $partService;
     }
 
     /**
@@ -29,64 +41,47 @@ class ObjectController extends Controller
      */
     public function create()
     {
-        $objectTypes = $this->objectService->getObjectTypes();
-        $parts = $this->objectService->getParts();
+        $objectTypes = $this->objectTypeService->getAll();
+        $parts = $this->partService->getAll();
         return view('objects.form', compact('objectTypes', 'parts'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreObjectRequest $request)
     {
-        $validated = $request->validate([
-            'object_type_id' => 'nullable|exists:object_types,id',
-            'object_type_name' => 'nullable|string|max:255',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'part_id' => 'nullable|array',
-            'part_name' => 'nullable|array',
-            'part_name.*' => 'nullable|string|max:255',
-            'part_value' => 'nullable|array',
-            'part_value.*' => 'nullable|numeric|min:0',
-        ]);
+        try {
+            \Log::info('Store Object Request', [
+                'data' => $request->all()
+            ]);
 
-        // Custom validation for part_id
-        if (isset($validated['part_id']) && is_array($validated['part_id'])) {
-            foreach ($validated['part_id'] as $index => $partId) {
-                $partName = $validated['part_name'][$index] ?? '';
-                // If part_id is not empty, validate it exists in database
-                if (!empty($partId) && $partId !== '' && !empty(trim($partId))) {
-                    if (!is_numeric($partId) || !\App\Models\Part::where('id', $partId)->exists()) {
-                        return redirect()->back()->withInput()->with('error', 'Part yang dipilih tidak valid.');
-                    }
-                }
-                // If both part_id and part_name are empty, error
-                elseif (empty($partName) || trim($partName) === '') {
-                    return redirect()->back()->withInput()->with('error', 'Setiap part harus dipilih atau diisi dengan nama baru.');
-                }
+            $validated = $request->validated();
+
+            \Log::info('Validated Data', [
+                'validated' => $validated
+            ]);
+
+            $object = $this->objectService->createWithParts($validated);
+            
+            if (!$object) {
+                \Log::error('Failed to create object - service returned null');
+                return redirect()->back()->withInput()->with('error', 'Gagal menambahkan object.');
             }
-        }
 
-        // Validate that either object_type_id or object_type_name is provided
-        if (empty($validated['object_type_id']) && empty($validated['object_type_name'])) {
-            return redirect()->back()->withInput()->with('error', 'Tipe objek harus dipilih atau diisi.');
-        }
+            \Log::info('Object created successfully', [
+                'object_id' => $object->id
+            ]);
 
-        // Validate duplicates using service
-        $duplicateError = $this->objectService->validateDuplicates($validated);
-        if ($duplicateError) {
-            return redirect()->back()->withInput()->with('error', $duplicateError);
+            return redirect()->route('objects.index')
+                ->with('success', 'Object berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            \Log::error('Exception in store object', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        $object = $this->objectService->createWithParts($validated);
-        
-        if (!$object) {
-            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan object.');
-        }
-
-        return redirect()->route('objects.index')
-            ->with('success', 'Object berhasil ditambahkan.');
     }
 
     /**
@@ -106,55 +101,17 @@ class ObjectController extends Controller
     {
         $object = $this->objectService->findOrFail($id);
         $object->load('objectParts.part');
-        $objectTypes = $this->objectService->getObjectTypes();
-        $parts = $this->objectService->getParts();
+        $objectTypes = $this->objectTypeService->getAll();
+        $parts = $this->partService->getAll();
         return view('objects.form', compact('object', 'objectTypes', 'parts'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateObjectRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'object_type_id' => 'nullable|exists:object_types,id',
-            'object_type_name' => 'nullable|string|max:255',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'part_id' => 'nullable|array',
-            'part_name' => 'nullable|array',
-            'part_name.*' => 'nullable|string|max:255',
-            'part_value' => 'nullable|array',
-            'part_value.*' => 'nullable|numeric|min:0',
-        ]);
-
-        // Custom validation for part_id
-        if (isset($validated['part_id']) && is_array($validated['part_id'])) {
-            foreach ($validated['part_id'] as $index => $partId) {
-                $partName = $validated['part_name'][$index] ?? '';
-                // If part_id is not empty, validate it exists in database
-                if (!empty($partId) && $partId !== '' && !empty(trim($partId))) {
-                    if (!is_numeric($partId) || !\App\Models\Part::where('id', $partId)->exists()) {
-                        return redirect()->back()->withInput()->with('error', 'Part yang dipilih tidak valid.');
-                    }
-                }
-                // If both part_id and part_name are empty, error
-                elseif (empty($partName) || trim($partName) === '') {
-                    return redirect()->back()->withInput()->with('error', 'Setiap part harus dipilih atau diisi dengan nama baru.');
-                }
-            }
-        }
-
-        // Validate that either object_type_id or object_type_name is provided
-        if (empty($validated['object_type_id']) && empty($validated['object_type_name'])) {
-            return redirect()->back()->withInput()->with('error', 'Tipe objek harus dipilih atau diisi.');
-        }
-
-        // Validate duplicates using service
-        $duplicateError = $this->objectService->validateDuplicates($validated);
-        if ($duplicateError) {
-            return redirect()->back()->withInput()->with('error', $duplicateError);
-        }
+        $validated = $request->validated();
 
         $updated = $this->objectService->updateWithParts($id, $validated);
         

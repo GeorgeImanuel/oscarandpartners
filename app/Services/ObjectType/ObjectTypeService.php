@@ -6,5 +6,8 @@ use LaravelEasyRepository\BaseService;
 
 interface ObjectTypeService extends BaseService{
 
-    // Write something awesome :)
+    /**
+     * Get all object types
+     */
+    public function getAll();
 }

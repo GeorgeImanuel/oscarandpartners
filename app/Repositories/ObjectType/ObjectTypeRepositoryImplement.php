@@ -19,5 +19,11 @@ class ObjectTypeRepositoryImplement extends Eloquent implements ObjectTypeReposi
         $this->model = $model;
     }
 
-    // Write something awesome :)
+    /**
+     * Find or create an object type by name
+     */
+    public function firstOrCreate(array $attributes)
+    {
+        return $this->model->firstOrCreate($attributes);
+    }
 }
