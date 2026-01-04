@@ -11,6 +11,7 @@ use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\ProductionCardController;
 use App\Http\Controllers\CoverageController;
 use App\Http\Controllers\ObjectController;
+use App\Http\Controllers\ObjectTypeController;
 use App\Http\Controllers\PartController;
 
 /*
@@ -52,6 +53,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('policies', PolicyController::class);
     Route::resource('coverages', CoverageController::class);
     Route::resource('objects', ObjectController::class);
+    Route::resource('object-types', ObjectTypeController::class);
     Route::resource('parts', PartController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);

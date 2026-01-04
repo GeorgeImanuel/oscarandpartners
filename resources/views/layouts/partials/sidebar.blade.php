@@ -30,6 +30,7 @@
                         <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Policies</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}" href="{{ route('coverages.index') }}"><i data-feather="airplay"></i><span>Coverages</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objects</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('object-types.index') }}" href="{{ route('object-types.index') }}"><i data-feather="layers"></i><span>Object Types</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('parts.index') }}" href="{{ route('parts.index') }}"><i data-feather="box"></i><span>Parts</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Users</span></a>
