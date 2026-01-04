@@ -25,18 +25,22 @@ class UpdatePoliciesRequest extends FormRequest
         $id = $this->route('policy'); // Assuming the route parameter is named 'policy'
 
         return [
-            'insurance_id' => 'required|string|max:255|exists:insurances,id',
-            'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
-            'object_type_id' => 'required|string|max:255|exists:object_types,id',
+            'object_id' => 'nullable|exists:objects,id',
+            'coverage_code' => 'nullable|exists:coverages,code',
+            'coverage_percentage' => 'required|numeric',
             'policy_number' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('policies', 'policy_number')->ignore($id)
             ],
-            'object' => 'required|string|max:255',
-            'object_address' => 'required|string|max:255',
-            'object_value' => 'required|numeric|min:0',
+            'started_date' => 'required|date',
+            'ended_date' => 'required|date|after_or_equal:started_date',
+            'insurance_id' => 'nullable|array',
+            'insurance_id.*' => 'nullable|integer|exists:insurances,id',
+            'is_main' => 'nullable|array',
+            'percentage' => 'nullable|array',
+            'percentage.*' => 'nullable|numeric|min:0|max:100',
         ];
     }
 
@@ -48,36 +52,27 @@ class UpdatePoliciesRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'insurance_id.required' => 'ID Asuransi wajib diisi.',
-            'insurance_id.string' => 'ID Asuransi harus berupa teks.',
-            'insurance_id.max' => 'ID Asuransi maksimal 255 karakter.',
-            'insurance_id.exists' => 'ID Asuransi yang dipilih tidak valid atau tidak ditemukan.',
-
-            'parent_policy_id.string' => 'ID Polis Induk harus berupa teks.',
-            'parent_policy_id.max' => 'ID Polis Induk maksimal 255 karakter.',
-            'parent_policy_id.exists' => 'ID Polis Induk yang dipilih tidak valid atau tidak ditemukan.',
-
-            'object_type_id.required' => 'Tipe Objek wajib diisi.',
-            'object_type_id.string' => 'Tipe Objek harus berupa teks.',
-            'object_type_id.max' => 'Tipe Objek maksimal 255 karakter.',
-            'object_type_id.exists' => 'Tipe Objek yang dipilih tidak valid atau tidak ditemukan.',
-
-            'policy_number.required' => 'Nomor Polis wajib diisi.',
-            'policy_number.string' => 'Nomor Polis harus berupa teks.',
-            'policy_number.max' => 'Nomor Polis maksimal 255 karakter.',
-            'policy_number.unique' => 'Nomor Polis ini sudah terdaftar.',
-
-            'object.required' => 'Objek wajib diisi.',
-            'object.string' => 'Objek harus berupa teks.',
-            'object.max' => 'Objek maksimal 255 karakter.',
-
-            'object_address.required' => 'Alamat Objek wajib diisi.',
-            'object_address.string' => 'Alamat Objek harus berupa teks.',
-            'object_address.max' => 'Alamat Objek maksimal 255 karakter.',
-
-            'object_value.required' => 'Nilai Objek wajib diisi.',
-            'object_value.numeric' => 'Nilai Objek harus berupa angka.',
-            'object_value.min' => 'Nilai Objek minimal adalah 0.',
+            'object_id.exists' => 'The selected object is invalid.',
+            'coverage_code.exists' => 'The selected coverage code is invalid.',
+            'coverage_percentage.required' => 'Coverage percentage is required.',
+            'coverage_percentage.numeric' => 'Coverage percentage must be a number.',
+            'policy_number.required' => 'Policy number is required.',
+            'policy_number.string' => 'Policy number must be a string.',
+            'policy_number.max' => 'Policy number may not be greater than 255 characters.',
+            'policy_number.unique' => 'The policy number has already been taken.',
+            'started_date.required' => 'Start date is required.',
+            'started_date.date' => 'Start date is not a valid date.',
+            'ended_date.required' => 'End date is required.',
+            'ended_date.date' => 'End date is not a valid date.',
+            'ended_date.after_or_equal' => 'End date must be after or equal to start date.',
+            'insurance_id.array' => 'Insurance ID must be an array.',
+            'insurance_id.*.integer' => 'Insurance ID must be an integer.',
+            'insurance_id.*.exists' => 'The selected insurance ID is invalid.',
+            'is_main.array' => 'Main status must be an array.',
+            'percentage.array' => 'Percentage must be an array.',
+            'percentage.*.numeric' => 'Percentage must be a number.',
+            'percentage.*.min' => 'Percentage must be at least 0.',
+            'percentage.*.max' => 'Percentage may not be greater than 100.',
         ];
     }
 }

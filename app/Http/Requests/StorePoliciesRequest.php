@@ -16,61 +16,53 @@ class StorePoliciesRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'insurance_id' => 'required|array|min:1',
-            'insurance_id.*' => 'exists:insurances,id',
-            'parent_policy_id' => 'nullable|string|max:255|exists:policies,id',
-            'object_type_id' => 'required|string|max:255|exists:object_types,id',
+            'object_id' => 'nullable|exists:objects,id',
+            'coverage_code' => 'nullable|exists:coverages,code',
+            'coverage_percentage' => 'required|numeric',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
-            'object' => 'required|string|max:255',
-            'object_address' => 'required|string|max:255',
-            'object_value' => 'required|numeric|min:0',
+            'started_date' => 'required|date',
+            'ended_date' => 'required|date|after_or_equal:started_date',
+            'insurance_id' => 'nullable|array',
+            'insurance_id.*' => 'nullable|integer|exists:insurances,id',
+            'is_main' => 'nullable|array',
+            'percentage' => 'nullable|array',
+            'percentage.*' => 'nullable|numeric|min:0|max:100',
         ];
     }
 
     /**
      * Get custom validation messages.
-     *
-     * @return array<string, string>
      */
     public function messages(): array
     {
         return [
-            'insurance_id.required' => 'ID Asuransi wajib diisi.',
-            'insurance_id.array' => 'ID Asuransi harus berupa array.',
-            'insurance_id.max' => 'ID Asuransi maksimal 255 karakter.',
-            'insurance_id.exists' => 'ID Asuransi yang dipilih tidak valid atau tidak ditemukan.',
-
-            'parent_policy_id.string' => 'ID Polis Induk harus berupa teks.',
-            'parent_policy_id.max' => 'ID Polis Induk maksimal 255 karakter.',
-            'parent_policy_id.exists' => 'ID Polis Induk yang dipilih tidak valid atau tidak ditemukan.',
-
-            'object_type_id.required' => 'Tipe Objek wajib diisi.',
-            'object_type_id.string' => 'Tipe Objek harus berupa teks.',
-            'object_type_id.max' => 'Tipe Objek maksimal 255 karakter.',
-            'object_type_id.exists' => 'Tipe Objek yang dipilih tidak valid atau tidak ditemukan.',
-
             'policy_number.required' => 'Nomor Polis wajib diisi.',
-            'policy_number.string' => 'Nomor Polis harus berupa teks.',
-            'policy_number.max' => 'Nomor Polis maksimal 255 karakter.',
             'policy_number.unique' => 'Nomor Polis ini sudah terdaftar.',
+            'policy_number.max' => 'Nomor Polis maksimal 255 karakter.',
 
-            'object.required' => 'Objek wajib diisi.',
-            'object.string' => 'Objek harus berupa teks.',
-            'object.max' => 'Objek maksimal 255 karakter.',
+            'object_id.exists' => 'Objek yang dipilih tidak valid.',
 
-            'object_address.required' => 'Alamat Objek wajib diisi.',
-            'object_address.string' => 'Alamat Objek harus berupa teks.',
-            'object_address.max' => 'Alamat Objek maksimal 255 karakter.',
+            'coverage_code.exists' => 'Coverage yang dipilih tidak valid.',
 
-            'object_value.required' => 'Nilai Objek wajib diisi.',
-            'object_value.numeric' => 'Nilai Objek harus berupa angka.',
-            'object_value.min' => 'Nilai Objek minimal adalah 0.',
+            'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
+            'coverage_percentage.numeric' => 'Persentase Coverage harus berupa angka.',
+
+            'started_date.required' => 'Tanggal Mulai wajib diisi.',
+            'started_date.date' => 'Tanggal Mulai harus format tanggal yang valid.',
+
+            'ended_date.required' => 'Tanggal Selesai wajib diisi.',
+            'ended_date.date' => 'Tanggal Selesai harus format tanggal yang valid.',
+            'ended_date.after_or_equal' => 'Tanggal Selesai harus sama atau lebih besar dari Tanggal Mulai.',
+
+            'insurance_id.*.exists' => 'Asuransi yang dipilih tidak valid.',
+
+            'percentage.*.numeric' => 'Persentase Asuransi harus berupa angka.',
+            'percentage.*.min' => 'Persentase Asuransi minimal 0.',
+            'percentage.*.max' => 'Persentase Asuransi maksimal 100.',
         ];
     }
 }

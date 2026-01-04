@@ -85,6 +85,9 @@ $(document).on("click", ".add-item-btn", function () {
         newItem.find(".remove-item-btn").show();
         // Append to container
         container.append(newItem);
+        
+        // Hide empty state alert
+        $(this).closest(".multiple-item-container").find(".empty-state").hide();
     }
 });
 
@@ -103,10 +106,12 @@ $(document).on("click", ".remove-item-btn", function () {
     }).then(result => {
         if (result.isConfirmed) {
             var $itemList = $(this).closest(".item-list");
+            var $multipleItemContainer = $(this).closest(".multiple-item-container");
+            
             if ($itemList.find(".item").length === 1) {
                 return;
             } else {
-                const container = $(this).closest(".multiple-item-container").find(".item-list");
+                const container = $multipleItemContainer.find(".item-list");
                 $(this).closest(".item").remove();
 
                 const hiddenItems = container.find(".item").filter(function () {
@@ -124,6 +129,14 @@ $(document).on("click", ".remove-item-btn", function () {
                         })
                         .addClass("item-" + itemCount);
                 });
+                
+                // Show empty state if no visible items
+                const visibleItems = container.find(".item").filter(function () {
+                    return $(this).css("display") !== "none";
+                });
+                if (visibleItems.length === 0) {
+                    $multipleItemContainer.find(".empty-state").show();
+                }
             }
         }
     });

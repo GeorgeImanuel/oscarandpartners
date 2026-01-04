@@ -85,7 +85,7 @@ class CardController extends Controller
     {
         $productionCard->load([
             'client.relation',
-            'policy.insurance',
+            'policy.insurances',
             'cardStatus',
             'insurancePaymentStatus',
             'paymentType',

@@ -3,85 +3,123 @@
 namespace App\Http\Controllers;
 
 use App\Models\Policy;
-use App\Models\Insurance;
-use App\Models\ObjectType;
+use App\Models\ObjectModel;
 use Illuminate\Http\Request;
 use App\Services\Policy\PolicyService;
-use App\Http\Requests\StorePoliciesRequest;
 use App\Http\Requests\UpdatePoliciesRequest;
+use App\Models\Insurance;
+use App\Models\PolicyInsurance;
+use App\Services\Coverage\CoverageService;
+use App\Services\PolicyInsurance\PolicyInsuranceService;
 use App\Services\Insurance\InsuranceService;
-use App\Services\ObjectType\ObjectTypeService;
 
 class PolicyController extends Controller
 {
-
     private $policyService;
-    private $objectTypeService;
+    private $coverageService;
+    private $policyInsuranceService;
     private $insuranceService;
-    
-    /**
-     * @var PolicyService
-     */
+
     public function __construct(
         PolicyService $policyService,
-        ObjectTypeService $objectTypeService,
+        PolicyInsuranceService $policyInsuranceService,
+        CoverageService $coverageService,
         InsuranceService $insuranceService
     ) {
         $this->policyService = $policyService;
-        $this->objectTypeService = $objectTypeService;
+        $this->policyInsuranceService = $policyInsuranceService;
+        $this->coverageService = $coverageService;
         $this->insuranceService = $insuranceService;
     }
-
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $policies =  $this->policyService->all();
+        $policies = $this->policyService->all();
         return view('policies.index', compact('policies'));
     }
 
     /**
-     * Create page.
+     * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
-        $insurances      = $this->insuranceService->all();
-        $object_types    = $this->objectTypeService->all();
-        $parent_policies = $this->policyService->all();
-    
-        return view('policies.form', compact('insurances', 'object_types', 'parent_policies'));
+        $objects = ObjectModel::all();
+        $coverages = $this->coverageService->all();
+        $insurances = $this->insuranceService->all();
+
+        return view('policies.form', compact('objects', 'coverages', 'insurances'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePoliciesRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated(); // Ambil data yang sudah divalidasi
+        $validated = $request->validate([
+            'object_id' => 'nullable|exists:objects,id',
+            'coverage_code' => 'nullable|exists:coverages,code',
+            'coverage_percentage' => 'required|numeric',
+            'policy_number' => 'required|string|max:255|unique:policies,policy_number',
+            'started_date' => 'required|date',
+            'ended_date' => 'required|date|after_or_equal:started_date',
+            'insurance_id' => 'nullable|array',
+            'insurance_id.*' => 'nullable|integer|exists:insurances,id',
+            'is_main' => 'nullable|array',
+            'percentage' => 'nullable|array',
+            'percentage.*' => 'nullable|numeric|min:0|max:100',
+        ]);
 
-        // Simpan policy dulu
-        $policy = $this->policyService->create($data);
+        try {
+            $policy = Policy::create([
+                'policy_number' => $validated['policy_number'],
+                'object_id' => $validated['object_id'] ?? null,
+                'coverage_code' => $validated['coverage_code'] ?? null,
+                'coverage_percentage' => $validated['coverage_percentage'],
+                'started_date' => $validated['started_date'],
+                'ended_date' => $validated['ended_date'],
+            ]);
 
-        // Attach multiple insurances (asumsi relasi many-to-many)
-        if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
-            $policy->insurances()->sync($data['insurance_id']); // Sync untuk attach/detach
+            // Save policy insurances
+            if (isset($validated['insurance_id']) && is_array($validated['insurance_id'])) {
+                foreach ($validated['insurance_id'] as $index => $insuranceId) {
+                    if (!empty($insuranceId)) {
+                        $isMain = isset($validated['is_main'][$index]) ? (bool)$validated['is_main'][$index] : false;
+                        $percentage = isset($validated['percentage'][$index]) ? floatval($validated['percentage'][$index]) : 0;
+
+                        PolicyInsurance::create([
+                            'policy_id' => $policy->id,
+                            'insurance_id' => $insuranceId,
+                            'is_main' => $isMain,
+                            'percentage' => $percentage,
+                        ]);
+                    }
+                }
+            }
+
+            return redirect()->route('policies.index')
+                ->with('success', 'Policy berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menambahkan policy: ' . $e->getMessage());
         }
-
-        return redirect()->route('policies.index')->with('success', 'Policy created successfully!');
     }
 
     /**
-     * Edit Page
+     * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        $policy          = $this->policyService->findOrFail($id);
-        $insurances      = $this->insuranceService->all();
-        $object_types    = $this->objectTypeService->all();
-        $parent_policies = $this->policyService->all();
-        return view('policies.form', compact('policy', 'insurances', 'object_types', 'parent_policies'));
+        $policy = $this->policyService->findOrFail($id);
+        $objects = ObjectModel::all();
+        $coverages = $this->coverageService->all();
+        $insurances = $this->insuranceService->all();
+        $policyInsurances = $policy->policyInsurances;
+
+        return view('policies.form', compact('policy', 'objects', 'coverages', 'insurances', 'policyInsurances'));
     }
 
     /**
@@ -89,12 +127,47 @@ class PolicyController extends Controller
      */
     public function update(UpdatePoliciesRequest $request, string $id)
     {
+        try {
+            $policy = $this->policyService->findOrFail($id);
 
-        $policies = $this->policyService->update($id, $request->all());
-        if(!$policies){
-            return redirect()->back()->withInput()->with('error', 'Gagal mengubah data policies.');
+            $validated = $request->validated();
+
+            $policy->update([
+                'policy_number' => $validated['policy_number'],
+                'object_id' => $validated['object_id'] ?? null,
+                'coverage_code' => $validated['coverage_code'] ?? null,
+                'coverage_percentage' => $validated['coverage_percentage'],
+                'started_date' => $validated['started_date'],
+                'ended_date' => $validated['ended_date'],
+            ]);
+
+            // Delete existing insurances
+            PolicyInsurance::where('policy_id', $id)->delete();
+
+            // Save new insurances
+            if (isset($validated['insurance_id']) && is_array($validated['insurance_id'])) {
+                foreach ($validated['insurance_id'] as $index => $insuranceId) {
+                    if (!empty($insuranceId)) {
+                        $isMain = isset($validated['is_main'][$index]) ? (bool)$validated['is_main'][$index] : false;
+                        $percentage = isset($validated['percentage'][$index]) ? floatval($validated['percentage'][$index]) : 0;
+
+                        PolicyInsurance::create([
+                            'policy_id' => $id,
+                            'insurance_id' => $insuranceId,
+                            'is_main' => $isMain,
+                            'percentage' => $percentage,
+                        ]);
+                    }
+                }
+            }
+
+            return redirect()->route('policies.index')
+                ->with('success', 'Policy berhasil diubah.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal mengubah policy: ' . $e->getMessage());
         }
-        return redirect()->route('policies.index')->with('success', 'Berhasil mengubah data policies.');
     }
 
     /**
@@ -102,7 +175,15 @@ class PolicyController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->policyService->delete($id);
-        return redirect()->route('policies.index')->with('success', 'Berhasil menghapus data policies.');
+        try {
+            $policy = $this->policyService->findOrFail($id);
+            $policy->delete();
+
+            return redirect()->route('policies.index')
+                ->with('success', 'Policy berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal menghapus policy: ' . $e->getMessage());
+        }
     }
 }

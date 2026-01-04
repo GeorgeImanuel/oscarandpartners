@@ -21,13 +21,16 @@ class PolicyServiceImplement extends Service implements PolicyService
      */
 
     /**
+    /**
      * don't change $this->mainRepository variable name
      * because used in extends service class
      */
     protected PolicyRepository $mainRepository;
+    protected PolicyRepository $mainRepository;
 
     public function __construct(PolicyRepository $mainRepository)
     {
+        $this->mainRepository = $mainRepository;
         $this->mainRepository = $mainRepository;
     }
 
