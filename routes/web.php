@@ -45,8 +45,10 @@ Route::group(['middleware' => ['auth:web']], function () {
     
     Route::resource('relations', RelationController::class);
 
+    Route::get('/cards/this-month', [CardController::class, 'thisMonth'])->name('cards.thisMonth');
+    Route::get('/cards/next-month', [CardController::class, 'nextMonth'])->name('cards.nextMonth');
+    Route::resource('cards', CardController::class)->parameters(['cards' => 'productionCard']);
     Route::get('cards/{productionCard}/preview', [CardController::class, 'preview'])->name('cards.preview');
-    Route::resource('cards', CardController::class);
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

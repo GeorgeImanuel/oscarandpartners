@@ -48,7 +48,7 @@ class CardController extends Controller
      */
     public function index()
     {
-        $cards = $this->cardService->getAllWithRelations();
+        $cards = $this->cardService->getAllWithFilter([]);
         return view('cards.index', compact('cards'));
     }
 
@@ -88,6 +88,7 @@ class CardController extends Controller
         $productionCard->load([
             'client.relation',
             'policy.insurances',
+            'policy.object',
             'cardStatus',
             'insurancePaymentStatus',
             'paymentType',
@@ -149,5 +150,37 @@ class CardController extends Controller
     {
         $this->cardService->deleteCard($productionCard->id);
         return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
+    }
+
+    public function thisMonth()
+    {
+        $currentDate = now();
+        $month = $currentDate->format('F');
+        $year = $currentDate->year;
+
+        $data = [
+            'started_date' => $currentDate->copy()->startOfMonth()->format('Y-m-d'),
+            'ended_date' => $currentDate->copy()->endOfMonth()->format('Y-m-d'),
+        ];
+
+        $cards = $this->cardService->getAllWithFilter($data);
+
+        return view('cards.monthly', compact('cards', 'month', 'year'));
+    }
+
+    public function nextMonth()
+    {
+        $nextMonthDate = now()->addMonth();
+        $month = $nextMonthDate->format('F');
+        $year = $nextMonthDate->year;
+
+        $data = [
+            'started_date' => $nextMonthDate->copy()->startOfMonth()->format('Y-m-d'),
+            'ended_date' => $nextMonthDate->copy()->endOfMonth()->format('Y-m-d'),
+        ];
+
+        $cards = $this->cardService->getAllWithFilter($data);
+
+        return view('cards.monthly', compact('cards', 'month', 'year'));
     }
 }

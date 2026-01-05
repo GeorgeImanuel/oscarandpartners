@@ -39,4 +39,42 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             'paymentType'
         ])->get();
     }
+
+    public function getAllWithFilter(array $data){
+        $query = $this->model->with(['client.relation', 'policy.object', 'cardStatus', 'insurancePaymentStatus']);
+
+        // Filter by role - pastikan client hanya lihat data mereka
+        $user = auth()->user();
+        if ($user && $user->hasRole('client')) {
+            if ($user->client) {
+                $query->where('client_id', $user->client->id);
+            } else {
+                // Jika client tapi tidak punya client, return empty
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        if(isset($data['started_date']) && isset($data['ended_date'])){
+            $query->whereHas('policy', function($q) use ($data) {
+                $q->whereBetween('ended_date', [$data['started_date'], $data['ended_date']]);
+            });
+        }
+
+        if(isset($data['status_id'])){
+            $query->where('card_status_id', $data['status_id']);
+        }
+
+        // Jika client_id dikirim dari parameter, filter tambahan (untuk admin)
+        if(isset($data['client_id']) && (!$user || !$user->hasRole('client'))){
+            $query->where('client_id', $data['client_id']);
+        }
+
+        if(isset($data['relation_id'])){
+            $query->whereHas('client', function($q) use ($data) {
+                $q->where('relation_id', $data['relation_id']);
+            });
+        }
+
+        return $query->get();
+    }
 }

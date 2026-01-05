@@ -30,10 +30,10 @@
 									<i class="fa fa-arrow-left"></i> Kembali
 								</a>
 								<div>
-								<a href="{{ route('cards.preview', $productionCard->id) }}" class="btn btn-success btn-sm">
+								<a href="{{ route('cards.preview', $productionCard) }}" class="btn btn-success btn-sm">
 									<i class="fa fa-file-text"></i> Preview Kartu
 								</a>
-								<a href="{{ route('cards.edit', $productionCard->id) }}" class="btn btn-warning btn-sm">
+								<a href="{{ route('cards.edit', $productionCard) }}" class="btn btn-warning btn-sm">
 										<i class="fa fa-edit"></i> Edit
 									</a>
 								</div>
@@ -84,7 +84,7 @@
 									</tr>
 									<tr>											<td class="fw-bold">Obyek Asuransi</td>
 											<td>:</td>
-											<td>{{ $productionCard->policy->object ?? '-' }}</td>
+											<td>{{ $productionCard->policy->object->name ?? '-' }}</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Periode Awal</td>
