@@ -18,150 +18,150 @@
     @endcomponent
 
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <form class="needs-validation" action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}" method="POST" novalidate>
-                    <div class="card">
-                        @csrf
-                        @if (isset($card))
-                            @method('PUT')
-                        @endif
-                        <div class="card-body row g-3 my-2">
-                            <div class="col-md-12 mt-3">
-                                <label class="form-label" for="card_status_id">Tipe Kartu</label>
-                                <select id="card_status_id" class="form-control basic-single-select2 @error('card_status_id') is-invalid @enderror" name="card_status_id" required>
-                                    <option value=""></option>
-                                    @foreach ($cardStatuses as $status)
-                                        <option value="{{ $status->id }}" {{ isset($card) ? ($card->card_status_id == $status->id ? 'selected' : '') : (old('card_status_id') == $status->id ? 'selected' : '') }}>
-                                            {{ $status->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('card_status_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+        <form class="needs-validation" action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}" method="POST" novalidate>
+            <div class="card">
+                @csrf
+                @if (isset($card))
+                    @method('PUT')
+                @endif
+                <div class="card-body">
 
-                            <div id="parent_card_container" class="col-md-12" style="display:none;">
-                                <label class="form-label" for="parent_card_id">Kartu Produksi Sebelumnya</label>
-                                <select id="parent_card_id" class="form-control basic-single-select2 @error('parent_card_id') is-invalid @enderror" name="parent_card_id">
-                                    <option value=""></option>
-                                    @foreach ($parentCards as $parentCard)
-                                        <option value="{{ $parentCard->id }}" {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
-                                            {{ $parentCard->policy->policy_number }} -
-                                            {{ $parentCard->policy->object->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('parent_card_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                    <div class="row g-3 my-2">
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label" for="card_status_id">Tipe Kartu</label>
+                            <select id="card_status_id" class="form-control basic-single-select2 @error('card_status_id') is-invalid @enderror" name="card_status_id" required>
+                                <option value=""></option>
+                                @foreach ($cardStatuses as $status)
+                                    <option value="{{ $status->id }}" {{ isset($card) ? ($card->card_status_id == $status->id ? 'selected' : '') : (old('card_status_id') == $status->id ? 'selected' : '') }}>
+                                        {{ $status->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('card_status_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <div class="col-md-12">
-                                <label class="form-label" for="client_id">Client</label>
-                                <select id="client_id" class="form-control basic-single-select2 @error('client_id') is-invalid @enderror" name="client_id" required>
-                                    <option value=""></option>
-                                    @foreach ($clients as $client)
-                                        <option value="{{ $client->id }}" {{ isset($card) ? ($card->client_id == $client->id ? 'selected' : '') : (old('client_id') == $client->id ? 'selected' : '') }}>
-                                            {{ $client->id_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('client_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div id="parent_card_container" class="col-md-12" style="display:none;">
+                            <label class="form-label" for="parent_card_id">Kartu Produksi Sebelumnya</label>
+                            <select id="parent_card_id" class="form-control basic-single-select2 @error('parent_card_id') is-invalid @enderror" name="parent_card_id">
+                                <option value=""></option>
+                                @foreach ($parentCards as $parentCard)
+                                    <option value="{{ $parentCard->id }}" {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
+                                        {{ $parentCard->policy->policy_number }} -
+                                        {{ $parentCard->policy->object->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('parent_card_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            {{-- POLIS --}}
-                            <div class="col-md-12 mt-5">
-                                <h5 class="text-primary">Polis</h5>
-                                <hr class="separator">
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label" for="policy_id">Nomor Polis</label>
-                                <select id="policy_id" class="form-control basic-single-select2 @error('policy_id') is-invalid @enderror" name="policy_id" required>
-                                    <option value=""></option>
-                                    @foreach ($policies as $policy)
-                                        <option value="{{ $policy->id }}" {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
-                                            {{ $policy->policy_number }} - {{ $policy->object->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('policy_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="client_id">Client</label>
+                            <select id="client_id" class="form-control basic-single-select2 @error('client_id') is-invalid @enderror" name="client_id" required>
+                                <option value=""></option>
+                                @foreach ($clients as $client)
+                                    <option value="{{ $client->id }}" {{ isset($card) ? ($card->client_id == $client->id ? 'selected' : '') : (old('client_id') == $client->id ? 'selected' : '') }}>
+                                        {{ $client->id_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('client_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    {{-- POLIS --}}
+                    <div class="row g-3 my-2">
+                        <div class="col-md-12 mt-5">
+                            <h5 class="text-primary">Polis</h5>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="policy_id">Nomor Polis</label>
+                            <select id="policy_id" class="form-control basic-single-select2 @error('policy_id') is-invalid @enderror" name="policy_id" required>
+                                <option value=""></option>
+                                @foreach ($policies as $policy)
+                                    <option value="{{ $policy->id }}" {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
+                                        {{ $policy->policy_number }} - {{ $policy->object->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('policy_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            {{-- Dynamic Policy Details Component --}}
-                            <div class="col-md-12 mt-3 mb-3">
-                                @livewire('policy-details', ['policyId' => isset($card) ? $card->policy_id : old('policy_id')])
-                            </div>
+                        {{-- Dynamic Policy Details Component --}}
+                        <div class="col-md-12 mt-3">
+                            @livewire('policy-details', ['policyId' => isset($card) ? $card->policy_id : old('policy_id')])
+                        </div>
 
-                            {{-- New Policy Input --}}
-                            @livewire('policy-form')
+                        {{-- New Policy Input --}}
+                        @livewire('policy-form')
 
-                            {{-- SECTION: HARGA PERTANGGUNGAN --}}
-                            <div id="policy-prices" class="row g-3">
-                                <div class="col-md-12 input-group-solid">
-                                    <label class="form-label" for="object_value">Harga Pertanggungan (Rp)</label>
-                                    <input id="object_value" class="form-control @error('object_value') is-invalid @enderror" name="object_value" type="number" step="0.01" value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}" required readonly>
-                                    @error('object_value')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                        {{-- SECTION: HARGA PERTANGGUNGAN --}}
+                        <div id="policy-prices" class="col-md-12 input-group-solid">
+                            <label class="form-label" for="object_value">Harga Pertanggungan (Rp)</label>
+                            <input id="object_value" class="form-control @error('object_value') is-invalid @enderror" name="object_value" type="number" step="0.01" value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}" required readonly>
+                            @error('object_value')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    {{-- POLIS END --}}
 
-                            </div>
-                            {{-- POLIS END --}}
+                    {{-- PARAMETER PREMI --}}
+                    <div class="row g-3">
+                        <div class="col-md-12 mt-5">
+                            <h5 class="text-primary">Parameter Premi</h5>
+                            <hr class="separator">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="premi_percentages">Presentase Premi (%)</label>
+                            <input id="premi_percentages" class="form-control @error('premi_percentages') is-invalid @enderror" name="premi_percentages" type="number" step="0.001" value="{{ isset($card) ? $card->premi_percentages : old('premi_percentages', 0) }}" required>
+                            <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                            @error('premi_percentages')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="tax_percentages">Persentase Pajak (%)</label>
+                            <input id="tax_percentages" class="form-control @error('tax_percentages') is-invalid @enderror" name="tax_percentages" type="number" step="0.001" value="{{ isset($card) ? $card->tax_percentages : old('tax_percentages', 0) }}" required>
+                            <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                            @error('tax_percentages')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="commision_percentages">Presentasi Komisi (%)</label>
+                            <input id="commision_percentages" class="form-control @error('commision_percentages') is-invalid @enderror" name="commision_percentages" type="number" step="0.01" value="{{ isset($card) ? $card->commision_percentages : old('commision_percentages', 0) }}" required>
+                            <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                            @error('commision_percentages')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="discount">Diskon (Rp)</label>
+                            <input id="discount" class="form-control @error('discount') is-invalid @enderror" name="discount" type="number" step="0.01" value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
+                            <small class="text-muted">Masukkan nilai diskon dalam rupiah</small>
+                            @error('discount')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    {{-- PARAMTER PREMI END --}}
 
-                            {{-- PARAMETER PREMI --}}
-                            <div class="col-md-12 mt-5">
-                                <h5 class="text-primary">Parameter Premi</h5>
-                                <hr class="separator">
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label" for="premi_percentages">Presentase Premi (%)</label>
-                                    <input id="premi_percentages" class="form-control @error('premi_percentages') is-invalid @enderror" name="premi_percentages" type="number" step="0.001" value="{{ isset($card) ? $card->premi_percentages : old('premi_percentages', 0) }}" required>
-                                    <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
-                                    @error('premi_percentages')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="tax_percentages">Persentase Pajak (%)</label>
-                                    <input id="tax_percentages" class="form-control @error('tax_percentages') is-invalid @enderror" name="tax_percentages" type="number" step="0.001" value="{{ isset($card) ? $card->tax_percentages : old('tax_percentages', 0) }}" required>
-                                    <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
-                                    @error('tax_percentages')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="commision_percentages">Presentasi Komisi (%)</label>
-                                    <input id="commision_percentages" class="form-control @error('commision_percentages') is-invalid @enderror" name="commision_percentages" type="number" step="0.01" value="{{ isset($card) ? $card->commision_percentages : old('commision_percentages', 0) }}" required>
-                                    <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
-                                    @error('commision_percentages')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="discount">Diskon (Rp)</label>
-                                    <input id="discount" class="form-control @error('discount') is-invalid @enderror" name="discount" type="number" step="0.01" value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
-                                    <small class="text-muted">Masukkan nilai diskon dalam rupiah</small>
-                                    @error('discount')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                            </div>
-                            {{-- PARAMTER PREMI END --}}
-
-                            {{-- SECTION: PERHITUNGAN KOMISI --}}
-                            <div class="col-md-12 mt-5">
-                                <h5 class="text-primary">Perhitungan Komisi</h5>
-                                <hr class="separator">
-                            </div>
+                    {{-- SECTION: PERHITUNGAN KOMISI --}}
+                    <div class="row g-3 mt-5">
+                        <div class="col-md-12 ">
                             <div class="row g-3 input-group-solid">
+                                <div class="col-md-12">
+                                    <h5 class="text-primary">Perhitungan Komisi</h5>
+                                    <hr class="separator">
+                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="production_value">Nilai Produksi (Rp)</label>
                                     <input id="production_value" class="form-control @error('production_value') is-invalid @enderror" name="production_value" type="number" step="0.01" value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}" readonly>
@@ -210,16 +210,15 @@
                                     @enderror
                                 </div>
                             </div>
-
-                        </div>
-                        <div class="card-footer	">
-                            <a class="btn btn-light" href="{{ route('cards.index') }}">Kembali</a>
-                            <button class="btn btn-primary float-end" type="submit">Simpan</button>
                         </div>
                     </div>
-                </form>
+                </div>
+                <div class="card-footer	">
+                    <a class="btn btn-light" href="{{ route('cards.index') }}">Kembali</a>
+                    <button class="btn btn-primary float-end" type="submit">Simpan</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     @push('css')

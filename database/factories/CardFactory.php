@@ -26,19 +26,21 @@ class CardFactory extends Factory
     public function definition(): array
     {
         // Parameter Input
-        $premiPercentages = fake()->randomFloat(2, 0.5, 5.0);
-        $taxPercentages = fake()->randomFloat(2, 2, 5);
-        $commisionPercentages = fake()->randomFloat(2, 10, 30);
+        $premiPercentages = fake()->randomFloat(4, 0, 0.3);
+        $taxPercentages = fake()->randomFloat(4, 0, 0.3);
+        $commisionPercentages = fake()->randomFloat(4, 0, 0.5);
         $objectValue = fake()->randomFloat(2, 10000000, 500000000);
+        $policyFee = fake()->randomFloat(2, 50000, 500000);
         $discount = fake()->randomFloat(2, 0, 1000000);
 
         // Calculated Values
         $productionValue = $objectValue * ($premiPercentages / 100);
-        $premi           = $productionValue;
+        $premiValue      = $productionValue;
         $commisionBruto  = $productionValue * ($commisionPercentages / 100);
-        $tax             = $commisionBruto * ($taxPercentages / 100);
-        $commisionNetto  = $commisionBruto - $tax;
-        $insurancePay    = $premi - $commisionNetto;
+        $taxValue        = $commisionBruto * ($taxPercentages / 100);
+        $commisionNetto  = $commisionBruto - $taxValue;
+        $clientPay       = $premiValue + $policyFee - $discount;
+        $insurancePay    = $clientPay - $commisionNetto;
 
         return [
             'client_id' => Client::inRandomOrder()->first()?->id ?? Client::factory(),
@@ -49,18 +51,20 @@ class CardFactory extends Factory
             'created_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
 
             // Parameter Input
-            'premi_percentages' => $premiPercentages,
-            'tax_percentages' => $taxPercentages,
-            'commision_percentages' => $commisionPercentages,
             'object_value' => $objectValue,
+            'policy_fee' => $policyFee,
+            'premi_percentages' => $premiPercentages,
+            'commision_percentages' => $commisionPercentages,
+            'tax_percentages' => $taxPercentages,
             'discount' => $discount,
 
             // Calculated Values
             'production_value' => $productionValue,
-            'premi' => $premi,
+            'premi_value' => $premiValue,
             'commision_bruto' => $commisionBruto,
             'commision_netto' => $commisionNetto,
-            'tax' => $tax,
+            'tax_value' => $taxValue,
+            'client_pay' => $clientPay,
             'insurance_pay' => $insurancePay,
 
             // Insurance Payment
