@@ -38,6 +38,8 @@ class UpdatePoliciesRequest extends FormRequest
             'ended_date' => 'required|date|after_or_equal:started_date',
             'insurance_id' => 'nullable|array',
             'insurance_id.*' => 'nullable|integer|exists:insurances,id',
+            'insurance_new_name' => 'nullable|array',
+            'insurance_new_name.*' => 'nullable|string|max:255',
             'is_main' => 'nullable|array',
             'percentage' => 'nullable|array',
             'percentage.*' => 'nullable|numeric|min:0|max:100',
@@ -74,5 +76,32 @@ class UpdatePoliciesRequest extends FormRequest
             'percentage.*.min' => 'Percentage must be at least 0.',
             'percentage.*.max' => 'Percentage may not be greater than 100.',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $insurances = $this->input('insurance_id', []);
+            $newInsurances = $this->input('insurance_new_name', []);
+            $isMain = $this->input('is_main', []);
+
+            // Cek apakah ada data asuransi yang diinput
+            $hasInsurance = false;
+            foreach ($insurances as $val) { if (!empty($val)) $hasInsurance = true; }
+            foreach ($newInsurances as $val) { if (!empty($val)) $hasInsurance = true; }
+
+            if ($hasInsurance) {
+                // Jika ada asuransi, pastikan ada yang dipilih sebagai utama
+                if (empty($isMain)) {
+                    $validator->errors()->add('is_main', 'Salah satu asuransi harus dipilih sebagai Asuransi Utama.');
+                }
+            }
+        });
     }
 }
