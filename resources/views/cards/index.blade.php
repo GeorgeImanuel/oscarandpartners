@@ -21,9 +21,25 @@
 			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header pb-0">
-						<div class="d-flex justify-content-between align-items-center">
-							<h5>Kartu Produksi</h5>
-							<a href="{{ route('cards.create') }}" class="btn btn-primary">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							@if(auth()->user()->hasRole(['owner', 'admin']))
+								<div class="d-flex gap-2 align-items-center">
+									<label for="clientFilter" class="mb-0 me-2">Filter Client:</label>
+									<select id="clientFilter" class="form-select" style="width: 250px;">
+										<option value="">Semua Client</option>
+										@forelse($clients as $client)
+											<option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
+												{{ $client->user->name ?? $client->id_name ?? 'No Name' }}
+											</option>
+										@empty
+											<option value="" disabled>Tidak ada data client</option>
+										@endforelse
+									</select>
+								</div>
+							@else
+								<h5>Kartu Produksi</h5>
+							@endif
+							<a href="{{ route('cards.create') }}" class="btn btn-primary btn-sm">
 								<i class="fa fa-plus"></i> Tambah Kartu Produksi
 							</a>
 						</div>
@@ -113,6 +129,18 @@
 	@push('scripts')
 		<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
 		<script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+		<script>
+			$(document).ready(function() {
+				$('#clientFilter').on('change', function() {
+					var clientId = $(this).val();
+					if (clientId) {
+						window.location.href = "{{ route('cards.index') }}?client_id=" + clientId;
+					} else {
+						window.location.href = "{{ route('cards.index') }}";
+					}
+				});
+			});
+		</script>
 	@endpush
 
 @endsection

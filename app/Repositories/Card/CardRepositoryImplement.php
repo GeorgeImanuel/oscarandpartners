@@ -43,13 +43,11 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     public function getAllWithFilter(array $data){
         $query = $this->model->with(['client.relation', 'policy.object', 'cardStatus', 'insurancePaymentStatus']);
 
-        // Filter by role - pastikan client hanya lihat data mereka
         $user = auth()->user();
         if ($user && $user->hasRole('client')) {
             if ($user->client) {
                 $query->where('client_id', $user->client->id);
             } else {
-                // Jika client tapi tidak punya client, return empty
                 $query->whereRaw('1 = 0');
             }
         }
@@ -64,7 +62,6 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             $query->where('card_status_id', $data['status_id']);
         }
 
-        // Jika client_id dikirim dari parameter, filter tambahan (untuk admin)
         if(isset($data['client_id']) && (!$user || !$user->hasRole('client'))){
             $query->where('client_id', $data['client_id']);
         }

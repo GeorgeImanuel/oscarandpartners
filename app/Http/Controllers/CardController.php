@@ -46,10 +46,18 @@ class CardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cards = $this->cardService->getAllWithFilter([]);
-        return view('cards.index', compact('cards'));
+        $filters = [];
+        
+        if ($request->has('client_id') && $request->client_id != '') {
+            $filters['client_id'] = $request->client_id;
+        }
+        
+        $cards = $this->cardService->getAllWithFilter($filters);
+        $clients = $this->clientService->getAllWithRelations();
+        
+        return view('cards.index', compact('cards', 'clients'));
     }
 
     /**
