@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
-            $table->string('policy_number')->comment('No Polis Fisik');
+            $table->string('policy_number')->unique()->comment('No Polis Fisik');
             $table->foreignId('object_id')->constrained('objects')->onDelete('cascade')->comment('Link ke Objek Asuransi');
             $table->string('coverage_code');
             $table->foreign('coverage_code')->references('code')->on('coverages')->onDelete('cascade')->comment('Link ke Coverage');

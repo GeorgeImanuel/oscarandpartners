@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-md-12">
                             <label class="form-label" for="policy_id">Nomor Polis</label>
-                            <select id="policy_id" class="form-control basic-single-select2 @error('policy_id') is-invalid @enderror" name="policy_id" required>
+                            <select id="policy_id" class="form-control policy-number-select2 @error('policy_id') is-invalid @enderror" name="policy_id" required>
                                 <option value=""></option>
                                 @foreach ($policies as $policy)
                                     <option value="{{ $policy->id }}" {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
@@ -94,13 +94,15 @@
                             @enderror
                         </div>
 
-                        {{-- Dynamic Policy Details Component --}}
-                        <div class="col-md-12 mt-3">
+                        {{-- Exist Policy Detail --}}
+                        <div class="col-md-12">
                             @livewire('policy-details', ['policyId' => isset($card) ? $card->policy_id : old('policy_id')])
                         </div>
 
                         {{-- New Policy Input --}}
-                        @livewire('policy-form')
+                        <div class="col-md-12">
+                            @livewire('policy-form')
+                        </div>
 
                         {{-- SECTION: HARGA PERTANGGUNGAN --}}
                         <div id="policy-prices" class="col-md-12 input-group-solid">
@@ -229,6 +231,7 @@
         <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
         <script src="{{ asset('assets/js/form-validation.js') }}"></script>
         <script src="{{ asset('assets/js/formula.js') }}"></script>
+        <script src="{{ asset('assets/js/multiple-add.js') }}"></script>
         {{-- <script src="{{ asset('assets/js/datepicker/date-picker/datepicker.js') }}"></script>
 		<script src="{{ asset('assets/js/datepicker/date-picker/datepicker.en.js') }}"></script>
 		<script src="{{ asset('assets/js/datepicker/date-picker/datepicker.custom.js') }}"></script>
@@ -248,6 +251,55 @@
                 $(".basic-single-select2").select2({
                     placeholder: "Pilih ",
                     allowClear: true,
+                });
+
+                // Custom Select2 for Existing and New data open
+                $(".policy-number-select2").select2({
+                    placeholder: "Pilih ",
+                    allowClear: true,
+                    tags: true,
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+
+                        if (term === '') {
+                            return null;
+                        }
+
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true
+                        }
+                    },
+                    templateResult: function(data) {
+                        var $result = $("<span></span>");
+                        $result.text(data.text);
+
+                        if (data.newTag) {
+                            $result.append(" <em class='text-primary'>(Klik untuk tambah item)</em>");
+                        }
+
+                        return $result;
+                    }
+                }).on('select2:select', function(e) {
+                    var data = e.params.data;
+
+                    if (data.newTag) {
+                        // Show new policy form, hide existing policy
+                        $('#new-policy').show();
+                        $('#policy_id').attr('name', 'policy_name');
+                        $('#existing-policy').hide();
+                    } else {
+                        // Show existing policy, hide new policy form
+                        $('#existing-policy').show();
+                        $('#policy_id').attr('name', 'policy_id');
+                        $('#new-policy').hide();
+                    }
+                }).on('select2:unselect', function(e) {
+                    console.log('Selection unselected');
+                    $('#new-policy').hide();
+                    $('#policy_id').attr('name', 'policy_id');
+                    $('#existing-policy').show();
                 });
 
                 $(".add-single-select2").select2({

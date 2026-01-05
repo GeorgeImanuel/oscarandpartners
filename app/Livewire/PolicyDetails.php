@@ -10,6 +10,7 @@ class PolicyDetails extends Component
 {
     public $policyId;
     public $policy = null;
+    public $notFound = false;
 
     protected $policyService;
 
@@ -35,10 +36,14 @@ class PolicyDetails extends Component
     {
         if ($this->policyId) {
             $this->policy = $this->policyService->findPoliciesWithRelations($this->policyId);
-            
-            // dd(calculate_payment($this->policy->object->object_value, $this->policy->premi_percentage, $this->policy->policy_fee, $this->policy->commision_percentage, $this->policy->tax_percentage, $this->policy->discount));
-            // Dispatch event with object value for auto-fill
-            if ($this->policy && $this->policy->object) {
+            // dd($this->policy);
+            // If policy not found, do nothing
+            if (!$this->policy) {
+                $this->notFound = true;
+                return;
+            }
+
+            if ($this->policy->object) {
                 $this->dispatch('policyLoaded', objectValue: $this->policy->object->object_value);
             }
         } else {

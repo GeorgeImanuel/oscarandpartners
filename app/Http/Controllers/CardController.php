@@ -48,6 +48,8 @@ class CardController extends Controller
      */
     public function index()
     {
+        // auth()->user()->hasRole('client');
+        // ['client_id' => $client_id];
         $cards = $this->cardService->getAllWithRelations();
         return view('cards.index', compact('cards'));
     }
