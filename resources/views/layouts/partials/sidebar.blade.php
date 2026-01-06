@@ -56,6 +56,20 @@
                                 </a>
                             </li>
 
+                            <li>
+                                <a href="{{ route('cards.reportByRelation') }}" class="{{ routeActive('cards.reportByRelation') }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Kartu Per Relasi</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('cards.reportByObject') }}" class="{{ routeActive('cards.reportByObject') }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Kartu Per Objek</span>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
                     <li class="sidebar-main-title">

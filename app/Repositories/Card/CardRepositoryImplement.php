@@ -58,8 +58,9 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             });
         }
 
-        if(isset($data['status_id'])){
-            $query->where('card_status_id', $data['status_id']);
+
+        if(isset($data['card_status_id'])){
+            $query->where('card_status_id', $data['card_status_id']);
         }
 
         if(isset($data['client_id']) && (!$user || !$user->hasRole('client'))){
@@ -69,6 +70,12 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
         if(isset($data['relation_id'])){
             $query->whereHas('client', function($q) use ($data) {
                 $q->where('relation_id', $data['relation_id']);
+            });
+        }
+
+        if(isset($data['object_id'])){
+            $query->whereHas('policy', function($q) use ($data) {
+                $q->where('object_id', $data['object_id']);
             });
         }
 
