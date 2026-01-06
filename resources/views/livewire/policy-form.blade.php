@@ -40,23 +40,25 @@
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
-        <h6>Asuransi</h6>
-        <small class="text-muted">Total persentase harus 100%</small>
-        <button type="button" class="btn btn-primary btn-sm add-item-btn float-end" class="add-item-btn" data-target="item-1">
-            <i class="fa fa-plus"></i> Tambah Asuransi
-        </button>
-        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert" id="percentage-info" style="display: none;">
-            <span>Total Persentase: <strong id="total-percentage">0</strong>%</span>
-        </div>
-        <div class="alert alert-danger" role="alert" id="percentage-error" style="display: none;">
-            Total persentase asuransi harus tepat 100%
+        <label>List Asuransi</label>
+        <div class="row">
+            <div class="col-md">
+                <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert" id="percentage-info">
+                    <span>Total Persentase: <strong id="total-percentage">0</strong>%</span>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-primary btn-sm add-item-btn float-end" class="add-item-btn" data-target="item-1">
+                    <i class="fa fa-plus"></i> Tambah Asuransi
+                </button>
+            </div>
         </div>
         <div class="item-list">
-            <div class="insurance-row mb-3 p-3 border rounded item item-1" style="display: none">
-                <div class="row align-items-end">
-                    <div class="col-md-6 mb-2 mb-md-0">
+            <div class="insurance-row mb-2 px-3 py-2 border rounded item item-1" style="display: none">
+                <div class="row">
+                    <div class="col-md">
                         <label class="form-label">Asuransi <span class="item-count"></span></label>
-                        <select class="form-select insurance-select" name="insurance_id[]" style="width: 100%;" required>
+                        <select class="form-select add-select2" name="insurance_id[]" style="width: 100%;" required>
                             <option value="">- Pilih Asuransi -</option>
                             @foreach ($insurances as $insurance)
                                 <option value="{{ $insurance->id }}">
@@ -65,19 +67,18 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 mb-2 mb-md-0">
+                    <div class="col-md-auto">
                         <label class="form-label">Persentase (%)</label>
                         <input type="number" class="form-control insurance-percentage" name="percentage[]" value="" placeholder="0" min="0" max="100" step="0.01">
                     </div>
-                    <div class="col-md-2 mb-2 mb-md-0">
-                        <label class="form-label">Asuransi Utama</label>
+                    <div class="col-md-auto pt-3">
                         <div class="form-check">
                             <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1">
-                            <label class="form-check-label">Ya</label>
+                            <label class="form-check-label">Asuransi <br> Utama</label>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-danger remove-item-btn">
+                    <div class="col-md-auto pt-3">
+                        <button type="button" class="btn btn-danger btn-xs remove-item-btn">
                             <i class="fa fa-trash"></i> Hapus
                         </button>
                     </div>

@@ -65,12 +65,47 @@ $(document).on("click", ".add-item-btn", function () {
         selects.each(function () {
             $(this).removeClass('select2-hidden-accessible');
             $(this).next('span.select2').remove();
-            var label = $(this).siblings("label");
-            var labelText = label.length ? "Pilih " + label.text() : "Pilih Item";
-            $(this).select2({
-                placeholder: labelText,
-                allowClear: true,
-            });
+            
+            // Check if it's an insurance select
+            if ($(this).hasClass('add-select2')) {
+                // Initialize with custom select2 for adding new insurances
+                var $select = $(this);
+                var label = $select.siblings("label");
+                var labelText = label.length ? label.text().replace(/\d+/, '').trim() : "Data";
+                
+                $select.select2({
+                    placeholder: "Pilih " + labelText,
+                    allowClear: true,
+                    tags: true,
+                    createTag: function (params) {
+                        var term = $.trim(params.term);
+                        if (term === "") {
+                            return null;
+                        }
+                        return {
+                            id: term,
+                            text: term,
+                            newTag: true,
+                        };
+                    },
+                    templateResult: function (data) {
+                        var $result = $("<span></span>");
+                        $result.text(data.text);
+                        if (data.newTag) {
+                            $result.append(" <em class='text-primary'>(Klik untuk tambah data)</em>");
+                        }
+                        return $result;
+                    }
+                });
+            } else {
+                // Default select2 initialization
+                var label = $(this).siblings("label");
+                var labelText = label.length ? "Pilih " + label.text() : "Pilih Data";
+                $(this).select2({
+                    placeholder: labelText,
+                    allowClear: true,
+                });
+            }
         });
 
         // Attach remove functionality

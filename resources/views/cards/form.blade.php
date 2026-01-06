@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-12 mt-3">
                                 <label class="form-label" for="card_status_id">Tipe Kartu</label>
-                                <select id="card_status_id" class="form-control basic-single-select2 @error('card_status_id') is-invalid @enderror" name="card_status_id" required>
+                                <select id="card_status_id" class="form-control select2-basic-single @error('card_status_id') is-invalid @enderror" name="card_status_id" required>
                                     <option value=""></option>
                                     @foreach ($cardStatuses as $status)
                                         <option value="{{ $status->id }}" {{ isset($card) ? ($card->card_status_id == $status->id ? 'selected' : '') : (old('card_status_id') == $status->id ? 'selected' : '') }}>
@@ -66,7 +66,7 @@
 
                             <div id="parent_card_container" class="col-md-12" style="display:none;">
                                 <label class="form-label" for="parent_card_id">Kartu Produksi Sebelumnya</label>
-                                <select id="parent_card_id" class="form-control basic-single-select2 @error('parent_card_id') is-invalid @enderror" name="parent_card_id">
+                                <select id="parent_card_id" class="form-control select2-basic-single @error('parent_card_id') is-invalid @enderror" name="parent_card_id">
                                     <option value=""></option>
                                     @foreach ($parentCards as $parentCard)
                                         <option value="{{ $parentCard->id }}" {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
@@ -82,7 +82,7 @@
 
                             <div class="col-md-12">
                                 <label class="form-label" for="client_id">Client</label>
-                                <select id="client_id" class="form-control basic-single-select2 @error('client_id') is-invalid @enderror" name="client_id" required>
+                                <select id="client_id" class="form-control select2-basic-single @error('client_id') is-invalid @enderror" name="client_id" required>
                                     <option value=""></option>
                                     @foreach ($clients as $client)
                                         <option value="{{ $client->id }}" {{ isset($card) ? ($card->client_id == $client->id ? 'selected' : '') : (old('client_id') == $client->id ? 'selected' : '') }}>
@@ -100,7 +100,7 @@
 
                     {{-- POLIS INFO START --}}
                     <div class="setup-content" id="step-2">
-                        <div class="row g-3 my-2">
+                        <div class="row g-3">
                             <div class="col-md-12">
                                 <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
@@ -290,209 +290,90 @@
 
     @push('scripts')
         <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+        <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
         <script src="{{ asset('assets/js/form-validation.js') }}"></script>
         <script src="{{ asset('assets/js/formula.js') }}"></script>
         <script src="{{ asset('assets/js/multiple-item.js') }}"></script>
         <script src="{{ asset('assets/js/form-wizard/form-wizard-two.js') }}"></script>
-
-        {{-- <script src="{{ asset('assets/js/datepicker/date-picker/datepicker.js') }}"></script>
-		<script src="{{ asset('assets/js/datepicker/date-picker/datepicker.en.js') }}"></script>
-		<script src="{{ asset('assets/js/datepicker/date-picker/datepicker.custom.js') }}"></script>
-		<script src="{{ asset('assets/js/datepicker/date-time-picker/moment.min.js') }}"></script>
-		<script src="{{ asset('assets/js/datepicker/date-time-picker/tempusdominus-bootstrap-4.min.js') }}"></script>
-		<script src="{{ asset('assets/js/datepicker/date-time-picker/datetimepicker.custom.js') }}"></script> --}}
 
         <script>
             initializeFormValidation({
                 formsSelector: '.needs-validation'
             });
 
-            (function($) {
-                "use strict";
+            // Initialize Policy Select2
+            initCustomSelect2("#policy_id", {
+                placeholder      : "Pilih Polis",
+                newFormId        : '#new-policy',
+                existingDetailsId: '#existing-policy',
+                newNameAttr      : 'policy_name',
+                existingNameAttr : 'policy_id'
+            });
 
-                // Initialize Select2 with tags option for adding new items
-                $(".basic-single-select2").select2({
-                    placeholder: "Pilih ",
-                    allowClear: true,
-                });
+            // Initialize Object Select2
+            initCustomSelect2("#object_id", {
+                placeholder      : "Pilih Objek",
+                newFormId        : '#new-object',
+                existingDetailsId: '#existing-object',
+                newNameAttr      : 'object_name',
+                existingNameAttr : 'object_id'
+            });
 
-                // Custom Select2 for Existing and New data open
-                $(".policy-number-select2").select2({
-                    placeholder: "Pilih Polis",
-                    allowClear: true,
-                    tags: true,
-                    createTag: function(params) {
-                        var term = $.trim(params.term);
+            // Initialize Object Select2
+            initCustomSelect2(".select2-add-single", {
+                placeholder     : "Pilih Asuransi",
+                newNameAttr     : 'insurance_name',
+                existingNameAttr: 'insurance_id'
+            });
 
-                        if (term === '') {
-                            return null;
-                        }
+            // Toggle parent_card_id based on card_status_id
+            function toggleParentCard() {
+                var cardStatusId = $('#card_status_id').val();
+                var parentContainer = $('#parent_card_container');
+                var parentSelect = $('#parent_card_id');
 
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        }
-                    },
-                    templateResult: function(data) {
-                        var $result = $("<span></span>");
-                        $result.text(data.text);
-
-                        if (data.newTag) {
-                            $result.append(" <em class='text-primary'>(Klik untuk tambah item)</em>");
-                        }
-
-                        return $result;
-                    }
-                }).on('select2:select', function(e) {
-                    var data = e.params.data;
-
-                    if (data.newTag) {
-                        // Show new policy form, hide existing policy
-                        $('#new-policy').show();
-                        $('#policy_id').attr('name', 'policy_name');
-                        $('#existing-policy').hide();
-                    } else {
-                        // Show existing policy, hide new policy form
-                        $('#existing-policy').show();
-                        $('#policy_id').attr('name', 'policy_id');
-                        $('#new-policy').hide();
-                    }
-                }).on('select2:unselect', function(e) {
-                    console.log('Selection unselected');
-                    $('#new-policy').hide();
-                    $('#policy_id').attr('name', 'policy_id');
-                    $('#existing-policy').show();
-                });
-
-
-                // Custom Select2 for Existing and New data open
-                $(".object-number-select2").select2({
-                    placeholder: "Pilih Objek",
-                    allowClear: true,
-                    tags: true,
-                    createTag: function(params) {
-                        var term = $.trim(params.term);
-
-                        if (term === '') {
-                            return null;
-                        }
-
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        }
-                    },
-                    templateResult: function(data) {
-                        var $result = $("<span></span>");
-                        $result.text(data.text);
-
-                        if (data.newTag) {
-                            $result.append(" <em class='text-primary'>(Klik untuk tambah item)</em>");
-                        }
-
-                        return $result;
-                    }
-                }).on('select2:select', function(e) {
-                    var data = e.params.data;
-
-                    if (data.newTag) {
-                        // Show new object form, hide existing object
-                        $('#new-object').show();
-                        $('#object_id').attr('name', 'object_name');
-                        $('#existing-object').hide();
-                    } else {
-                        // Show existing object, hide new object form
-                        $('#existing-object').show();
-                        $('#object_id').attr('name', 'object_id');
-                        $('#new-object').hide();
-                    }
-                }).on('select2:unselect', function(e) {
-                    console.log('Selection unselected');
-                    $('#new-object').hide();
-                    $('#object_id').attr('name', 'object_id');
-                    $('#existing-policy').show();
-                });
-
-                $(".add-single-select2").select2({
-                    placeholder: "Pilih ",
-                    allowClear: true,
-                    tags: true,
-                    createTag: function(params) {
-                        var term = $.trim(params.term);
-
-                        if (term === '') {
-                            return null;
-                        }
-
-                        return {
-                            id: term,
-                            text: term,
-                            newTag: true
-                        }
-                    },
-                    templateResult: function(data) {
-                        var $result = $("<span></span>");
-                        $result.text(data.text);
-
-                        if (data.newTag) {
-                            $result.append(" <em class='text-primary'>(Klik untuk tambah item)</em>");
-                        }
-
-                        return $result;
-                    }
-                });
-
-                // Toggle parent_card_id based on card_status_id
-                function toggleParentCard() {
-                    var cardStatusId = $('#card_status_id').val();
-                    var parentContainer = $('#parent_card_container');
-                    var parentSelect = $('#parent_card_id');
-
-                    if (cardStatusId == '2') {
-                        parentContainer.show();
-                        parentSelect.attr('required', true);
-                    } else {
-                        parentContainer.hide();
-                        parentSelect.removeAttr('required');
-                        parentSelect.val('').trigger('change'); // Clear selection
-                    }
+                if (cardStatusId == '2') {
+                    parentContainer.show();
+                    parentSelect.attr('required', true);
+                } else {
+                    parentContainer.hide();
+                    parentSelect.removeAttr('required');
+                    parentSelect.val('').trigger('change'); // Clear selection
                 }
+            }
 
-                // Initialize on page load
-                toggleParentCard();
+            // Initialize on page load
+            toggleParentCard();
 
-                // Listen to card_status_id changes
-                $('#card_status_id').on('change', toggleParentCard);
+            // Listen to card_status_id changes
+            $('#card_status_id').on('change', toggleParentCard);
 
-                // Listen to policy_id dropdown change and update Livewire component
-                $('#policy_id').on('change', function() {
-                    var policyId = $(this).val();
-                    // Find the Livewire component and update policyId
-                    var livewireComponent = Livewire.find(document.querySelector('[wire\\:id]').getAttribute(
-                        'wire:id'));
-                    if (livewireComponent) {
-                        livewireComponent.set('policyId', policyId);
+            // Listen to policy_id dropdown change and update Livewire component
+            $('#policy_id').on('change', function() {
+                var policyId = $(this).val();
+                // Find the Livewire component and update policyId
+                var livewireComponent = Livewire.find(document.querySelector('[wire\\:id]').getAttribute(
+                    'wire:id'));
+                if (livewireComponent) {
+                    livewireComponent.set('policyId', policyId);
+                }
+            });
+
+            // Listen to object_id dropdown change and update Livewire component
+            $('#object_id').on('change', function() {
+                var objectId = $(this).val();
+                // Find all Livewire components and check if they have objectId property
+                document.querySelectorAll('[wire\\:id]').forEach(function(element) {
+                    try {
+                        var component = Livewire.find(element.getAttribute('wire:id'));
+                        if (component && component.$data && 'objectId' in component.$data) {
+                            component.set('objectId', objectId);
+                        }
+                    } catch (e) {
+                        // Skip components that don't have objectId property
                     }
                 });
-
-                // Listen to object_id dropdown change and update Livewire component
-                $('#object_id').on('change', function() {
-                    var objectId = $(this).val();
-                    // Find all Livewire components and check if they have objectId property
-                    document.querySelectorAll('[wire\\:id]').forEach(function(element) {
-                        try {
-                            var component = Livewire.find(element.getAttribute('wire:id'));
-                            if (component && component.$data && 'objectId' in component.$data) {
-                                component.set('objectId', objectId);
-                            }
-                        } catch (e) {
-                            // Skip components that don't have objectId property
-                        }
-                    });
-                });
-            })(jQuery);
+            });
 
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
