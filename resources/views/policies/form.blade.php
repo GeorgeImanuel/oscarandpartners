@@ -89,11 +89,14 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="coverage_percentage">Persentase Coverage (%) <span class="text-danger">*</span></label>
-                        <input class="form-control @error('coverage_percentage') is-invalid @enderror" id="coverage_percentage" name="coverage_percentage" type="number" step="0.01" min="0" max="100" value="{{ isset($policy) ? $policy->coverage_percentage : old('coverage_percentage', '') }}" placeholder="Contoh: 80.50" required />
-                        @error('coverage_percentage')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <label class="form-label" for="coverage_percentage">Persentase Coverage <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input class="form-control @error('coverage_percentage') is-invalid @enderror" id="coverage_percentage" name="coverage_percentage" type="number" step="0.01" min="0" max="100" value="{{ old('coverage_percentage', isset($policy) ? $policy->coverage_percentage * 100 : '') }}" placeholder="Contoh: 80.50" required />
+                            <span class="input-group-text">%</span>
+                            @error('coverage_percentage')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -152,7 +155,7 @@
                                                 </div>
                                                 <input type="text" class="form-control insurance-new-name d-none" name="insurance_new_name[{{ $index }}]" placeholder="Nama Asuransi Baru">
                                                 <button type="button" class="btn btn-outline-primary toggle-insurance-input" title="Tambah Baru">
-                                                    <i class="fa fa-plus">Tambah</i>
+                                                    <i class="fa fa-plus"></i> Baru
                                                 </button>
                                             </div>
                                         </div>
@@ -224,7 +227,7 @@
                                 </div>
                                 <input type="text" class="form-control insurance-new-name d-none" name="insurance_new_name[${insuranceIndex}]" placeholder="Nama Asuransi Baru">
                                 <button type="button" class="btn btn-outline-primary toggle-insurance-input" title="Tambah Baru">
-                                    <i class="fa fa-plus"></i>
+                                    <i class="fa fa-plus"></i> Baru
                                 </button>
                             </div>
                         </div>
