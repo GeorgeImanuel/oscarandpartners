@@ -43,8 +43,8 @@
         <label>List Asuransi</label>
         <div class="row">
             <div class="col-md">
-                <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert" id="percentage-info">
-                    <span>Total Persentase: <strong id="total-percentage">0</strong>%</span>
+                <div id="percentage-info" class="alert alert-info">
+                    Total Persentase Asuransi: <span id="total-percentage">0.00</span>%
                 </div>
             </div>
             <div class="col-md-auto">
@@ -107,4 +107,3 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div> --}}
-

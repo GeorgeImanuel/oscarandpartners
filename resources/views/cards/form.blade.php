@@ -142,7 +142,7 @@
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label class="form-label" for="object_id">Objek <span class="text-danger">*</span></label>
+                                <label class="form-label" for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select class="object-number-select2 @error('object_id') is-invalid @enderror" name="object_id" id="object_id" required style="width: 100%;">
                                     <option value=""></option>
                                     @foreach ($objects ?? [] as $object)
@@ -303,27 +303,20 @@
 
             // Initialize Policy Select2
             initCustomSelect2("#policy_id", {
-                placeholder      : "Pilih Polis",
-                newFormId        : '#new-policy',
+                placeholder: "Pilih Polis",
+                newFormId: '#new-policy',
                 existingDetailsId: '#existing-policy',
-                newNameAttr      : 'policy_name',
-                existingNameAttr : 'policy_id'
+                newNameAttr: 'policy_name',
+                existingNameAttr: 'policy_id'
             });
 
             // Initialize Object Select2
             initCustomSelect2("#object_id", {
-                placeholder      : "Pilih Objek",
-                newFormId        : '#new-object',
+                placeholder: "Pilih Objek",
+                newFormId: '#new-object',
                 existingDetailsId: '#existing-object',
-                newNameAttr      : 'object_name',
-                existingNameAttr : 'object_id'
-            });
-
-            // Initialize Object Select2
-            initCustomSelect2(".select2-add-single", {
-                placeholder     : "Pilih Asuransi",
-                newNameAttr     : 'insurance_name',
-                existingNameAttr: 'insurance_id'
+                newNameAttr: 'object_name',
+                existingNameAttr: 'object_id'
             });
 
             // Toggle parent_card_id based on card_status_id
@@ -429,6 +422,61 @@
                 if (parseFloat($('#object_value').val()) > 0) {
                     update_payment();
                 }
+
+                // Validate insurance percentage sum before form submission
+                $('.needs-validation').on('submit', function(e) {
+                    var totalPercentage = 0;
+                    var hasInsurances = false;
+
+                    // Calculate sum of all visible insurance percentages
+                    $('#new-policy .insurance-percentage').each(function() {
+                        if ($(this).closest('.item').is(':visible')) {
+                            hasInsurances = true;
+                            var value = parseFloat($(this).val()) || 0;
+                            totalPercentage += value;
+                        }
+                    });
+
+                    // Check if new policy form is visible and has insurances
+                    if ($('#new-policy').is(':visible') && hasInsurances) {
+                        if (totalPercentage < 0 || totalPercentage > 100) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            Swal.fire({
+                                title: 'Validasi Gagal',
+                                text: 'Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            return false;
+                        }
+                    }
+                });
+
+                // Update total percentage display in real-time
+                $(document).on('input change', '.insurance-percentage', function() {
+                    var totalPercentage = 0;
+                    $('.insurance-percentage').each(function() {
+                        if ($(this).closest('.item').is(':visible')) {
+                            var value = parseFloat($(this).val()) || 0;
+                            totalPercentage += value;
+                        }
+                    });
+                    $('#total-percentage').text(totalPercentage.toFixed(2));
+                    var infoDiv = $('#percentage-info');
+                    if (totalPercentage > 100 || totalPercentage < 0) {
+                        infoDiv.attr('class', 'alert alert-danger');
+                    } else {
+                        infoDiv.attr('class', 'alert alert-success');
+                    }
+                });
+
+                $(document).on('change', '.is-main-checkbox', function() {
+                    if (this.checked) {
+                        $('.is-main-checkbox').not(this).prop('checked', false);
+                    }
+                });
             });
         </script>
     @endpush
