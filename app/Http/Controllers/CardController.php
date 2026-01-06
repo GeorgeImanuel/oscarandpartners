@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\PaymentStatus;
 use App\Services\Card\CardService;
 use App\Services\Client\ClientService;
+use App\Services\Object\ObjectService;
 use App\Services\Policy\PolicyService;
 use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
@@ -26,6 +27,7 @@ class CardController extends Controller
     private $cardStatusService;
     private $paymentStatusService;
     private $paymentTypeService;
+    private $objectService;
 
     public function __construct(
         CardService $cardService,
@@ -33,7 +35,8 @@ class CardController extends Controller
         PolicyService $policyService,
         CardStatusService $cardStatusService,
         PaymentStatusService $paymentStatusService,
-        PaymentTypeService $paymentTypeService
+        PaymentTypeService $paymentTypeService,
+        ObjectService $objectService
     ) {
         $this->cardService = $cardService;
         $this->clientService = $clientService;
@@ -41,6 +44,7 @@ class CardController extends Controller
         $this->cardStatusService = $cardStatusService;
         $this->paymentStatusService = $paymentStatusService;
         $this->paymentTypeService = $paymentTypeService;
+        $this->objectService = $objectService;
     }
 
     /**
@@ -59,12 +63,13 @@ class CardController extends Controller
      */
     public function create()
     {
+        $objects      = $this->objectService->all();
         $clients      = $this->clientService->all();
         $policies     = $this->policyService->getAllFreePolicies();
         $cardStatuses = $this->cardStatusService->all();
         $parentCards  = $this->cardService->getAllParent();
 
-        return view('cards.form', compact('clients', 'policies', 'cardStatuses','parentCards'));
+        return view('cards.form', compact('objects','clients', 'policies', 'cardStatuses','parentCards'));
     }
 
     /**

@@ -1,46 +1,46 @@
-    <?php
+<?php
 
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\ObjectModel;
+use App\Services\Object\ObjectService;
 use App\Services\Policy\PolicyService;
 use App\Services\Coverage\CoverageService;
 use App\Services\Insurance\InsuranceService;
-use App\Services\Object\ObjectService;
 use App\Services\PolicyInsurance\PolicyInsuranceService;
 
 class PolicyForm extends Component
 {
-    public $policyInsurances, $coverages, $insurances,$objects;
-
-    private $policyService;
-    private $coverageService;
-    private $policyInsuranceService;
-    private $insuranceService;
-    private $objectService;
+    protected $objectService;
+    protected $coverageService;
+    protected $insuranceService;
+    protected $policyInsuranceService;
 
     public function boot(
-        PolicyInsuranceService $policyInsuranceService,
+        ObjectService $objectService,
         CoverageService $coverageService,
         InsuranceService $insuranceService,
-        ObjectService $objectService
+        PolicyInsuranceService $policyInsuranceService
     ) {
-        $this->policyInsuranceService = $policyInsuranceService;
+        $this->objectService = $objectService;
         $this->coverageService = $coverageService;
         $this->insuranceService = $insuranceService;
-        $this->objectService = $objectService;
-    }
-
-    public function mount()
-    {
-        $this->coverages        = $this->coverageService->all();
-        $this->insurances       = $this->insuranceService->all();
-        $this->objects          = $this->objectService->all();
-        $this->policyInsurances = $this->policyInsuranceService->all();
+        $this->policyInsuranceService = $policyInsuranceService;
     }
 
     public function render()
     {
-        return view('livewire.policy-form');
+        $objects = $this->objectService->all();
+        $coverages = $this->coverageService->all();
+        $insurances = $this->insuranceService->all();
+        $policyInsurances = $this->policyInsuranceService->all();
+
+        return view('livewire.policy-form', [
+            'objects' => $objects,
+            'coverages' => $coverages,
+            'insurances' => $insurances,
+            'policyInsurances' => $policyInsurances,
+        ]);
     }
 }

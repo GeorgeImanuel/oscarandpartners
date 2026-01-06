@@ -8,37 +8,37 @@ use App\Repositories\ObjectType\ObjectTypeRepository;
 use App\Repositories\Part\PartRepository;
 use App\Models\ObjectPart;
 
-class ObjectServiceImplement extends Service implements ObjectService{
+class ObjectServiceImplement extends Service implements ObjectService
+{
 
     /**
      * set title message api for CRUD
      * @param string $title
      */
-     protected string $title = "";
-     /**
+    protected string $title = "";
+    /**
      * uncomment this to override the default message
      * protected string $create_message = "";
      * protected string $update_message = "";
      * protected string $delete_message = "";
      */
 
-     /**
+    /**
      * don't change $this->mainRepository variable name
      * because used in extends service class
      */
-     protected ObjectRepository $mainRepository;
-     protected ObjectTypeRepository $objectTypeRepository;
-     protected PartRepository $partRepository;
+    protected ObjectRepository $mainRepository;
+    protected ObjectTypeRepository $objectTypeRepository;
+    protected PartRepository $partRepository;
 
     public function __construct(
         ObjectRepository $mainRepository,
         ObjectTypeRepository $objectTypeRepository,
         PartRepository $partRepository
-    )
-    {
-      $this->mainRepository = $mainRepository;
-      $this->objectTypeRepository = $objectTypeRepository;
-      $this->partRepository = $partRepository;
+    ) {
+        $this->mainRepository = $mainRepository;
+        $this->objectTypeRepository = $objectTypeRepository;
+        $this->partRepository = $partRepository;
     }
 
     /**
@@ -73,7 +73,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
             foreach ($data['part_id'] as $index => $partId) {
                 $partName = $data['part_name'][$index] ?? null;
                 $partValue = $data['part_value'][$index] ?? 0;
-                
+
                 // If part_id is not null, use part_id; else use part_name
                 if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
                     $finalPartId = intval($partId);
@@ -81,7 +81,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
                     $part = $this->partRepository->firstOrCreate(['name' => $partName]);
                     $finalPartId = $part->id;
                 }
-                
+
                 ObjectPart::create([
                     'object_id' => $object->id,
                     'part_id' => $finalPartId,
@@ -99,7 +99,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
     public function updateWithParts($id, array $data)
     {
         $object = $this->mainRepository->find($id);
-        
+
         if (!$object) {
             return false;
         }
@@ -125,7 +125,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
             foreach ($data['part_id'] as $index => $partId) {
                 $partName = $data['part_name'][$index] ?? null;
                 $partValue = $data['part_value'][$index] ?? 0;
-                
+
                 // If part_id is not null, use part_id; else use part_name
                 if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
                     $finalPartId = intval($partId);
@@ -133,7 +133,7 @@ class ObjectServiceImplement extends Service implements ObjectService{
                     $part = $this->partRepository->firstOrCreate(['name' => $partName]);
                     $finalPartId = $part->id;
                 }
-                
+
                 ObjectPart::create([
                     'object_id' => $id,
                     'part_id' => $finalPartId,
