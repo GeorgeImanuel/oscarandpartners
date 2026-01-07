@@ -21,9 +21,36 @@
 			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header pb-0">
-						<div class="d-flex justify-content-between align-items-center">
-							<h5>Kartu Produksi</h5>
-							<a href="{{ route('cards.create') }}" class="btn btn-primary">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							@if(auth()->user()->hasRole(['owner', 'admin']))
+								<div class="d-flex gap-2 align-items-center">
+									<label for="clientFilter" class="mb-0 me-2">Filter Client:</label>
+									<select id="clientFilter" class="form-select" style="width: 250px;">
+										<option value="">Semua Client</option>
+										@forelse($clients as $client)
+											<option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
+												{{ $client->user->name ?? $client->id_name ?? 'No Name' }}
+											</option>
+										@empty
+											<option value="" disabled>Tidak ada data client</option>
+										@endforelse
+									</select>
+								</div>
+							@endif
+							<div class="d-flex gap-2 align-items-center">
+								<label for="statusFilter" class="mb-0 me-2">Filter Status:</label>
+								<select id="statusFilter" class="form-select" style="width: 250px;">
+									<option value="">Semua Status</option>
+									@forelse($cardStatuses as $status)
+										<option value="{{ $status->id }}" {{ request('card_status_id') == $status->id ? 'selected' : '' }}>
+											{{ $status->name }}
+										</option>
+									@empty
+										<option value="" disabled>Tidak ada data status</option>
+									@endforelse
+								</select>
+							</div>
+							<a href="{{ route('cards.create') }}" class="btn btn-primary btn-sm">
 								<i class="fa fa-plus"></i> Tambah Kartu Produksi
 							</a>
 						</div>
@@ -113,6 +140,36 @@
 	@push('scripts')
 		<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
 		<script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+		<script>
+			$(document).ready(function() {
+				function buildFilterUrl() {
+					var params = [];
+					var clientId = $('#clientFilter').val();
+					var statusId = $('#statusFilter').val();
+					
+					if (clientId) {
+						params.push('client_id=' + clientId);
+					}
+					if (statusId) {
+						params.push('card_status_id=' + statusId);
+					}
+					
+					var url = "{{ route('cards.index') }}";
+					if (params.length > 0) {
+						url += '?' + params.join('&');
+					}
+					return url;
+				}
+				
+				$('#clientFilter').on('change', function() {
+					window.location.href = buildFilterUrl();
+				});
+				
+				$('#statusFilter').on('change', function() {
+					window.location.href = buildFilterUrl();
+				});
+			});
+		</script>
 	@endpush
 
 @endsection

@@ -20,7 +20,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="card">
-					<form action="{{ isset($card) ? route('production-cards.update', $card->id) : route('production-cards.store') }}" method="POST" class="needs-validation" novalidate="">
+					<form action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}" method="POST" class="needs-validation" novalidate="">
 						@csrf
 						@if(isset($card))
 							@method('PUT')
@@ -214,7 +214,7 @@
 
 						</div>
 						<div class="card-footer	">
-							<a href="{{ route('production-cards.index') }}" class="btn btn-light">Kembali</a>
+							<a href="{{ route('cards.index') }}" class="btn btn-light">Kembali</a>
 							<button class="btn btn-primary float-end" type="submit">Simpan</button>
 						</div>
 				</div>

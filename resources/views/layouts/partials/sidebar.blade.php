@@ -1,3 +1,8 @@
+@php
+    use Carbon\Carbon;
+    $now = Carbon::now();
+@endphp
+
 <header class="main-nav">
     <div class="sidebar-user text-center">
         <a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" src="{{asset('assets/images/dashboard/1.png')}}" alt="" />
@@ -23,8 +28,49 @@
                             <h6>Kartu Produksi</h6>
                         </div>
                     </li>
+
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav {{ routeActive(['cards.index','cards.create']) }}" href="{{ route('cards.index') }}"><i data-feather="file-text"></i><span>Kartu Produksi</span></a>
+                        <a class="nav-link menu-title" href="javascript:void(0)">
+                            <i data-feather="folder"></i>
+                            <span>Kartu Produksi</span>
+                            </a>
+
+                        <ul class="nav-submenu menu-content"> <li>
+                                <a href="{{ route('cards.index') }}" class="{{ routeActive(['cards.index','cards.create']) }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Semua Kartu</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('cards.thisMonth') }}" class="{{ routeActive('cards.thisMonth') }}">
+                                    <i data-feather="calendar"></i>
+                                    <span>Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('cards.nextMonth') }}" class="{{ routeActive('cards.nextMonth') }}">
+                                    <i data-feather="calendar"></i>
+                                    <span>Bulan Depan ( {{ $now->copy()->addMonth()->translatedFormat('F Y') }} )</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('cards.reportByRelation') }}" class="{{ routeActive('cards.reportByRelation') }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Kartu Per Relasi</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('cards.reportByObject') }}" class="{{ routeActive('cards.reportByObject') }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Kartu Per Objek</span>
+                                </a>
+                            </li>
+
+                        </ul>
                     </li>
                     <li class="sidebar-main-title">
                         <div><h6>Polis</h6></div>

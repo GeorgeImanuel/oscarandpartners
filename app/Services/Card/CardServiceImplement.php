@@ -179,4 +179,8 @@ class CardServiceImplement extends Service implements CardService
     {
         return $this->mainRepository->delete($id);
     }
+
+    public function getAllWithFilter(array $data){
+        return $this->mainRepository->getAllWithFilter($data);
+    }
 }

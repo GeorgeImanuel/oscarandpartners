@@ -144,4 +144,12 @@ class ObjectServiceImplement extends Service implements ObjectService
 
         return $updated;
     }
+
+    /**
+     * Get all objects by relation with filter
+     */
+    public function getAllByRelationWithFilter(array $filters = [])
+    {
+        return $this->mainRepository->getAllByRelationWithFilter($filters);
+    }
 }

@@ -8,4 +8,5 @@ interface CardRepository extends Repository
 {
     public function getAllParent();
     public function getAllWithRelations();
+    public function getAllWithFilter(array $data);
 }

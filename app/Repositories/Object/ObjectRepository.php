@@ -7,4 +7,5 @@ use LaravelEasyRepository\Repository;
 interface ObjectRepository extends Repository{
 
     public function getAllWithRelations();
+    public function getAllByRelationWithFilter(array $filters = []);
 }
