@@ -138,6 +138,7 @@ $(document).on("click", ".remove-item-btn", function () {
             if ($itemList.find(".item").length === 1) {
                 return;
             } else {
+                
                 const container = $multipleItemContainer.find(".item-list");
                 $(this).closest(".item").remove();
 

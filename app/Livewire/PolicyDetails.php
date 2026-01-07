@@ -36,15 +36,17 @@ class PolicyDetails extends Component
     {
         if ($this->policyId) {
             $this->policy = $this->policyService->findPoliciesWithRelations($this->policyId);
-            // dd($this->policy);
-            // If policy not found, do nothing
             if (!$this->policy) {
                 $this->notFound = true;
                 return;
             }
 
             if ($this->policy->object) {
-                $this->dispatch('policyLoaded', objectValue: $this->policy->object->object_value);
+                $this->dispatch(
+                    'policyLoaded',
+                    objectValue: $this->policy->object->object_value,
+                    objectId: $this->policy->object->id
+                );
             }
         } else {
             $this->policy = null;

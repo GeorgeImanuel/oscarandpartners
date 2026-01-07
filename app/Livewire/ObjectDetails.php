@@ -32,11 +32,17 @@ class ObjectDetails extends Component
         $this->loadObject();
     }
 
+    public function handleObjectIdChanged($objectId)
+    {
+        $this->objectId = $objectId;
+        $this->loadObject();
+    }
+
     public function loadObject()
     {
         if ($this->objectId) {
-            $this->object = $this->objectService->findObjectsWithRelations($this->objectId);
-            
+            $this->object = $this->objectService->find($this->objectId);
+
             // If object not found, do nothing
             if (!$this->object) {
                 $this->notFound = true;
@@ -44,7 +50,7 @@ class ObjectDetails extends Component
             }
 
             // Dispatch event with object value
-            $this->dispatch('objectLoaded', objectValue: $this->object->object_value);
+            $this->dispatch('objectLoaded', object: $this->object);
         } else {
             $this->object = null;
         }

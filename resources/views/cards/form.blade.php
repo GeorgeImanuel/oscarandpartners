@@ -157,8 +157,8 @@
                             </div>
 
                             {{-- Exist Policy Detail --}}
-                            <div class="col-md-12">
-                                @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')])
+                            <div class="col-md-12" id="object-details-container">
+                                @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details'))
                             </div>
 
                             {{-- New Policy Input --}}
@@ -298,7 +298,53 @@
 
         <script>
             initializeFormValidation({
-                formsSelector: '.needs-validation'
+                customValidator: function(form, fields) {
+                    var errors = [];
+                    // Example: Check if every location has at least 1 BoQ entry
+                    var insurance_percentages = $(form).find('.insurance-percentage');
+                    var totalPercentage = 0;
+                    insurance_percentages.each(function() {
+                        if ($(this).closest('.item').is(':visible')) {
+                            var value = parseFloat($(this).val()) || 0;
+                            totalPercentage += value;
+                        }
+                    });
+
+                    if (totalPercentage < 0 || totalPercentage > 100) {
+                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
+                        errors.push({
+                            field: '.insurance-percentage',
+                            message: 'Total persentase asuransi harus antara 0-100%'
+                        });
+                    };
+
+                    // Check if at least one is-main-checkbox is checked
+                    var hasMainInsurance = false;
+                    var hasInsurances = false;
+
+                    $('#new-policy .is-main-checkbox').each(function() {
+                        if ($(this).closest('.item').is(':visible')) {
+                            hasInsurances = true;
+                            if ($(this).is(':checked')) {
+                                hasMainInsurance = true;
+                            }
+                        }
+                    });
+
+                    // Only validate if new policy form is visible and has insurance items
+                    if ($('#new-policy').is(':visible') && hasInsurances && !hasMainInsurance) {
+                        alertWarning('Minimal satu asuransi harus dipilih sebagai asuransi utama', '');
+                        errors.push({
+                            field: '.is-main-checkbox',
+                            message: 'Minimal satu asuransi harus dipilih sebagai asuransi utama'
+                        });
+                    }
+
+                    return {
+                        isValid: errors.length === 0,
+                        errors: errors
+                    };
+                },
             });
 
             // Initialize Policy Select2
@@ -306,7 +352,7 @@
                 placeholder: "Pilih Polis",
                 newFormId: '#new-policy',
                 existingDetailsId: '#existing-policy',
-                newNameAttr: 'policy_name',
+                newNameAttr: 'policy_number',
                 existingNameAttr: 'policy_id'
             });
 
@@ -318,9 +364,15 @@
                 newNameAttr: 'object_name',
                 existingNameAttr: 'object_id'
             });
+            // Initialize Object Select2
+            initCustomSelect2("#object_type_id", {
+                placeholder: "Pilih Tipe Objek",
+                newNameAttr: 'object_type_name',
+                existingNameAttr: 'object_type_id'
+            });
 
             // Toggle parent_card_id based on card_status_id
-            function toggleParentCard() {
+            $('#card_status_id').on('change', function() {
                 var cardStatusId = $('#card_status_id').val();
                 var parentContainer = $('#parent_card_container');
                 var parentSelect = $('#parent_card_id');
@@ -333,13 +385,7 @@
                     parentSelect.removeAttr('required');
                     parentSelect.val('').trigger('change'); // Clear selection
                 }
-            }
-
-            // Initialize on page load
-            toggleParentCard();
-
-            // Listen to card_status_id changes
-            $('#card_status_id').on('change', toggleParentCard);
+            });
 
             // Listen to policy_id dropdown change and update Livewire component
             $('#policy_id').on('change', function() {
@@ -352,39 +398,55 @@
                 }
             });
 
-            // Listen to object_id dropdown change and update Livewire component
             $('#object_id').on('change', function() {
                 var objectId = $(this).val();
-                // Find all Livewire components and check if they have objectId property
-                document.querySelectorAll('[wire\\:id]').forEach(function(element) {
-                    try {
-                        var component = Livewire.find(element.getAttribute('wire:id'));
-                        if (component && component.$data && 'objectId' in component.$data) {
+                console.log('Object ID changed:', objectId);
+
+                if (!objectId) {
+                    console.log('No object ID selected');
+                    return;
+                }
+
+                // Find the object-details component
+                try {
+                    var container = document.querySelector('#object-details-container [wire\\:id]');
+                    if (container) {
+                        var wireId = container.getAttribute('wire:id');
+                        var component = Livewire.find(wireId);
+                        if (component) {
+                            console.log('Setting objectId on component:', objectId);
                             component.set('objectId', objectId);
+                        } else {
+                            console.warn('Component not found with wire:id:', wireId);
                         }
-                    } catch (e) {
-                        // Skip components that don't have objectId property
+                    } else {
+                        console.warn('No Livewire component found in object-details-container');
                     }
-                });
+                } catch (e) {
+                    console.error('Error updating object component:', e);
+                }
             });
+
 
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
                 Livewire.on('policyLoaded', (event) => {
                     const objectValue = event.objectValue || event[0]?.objectValue || 0;
+                    const objectId = event.objectId || event[0]?.objectId || null;
                     console.log('Policy - Object value received:', objectValue);
                     if (objectValue > 0) {
                         $('#object_value').val(objectValue);
                     }
+                    if (objectId) {
+                        // Set the object_id select2 value
+                        $('#object_id').val(objectId).trigger('change').prop('disabled', true);
+                    }
+                    update_payment(); // Trigger calculation when policy is loaded
                 });
 
                 Livewire.on('objectLoaded', (event) => {
-                    const objectValue = event.objectValue || event[0]?.objectValue || 0;
-                    console.log('Object - Object value received:', objectValue);
-                    if (objectValue > 0) {
-                        $('#object_value').val(objectValue);
-                        update_payment(); // Trigger calculation when object value changes
-                    }
+                    const object = event.object || event[0]?.object || 0;
+                    console.log('Object received:', object);
                 });
             });
 

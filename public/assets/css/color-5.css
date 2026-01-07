@@ -11771,6 +11771,23 @@ label {
 .input-group-solid .input-group-text, .input-group-solid .form-control {
   background: #e6edef; }
 
+input:read-only {
+    background-color: #e6edef;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+select:read-only {
+    background-color: #e6edef;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.form-control:read-only {
+    background-color: #e6edef;
+    cursor: not-allowed;
+}
+
 .input-group-air {
   -webkit-box-shadow: 0 3px 20px 0 #efefef;
           box-shadow: 0 3px 20px 0 #efefef; }

@@ -43,21 +43,22 @@
         <label>List Asuransi</label>
         <div class="row">
             <div class="col-md">
-                <div id="percentage-info" class="alert alert-info">
-                    Total Persentase Asuransi: <span id="total-percentage">0.00</span>%
+                <div id="percentage-info" class="alert alert-danger py-2">
+                    <strong>Total Persentase Asuransi: <span id="total-percentage">0.00</span>%</strong><br>
+                    <small>Total persentasi harus 100%</small>
                 </div>
             </div>
             <div class="col-md-auto">
-                <button type="button" class="btn btn-primary btn-sm add-item-btn float-end" class="add-item-btn" data-target="item-1">
+                <button type="button" class="btn btn-primary btn-sm add-item-btn float-end mt-4" class="add-item-btn" data-target="item-1">
                     <i class="fa fa-plus"></i> Tambah Asuransi
                 </button>
             </div>
         </div>
-        <div class="item-list">
-            <div class="insurance-row mb-2 px-3 py-2 border rounded item item-1" style="display: none">
+        <div class="item-list pt-2">
+            <div class="mb-2 px-3 py-2 border rounded item item-1">
                 <div class="row">
                     <div class="col-md">
-                        <label class="form-label">Asuransi <span class="item-count"></span></label>
+                        <label class="form-label">Asuransi <span class="item-count">1</span></label>
                         <select class="form-select add-select2" name="insurance_id[]" style="width: 100%;" required>
                             <option value="">- Pilih Asuransi -</option>
                             @foreach ($insurances as $insurance)
@@ -74,11 +75,11 @@
                     <div class="col-md-auto pt-3">
                         <div class="form-check">
                             <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1">
-                            <label class="form-check-label">Asuransi <br> Utama</label>
+                            <label class="form-check-label">Asuransi Utama</label>
                         </div>
                     </div>
-                    <div class="col-md-auto pt-3">
-                        <button type="button" class="btn btn-danger btn-xs remove-item-btn">
+                    <div class="col-md-1 pt-3">
+                        <button type="button" class="btn btn-danger btn-xs remove-item-btn" style="display:none">
                             <i class="fa fa-trash"></i> Hapus
                         </button>
                     </div>
