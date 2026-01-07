@@ -6,5 +6,4 @@ use LaravelEasyRepository\BaseService;
 
 interface PaymentStatusService extends BaseService{
 
-    // Write something awesome :)
 }

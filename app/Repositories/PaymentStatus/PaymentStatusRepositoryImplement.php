@@ -19,5 +19,4 @@ class PaymentStatusRepositoryImplement extends Eloquent implements PaymentStatus
         $this->model = $model;
     }
 
-    // Write something awesome :)
 }

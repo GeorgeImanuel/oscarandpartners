@@ -13,6 +13,9 @@ use App\Http\Controllers\CoverageController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\ObjectTypeController;
 use App\Http\Controllers\PartController;
+use App\Http\Controllers\PaymentController;
+use App\Models\Relation;
+use App\Models\Payment;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +54,8 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('/cards/report-by-object', [CardController::class, 'reportByObject'])->name('cards.reportByObject');
     Route::resource('cards', CardController::class)->parameters(['cards' => 'productionCard']);
     Route::get('cards/{productionCard}/preview', [CardController::class, 'preview'])->name('cards.preview');
+
+    Route::resource('payments', PaymentController::class);
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

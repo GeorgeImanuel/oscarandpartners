@@ -73,6 +73,12 @@
                         </ul>
                     </li>
                     <li class="sidebar-main-title">
+                        <div><h6>Payment</h6></div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('payments.index') }}" href="{{ route('payments.index') }}"><i data-feather="credit-card"></i><span>Payments</span></a>
+                    </li>
+                    <li class="sidebar-main-title">
                         <div><h6>Polis</h6></div>
                     </li>
                     <li class="dropdown">
