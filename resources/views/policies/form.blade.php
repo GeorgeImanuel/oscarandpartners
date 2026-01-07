@@ -14,6 +14,17 @@
     .percentage-error.show {
         display: block;
     }
+    /* Memaksa warna hijau saat valid */
+    .alert-success {
+        background-color: #d4edda !important;
+        border-color: #c3e6cb !important;
+        color: #155724 !important;
+    }
+    /* Warna border input saat valid */
+    .is-valid {
+        border-color: #28a745 !important;
+        background-image: none !important;
+    }
 </style>
 @endpush
 
@@ -78,11 +89,14 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="coverage_percentage">Persentase Coverage (%) <span class="text-danger">*</span></label>
-                        <input class="form-control @error('coverage_percentage') is-invalid @enderror" id="coverage_percentage" name="coverage_percentage" type="number" step="0.01" min="0" max="100" value="{{ isset($policy) ? $policy->coverage_percentage : old('coverage_percentage', '') }}" placeholder="Contoh: 80.50" required />
-                        @error('coverage_percentage')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <label class="form-label" for="coverage_percentage">Persentase Coverage <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input class="form-control @error('coverage_percentage') is-invalid @enderror" id="coverage_percentage" name="coverage_percentage" type="number" step="0.01" min="0" max="100" value="{{ old('coverage_percentage', isset($policy) ? $policy->coverage_percentage * 100 : '') }}" placeholder="Contoh: 80.50" required />
+                            <span class="input-group-text">%</span>
+                            @error('coverage_percentage')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -127,24 +141,32 @@
                                 <div class="insurance-row mb-3 p-3 border rounded" data-index="{{ $index }}">
                                     <div class="row align-items-end">
                                         <div class="col-md-6 mb-2 mb-md-0">
-                                            <label class="form-label">Asuransi {{ $index + 1 }}</label>
-                                            <select class="form-select insurance-select" name="insurance_id[]" style="width: 100%;" required>
-                                                <option value="">- Pilih Asuransi -</option>
-                                                @foreach($insurances as $insurance)
-                                                    <option value="{{ $insurance->id }}" {{ $policyInsurance->insurance_id == $insurance->id ? 'selected' : '' }}>
-                                                        {{ $insurance->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <label class="form-label">Asuransi {{ $index + 1 }} <span class="text-danger">*</span></label>
+                                            <div class="input-group insurance-input-group">
+                                                <div class="flex-grow-1 select-container">
+                                                    <select class="form-select insurance-select" name="insurance_id[{{ $index }}]" style="width: 100%;">
+                                                        <option value="">- Pilih Asuransi -</option>
+                                                        @foreach($insurances as $insurance)
+                                                            <option value="{{ $insurance->id }}" {{ $policyInsurance->insurance_id == $insurance->id ? 'selected' : '' }}>
+                                                                {{ $insurance->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <input type="text" class="form-control insurance-new-name d-none" name="insurance_new_name[{{ $index }}]" placeholder="Nama Asuransi Baru">
+                                                <button type="button" class="btn btn-outline-primary toggle-insurance-input" title="Tambah Baru">
+                                                    <i class="fa fa-plus"></i> Baru
+                                                </button>
+                                            </div>
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Persentase (%)</label>
-                                            <input type="number" class="form-control insurance-percentage" name="percentage[]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.01">
+                                            <input type="number" class="form-control insurance-percentage" name="percentage[{{ $index }}]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.01">
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Asuransi Utama</label>
                                             <div class="form-check">
-                                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1" id="is_main_{{ $index }}" {{ $policyInsurance->is_main ? 'checked' : '' }}>
+                                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[{{ $index }}]" value="1" id="is_main_{{ $index }}" {{ $policyInsurance->is_main ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="is_main_{{ $index }}">Ya</label>
                                             </div>
                                         </div>
@@ -189,25 +211,34 @@
         let insuranceIndex = {{ isset($policyInsurances) ? $policyInsurances->count() : 0 }};
         const insurancesData = {!! json_encode($insurances) !!};
 
+        // Fungsi Menambah Baris Asuransi
         function addInsuranceRow() {
             const row = `
                 <div class="insurance-row mb-3 p-3 border rounded" data-index="${insuranceIndex}">
                     <div class="row align-items-end">
                         <div class="col-md-6 mb-2 mb-md-0">
-                            <label class="form-label">Asuransi ${insuranceIndex + 1}</label>
-                            <select class="form-select insurance-select" name="insurance_id[]" style="width: 100%;" required>
-                                <option value="">- Pilih Asuransi -</option>
-                                ${insurancesData.map(ins => `<option value="${ins.id}">${ins.name}</option>`).join('')}
-                            </select>
+                            <label class="form-label">Asuransi ${insuranceIndex + 1} <span class="text-danger">*</span></label>
+                            <div class="input-group insurance-input-group">
+                                <div class="flex-grow-1 select-container">
+                                    <select class="form-select insurance-select" name="insurance_id[${insuranceIndex}]" style="width: 100%;">
+                                        <option value="">- Pilih Asuransi -</option>
+                                        ${insurancesData.map(ins => `<option value="${ins.id}">${ins.name}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <input type="text" class="form-control insurance-new-name d-none" name="insurance_new_name[${insuranceIndex}]" placeholder="Nama Asuransi Baru">
+                                <button type="button" class="btn btn-outline-primary toggle-insurance-input" title="Tambah Baru">
+                                    <i class="fa fa-plus"></i> Baru
+                                </button>
+                            </div>
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Persentase (%)</label>
-                            <input type="number" class="form-control insurance-percentage" name="percentage[]" placeholder="0" min="0" max="100" step="0.01">
+                            <input type="number" class="form-control insurance-percentage" name="percentage[${insuranceIndex}]" placeholder="0" min="0" max="100" step="0.01" required>
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Asuransi Utama</label>
                             <div class="form-check">
-                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[]" value="1" id="is_main_${insuranceIndex}">
+                                <input class="form-check-input is-main-checkbox" type="checkbox" name="is_main[${insuranceIndex}]" value="1" id="is_main_${insuranceIndex}">
                                 <label class="form-check-label" for="is_main_${insuranceIndex}">Ya</label>
                             </div>
                         </div>
@@ -222,12 +253,14 @@
             document.getElementById('insurances-container').insertAdjacentHTML('beforeend', row);
             document.getElementById('empty-state').style.display = 'none';
             insuranceIndex++;
+            
+            // Re-inisialisasi event listeners
             initializeSelect2();
             initializeMainCheckboxes();
             initializePercentageValidation();
         }
 
-        // Function to handle single main insurance selection
+        // Logic Checkbox "Asuransi Utama" (Hanya boleh 1)
         function initializeMainCheckboxes() {
             const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
             mainCheckboxes.forEach(checkbox => {
@@ -240,22 +273,25 @@
             if (this.checked) {
                 const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
                 mainCheckboxes.forEach(cb => {
-                    if (cb !== this) {
-                        cb.checked = false;
-                    }
+                    if (cb !== this) cb.checked = false;
                 });
             }
         }
 
-        // Function to validate percentage total
+        // Logic Validasi Persentase Real-time
         function initializePercentageValidation() {
             const percentageInputs = document.querySelectorAll('.insurance-percentage');
             percentageInputs.forEach(input => {
                 input.removeEventListener('input', updatePercentageTotal);
                 input.addEventListener('input', updatePercentageTotal);
+                // Hapus warna merah saat user mengetik
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                });
             });
         }
 
+        // Menghitung Total dan Update UI (Warna Alert)
         function updatePercentageTotal() {
             const percentageInputs = document.querySelectorAll('.insurance-percentage');
             let total = 0;
@@ -265,76 +301,100 @@
                 total += value;
             });
 
-            // Round to 2 decimal places
+            // Pembulatan 2 desimal untuk menghindari floating point error (e.g. 99.99999)
             total = Math.round(total * 100) / 100;
 
             const infoDiv = document.getElementById('percentage-info');
-            const errorDiv = document.getElementById('percentage-error');
             const totalPercentageSpan = document.getElementById('total-percentage');
+            const errorDiv = document.getElementById('percentage-error'); // Ambil div error
 
-            // Show info if there are insurances
             if (percentageInputs.length > 0) {
                 infoDiv.style.display = 'flex';
                 totalPercentageSpan.textContent = total;
                 
-                if (total > 100) {
-                    infoDiv.classList.add('alert-danger');
-                    infoDiv.classList.remove('alert-warning');
-                    infoDiv.classList.remove('alert-info');
-                    infoDiv.classList.remove('alert-success');
-                } else if (total !== 100) {
-                    infoDiv.classList.add('alert-warning');
-                    infoDiv.classList.remove('alert-danger');
-                    infoDiv.classList.remove('alert-info');
-                    infoDiv.classList.remove('alert-success');
+                // Reset Class
+                infoDiv.className = 'alert d-flex justify-content-between align-items-center mb-3';
+                
+                if (total !== 100) {
+                    // Jika TIDAK 100%, beri warna warning/danger
+                    infoDiv.classList.add(total > 100 ? 'alert-danger' : 'alert-warning');
+                    // Sembunyikan error text saat sedang mengedit (opsional, agar tidak mengganggu)
+                    // errorDiv.style.display = 'none'; 
                 } else {
-                    infoDiv.classList.remove('alert-warning');
-                    infoDiv.classList.remove('alert-danger');
+                    // Jika TEPAT 100%, beri warna hijau
                     infoDiv.classList.add('alert-success');
+                    errorDiv.style.display = 'none'; // Sembunyikan error jika sudah benar
+                    
+                    // Hapus invalid class dari semua input
+                    percentageInputs.forEach(input => input.classList.remove('is-invalid'));
                 }
             } else {
                 infoDiv.style.display = 'none';
+                errorDiv.style.display = 'none';
             }
+            
+            return total;
         }
 
-        // Form submission validation
+        // --- VALIDASI SAAT SUBMIT ---
         function validatePercentageBeforeSubmit(e) {
             const percentageInputs = document.querySelectorAll('.insurance-percentage');
             
+            // Jika tidak ada asuransi, biarkan lewat (atau return false jika asuransi wajib)
             if (percentageInputs.length === 0) {
-                return true;
+                return true; 
             }
 
-            let total = 0;
-            percentageInputs.forEach(input => {
-                const value = parseFloat(input.value) || 0;
-                total += value;
-            });
+            // Validasi Asuransi Utama
+            const mainCheckboxes = document.querySelectorAll('.is-main-checkbox:checked');
+            if (mainCheckboxes.length === 0) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const errorDiv = document.getElementById('percentage-error');
+                errorDiv.textContent = 'Gagal Simpan: Harap pilih salah satu sebagai Asuransi Utama.';
+                errorDiv.style.display = 'block';
+                
+                document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
 
-            total = Math.round(total * 100) / 100;
+            const total = updatePercentageTotal(); // Ambil total terbaru
 
             if (total !== 100) {
+                // STOP PROSES SUBMIT
                 e.preventDefault();
                 e.stopPropagation();
                 
                 let errorMessage = '';
                 if (total > 100) {
-                    errorMessage = `Total persentase asuransi tidak boleh lebih dari 100% (Saat ini: ${total}%)`;
+                    errorMessage = `Gagal Simpan: Total persentase (${total}%) melebihi 100%.`;
                 } else {
-                    errorMessage = `Total persentase asuransi harus tepat 100% (Saat ini: ${total}%)`;
+                    errorMessage = `Gagal Simpan: Total persentase (${total}%) kurang dari 100%.`;
                 }
                 
+                // Tampilkan Error
                 const errorDiv = document.getElementById('percentage-error');
                 errorDiv.textContent = errorMessage;
                 errorDiv.style.display = 'block';
+
+                // Beri highlight merah pada semua input persentase
+                percentageInputs.forEach(input => {
+                    input.classList.add('is-invalid');
+                });
+
+                // Scroll ke atas agar user melihat errornya
                 document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
                 return false;
             } else {
+                // Jika Valid
                 document.getElementById('percentage-error').style.display = 'none';
                 return true;
             }
         }
 
+        // Event Listeners Tombol
         document.getElementById('add-insurance-btn').addEventListener('click', function(e) {
             e.preventDefault();
             addInsuranceRow();
@@ -347,8 +407,38 @@
                 if (rows.length === 0) {
                     document.getElementById('empty-state').style.display = 'block';
                     document.getElementById('percentage-info').style.display = 'none';
+                    document.getElementById('percentage-error').style.display = 'none';
                 }
                 updatePercentageTotal();
+            }
+        });
+
+        // Logic Toggle Input Asuransi (Select vs Text)
+        document.addEventListener('click', function(e) {
+            const toggleBtn = e.target.closest('.toggle-insurance-input');
+            if (toggleBtn) {
+                e.preventDefault();
+                const group = toggleBtn.closest('.insurance-input-group');
+                const selectContainer = group.querySelector('.select-container');
+                const select = group.querySelector('.insurance-select');
+                const input = group.querySelector('.insurance-new-name');
+                const icon = toggleBtn.querySelector('i');
+
+                if (input.classList.contains('d-none')) {
+                    // Switch to Text Input
+                    selectContainer.classList.add('d-none');
+                    input.classList.remove('d-none');
+                    $(select).val(null).trigger('change'); // Reset select
+                    icon.className = 'fa fa-list';
+                    toggleBtn.title = 'Pilih dari daftar';
+                } else {
+                    // Switch to Select
+                    selectContainer.classList.remove('d-none');
+                    input.classList.add('d-none');
+                    input.value = ''; // Reset input
+                    icon.className = 'fa fa-plus';
+                    toggleBtn.title = 'Tambah Baru';
+                }
             }
         });
 
@@ -359,18 +449,18 @@
             });
         }
 
+        // Inisialisasi saat Load
         document.addEventListener('DOMContentLoaded', function() {
             initializeSelect2();
             initializeMainCheckboxes();
             initializePercentageValidation();
             updatePercentageTotal();
             
-            // Add submit validation
-            document.querySelector('.needs-validation').addEventListener('submit', validatePercentageBeforeSubmit);
-            
-            initializeFormValidation({
-                formSelector: '.needs-validation'
-            });
+            // Attach Validasi ke Form Submit
+            const form = document.querySelector('.needs-validation');
+            if(form) {
+                form.addEventListener('submit', validatePercentageBeforeSubmit);
+            }
         });
     </script>
 @endpush

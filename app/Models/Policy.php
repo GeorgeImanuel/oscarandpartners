@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,13 @@ class Policy extends Model
         'ended_date' => 'date',
         'coverage_percentage' => 'decimal:2',
     ];
+
+    protected function coveragePercentage(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => is_numeric($value) ? $value / 100 : null,
+        );
+    }
 
     public function productionCard(): HasOne
     {
