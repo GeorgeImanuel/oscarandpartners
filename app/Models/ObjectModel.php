@@ -29,7 +29,7 @@ class ObjectModel extends Model
         return $this->hasMany(Policy::class, 'object_id');
     }
 
-    public function objectPart(){
+    public function objectParts(){
         return $this->hasMany(ObjectPart::class, 'object_id');
     }
 }
