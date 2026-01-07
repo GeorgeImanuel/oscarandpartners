@@ -72,121 +72,132 @@
 							</div>
 						@endif
 
-						@forelse($objectsByRelation as $relationId => $objects)
-							@php
-								// Cari nama relasi dari ID (cast ke int untuk matching)
-								$relationName = $relations->firstWhere('id', (int)$relationId)?->name ?? ($relationId == 0 ? 'Tanpa Relasi' : 'Relasi ID: ' . $relationId);
-							@endphp
-							<div class="mb-5">
-								<h4 class="mb-3">{{ $relationName }}</h4>
-								<div class="table-responsive" style="overflow-x: auto;">
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th style="width: 3%;">No</th>
-												<th style="width: 15%;">Nomor Polis</th>
-												<th style="width: 22%;">Nama Pertanggungan<br>Alamat Risiko</th>
-												<th style="width: 12%;">Objek/Okupasi</th>
-												<th style="width: 8%;">Coverage</th>
-												<th style="width: 12%;">Periode</th>
-												<th style="width: 18%;">Total Harga Bagian</th>
-											</tr>
-										</thead>
-										<tbody>
-											@foreach($objects as $index => $object)
-												@php
-													$objectPartTotal = $object->objectPart->sum('value');
-													$policiesCount = $object->policies->count();
-												@endphp
+						@if(!request('client_id') && !request('relation_id'))
+                            
+                            {{-- Tampilan jika belum memilih filter --}}
+                            <div class="alert alert-light text-center border py-5">
+                                <i class="fa fa-filter fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Data belum ditampilkan</h5>
+                                <p class="mb-0">Silakan pilih <strong>Client</strong> atau <strong>Relasi</strong> pada filter di atas untuk melihat laporan.</p>
+                            </div>
+
+                        @else
+							@forelse($objectsByRelation as $relationId => $objects)
+								@php
+									// Cari nama relasi dari ID (cast ke int untuk matching)
+									$relationName = $relations->firstWhere('id', (int)$relationId)?->name ?? ($relationId == 0 ? 'Tanpa Relasi' : 'Relasi ID: ' . $relationId);
+								@endphp
+								<div class="mb-5">
+									<h4 class="mb-3">{{ $relationName }}</h4>
+									<div class="table-responsive" style="overflow-x: auto;">
+										<table class="table table-bordered">
+											<thead>
 												<tr>
-													<td style="vertical-align: top;">{{ $index + 1 }}</td>
-													<td style="vertical-align: top;">
-														@if($policiesCount > 0)
-															@foreach($object->policies as $policyIndex => $policy)
-																@php
-																	$mainInsurance = $policy->mainInsurance->first();
-																@endphp
-																<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
-																	<div class="fw-bold">{{ $policy->policy_number ?? '-' }}</div>
-																	<small class="text-muted">{{ $mainInsurance?->name ?? '-' }}</small>
-																</div>
-															@endforeach
-														@else
-															<div>-</div>
-														@endif
-													</td>
-													<td style="vertical-align: top;">
-														<div class="fw-bold">{{ $object->name ?? '-' }}</div>
-														<small class="text-muted">{{ $object->address ?? '-' }}</small>
-													</td>
-													<td style="vertical-align: top;">{{ $object->objectType?->name ?? '-' }}</td>
-													<td style="vertical-align: top;">
-														@if($policiesCount > 0)
-															@foreach($object->policies as $policyIndex => $policy)
-																<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
-																	{{ $policy->coverage?->code ?? '-' }}
-																</div>
-															@endforeach
-														@else
-															<div>-</div>
-														@endif
-													</td>
-													<td style="vertical-align: top;">
-														@if($policiesCount > 0)
-															@foreach($object->policies as $policyIndex => $policy)
-																<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
-																	<div>{{ $policy->started_date ? $policy->started_date->format('d/m/Y') : '-' }}</div>
-																	<div>{{ $policy->ended_date ? $policy->ended_date->format('d/m/Y') : '-' }}</div>
-																</div>
-															@endforeach
-														@else
-															<div>-</div>
-														@endif
-													</td>
-													<td style="white-space: nowrap; vertical-align: top;">
-														@if($object->objectPart->isNotEmpty())
-															<div style="display: table; width: 100%;">
-																{{-- Loop Item --}}
-																@foreach($object->objectPart as $part)
-																	<div style="display: table-row;">
-																		<div style="display: table-cell; text-align: left; padding-bottom: 4px;">
-																			{{ $part->part->name }}:
-																		</div>
-																		<div style="display: table-cell; text-align: right; padding-bottom: 4px; padding-left: 20px;">
-																			{{ numberFormat($part->value) }}
-																		</div>
+													<th style="width: 3%;">No</th>
+													<th style="width: 15%;">Nomor Polis</th>
+													<th style="width: 22%;">Nama Pertanggungan<br>Alamat Risiko</th>
+													<th style="width: 12%;">Objek/Okupasi</th>
+													<th style="width: 8%;">Coverage</th>
+													<th style="width: 12%;">Periode</th>
+													<th style="width: 18%;">Total Harga Bagian</th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach($objects as $index => $object)
+													@php
+														$objectPartTotal = $object->objectPart->sum('value');
+														$policiesCount = $object->policies->count();
+													@endphp
+													<tr>
+														<td style="vertical-align: top;">{{ $index + 1 }}</td>
+														<td style="vertical-align: top;">
+															@if($policiesCount > 0)
+																@foreach($object->policies as $policyIndex => $policy)
+																	@php
+																		$mainInsurance = $policy->mainInsurance->first();
+																	@endphp
+																	<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
+																		<div class="fw-bold">{{ $policy->policy_number ?? '-' }}</div>
+																		<small class="text-muted">{{ $mainInsurance?->name ?? '-' }}</small>
 																	</div>
 																@endforeach
-															</div>
-
-															<div style="border-top: 2px solid #000; margin: 8px 0; width: 100%;"></div>
-
-															{{-- Bagian Total --}}
-															<div style="display: table; width: 100%;">
-																<div style="display: table-row;">
-																	<div style="display: table-cell; text-align: right; font-weight: bold; padding-right: 10px;">
-																		Total :
+															@else
+																<div>-</div>
+															@endif
+														</td>
+														<td style="vertical-align: top;">
+															<div class="fw-bold">{{ $object->name ?? '-' }}</div>
+															<small class="text-muted">{{ $object->address ?? '-' }}</small>
+														</td>
+														<td style="vertical-align: top;">{{ $object->objectType?->name ?? '-' }}</td>
+														<td style="vertical-align: top;">
+															@if($policiesCount > 0)
+																@foreach($object->policies as $policyIndex => $policy)
+																	<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
+																		{{ $policy->coverage?->code ?? '-' }}
 																	</div>
-																	<div style="display: table-cell; text-align: right; font-weight: bold; padding-left: 20px;">
-																		{{ numberFormat($objectPartTotal) }}
+																@endforeach
+															@else
+																<div>-</div>
+															@endif
+														</td>
+														<td style="vertical-align: top;">
+															@if($policiesCount > 0)
+																@foreach($object->policies as $policyIndex => $policy)
+																	<div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
+																		<div>{{ $policy->started_date ? $policy->started_date->format('d/m/Y') : '-' }}</div>
+																		<div>{{ $policy->ended_date ? $policy->ended_date->format('d/m/Y') : '-' }}</div>
+																	</div>
+																@endforeach
+															@else
+																<div>-</div>
+															@endif
+														</td>
+														<td style="white-space: nowrap; vertical-align: top;">
+															@if($object->objectPart->isNotEmpty())
+																<div style="display: table; width: 100%;">
+																	{{-- Loop Item --}}
+																	@foreach($object->objectPart as $part)
+																		<div style="display: table-row;">
+																			<div style="display: table-cell; text-align: left; padding-bottom: 4px;">
+																				{{ $part->part->name }}:
+																			</div>
+																			<div style="display: table-cell; text-align: right; padding-bottom: 4px; padding-left: 20px;">
+																				{{ numberFormat($part->value) }}
+																			</div>
+																		</div>
+																	@endforeach
+																</div>
+
+																<div style="border-top: 2px solid #000; margin: 8px 0; width: 100%;"></div>
+
+																{{-- Bagian Total --}}
+																<div style="display: table; width: 100%;">
+																	<div style="display: table-row;">
+																		<div style="display: table-cell; text-align: right; font-weight: bold; padding-right: 10px;">
+																			Total :
+																		</div>
+																		<div style="display: table-cell; text-align: right; font-weight: bold; padding-left: 20px;">
+																			{{ numberFormat($objectPartTotal) }}
+																		</div>
 																	</div>
 																</div>
-															</div>
-														@else
-															<div class="text-center">-</div>
-														@endif
-													</td>
-												</tr>
-											@endforeach
-										</tbody>
-									</table>
+															@else
+																<div class="text-center">-</div>
+															@endif
+														</td>
+													</tr>
+												@endforeach
+											</tbody>
+										</table>
+									</div>
 								</div>
-							</div>
-						@empty
-							<div class="alert alert-info">
-								Tidak ada data objek pertanggungan
-							</div>
-						@endforelse
+							@empty
+								<div class="alert alert-info">
+									Tidak ada data objek pertanggungan
+								</div>
+							@endforelse
+						@endif
 					</div>
 				</div>
 			</div>
