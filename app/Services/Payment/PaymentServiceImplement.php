@@ -32,7 +32,6 @@ class PaymentServiceImplement extends Service implements PaymentService{
 
     public function getAllWithRelations()
     {
-        // Pastikan PaymentRepository memiliki method ini atau gunakan magic method jika didukung
         return $this->mainRepository->getAllWithRelations();
     }
 
