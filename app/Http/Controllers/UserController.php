@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\User\UserService;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateProfileRequest;
 
 class UserController extends Controller
 {
@@ -83,5 +84,29 @@ class UserController extends Controller
     {
         $this->userService->deleteUser($user->id);
         return redirect()->route('users.index')->with('success', 'Berhasil menghapus user.');
+    }
+
+    public function profile()
+    {
+        $user = auth()->user();
+        return view('user-profile', compact('user'));
+    }
+
+    /**
+     * Update authenticated user's profile
+     */
+    public function profileUpdate(UpdateProfileRequest $request)
+    {
+        try {
+            $updated = $this->userService->updateUser(auth()->id(), $request->only('name', 'email', 'password'));
+
+            if (!$updated) {
+                return redirect()->back()->withInput()->with('error', 'Gagal mengubah profile.');
+            }
+
+            return redirect()->back()->with('success', 'Profile berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }
