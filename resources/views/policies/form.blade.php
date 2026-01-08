@@ -20,10 +20,24 @@
         border-color: #c3e6cb !important;
         color: #155724 !important;
     }
+    /* Custom warna orange untuk alert */
+    .alert-orange {
+        background-color: #ffe0b2 !important;
+        border-color: #ffcc80 !important;
+        color: #e65100 !important;
+    }
     /* Warna border input saat valid */
     .is-valid {
         border-color: #28a745 !important;
         background-image: none !important;
+    }
+    /* Memastikan kursor default pada container baris asuransi */
+    .insurance-row {
+        cursor: default !important; /* Memaksa kursor menjadi panah biasa */
+    }
+
+    .insurance-row button, .insurance-row .form-check-input, .insurance-row .select2-selection, .form-select {
+        cursor: pointer !important;
     }
 </style>
 @endpush
@@ -207,6 +221,7 @@
     <script src="{{ asset('assets/js/form-validation.js') }}"></script>
     <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
+    <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script>
         let insuranceIndex = {{ isset($policyInsurances) ? $policyInsurances->count() : 0 }};
         const insurancesData = {!! json_encode($insurances) !!};
@@ -252,7 +267,7 @@
             `;
             document.getElementById('insurances-container').insertAdjacentHTML('beforeend', row);
             document.getElementById('empty-state').style.display = 'none';
-            insuranceIndex++;
+            updateInsuranceNumbers();
             
             // Re-inisialisasi event listeners
             initializeSelect2();
@@ -317,7 +332,7 @@
                 
                 if (total !== 100) {
                     // Jika TIDAK 100%, beri warna warning/danger
-                    infoDiv.classList.add(total > 100 ? 'alert-danger' : 'alert-warning');
+                    infoDiv.classList.add(total > 100 ? 'alert-danger' : 'alert-orange');
                     // Sembunyikan error text saat sedang mengedit (opsional, agar tidak mengganggu)
                     // errorDiv.style.display = 'none'; 
                 } else {
@@ -334,6 +349,44 @@
             }
             
             return total;
+        }
+
+        // Update Penomoran Asuransi (Label & Index Input)
+        function updateInsuranceNumbers() {
+            const rows = document.querySelectorAll('.insurance-row');
+            rows.forEach((row, index) => {
+                // Update Label No Urut
+                const label = row.querySelector('.form-label');
+                if (label) {
+                    label.innerHTML = `Asuransi ${index + 1} <span class="text-danger">*</span>`;
+                }
+
+                // Update Input Names & IDs (agar urutan index array tetap rapi: 0, 1, 2...)
+                const inputs = row.querySelectorAll('[name*="["]');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                    }
+                    if (input.id && input.id.match(/_\d+$/)) {
+                        input.id = input.id.replace(/_\d+$/, `_${index}`);
+                    }
+                });
+
+                // Update Label For Attributes (untuk checkbox/radio)
+                const labels = row.querySelectorAll('label[for]');
+                labels.forEach(lbl => {
+                    const forAttr = lbl.getAttribute('for');
+                    if (forAttr && forAttr.match(/_\d+$/)) {
+                        lbl.setAttribute('for', forAttr.replace(/_\d+$/, `_${index}`));
+                    }
+                });
+
+                row.setAttribute('data-index', index);
+            });
+            
+            // Update global counter agar sinkron
+            insuranceIndex = rows.length;
         }
 
         // --- VALIDASI SAAT SUBMIT ---
@@ -401,15 +454,32 @@
         });
 
         document.addEventListener('click', function(e) {
-            if (e.target.closest('.remove-insurance-btn')) {
-                e.target.closest('.insurance-row').remove();
-                const rows = document.querySelectorAll('.insurance-row');
-                if (rows.length === 0) {
-                    document.getElementById('empty-state').style.display = 'block';
-                    document.getElementById('percentage-info').style.display = 'none';
-                    document.getElementById('percentage-error').style.display = 'none';
-                }
-                updatePercentageTotal();
+            const removeBtn = e.target.closest('.remove-insurance-btn');
+            if (removeBtn) {
+                const row = removeBtn.closest('.insurance-row');
+                
+                Swal.fire({
+                    title: 'Hapus Asuransi?',
+                    text: "Asuransi ini akan dihapus dari daftar.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        row.remove();
+                        const rows = document.querySelectorAll('.insurance-row');
+                        if (rows.length === 0) {
+                            document.getElementById('empty-state').style.display = 'block';
+                            document.getElementById('percentage-info').style.display = 'none';
+                            document.getElementById('percentage-error').style.display = 'none';
+                        }
+                        updateInsuranceNumbers();
+                        updatePercentageTotal();
+                    }
+                });
             }
         });
 
@@ -455,6 +525,13 @@
             initializeMainCheckboxes();
             initializePercentageValidation();
             updatePercentageTotal();
+            
+            // Tambah 1 baris asuransi otomatis jika kosong (biasanya saat create baru)
+            const insuranceContainer = document.getElementById('insurances-container');
+            if (insuranceContainer && insuranceContainer.children.length === 0) {
+                addInsuranceRow();
+                updatePercentageTotal();
+            }
             
             // Attach Validasi ke Form Submit
             const form = document.querySelector('.needs-validation');
