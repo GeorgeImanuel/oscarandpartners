@@ -33,11 +33,11 @@
                         <td><strong>Kota</strong></td>
                         <td>{{ $object->city ?? '-' }}</td>
                     </tr>
-                    @if ($object->objectPartss && $object->objectParts->count() > 0)
+                    @if ($object->objectParts && $object->objectParts->count() > 0)
                         <tr>
                             <td><strong>Parts</strong></td>
                             <td>
-                                @foreach ($object->objectPartss as $objectPart)
+                                @foreach ($object->objectParts as $objectPart)
                                     <span class="badge badge-info">{{ $objectParts->part->name ?? '-' }}</span>
                                 @endforeach
                             </td>

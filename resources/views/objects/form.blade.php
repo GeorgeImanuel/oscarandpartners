@@ -99,7 +99,7 @@
                 <div class="card-body">
                     <div id="parts-container">
                         @if(isset($object) && $object->objectParts->count() > 0)
-                            @foreach($object->objectPartss as $index => $objectPart)
+                            @foreach($object->objectParts as $index => $objectPart)
                                 <div class="part-row mb-3 p-3 border rounded" data-index="{{ $index }}">
                                     <div class="row align-items-end">
                                         <div class="col-md-7 mb-2 mb-md-0">
@@ -125,8 +125,8 @@
                                             <label class="form-label">Nilai (Rp)</label>
                                             <input type="number" class="form-control" name="part_value[]" value="{{ $objectParts->value }}" placeholder="0" min="0" step="0.01">
                                         </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger w-100 remove-part-btn">
+                                        <div class="col-md-1 pt-3">
+                                            <button type="button" class="btn btn-danger btn-xs remove-part-btn" style="{{ $index == 0 ? 'display:none' : '' }}">
                                                 <i class="fa fa-trash"></i> Hapus
                                             </button>
                                         </div>
@@ -134,11 +134,6 @@
                                 </div>
                             @endforeach
                         @endif
-                    </div>
-                    
-                    <div id="empty-state" class="text-center py-4 text-muted" style="{{ (isset($object) && $object->objectParts->count() > 0) ? 'display: none;' : '' }}">
-                        <i class="fa fa-info-circle fa-2x mb-2 d-block"></i>
-                        <p class="mb-0">Klik tombol <strong class="text-primary">"Tambah Part"</strong> untuk menambahkan komponen objek</p>
                     </div>
                 </div>
             </div>
@@ -164,10 +159,18 @@
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script>
-        let partIndex = {{ isset($object) ? $object->objectParts->count() : 0 }};
+        let partIndex = {{ isset($object) ? $object->objectPart->count() : 0 }};
         const partsData = @json($parts);
 
         $(document).ready(function() {
+            // Add default part if no parts exist
+            if ($('#parts-container .part-row').length === 0) {
+                partIndex = 1;
+                const partHtml = createPartRow(1);
+                $('#parts-container').append(partHtml);
+                updatePartVisibility();
+            }
+
             // Initialize form validation
             initializeFormValidation({
                 formSelector: '.needs-validation'
@@ -212,6 +215,7 @@
                 $('#parts-container').append(partHtml);
                 $('#empty-state').hide();
                 updatePartNumbers();
+                updatePartVisibility();
             });
 
             // Toggle Part: Select <=> Input
@@ -241,6 +245,19 @@
 
             // Remove Part Button
             $(document).on('click', '.remove-part-btn', function() {
+                const $partRows = $('#parts-container .part-row');
+                
+                // Prevent removal if only 1 part left
+                if ($partRows.length <= 1) {
+                    Swal.fire({
+                        title: 'Tidak dapat menghapus!',
+                        text: 'Minimal harus ada 1 part.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
                 const $partRow = $(this).closest('.part-row');
                 
                 Swal.fire({
@@ -256,10 +273,7 @@
                     if (result.isConfirmed) {
                         $partRow.remove();
                         updatePartNumbers();
-                        
-                        if ($('#parts-container .part-row').length === 0) {
-                            $('#empty-state').show();
-                        }
+                        updatePartVisibility();
                     }
                 });
             });
@@ -267,20 +281,6 @@
             // Form Submit Validation
             $('.needs-validation').on('submit', function(e) {
                 const $partRows = $('#parts-container .part-row');
-                
-                // Check if at least one part exists
-                if ($partRows.length === 0) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Minimal harus ada 1 komponen objek (part).',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return false;
-                }
 
                 // Validate each part
                 let isValid = true;
@@ -344,8 +344,8 @@
                             <label class="form-label">Nilai (Rp)</label>
                             <input type="number" class="form-control" name="part_value[]" placeholder="0" min="0" step="0.01">
                         </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger w-100 remove-part-btn">
+                        <div class="col-md-1 pt-3">
+                            <button type="button" class="btn btn-danger btn-xs remove-part-btn">
                                 <i class="fa fa-trash"></i> Hapus
                             </button>
                         </div>
@@ -359,6 +359,19 @@
             $('#parts-container .part-row').each(function(index) {
                 $(this).attr('data-index', index);
                 $(this).find('.form-label').first().text(`Part ${index + 1}`);
+            });
+        }
+
+        // Update Part Visibility - Hide first part delete button
+        function updatePartVisibility() {
+            const $partRows = $('#parts-container .part-row');
+            $partRows.each(function(index) {
+                const $deleteBtn = $(this).find('.remove-part-btn');
+                if (index === 0) {
+                    $deleteBtn.hide();
+                } else {
+                    $deleteBtn.show();
+                }
             });
         }
     </script>
