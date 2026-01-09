@@ -5,7 +5,7 @@
 
 <header class="main-nav">
     <div class="sidebar-user text-center">
-        <a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" src="{{asset('assets/images/dashboard/1.png')}}" alt="" />
+        <a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" src="{{ asset('assets/images/dashboard/1.png') }}" alt="" />
         {{-- <div class="badge-bottom"><span class="badge badge-primary">New</span></div> --}}
         <a href="{{ route('user.profile') }}">
             <h6 class="mt-3 f-14 f-w-600">{{ auth()->user()->name }}</h6>
@@ -33,11 +33,11 @@
                         <a class="nav-link menu-title" href="javascript:void(0)">
                             <i data-feather="folder"></i>
                             <span>Kartu Produksi</span>
-                            </a>
+                        </a>
 
-                        <ul class="nav-submenu menu-content"> 
+                        <ul class="nav-submenu menu-content">
                             <li>
-                                <a href="{{ route('cards.index') }}" class="{{ routeActive(['cards.index','cards.create']) }}"><i data-feather="file-text"></i><span>Semua Kartu</span></a>
+                                <a href="{{ route('cards.index') }}" class="{{ routeActive(['cards.index', 'cards.create']) }}"><i data-feather="file-text"></i><span>Semua Kartu</span></a>
                             </li>
 
                             <li>
@@ -59,7 +59,6 @@
                                         <span>Kartu Per Relasi</span>
                                     </a>
                                 </li>
-                            
 
                                 <li>
                                     <a href="{{ route('cards.reportByObject') }}" class="{{ routeActive('cards.reportByObject') }}">
@@ -74,13 +73,17 @@
 
                     @hasanyrole('owner|admin|finance')
                         <li class="sidebar-main-title">
-                        <div><h6>Payment</h6></div>
-                    </li>
-                    <li class="dropdown">
-                        <a class="nav-link menu-title link-nav {{ routeActive('payments.index') }}" href="{{ route('payments.index') }}"><i data-feather="credit-card"></i><span>Payments</span></a>
-                    </li>
-                    <li class="sidebar-main-title">
-                            <div><h6>Polis</h6></div>
+                            <div>
+                                <h6>Payment</h6>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a class="nav-link menu-title link-nav {{ routeActive('payments.index') }}" href="{{ route('payments.index') }}"><i data-feather="credit-card"></i><span>Payments</span></a>
+                        </li>
+                        <li class="sidebar-main-title">
+                            <div>
+                                <h6>Polis</h6>
+                            </div>
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Polis</span></a>
@@ -90,7 +93,9 @@
                         </li>
 
                         <li class="sidebar-main-title">
-                            <div><h6>Objek</h6></div>
+                            <div>
+                                <h6>Objek</h6>
+                            </div>
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
@@ -101,7 +106,9 @@
 
                     @hasanyrole('owner|admin')
                         <li class="sidebar-main-title">
-                            <div><h6>Pengguna</h6></div>
+                            <div>
+                                <h6>Pengguna</h6>
+                            </div>
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
@@ -112,7 +119,9 @@
 
                     @hasanyrole('owner|admin|finance')
                         <li class="sidebar-main-title">
-                            <div><h6>Pengaturan</h6></div>
+                            <div>
+                                <h6>Pengaturan</h6>
+                            </div>
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('settings.index') }}" href="{{ route('settings.index') }}"><i data-feather="settings"></i><span>Presentase</span></a>
@@ -120,7 +129,9 @@
                     @endhasanyrole
 
                     <li class="sidebar-main-title">
-                        <div><h6>Profile</h6></div>
+                        <div>
+                            <h6>Profile</h6>
+                        </div>
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('user.profile') }}" href="{{ route('user.profile') }}"><i data-feather="user"></i><span>Edit Profile</span></a>

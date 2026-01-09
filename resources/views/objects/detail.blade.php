@@ -62,7 +62,7 @@
 						<h5>Komponen Objek (Parts)</h5>
 					</div>
 					<div class="card-body">
-						@if($object->objectParts && $object->objectParts->count() > 0)
+						@if($object->objectPartss && $object->objectParts->count() > 0)
 							<div class="table-responsive">
 								<table class="table table-bordered">
 									<thead>
@@ -74,12 +74,12 @@
 									</thead>
 									<tbody>
 										@php $totalValue = 0; @endphp
-										@foreach($object->objectParts as $index => $objectPart)
-											@php $totalValue += $objectPart->value; @endphp
+										@foreach($object->objectPartss as $index => $objectPart)
+											@php $totalValue += $objectParts->value; @endphp
 											<tr>
 												<td>{{ $index + 1 }}</td>
-												<td>{{ $objectPart->part->name ?? '-' }}</td>
-												<td class="text-end">{{ number_format($objectPart->value, 2, ',', '.') }}</td>
+												<td>{{ $objectParts->part->name ?? '-' }}</td>
+												<td class="text-end">{{ number_format($objectParts->value, 2, ',', '.') }}</td>
 											</tr>
 										@endforeach
 									</tbody>

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ObjectModel extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'objects';
 
     protected $fillable = [
@@ -29,7 +29,8 @@ class ObjectModel extends Model
         return $this->hasMany(Policy::class, 'object_id');
     }
 
-    public function objectParts(){
+    public function objectParts()
+    {
         return $this->hasMany(ObjectPart::class, 'object_id');
     }
 }

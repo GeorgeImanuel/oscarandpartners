@@ -99,7 +99,7 @@
                 <div class="card-body">
                     <div id="parts-container">
                         @if(isset($object) && $object->objectParts->count() > 0)
-                            @foreach($object->objectParts as $index => $objectPart)
+                            @foreach($object->objectPartss as $index => $objectPart)
                                 <div class="part-row mb-3 p-3 border rounded" data-index="{{ $index }}">
                                     <div class="row align-items-end">
                                         <div class="col-md-7 mb-2 mb-md-0">
@@ -109,7 +109,7 @@
                                                     <select class="form-select part-select" name="part_id[]" style="width: 100%;">
                                                         <option value="">- Pilih Part -</option>
                                                         @foreach($parts as $part)
-                                                            <option value="{{ $part->id }}" {{ $objectPart->part_id == $part->id ? 'selected' : '' }}>
+                                                            <option value="{{ $part->id }}" {{ $objectParts->part_id == $part->id ? 'selected' : '' }}>
                                                                 {{ $part->name }}
                                                             </option>
                                                         @endforeach
@@ -123,7 +123,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2 mb-md-0">
                                             <label class="form-label">Nilai (Rp)</label>
-                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectPart->value }}" placeholder="0" min="0" step="0.01">
+                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectParts->value }}" placeholder="0" min="0" step="0.01">
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-danger w-100 remove-part-btn">

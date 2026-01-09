@@ -371,6 +371,9 @@
                 existingNameAttr: 'object_type_id'
             });
 
+            // Initialize Object Select2
+            initCustomSelect2(".add-select2");
+
             // Toggle parent_card_id based on card_status_id
             $('#card_status_id').on('change', function() {
                 var cardStatusId = $('#card_status_id').val();

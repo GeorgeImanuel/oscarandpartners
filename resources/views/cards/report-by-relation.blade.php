@@ -105,7 +105,7 @@
 											<tbody>
 												@foreach($objects as $index => $object)
 													@php
-														$objectPartTotal = $object->objectPart->sum('value');
+														$objectPartTotal = $object->objectParts->sum('value');
 														$policiesCount = $object->policies->count();
 													@endphp
 													<tr>
@@ -154,10 +154,10 @@
 															@endif
 														</td>
 														<td style="white-space: nowrap; vertical-align: top;">
-															@if($object->objectPart->isNotEmpty())
+															@if($object->objectParts->isNotEmpty())
 																<div style="display: table; width: 100%;">
 																	{{-- Loop Item --}}
-																	@foreach($object->objectPart as $part)
+																	@foreach($object->objectParts as $part)
 																		<div style="display: table-row;">
 																			<div style="display: table-cell; text-align: left; padding-bottom: 4px;">
 																				{{ $part->part->name }}:

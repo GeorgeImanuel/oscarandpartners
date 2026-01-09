@@ -36,7 +36,7 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
         
         $query = $this->model
             ->with([
-                'objectPart.part',
+                'objectParts.part',
                 'policies.mainInsurance',
                 'policies.productionCard.client.relation',
                 'objectType'
