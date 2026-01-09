@@ -4,13 +4,18 @@
 @endsection
 
 @push('css')
-	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
-	<style>
-		@media print {
-			.no-print { display: none; }
-			.card { box-shadow: none; border: none; }
-		}
-	</style>
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.bootstrap5.css">
+    
+    <style>
+        /* Style tambahan agar tombol print terlihat rapi */
+        .dt-buttons {
+            margin-bottom: 15px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -59,10 +64,6 @@
 									</div>
 								@endif
 							</div>
-							<button onclick="window.print()" class="btn btn-primary btn-sm">
-								<i class="fa fa-print"></i> Print
-							</button>
-						</div>
 					</div>
 					<div class="card-body">
 						@if(session('success'))
@@ -84,13 +85,14 @@
                         @else
 							@forelse($objectsByRelation as $relationId => $objects)
 								@php
-									// Cari nama relasi dari ID (cast ke int untuk matching)
 									$relationName = $relations->firstWhere('id', (int)$relationId)?->name ?? ($relationId == 0 ? 'Tanpa Relasi' : 'Relasi ID: ' . $relationId);
+									$client = request('client_id') ? $clients->firstWhere('id', request('client_id')) : $objects->first()?->client;
+        							$clientName = $client?->user?->name ?? $client?->id_name ?? 'No Name';
 								@endphp
 								<div class="mb-5">
 									<h4 class="mb-3">{{ $relationName }}</h4>
 									<div class="table-responsive" style="overflow-x: auto;">
-										<table class="table table-bordered">
+										<table class="table table-bordered table-print" style="width:100%" data-title="Daftar Polis - {{ $clientName }}" data-client="{{ $clientName }}" data-relation="{{ $relationName }}">
 											<thead>
 												<tr>
 													<th style="width: 3%;">No</th>
@@ -126,8 +128,7 @@
 															@endif
 														</td>
 														<td style="vertical-align: top;">
-															<div class="fw-bold">{{ $object->name ?? '-' }}</div>
-															<small class="text-muted">{{ $object->address ?? '-' }}</small>
+														{{ $object->name ?? '-' }} / {{ $object->address ?? '-' }}
 														</td>
 														<td style="vertical-align: top;">{{ $object->objectType?->name ?? '-' }}</td>
 														<td style="vertical-align: top;">
@@ -153,31 +154,31 @@
 																<div>-</div>
 															@endif
 														</td>
-														<td style="white-space: nowrap; vertical-align: top;">
+														<td style="white-space: normal; vertical-align: top; text-align: right;">
 															@if($object->objectParts->isNotEmpty())
-																<div style="display: table; width: 100%;">
+																<div style="display: table; width: 100%; font-size: 0.85em;">
 																	{{-- Loop Item --}}
 																	@foreach($object->objectParts as $part)
 																		<div style="display: table-row;">
-																			<div style="display: table-cell; text-align: left; padding-bottom: 4px;">
+																			<div style="display: table-cell; text-align: left; padding-bottom: 3px; padding-right: 20px;">
 																				{{ $part->part->name }}:
 																			</div>
-																			<div style="display: table-cell; text-align: right; padding-bottom: 4px; padding-left: 20px;">
+																			<div style="display: table-cell; text-align: right; padding-bottom: 3px;">
 																				{{ numberFormat($part->value) }}
 																			</div>
 																		</div>
 																	@endforeach
 																</div>
 
-																<div style="border-top: 2px solid #000; margin: 8px 0; width: 100%;"></div>
+																<div style="border-top: 1px solid #000; margin: 6px 0; width: 100%;"></div>
 
 																{{-- Bagian Total --}}
-																<div style="display: table; width: 100%;">
+																<div style="display: table; width: 100%; font-size: 0.85em;">
 																	<div style="display: table-row;">
-																		<div style="display: table-cell; text-align: right; font-weight: bold; padding-right: 10px;">
+																		<div style="display: table-cell; text-align: left; padding-right: 20px;">
 																			Total :
 																		</div>
-																		<div style="display: table-cell; text-align: right; font-weight: bold; padding-left: 20px;">
+																		<div style="display: table-cell; text-align: right;">
 																			{{ numberFormat($objectPartTotal) }}
 																		</div>
 																	</div>
@@ -205,6 +206,15 @@
 	</div>
 
 	@push('scripts')
+		<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+		<script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap5.js"></script>
+		
+		<script src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
+		<script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.bootstrap5.js"></script>
+		<script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.print.min.js"></script>
+
 		<script>
 			$(document).ready(function() {
 				function buildFilterUrl() {
@@ -212,26 +222,75 @@
 					var clientId = $('#clientFilter').val();
 					var relationId = $('#relationFilter').val();
 					
-					if (clientId) {
-						params.push('client_id=' + clientId);
-					}
-					if (relationId) {
-						params.push('relation_id=' + relationId);
-					}
+					if (clientId) params.push('client_id=' + clientId);
+					if (relationId) params.push('relation_id=' + relationId);
 					
 					var url = "{{ route('cards.reportByRelation') }}";
-					if (params.length > 0) {
-						url += '?' + params.join('&');
-					}
+					if (params.length > 0) url += '?' + params.join('&');
 					return url;
 				}
 				
-				$('#clientFilter').on('change', function() {
+				$('#clientFilter, #relationFilter').on('change', function() {
 					window.location.href = buildFilterUrl();
 				});
+
 				
-				$('#relationFilter').on('change', function() {
-					window.location.href = buildFilterUrl();
+				$('.table-print').each(function() {
+					var clientName = $(this).data('client');
+					var relationName = $(this).data('relation');
+					var printTitle = $(this).data('title');
+
+					new DataTable(this, {
+						paging: false, 
+						searching: false, 
+						info: false,     
+						
+						layout: {
+							topStart: {
+								buttons: [
+									{
+										extend: 'print',
+										text: '<i class="fa fa-print"></i> Print Tabel Ini',
+										className: 'btn btn-primary btn-sm mb-2',
+										
+										title: 'Laporan Kartu Produksi - ' + clientName,
+										messageTop: function() {
+											return '<div style="text-align: left; margin-bottom: 15px;">' +
+												'<h6 style="margin:0; font-weight:bold;">Relasi: ' + relationName + '</h6>' +
+												'<small class="text-muted">Dicetak pada: ' + new Date().toLocaleString('id-ID') + '</small>' +
+												'</div>';
+										},
+
+										autoPrint: true,
+
+										exportOptions: {
+											columns: ':visible',
+											stripHtml: false, 
+											format: {
+												body: function (data, row, column, node) {
+													return node.innerHTML; 
+												}
+											}
+										},
+
+										customize: function (win) {
+											$(win.document.body).css('-webkit-print-color-adjust', 'exact');
+											
+											$(win.document.body).css('font-family', 'inherit'); 
+
+											$(win.document.body).find('table')
+												.addClass('table table-bordered') 
+												.css('width', '100%') 
+												.css('font-size', 'inherit') 
+												.removeClass('dataTable'); 
+											
+											
+										}
+									}
+								]
+							}
+						}
+					});
 				});
 			});
 		</script>
