@@ -89,7 +89,7 @@
 				var win = window.open('', '', 'height=700,width=900');
 
 				// 3. Tulis HTML Lengkap ke Jendela Baru
-				win.document.write('<html><head><title>Print Laporan</title>');
+				win.document.write('<html><head><title>Laporan Pembayaran</title>');
 				
 				// Inject CSS langsung agar terbawa
 				win.document.write('<style>');
