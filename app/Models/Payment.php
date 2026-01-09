@@ -28,6 +28,11 @@ class Payment extends Model
         'paid_at' => 'datetime',
     ];
 
+    public function card(): BelongsTo
+    {
+        return $this->belongsTo(Card::class, 'card_id');
+    }
+
     public function productionCard(): BelongsTo
     {
         return $this->belongsTo(Card::class);
@@ -51,5 +56,25 @@ class Payment extends Model
     public function clientPaymentStatus(): BelongsTo
     {
         return $this->belongsTo(PaymentStatus::class, 'client_payment_status_id');
+    }
+
+    /**
+     * Accessor untuk mendapatkan Nama Tertanggung
+     * Prioritas: Client ID Name -> User Name -> '-'
+     */
+    public function getInsuredNameAttribute(): string
+    {
+        // Cek relasi card dan client untuk menghindari error on null
+        if (!$this->card || !$this->card->client) {
+            return '-';
+        }
+
+        // 1. Cek id_name (Nama sesuai KTP/Identitas)
+        if (!empty($this->card->client->id_name)) {
+            return $this->card->client->id_name;
+        }
+
+        // 2. Cek nama user (Login) jika id_name kosong
+        return $this->card->client->user?->name ?? '-';
     }
 }

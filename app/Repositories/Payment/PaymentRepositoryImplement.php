@@ -22,11 +22,8 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     public function getAllWithRelations()
     {
         return $this->model->with([
-            'productionCard.client',
-            'productionCard.policy',
-            'creator',
-            'collector',
-            'collectorType',
+            'card.policy.object', 
+            'card.client.user', 
             'clientPaymentStatus'
         ])->latest()->get();
     }

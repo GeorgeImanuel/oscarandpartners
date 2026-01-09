@@ -1,74 +1,108 @@
 @extends('layouts.master')
 
-@section('title')Payment
+@section('title')Payments
 @endsection
 
-@section('breadcrumb-items')
-<li class="breadcrumb-item">Pembayaran</li>
-<li class="breadcrumb-item active">Daftar</li>
-@endsection
+@push('css')
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
+@endpush
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Daftar Pembayaran</h5>
-                    <a href="{{ route('payments.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus"></i> Tambah Pembayaran
-                    </a>
-                </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+	@component('components.breadcrumb')
+	@slot('breadcrumb_title')
+	<h3>Daftar Pembayaran</h3>
+	@endslot
+	<li class="breadcrumb-item">Pembayaran</li>
+	<li class="breadcrumb-item active">Daftar</li>
+	@endcomponent
 
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="display" id="basic-1">
+								<thead>
+									<tr>
+										<th>Periode</th>
+	                                    <th>No</th>
+	                                    <th>No Polis</th>
+	                                    <th>Nama Tertanggung</th>
+	                                    <th>Letak Resiko</th>
+										<th>TSI</th>
+										<th>Keterangan</th>
+                                        <th>Jumlah Payment</th>
+                                        <th>Tipe Pembayaran</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									@forelse($payments as $payment)
+										<tr>
+                                            <td>{{ $payment->deadline_at ? $payment->deadline_at->format('d-m-Y') : '-' }}</td>
+											<td>{{ $loop->iteration }}</td>
+											<td>{{ $payment->card?->policy?->policy_number ?? '-' }}</td>
+											<td>{{ $payment->insured_name }}</td>
+											<td></td>
+											<td></td>
+                                            <td>{{ $payment->note ?? '-' }}</td>
+											<td>{{ number_format($payment->amount ?? 0) }}</td>
+											<td>{{ $payment->clientPaymentStatus?->name ?? '-' }}</td>
+                                            <td>
+												<div style="white-space: nowrap;">
+													<a href="{{ route('payments.show', $payment->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
+														<i class="fa fa-eye"></i> Detail
+													</a>
+												</div>
+											</td>
+										</tr>
+									@empty
+										<tr>
+											<td colspan="9" class="text-center">Tidak ada data</td>
+										</tr>
+									@endforelse
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	@push('scripts')
+		<script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
+		<script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+		<script>
+			$(document).ready(function() {
+				function buildFilterUrl() {
+					var params = [];
+					var clientId = $('#clientFilter').val();
+					var statusId = $('#statusFilter').val();
+					
+					if (clientId) {
+						params.push('client_id=' + clientId);
+					}
+					if (statusId) {
+						params.push('card_status_id=' + statusId);
+					}
+					
+					var url = "{{ route('cards.index') }}";
+					if (params.length > 0) {
+						url += '?' + params.join('&');
+					}
+					return url;
+				}
+				
+				$('#clientFilter').on('change', function() {
+					window.location.href = buildFilterUrl();
+				});
+				
+				$('#statusFilter').on('change', function() {
+					window.location.href = buildFilterUrl();
+				});
+			});
+		</script>
+	@endpush
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>No Kartu Produksi</th>
-                                    <th>Urutan Tagihan</th>
-                                    <th>Created by</th>
-                                    <th>Collected by</th>
-                                    <th>Jumlah</th>
-                                    <th>Note</th>
-                                    <th>Status Pembayaran</th>
-                                    <th>Tenggat Waktu</th>
-                                    <th>Tanggal Pembayaran</th>
-                                    <th>Bukti Transfer</th>
-                                    <th>No Bukti Transfer</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($payments as $payment)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-4">Belum ada data pembayaran.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
