@@ -23,6 +23,7 @@ class Payment extends Model
     ];
 
     protected $casts = [
+        'object_value' => 'decimal:2',
         'amount' => 'decimal:2',
         'deadline_at' => 'datetime',
         'paid_at' => 'datetime',
@@ -56,6 +57,13 @@ class Payment extends Model
     public function clientPaymentStatus(): BelongsTo
     {
         return $this->belongsTo(PaymentStatus::class, 'client_payment_status_id');
+    }
+
+        // app/Models/Card.php
+
+    public function paymentType(): BelongsTo
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
     /**

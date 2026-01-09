@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Payment;
 
+use App\Models\Card;
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\Payment;
 
@@ -22,9 +23,11 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     public function getAllWithRelations()
     {
         return $this->model->with([
+            'card',
             'card.policy.object', 
             'card.client.user', 
-            'clientPaymentStatus'
+            'clientPaymentStatus',
+            'card.paymentType',
         ])->latest()->get();
     }
 }
