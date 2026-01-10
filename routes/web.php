@@ -58,6 +58,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('cards/{productionCard}/preview', [CardController::class, 'preview'])->name('cards.preview');
 
     Route::resource('payments', PaymentController::class);
+    Route::post('payments/{payment}/update-installments', [PaymentController::class, 'updateInstallments'])->name('payments.updateInstallments');
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

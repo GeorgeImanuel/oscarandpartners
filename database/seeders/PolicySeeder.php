@@ -26,13 +26,25 @@ class PolicySeeder extends Seeder
             ]);
 
             $randomInsurances = Insurance::all()->random(rand(1, 3));
+            
+            // Calculate percentage splits in decimal format
+            $insuranceCount = $randomInsurances->count();
+            $percentages = [];
+            
+            if ($insuranceCount == 1) {
+                $percentages = [1.00]; // 100%
+            } elseif ($insuranceCount == 2) {
+                $percentages = [0.60, 0.40]; // 60%, 40%
+            } else { // 3
+                $percentages = [0.60, 0.30, 0.10]; // 60%, 30%, 10%
+            }
+            
             foreach ($randomInsurances as $index => $insurance) {
-
                 PolicyInsurance::create([
                     'policy_id' => $policy->id,
                     'insurance_id' => $insurance->id,
                     'is_main' => $index === 0,
-                    'percentage' => $index === 0 ? 100 : 0,
+                    'percentage' => $percentages[$index],
                 ]);
             }
         }
