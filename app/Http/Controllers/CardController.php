@@ -199,10 +199,12 @@ class CardController extends Controller
         $filters = [];
         $user = auth()->user();
         
+        // Set filter untuk client
         if ($user->hasRole('client') && $user->client) {
             $filters['relation_id'] = $user->client->relation_id;
         }
         
+        // Set filter untuk owner/admin
         if ($user->hasRole(['owner', 'admin'])) {
             if ($request->has('client_id') && $request->client_id != '') {
                 $filters['client_id'] = $request->client_id;
@@ -213,50 +215,17 @@ class CardController extends Controller
             }
         }
         
+        // Get objects dari database (sudah di-filter di repository)
         $objects = $this->objectService->getAllByRelationWithFilter($filters);
         
-        $hasActiveFilter = isset($filters['client_id']) || isset($filters['relation_id']);
-        
-        $objects->each(function($object) use ($filters, $user, $hasActiveFilter) {
-            $object->setRelation('policies', $object->policies->filter(function($policy) use ($filters, $user, $hasActiveFilter) {
-                if (!$hasActiveFilter && !($user->hasRole('client') && $user->client)) {
-                    return true;
-                }
-                
-                if (!$policy->productionCard || !$policy->productionCard->client) {
-                    return false;
-                }
-                
-                $client = $policy->productionCard->client;
-                
-                if ($user->hasRole('client') && $user->client) {
-                    if ($client->relation_id != $user->client->relation_id) {
-                        return false;
-                    }
-                }
-                
-                if (isset($filters['client_id']) && $client->id != $filters['client_id']) {
-                    return false;
-                }
-                
-                if (isset($filters['relation_id']) && $client->relation_id != $filters['relation_id']) {
-                    return false;
-                }
-                
-                return true;
-            })->values());
-        });
-        
-        $objects = $objects->filter(function($object) {
-            return $object->policies->isNotEmpty();
-        });
-        
+        // Group objects by relation
         $objectsByRelation = $objects->groupBy(function($object) {
+            // Ambil relation_id dari policy pertama
             $firstPolicy = $object->policies->first();
-            if ($firstPolicy && $firstPolicy->productionCard && $firstPolicy->productionCard->client && $firstPolicy->productionCard->client->relation_id) {
-                return $firstPolicy->productionCard->client->relation_id;
+            if ($firstPolicy && $firstPolicy->productionCard && $firstPolicy->productionCard->client) {
+                return $firstPolicy->productionCard->client->relation_id ?? 0;
             }
-            return 0; 
+            return 0;
         });
         
         $relations = $this->relationService->all();
