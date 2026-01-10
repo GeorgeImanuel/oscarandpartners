@@ -78,7 +78,23 @@
                             </div>
                         </li>
                         <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('payments.index') }}" href="{{ route('payments.index') }}"><i data-feather="credit-card"></i><span>Payments</span></a>
+                            <a class="nav-link menu-title" href="javascript:void(0)">
+                                <i data-feather="credit-card"></i>
+                                <span>Payment</span>
+                            </a>
+
+                            <ul class="nav-submenu menu-content">
+                                <li>
+                                    <a href="{{ route('payments.index') }}" class="{{ routeActive(['payments.index', 'payments.create']) }}"><i data-feather="file-text"></i><span>Semua Payment</span></a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('payments.overdue') }}" class="{{ routeActive('payments.overdue') }}">
+                                        <i data-feather="calendar"></i>
+                                        <span>Pembayaran Terlambat</span>
+                                    </a>
+                            </ul>
+
                         </li>
                         <li class="sidebar-main-title">
                             <div>

@@ -8,6 +8,7 @@ use App\Services\Card\CardService;
 use App\Services\User\UserService;
 use App\Services\CollectorType\CollectorTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
+use App\Repositories\Payment\PaymentRepositoryImplement;
 
 class PaymentController extends Controller
 {
@@ -71,5 +72,18 @@ class PaymentController extends Controller
         $allPayments = $this->paymentService->getByCardId($payment->card_id);
         
         return view('payments.detail', compact('payment', 'allPayments'));
+    }
+
+    // Di PaymentController.php, ganti isi function overdue sementara:
+
+// app/Http/Controllers/PaymentController.php
+
+    public function overdue()
+    {
+        // Mengambil data dari Service (yang sudah difilter di Repository)
+        $payments = $this->paymentService->getOverduePayments();
+
+        // Menampilkan ke view payments.overdue
+        return view('payments.overdue', compact('payments'));
     }
 }

@@ -57,7 +57,12 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('cards', CardController::class)->parameters(['cards' => 'productionCard']);
     Route::get('cards/{productionCard}/preview', [CardController::class, 'preview'])->name('cards.preview');
 
+        // PINDAHKAN KE ATAS resource
+    Route::get('/payments/overdue', [PaymentController::class, 'overdue'])->name('payments.overdue');
+
+    // Route resource diletakkan di bawahnya
     Route::resource('payments', PaymentController::class);
+
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

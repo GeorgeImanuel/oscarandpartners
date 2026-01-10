@@ -62,4 +62,9 @@ class PaymentServiceImplement extends Service implements PaymentService{
 
         return $this->mainRepository->update($id, $data);
     }
+
+    public function getOverduePayments()
+    {
+        return $this->mainRepository->getOverduePayments();
+    }
 }

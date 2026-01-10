@@ -40,4 +40,24 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
             'clientPaymentStatus'
         ])->where('card_id', $cardId)->get();
     }
+
+    // app/Repositories/Payment/PaymentRepositoryImplement.php
+
+    public function getOverduePayments()
+    {
+        return $this->model->with([
+            'card.policy.object',
+            'card.client.user',
+            'card.paymentType',
+            'clientPaymentStatus'
+        ])
+        // 1. Filter: Tanggal Deadline sudah lewat dari hari ini
+        ->whereDate('deadline_at', '<=', now()->toDateString()) 
+        
+        // 2. Filter: Status Pembayaran adalah Pending (ID: 1)
+        ->where('client_payment_status_id', 1)  
+        
+        ->latest()
+        ->get();
+    }
 }
