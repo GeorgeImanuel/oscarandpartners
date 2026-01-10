@@ -1,7 +1,12 @@
 <div id="new-object" class="row gt-3" style="display:none;">
     <div class="col-md-12 mb-3">
         <label class="form-label" for="object_type_id">Tipe Objek <span class="text-danger">*</span></label>
-        <select class="form-select add-single-select2 @error('object_type_id') is-invalid @enderror" name="object_type_id" id="object_type_id" required style="width: 100%;">
+        <select class="form-select add-single-select2 @error('object_type_id') is-invalid @enderror" 
+                name="object_type_id" 
+                id="object_type_id" 
+                data-placeholder="Pilih Tipe Objek"
+                required 
+                style="width: 100%;">
             <option value="">- Pilih Tipe Objek -</option>
             @foreach ($objectTypes ?? [] as $objectType)
                 <option value="{{ $objectType->id }}" {{ isset($object) && $object->object_type_id == $objectType->id ? 'selected' : (old('object_type_id') == $objectType->id ? 'selected' : '') }}>
@@ -40,7 +45,10 @@
                 <div class="row align-items-end">
                     <div class="col-md">
                         <label class="form-label">Bagian <span class="item-count">1</span></label>
-                        <select class="form-select add-select2" name="part_id[]" style="width: 100%;">
+                        <select class="form-select add-select2" 
+                                name="part_id[]" 
+                                data-placeholder="Pilih Bagian"
+                                style="width: 100%;">
                             <option value=""></option>
                             @foreach ($parts as $part)
                                 <option value="{{ $part->id }}">

@@ -18,7 +18,7 @@
                             <td><strong>Insurances</strong></td>
                             <td>
                                 @foreach ($policy->policyInsurances as $pi)
-                                    <span class="badge badge-info">{{ $pi->insurance->name ?? '-' }}</span>
+                                    <span class="badge badge-info ms-0 me-2">{{ $pi->insurance->name ?? '-' }}</span>
                                 @endforeach
                             </td>
                         </tr>

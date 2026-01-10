@@ -17,7 +17,7 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label" for="coverage_code">Coverage <span class="text-danger">*</span></label>
-        <select class="form-select add-single-select2 @error('coverage_code') is-invalid @enderror" name="coverage_code" id="coverage_code" required style="width: 100%;">
+        <select class="form-select add-single-select2 @error('coverage_code') is-invalid @enderror" name="coverage_code" id="coverage_code" data-placeholder="Pilih Coverage" required style="width: 100%;">
             <option value="">- Pilih Coverage -</option>
             @foreach ($coverages ?? [] as $coverage)
                 <option value="{{ $coverage->code }}" {{ isset($policy) && $coverage->code == $policy->coverage_code ? 'selected' : (old('coverage_code') == $coverage->code ? 'selected' : '') }}>
@@ -59,7 +59,7 @@
                 <div class="row">
                     <div class="col-md">
                         <label class="form-label">Asuransi <span class="item-count">1</span></label>
-                        <select class="form-select add-select2" name="insurance_id[]" style="width: 100%;" required>
+                        <select class="form-select add-select2" name="insurance_id[]" data-placeholder="Pilih Asuransi" style="width: 100%;" required>
                             <option value="">- Pilih Asuransi -</option>
                             @foreach ($insurances as $insurance)
                                 <option value="{{ $insurance->id }}">

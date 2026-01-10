@@ -20,3 +20,10 @@ if(! function_exists('routeActive')){
 		return	request()->routeIs($routeName) ? 'active' : '';
 	}
 }
+
+if(! function_exists('routeBlock')){
+	function routeBlock($routeName)
+	{ 
+		return	request()->routeIs($routeName) ? 'block' : 'none';
+	}
+}

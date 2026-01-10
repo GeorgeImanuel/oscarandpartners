@@ -1,3 +1,4 @@
+
 /**
  * This script handles adding and removing multiple items dynamically within a container.
  * Its important to include the first item inside .item-list as a template for cloning.

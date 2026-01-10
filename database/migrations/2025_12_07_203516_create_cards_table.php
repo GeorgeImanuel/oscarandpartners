@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
             $table->foreignId('card_type_id')->constrained('card_types')->onDelete('cascade');
-            $table->foreignId('card_status_id')->constrained('card_statuses')->onDelete('cascade');
+            $table->foreignId('card_status_id')->constrained('card_statuses')->onDelete('cascade')->default(1);
             $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('cascade')->comment('RENEWAL LINK (Self-Join)');
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade')->comment('Staff Inputter');

@@ -5,7 +5,9 @@
 @endsection
 
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/date-picker.css') }}">
+    <link rel="stylesheet"
+        type="text/css"
+        href="{{ asset('assets/css/date-picker.css') }}">
 @endpush
 
 @section('content')
@@ -18,7 +20,10 @@
     @endcomponent
 
     <div class="container-fluid">
-        <form class="needs-validation" action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}" method="POST" novalidate>
+        <form class="needs-validation"
+            action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}"
+            method="POST"
+            novalidate>
             <div class="card">
                 @csrf
                 @if (isset($card))
@@ -27,49 +32,65 @@
                 <div class="card-body">
                     <div class="stepwizard mt-3">
                         <div class="stepwizard-row setup-panel">
-                            <div class="stepwizard-step"><a class="btn btn-primary" href="#step-1">1</a>
+                            <div class="stepwizard-step"><a class="btn btn-primary"
+                                    href="#step-1">1</a>
                                 <p>Detail Kartu Produksi</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light" href="#step-2">2</a>
+                            <div class="stepwizard-step"><a class="btn btn-light"
+                                    href="#step-2">2</a>
                                 <p>Detail Polis</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light" href="#step-3">3</a>
+                            <div class="stepwizard-step"><a class="btn btn-light"
+                                    href="#step-3">3</a>
                                 <p>Detail Objek</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light" href="#step-4">4</a>
+                            <div class="stepwizard-step"><a class="btn btn-light"
+                                    href="#step-4">4</a>
                                 <p>Detail Premi & Komisi</p>
                             </div>
                         </div>
                     </div>
 
                     {{-- CARD INFO START --}}
-                    <div class="setup-content" id="step-1">
+                    <div id="step-1"
+                        class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12 mt-3">
                                 <h5 class="text-primary">Detail Kartu Produksi</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12 mt-3">
-                                <label class="form-label" for="card_status_id">Tipe Kartu</label>
-                                <select id="card_status_id" class="form-control select2-basic-single @error('card_status_id') is-invalid @enderror" name="card_status_id" required>
+                                <label class="form-label"
+                                    for="card_type_id">Tipe Kartu</label>
+                                <select id="card_type_id"
+                                    class="form-control select2-basic-single @error('card_type_id') is-invalid @enderror"
+                                    name="card_type_id"
+                                    required>
                                     <option value=""></option>
-                                    @foreach ($cardStatuses as $status)
-                                        <option value="{{ $status->id }}" {{ isset($card) ? ($card->card_status_id == $status->id ? 'selected' : '') : (old('card_status_id') == $status->id ? 'selected' : '') }}>
-                                            {{ $status->name }}
+                                    @foreach ($cardTypes as $cardType)
+                                        <option value="{{ $cardType->id }}"
+                                            {{ isset($card) ? ($card->card_type_id == $cardType->id ? 'selected' : '') : (old('card_type_id') == $cardType->id ? 'selected' : '') }}>
+                                            {{ $cardType->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('card_status_id')
+                                @error('card_type_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div id="parent_card_container" class="col-md-12" style="display:none;">
-                                <label class="form-label" for="parent_card_id">Kartu Produksi Sebelumnya</label>
-                                <select id="parent_card_id" class="form-control select2-basic-single @error('parent_card_id') is-invalid @enderror" name="parent_card_id">
+                            <div id="parent_card_container"
+                                class="col-md-12"
+                                style="display:none;">
+                                <label class="form-label"
+                                    for="parent_card_id">Kartu Produksi Sebelumnya</label>
+                                <select id="parent_card_id"
+                                    class="form-control select2-basic-single @error('parent_card_id') is-invalid @enderror"
+                                    name="parent_card_id">
                                     <option value=""></option>
                                     @foreach ($parentCards as $parentCard)
-                                        <option value="{{ $parentCard->id }}" {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
+                                        <option value="{{ $parentCard->id }}"
+                                            {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
                                             {{ $parentCard->policy->policy_number }} -
                                             {{ $parentCard->policy->object->name }}
                                         </option>
@@ -81,11 +102,16 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label" for="client_id">Client</label>
-                                <select id="client_id" class="form-control select2-basic-single @error('client_id') is-invalid @enderror" name="client_id" required>
+                                <label class="form-label"
+                                    for="client_id">Client</label>
+                                <select id="client_id"
+                                    class="form-control select2-basic-single @error('client_id') is-invalid @enderror"
+                                    name="client_id"
+                                    required>
                                     <option value=""></option>
                                     @foreach ($clients as $client)
-                                        <option value="{{ $client->id }}" {{ isset($card) ? ($card->client_id == $client->id ? 'selected' : '') : (old('client_id') == $client->id ? 'selected' : '') }}>
+                                        <option value="{{ $client->id }}"
+                                            {{ isset($card) ? ($card->client_id == $client->id ? 'selected' : '') : (old('client_id') == $client->id ? 'selected' : '') }}>
                                             {{ $client->id_name }}
                                         </option>
                                     @endforeach
@@ -99,18 +125,29 @@
                     {{-- CARD INFO END --}}
 
                     {{-- POLIS INFO START --}}
-                    <div class="setup-content" id="step-2">
+                    <div id="step-2"
+                        class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12">
-                                <label class="form-label" for="policy_id">Nomor Polis</label>
-                                <select id="policy_id" class="form-control policy-number-select2 @error('policy_id') is-invalid @enderror" name="policy_id" required>
+                                <label class="form-label"
+                                    for="policy_id">Nomor Polis</label>
+                                <select id="policy_id"
+                                    class="form-control add-select2 @error('policy_id') is-invalid @enderror"
+                                    data-existing-id="existing-policy"
+                                    data-existing-name="policy_id"
+                                    data-new-id="new-policy"
+                                    data-new-name="policy_number"
+                                    data-placeholder="Pilih Polis"
+                                    name="policy_id"
+                                    required>
                                     <option value=""></option>
                                     @foreach ($policies as $policy)
-                                        <option value="{{ $policy->id }}" {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
+                                        <option value="{{ $policy->id }}"
+                                            {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
                                             {{ $policy->policy_number }} - {{ $policy->object->name }}
                                         </option>
                                     @endforeach
@@ -135,18 +172,28 @@
                     {{-- POLIS INFO END --}}
 
                     {{-- OBJECT INFO START --}}
-                    <div class="setup-content" id="step-3">
+                    <div id="step-3"
+                        class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12 mt-3">
                                 <h5 class="text-primary">Detail Objek</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label class="form-label" for="object_id">Nama Objek <span class="text-danger">*</span></label>
-                                <select class="object-number-select2 @error('object_id') is-invalid @enderror" name="object_id" id="object_id" required style="width: 100%;">
+                                <label class="form-label"
+                                    for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                                <select id="object_id"
+                                    class="form-control add-select2 @error('object_id') is-invalid @enderror"
+                                    data-existing-id="existing-object"
+                                    data-existing-name="object_id"
+                                    data-new-id="new-object"
+                                    data-new-name="object_name"
+                                    data-placeholder="Pilih Objek"
+                                    name="object_id"
+                                    required>
                                     <option value=""></option>
                                     @foreach ($objects ?? [] as $object)
-                                        <option value="{{ $object->id }}" {{ isset($policy) && $policy->object_id == $object->id ? 'selected' : (old('object_id') == $object->id ? 'selected' : '') }}>
+                                        <option value="{{ $object->id }}">
                                             {{ $object->name }}
                                         </option>
                                     @endforeach
@@ -157,7 +204,8 @@
                             </div>
 
                             {{-- Exist Policy Detail --}}
-                            <div class="col-md-12" id="object-details-container">
+                            <div id="object-details-container"
+                                class="col-md-12">
                                 @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details'))
                             </div>
 
@@ -170,39 +218,73 @@
                     {{-- OBJECT INFO END --}}
 
                     {{-- PREMI PARAMETER START --}}
-                    <div class="setup-content" id="step-4">
+                    <div id="step-4"
+                        class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12 mt-5">
                                 <h5 class="text-primary">Parameter Premi</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="premi_percentages">Presentase Premi (%)</label>
-                                <input id="premi_percentages" class="form-control @error('premi_percentages') is-invalid @enderror" name="premi_percentages" type="number" step="0.001" min="0" max="1" value="{{ isset($card) ? $card->premi_percentages : old('premi_percentages', 0) }}" required>
+                                <label class="form-label"
+                                    for="premi_percentages">Presentase Premi (%)</label>
+                                <input id="premi_percentages"
+                                    class="form-control @error('premi_percentages') is-invalid @enderror"
+                                    name="premi_percentages"
+                                    type="number"
+                                    step="0.001"
+                                    min="0"
+                                    max="1"
+                                    value="{{ isset($card) ? $card->premi_percentages : old('premi_percentages', 0) }}"
+                                    required>
                                 <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
                                 @error('premi_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="tax_percentages">Persentase Pajak (%)</label>
-                                <input id="tax_percentages" class="form-control @error('tax_percentages') is-invalid @enderror" name="tax_percentages" type="number" step="0.001" min="0" max="1" value="{{ isset($card) ? $card->tax_percentages : old('tax_percentages', 0) }}" required>
+                                <label class="form-label"
+                                    for="tax_percentages">Persentase Pajak (%)</label>
+                                <input id="tax_percentages"
+                                    class="form-control @error('tax_percentages') is-invalid @enderror"
+                                    name="tax_percentages"
+                                    type="number"
+                                    step="0.001"
+                                    min="0"
+                                    max="1"
+                                    value="{{ isset($card) ? $card->tax_percentages : old('tax_percentages', 0) }}"
+                                    required>
                                 <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
                                 @error('tax_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="commision_percentages">Presentasi Komisi (%)</label>
-                                <input id="commision_percentages" class="form-control @error('commision_percentages') is-invalid @enderror" name="commision_percentages" type="number" step="0.01" min="0" max="1" value="{{ isset($card) ? $card->commision_percentages : old('commision_percentages', 0) }}" required>
+                                <label class="form-label"
+                                    for="commision_percentages">Presentasi Komisi (%)</label>
+                                <input id="commision_percentages"
+                                    class="form-control @error('commision_percentages') is-invalid @enderror"
+                                    name="commision_percentages"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="1"
+                                    value="{{ isset($card) ? $card->commision_percentages : old('commision_percentages', 0) }}"
+                                    required>
                                 <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
                                 @error('commision_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="discount">Diskon (Rp)</label>
-                                <input id="discount" class="form-control @error('discount') is-invalid @enderror" name="discount" type="number" step="0.01" value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
+                                <label class="form-label"
+                                    for="discount">Diskon (Rp)</label>
+                                <input id="discount"
+                                    class="form-control @error('discount') is-invalid @enderror"
+                                    name="discount"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
                                 <small class="text-muted">Masukkan nilai diskon dalam rupiah</small>
                                 @error('discount')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -218,56 +300,107 @@
                                 <hr class="separator">
                             </div>
                             {{-- SECTION: HARGA PERTANGGUNGAN --}}
-                            <div id="policy-prices" class="col-md-12 input-group-solid">
-                                <label class="form-label" for="object_value">Harga Pertanggungan (Rp)</label>
-                                <input id="object_value" class="form-control @error('object_value') is-invalid @enderror" name="object_value" type="number" step="0.01" value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}" required readonly>
+                            <div id="policy-prices"
+                                class="col-md-12 input-group-solid">
+                                <label class="form-label"
+                                    for="object_value">Harga Pertanggungan (Rp)</label>
+                                <input id="object_value"
+                                    class="form-control @error('object_value') is-invalid @enderror"
+                                    name="objects_value"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}"
+                                    required
+                                    readonly>
                                 @error('object_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="production_value">Nilai Produksi (Rp)</label>
-                                <input id="production_value" class="form-control @error('production_value') is-invalid @enderror" name="production_value" type="number" step="0.01" value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="production_value">Nilai Produksi (Rp)</label>
+                                <input id="production_value"
+                                    class="form-control @error('production_value') is-invalid @enderror"
+                                    name="production_value"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}"
+                                    readonly>
                                 @error('production_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="premi">Total Premi (Rp)</label>
-                                <input id="premi" class="form-control @error('premi') is-invalid @enderror" name="premi" type="number" step="0.01" value="{{ isset($card) ? $card->premi : old('premi', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="premi">Total Premi (Rp)</label>
+                                <input id="premi"
+                                    class="form-control @error('premi') is-invalid @enderror"
+                                    name="premi"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->premi : old('premi', 0) }}"
+                                    readonly>
                                 @error('premi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="commision_bruto">Komisi Awal (Rp)</label>
-                                <input id="commision_bruto" class="form-control @error('commision_bruto') is-invalid @enderror" name="commision_bruto" type="number" step="0.01" value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="commision_bruto">Komisi Awal (Rp)</label>
+                                <input id="commision_bruto"
+                                    class="form-control @error('commision_bruto') is-invalid @enderror"
+                                    name="commision_bruto"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}"
+                                    readonly>
                                 @error('commision_bruto')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="commision_netto">Komisi Bersih (Rp)</label>
-                                <input id="commision_netto" class="form-control @error('commision_netto') is-invalid @enderror" name="commision_netto" type="number" step="0.01" value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="commision_netto">Komisi Bersih (Rp)</label>
+                                <input id="commision_netto"
+                                    class="form-control @error('commision_netto') is-invalid @enderror"
+                                    name="commision_netto"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}"
+                                    readonly>
                                 @error('commision_netto')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="tax">Nilai Pajak (Rp)</label>
-                                <input id="tax" class="form-control @error('tax_value') is-invalid @enderror" name="tax" type="number" step="0.01" value="{{ isset($card) ? $card->tax : old('tax_value', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="tax">Nilai Pajak (Rp)</label>
+                                <input id="tax"
+                                    class="form-control @error('tax_value') is-invalid @enderror"
+                                    name="tax"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->tax : old('tax_value', 0) }}"
+                                    readonly>
                                 @error('tax_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="insurance_pay">Bayar Asuransi (Rp)</label>
-                                <input id="insurance_pay" class="form-control @error('insurance_pay') is-invalid @enderror" name="insurance_pay" type="number" step="0.01" value="{{ isset($card) ? $card->insurance_pay : old('insurance_pay', 0) }}" readonly>
+                                <label class="form-label"
+                                    for="insurance_pay">Bayar Asuransi (Rp)</label>
+                                <input id="insurance_pay"
+                                    class="form-control @error('insurance_pay') is-invalid @enderror"
+                                    name="insurance_pay"
+                                    type="number"
+                                    step="0.01"
+                                    value="{{ isset($card) ? $card->insurance_pay : old('insurance_pay', 0) }}"
+                                    readonly>
                                 @error('insurance_pay')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -277,15 +410,19 @@
                     </div>
                 </div>
                 <div class="card-footer	">
-                    <a class="btn btn-light" href="{{ route('cards.index') }}">Kembali</a>
-                    <button class="btn btn-primary float-end" type="submit">Simpan</button>
+                    <a class="btn btn-light"
+                        href="{{ route('cards.index') }}">Kembali</a>
+                    <button class="btn btn-primary float-end"
+                        type="submit">Simpan</button>
                 </div>
             </div>
         </form>
     </div>
 
     @push('css')
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+        <link rel="stylesheet"
+            type="text/css"
+            href="{{ asset('assets/css/select2.css') }}">
     @endpush
 
     @push('scripts')
@@ -347,32 +484,34 @@
                 },
             });
 
-            // Initialize Policy Select2
-            initCustomSelect2("#policy_id", {
-                placeholder: "Pilih Polis",
-                newFormId: '#new-policy',
-                existingDetailsId: '#existing-policy',
-                newNameAttr: 'policy_number',
-                existingNameAttr: 'policy_id'
-            });
-
-            // Initialize Object Select2
-            initCustomSelect2("#object_id", {
-                placeholder: "Pilih Objek",
-                newFormId: '#new-object',
-                existingDetailsId: '#existing-object',
-                newNameAttr: 'object_name',
-                existingNameAttr: 'object_id'
-            });
-            // Initialize Object Select2
-            initCustomSelect2("#object_type_id", {
-                placeholder: "Pilih Tipe Objek",
-                newNameAttr: 'object_type_name',
-                existingNameAttr: 'object_type_id'
-            });
-
-            // Initialize Object Select2
             initCustomSelect2(".add-select2");
+
+            // // Initialize Policy Select2
+            // initCustomSelect2("#policy_id", {
+            //     placeholder: "Pilih Polis",
+            //     newFormId: '#new-policy',
+            //     existingDetailsId: '#existing-policy',
+            //     newNameAttr: 'policy_number',
+            //     existingNameAttr: 'policy_id'
+            // });
+
+            // // Initialize Object Select2
+            // initCustomSelect2("#object_id", {
+            //     placeholder: "Pilih Objek",
+            //     newFormId: '#new-object',
+            //     existingDetailsId: '#existing-object',
+            //     newNameAttr: 'object_name',
+            //     existingNameAttr: 'object_id'
+            // });
+            // // Initialize Object Select2
+            // initCustomSelect2("#object_type_id", {
+            //     placeholder: "Pilih Tipe Objek",
+            //     newNameAttr: 'object_type_name',
+            //     existingNameAttr: 'object_type_id'
+            // });
+
+            // // Initialize Object Select2
+            // initCustomSelect2(".add-select2");
 
             // Toggle parent_card_id based on card_status_id
             $('#card_status_id').on('change', function() {

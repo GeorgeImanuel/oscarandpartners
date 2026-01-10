@@ -57,8 +57,8 @@
       </div>
     </div>
     <!-- latest jquery-->
+    @livewireScripts
     @includeIf('layouts.partials.js')
     @include('layouts.partials.alert')
-    @livewireScripts
   </body>
 </html>

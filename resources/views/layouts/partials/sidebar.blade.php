@@ -30,12 +30,12 @@
                     </li>
 
                     <li class="dropdown">
-                        <a class="nav-link menu-title" href="javascript:void(0)">
+                        <a class="nav-link menu-title {{ routeActive(['cards.index', 'cards.create', 'cards.thisMonth', 'cards.nextMonth', 'cards.edit']) }}" href="javascript:void(0)">
                             <i data-feather="folder"></i>
                             <span>Kartu Produksi</span>
                         </a>
 
-                        <ul class="nav-submenu menu-content">
+                        <ul class="nav-submenu menu-content" style="display: {{ routeBlock(['cards.index', 'cards.create', 'cards.thisMonth', 'cards.nextMonth', 'cards.edit']) }}">
                             <li>
                                 <a href="{{ route('cards.index') }}" class="{{ routeActive(['cards.index', 'cards.create']) }}"><i data-feather="file-text"></i><span>Semua Kartu</span></a>
                             </li>
@@ -58,8 +58,8 @@
                                     <span>Kartu Per Relasi</span>
                                 </a>
                             </li>
-                                
-                            @hasanyrole('owner|admin|finance')    
+
+                            @hasanyrole('owner|admin|finance')
                                 <li>
                                     <a href="{{ route('cards.reportByObject') }}" class="{{ routeActive('cards.reportByObject') }}">
                                         <i data-feather="file-text"></i>
