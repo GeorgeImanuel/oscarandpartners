@@ -38,7 +38,7 @@
                             <td><strong>Parts</strong></td>
                             <td>
                                 @foreach ($object->objectParts as $objectPart)
-                                    <span class="badge badge-info">{{ $objectPart->part->name ?? '-' }}</span>
+                                    <span class="badge badge-info">{{ $objectParts->part->name ?? '-' }}</span>
                                 @endforeach
                             </td>
                         </tr>

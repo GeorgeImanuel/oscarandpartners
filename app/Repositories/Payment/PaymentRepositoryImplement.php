@@ -30,4 +30,14 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
             'card.paymentType',
         ])->latest()->get();
     }
+
+    public function getByCardIdWithRelations($cardId)
+    {
+        return $this->model->with([
+            'productionCard.policy.policyInsurances.insurance',
+            'productionCard.policy.object',
+            'productionCard.client.user',
+            'clientPaymentStatus'
+        ])->where('card_id', $cardId)->get();
+    }
 }

@@ -44,7 +44,9 @@ Route::group(['middleware' => ['auth:web']], function () {
             return redirect()->route('login');
         }
         return view('dashboard');
-    })->name('dashboard');  
+    })->name('dashboard');
+    Route::get('user-profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::put('user-profile', [UserController::class, 'profileUpdate'])->name('profile.update');  
     
     Route::resource('relations', RelationController::class);
 

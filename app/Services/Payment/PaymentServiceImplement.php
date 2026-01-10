@@ -35,6 +35,11 @@ class PaymentServiceImplement extends Service implements PaymentService{
         return $this->mainRepository->getAllWithRelations();
     }
 
+    public function getByCardId($cardId)
+    {
+        return $this->mainRepository->getByCardIdWithRelations($cardId);
+    }
+
     public function create($data)
     {
         // Handle File Upload
@@ -42,12 +47,6 @@ class PaymentServiceImplement extends Service implements PaymentService{
             $file = $data['client_evident_file'];
             $path = $file->store('payments/evidents', 'public');
             $data['client_evident_file'] = $path;
-        }
-
-        // Map card_id (dari form/ERD) ke production_card_id (di Model Payment)
-        if (isset($data['card_id'])) {
-            $data['production_card_id'] = $data['card_id'];
-            unset($data['card_id']);
         }
 
         return $this->mainRepository->create($data);
@@ -59,11 +58,6 @@ class PaymentServiceImplement extends Service implements PaymentService{
             $file = $data['client_evident_file'];
             $path = $file->store('payments/evidents', 'public');
             $data['client_evident_file'] = $path;
-        }
-
-        if (isset($data['card_id'])) {
-            $data['production_card_id'] = $data['card_id'];
-            unset($data['card_id']);
         }
 
         return $this->mainRepository->update($id, $data);

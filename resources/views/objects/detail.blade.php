@@ -75,11 +75,11 @@
 									<tbody>
 										@php $totalValue = 0; @endphp
 										@foreach($object->objectParts as $index => $objectPart)
-											@php $totalValue += $objectPart->value; @endphp
+											@php $totalValue += $objectParts->value; @endphp
 											<tr>
 												<td>{{ $index + 1 }}</td>
-												<td>{{ $objectPart->part->name ?? '-' }}</td>
-												<td class="text-end">{{ number_format($objectPart->value, 2, ',', '.') }}</td>
+												<td>{{ $objectParts->part->name ?? '-' }}</td>
+												<td class="text-end">{{ number_format($objectParts->value, 2, ',', '.') }}</td>
 											</tr>
 										@endforeach
 									</tbody>

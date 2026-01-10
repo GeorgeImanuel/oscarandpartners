@@ -49,8 +49,12 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-auto pt-3">
-                        <button type="button" class="btn btn-danger btn-xs remove-item-btn">
+                    <div class="col-md-auto">
+                        <label class="form-label">Harga Bagian <span class="item-count">1</span></label>
+                        <input type="number" class="form-control" name="value">
+                    </div>
+                    <div class="col-md-1 pt-3">
+                        <button type="button" class="btn btn-danger btn-xs remove-item-btn" style="display:none">
                             <i class="fa fa-trash"></i> Hapus
                         </button>
                     </div>

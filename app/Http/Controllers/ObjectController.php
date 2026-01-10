@@ -90,7 +90,7 @@ class ObjectController extends Controller
     public function show(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts');
+        $object->load('objectParts.part');
         return view('objects.detail', compact('object'));
     }
 
@@ -100,7 +100,7 @@ class ObjectController extends Controller
     public function edit(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts');
+        $object->load('objectParts.part');
         $objectTypes = $this->objectTypeService->getAll();
         $parts = $this->partService->getAll();
         return view('objects.form', compact('object', 'objectTypes', 'parts'));
