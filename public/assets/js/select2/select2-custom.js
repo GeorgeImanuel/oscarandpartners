@@ -13,16 +13,18 @@ function initCustomSelect2(selector) {
 
     // Read all config from data attributes
     var config = {
-        placeholder  : $element.data("placeholder") || "Pilih Item",
-        newId        : $element.data("new-id"),
-        newName      : $element.data("new-name"),
-        existingId   : $element.data("existing-id"),
-        existingName : $element.data("existing-name"),
-        allowClear   : $element.data("allow-clear") !== false,             // default true
-        tags         : $element.data("tags") !== false,                    // default true
-        createTagText: 
+        placeholder: $element.data("placeholder") || "Pilih Item",
+        newId: $element.data("new-id"),
+        newName: $element.data("new-name"),
+        existingId: $element.data("existing-id"),
+        existingName: $element.data("existing-name"),
+        allowClear: $element.data("allow-clear") !== false, // default true
+        tags: $element.data("tags") !== false, // default true
+        createTagText:
             $element.data("create-tag-text") || "(Klik untuk tambah data)",
     };
+
+    console.log(config);
 
     $element
         .select2({
@@ -101,17 +103,24 @@ function initCustomSelect2(selector) {
 setTimeout(function () {
     (function ($) {
         "use strict";
+
+        $('.basic-select2').select2({
+            placeholder: "Pilih Data",
+            allowClear: true,
+        });
+
         $(".select2-basic-single").each(function () {
             var $select = $(this);
-            var label =
-                $select
-                    .closest(".col-md-12, .col-md-6")
-                    .find("label")
-                    .text()
-                    .trim() || "data";
+            // var label =
+            //     $select
+            //         .closest(".col-md-12, .col-md-6")
+            //         .find("label")
+            //         .text()
+            //         .trim() || "data";
 
             $select.select2({
-                placeholder: "Pilih " + label,
+                // placeholder: "Pilih " + label,
+                placeholder: "Pilih ",
                 allowClear: true,
             });
         });

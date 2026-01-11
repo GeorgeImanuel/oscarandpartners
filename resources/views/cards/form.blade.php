@@ -63,7 +63,7 @@
                                 <label class="form-label"
                                     for="card_type_id">Tipe Kartu</label>
                                 <select id="card_type_id"
-                                    class="form-control select2-basic-single @error('card_type_id') is-invalid @enderror"
+                                    class="form-control basic-select2 @error('card_type_id') is-invalid @enderror"
                                     name="card_type_id"
                                     required>
                                     <option value=""></option>
