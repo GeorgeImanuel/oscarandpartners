@@ -78,7 +78,7 @@ class CardController extends Controller
     {
         $objects     = $this->objectService->all();
         $clients     = $this->clientService->all();
-        $policies    = $this->policyService->getAllFreePolicies();
+        $policies    = $this->policyService->allActivePolicies();
         $cardTypes   = $this->cardTypeService->all();
         $parentCards = $this->cardService->getAllParent();
 
@@ -249,7 +249,7 @@ class CardController extends Controller
         }
 
         $cards = $this->cardService->getAllWithFilter($filters);
-        $objects = $this->objectService->getAllWithRelations();
+        $objects = $this->objectService->allWithRelations();
 
         return view('cards.report-by-object', compact('cards', 'objects'));
     }

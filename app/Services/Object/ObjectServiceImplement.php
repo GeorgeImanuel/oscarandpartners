@@ -44,7 +44,7 @@ class ObjectServiceImplement extends Service implements ObjectService
     /**
      * Get all objects with relations
      */
-    public function getAllWithRelations()
+    public function allWithRelations()
     {
         return $this->mainRepository->getAllWithRelations();
     }

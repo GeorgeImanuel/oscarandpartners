@@ -87,7 +87,6 @@ function initCustomSelect2(selector) {
             }
         })
         .on("select2:unselect", function (e) {
-            console.log("Selection unselected");
             if (config.newId) {
                 $(config.newId).hide();
             }

@@ -6,7 +6,7 @@ use LaravelEasyRepository\BaseService;
 
 interface ObjectService extends BaseService
 {
-    public function getAllWithRelations();
+    public function allWithRelations();
     public function createWithParts(array $data);
     public function updateWithParts($id, array $data);
     public function getAllByRelationWithFilter(array $filters = []);

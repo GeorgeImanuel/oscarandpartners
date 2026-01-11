@@ -44,7 +44,7 @@ class PolicyDetails extends Component
             if ($this->policy->object) {
                 $this->dispatch(
                     'policyLoaded',
-                    objectValue: $this->policy->object->object_value,
+                    // objectValue: $this->policy->object->object_value,
                     objectId: $this->policy->object->id
                 );
             }

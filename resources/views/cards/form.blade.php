@@ -89,8 +89,13 @@
                                     name="parent_card_id">
                                     <option value=""></option>
                                     @foreach ($parentCards as $parentCard)
+                                        @if ($parentCard->id == (isset($card) ? $card->id : null))
+                                            @continue
+                                        @endif
                                         <option value="{{ $parentCard->id }}"
-                                            {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}>
+                                            {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}
+                                            data-client-id="{{ $parentCard->client_id }}"
+                                            data-policy-id="{{ $parentCard->policy_id }}">
                                             {{ $parentCard->policy->policy_number }} -
                                             {{ $parentCard->policy->object->name }}
                                         </option>
@@ -132,14 +137,15 @@
                                 <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12">
+                            <div id="policy-details-container"
+                                class="col-md-12">
                                 <label class="form-label"
                                     for="policy_id">Nomor Polis</label>
                                 <select id="policy_id"
-                                    class="form-control add-select2 @error('policy_id') is-invalid @enderror"
-                                    data-existing-id="existing-policy"
+                                    class="form-control policy-select2 @error('policy_id') is-invalid @enderror"
+                                    data-existing-id="#existing-policy"
                                     data-existing-name="policy_id"
-                                    data-new-id="new-policy"
+                                    data-new-id="#new-policy"
                                     data-new-name="policy_number"
                                     data-placeholder="Pilih Polis"
                                     name="policy_id"
@@ -158,7 +164,8 @@
                             </div>
 
                             {{-- Exist Policy Detail --}}
-                            <div class="col-md-12">
+                            <div id="policy-details-container"
+                                class="col-md-12">
                                 @livewire('policy-details', ['policyId' => isset($card) ? $card->policy_id : old('policy_id')])
                             </div>
 
@@ -175,18 +182,18 @@
                     <div id="step-3"
                         class="setup-content">
                         <div class="row g-3">
-                            <div class="col-md-12 mt-3">
+                            <div class="col-md-12">
                                 <h5 class="text-primary">Detail Objek</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-12">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select id="object_id"
-                                    class="form-control add-select2 @error('object_id') is-invalid @enderror"
-                                    data-existing-id="existing-object"
+                                    class="form-control object-select2 @error('object_id') is-invalid @enderror"
+                                    data-existing-id="#existing-object"
                                     data-existing-name="object_id"
-                                    data-new-id="new-object"
+                                    data-new-id="#new-object"
                                     data-new-name="object_name"
                                     data-placeholder="Pilih Objek"
                                     name="object_id"
@@ -484,42 +491,16 @@
                 },
             });
 
-            initCustomSelect2(".add-select2");
-
-            // // Initialize Policy Select2
-            // initCustomSelect2("#policy_id", {
-            //     placeholder: "Pilih Polis",
-            //     newFormId: '#new-policy',
-            //     existingDetailsId: '#existing-policy',
-            //     newNameAttr: 'policy_number',
-            //     existingNameAttr: 'policy_id'
-            // });
-
-            // // Initialize Object Select2
-            // initCustomSelect2("#object_id", {
-            //     placeholder: "Pilih Objek",
-            //     newFormId: '#new-object',
-            //     existingDetailsId: '#existing-object',
-            //     newNameAttr: 'object_name',
-            //     existingNameAttr: 'object_id'
-            // });
-            // // Initialize Object Select2
-            // initCustomSelect2("#object_type_id", {
-            //     placeholder: "Pilih Tipe Objek",
-            //     newNameAttr: 'object_type_name',
-            //     existingNameAttr: 'object_type_id'
-            // });
-
-            // // Initialize Object Select2
-            // initCustomSelect2(".add-select2");
+            initCustomSelect2("#policy_id");
+            initCustomSelect2("#object_id");
 
             // Toggle parent_card_id based on card_status_id
-            $('#card_status_id').on('change', function() {
-                var cardStatusId = $('#card_status_id').val();
+            $('#card_type_id').on('change', function() {
+                var cardTypeId = $('#card_type_id').val();
                 var parentContainer = $('#parent_card_container');
                 var parentSelect = $('#parent_card_id');
 
-                if (cardStatusId == '2') {
+                if (cardTypeId == '{{ config('constants.card_type.renewal') }}') {
                     parentContainer.show();
                     parentSelect.attr('required', true);
                 } else {
@@ -529,43 +510,47 @@
                 }
             });
 
+            $('#parent_card_id').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var clientId = selectedOption.data('client-id') || '';
+                // var policyId = selectedOption.data('policy-id') || '';
+
+                // Set the client_id select2 value
+                $('#client_id').val(clientId).trigger('change');
+
+                // Set the policy_id select2 value
+                // $('#policy_id').val(policyId).trigger('change');
+            });
+
             // Listen to policy_id dropdown change and update Livewire component
             $('#policy_id').on('change', function() {
                 var policyId = $(this).val();
+                $('#object_id').val('').trigger('change').prop('disabled', false);
+                $('#new-object').hide();
+                $('#existing-object').show();
+                console.log('Policy ID changed:', policyId);
+
                 // Find the Livewire component and update policyId
-                var livewireComponent = Livewire.find(document.querySelector('[wire\\:id]').getAttribute(
-                    'wire:id'));
-                if (livewireComponent) {
-                    livewireComponent.set('policyId', policyId);
+                var container = document.querySelector('#policy-details-container [wire\\:id]');
+                if (container) {
+                    var livewireComponent = Livewire.find(container.getAttribute('wire:id'));
+                    if (livewireComponent) {
+                        livewireComponent.set('policyId', policyId);
+                    }
                 }
             });
 
+            // Listen to object_id dropdown change and update Livewire component
             $('#object_id').on('change', function() {
                 var objectId = $(this).val();
                 console.log('Object ID changed:', objectId);
 
-                if (!objectId) {
-                    console.log('No object ID selected');
-                    return;
-                }
-
-                // Find the object-details component
-                try {
-                    var container = document.querySelector('#object-details-container [wire\\:id]');
-                    if (container) {
-                        var wireId = container.getAttribute('wire:id');
-                        var component = Livewire.find(wireId);
-                        if (component) {
-                            console.log('Setting objectId on component:', objectId);
-                            component.set('objectId', objectId);
-                        } else {
-                            console.warn('Component not found with wire:id:', wireId);
-                        }
-                    } else {
-                        console.warn('No Livewire component found in object-details-container');
+                var container = document.querySelector('#object-details-container [wire\\:id]');
+                if (container) {
+                    var livewireComponent = Livewire.find(container.getAttribute('wire:id'));
+                    if (livewireComponent) {
+                        livewireComponent.set('objectId', objectId);
                     }
-                } catch (e) {
-                    console.error('Error updating object component:', e);
                 }
             });
 
@@ -573,14 +558,9 @@
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
                 Livewire.on('policyLoaded', (event) => {
-                    const objectValue = event.objectValue || event[0]?.objectValue || 0;
                     const objectId = event.objectId || event[0]?.objectId || null;
-                    console.log('Policy - Object value received:', objectValue);
-                    if (objectValue > 0) {
-                        $('#object_value').val(objectValue);
-                    }
+
                     if (objectId) {
-                        // Set the object_id select2 value
                         $('#object_id').val(objectId).trigger('change').prop('disabled', true);
                     }
                     update_payment(); // Trigger calculation when policy is loaded

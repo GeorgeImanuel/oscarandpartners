@@ -32,7 +32,7 @@ class ObjectController extends Controller
      */
     public function index()
     {
-        $objects = $this->objectService->getAllWithRelations();
+        $objects = $this->objectService->allWithRelations();
         return view('objects.index', compact('objects'));
     }
 

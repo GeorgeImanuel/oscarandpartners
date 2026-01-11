@@ -13,76 +13,149 @@ class StoreCardRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            // Foreign Keys (tetap pakai dropdown)
+        $rules = [
+            // Step 1: Card Details
+            'card_type_id' => 'required|exists:card_types,id',
             'client_id' => 'required|exists:clients,id',
-            'policy_id' => 'required|exists:policies,id',
-            'card_status_id' => 'required|exists:card_statuses,id',
-            'insurance_payment_status_id' => 'required|exists:payment_statuses,id',
-            'payment_type_id' => 'required|exists:payment_types,id',
             
-            // Periode & Perhitungan
-            'periode_mulai' => 'required|date',
-            'periode_akhir' => 'required|date|after:periode_mulai',
-            'harga_pertanggungan' => 'required|numeric|min:0',
+            // Step 2: Policy (either existing or new)
+            'policy_id' => 'required_without_all:started_date,ended_date,coverage_code|nullable|exists:policies,id',
             
-            // Perhitungan Premi
-            'tarif_premi' => 'required|numeric|min:0',
-            'biaya_polis' => 'required|numeric|min:0',
+            // New Policy Fields (conditional)
+            'started_date' => 'required_without:policy_id|nullable|date',
+            'ended_date' => 'required_without:policy_id|nullable|date|after:started_date',
+            'coverage_code' => 'required_without:policy_id|nullable|exists:coverages,code',
+            'coverage_percentage' => 'required_with:coverage_code|nullable|numeric|min:0|max:100',
+            'insurance_id' => 'required_with:coverage_code|nullable|array|min:1',
+            'insurance_id.*' => 'exists:insurances,id',
+            'percentage' => 'required_with:insurance_id|nullable|array',
+            'percentage.*' => 'numeric|min:0|max:100',
+            'is_main' => 'nullable|array',
             
-            // Perhitungan Komisi
-            'persentase_komisi' => 'required|numeric|min:0|max:100',
-            'pajak_komisi' => 'required|numeric|min:0|max:100',
+            // Step 3: Object (either existing or new)
+            'object_id' => 'required_without_all:object_type_id,object_address,object_city|nullable|exists:objects,id',
             
-            // Subsidi & Tagihan
-            'diskon_dari_komisi' => 'nullable|numeric|min:0',
+            // New Object Fields (conditional)
+            'object_type_id' => 'required_without:object_id|nullable|exists:object_types,id',
+            'object_address' => 'required_without:object_id|nullable|string',
+            'object_city' => 'required_without:object_id|nullable|string',
+            'part_id' => 'nullable|array',
+            'part_id.*' => 'nullable|exists:parts,id',
+            'value' => 'nullable|array',
+            'value.*' => 'nullable|numeric|min:0',
+            'object_value_input' => 'required_with:object_type_id|nullable|numeric|min:0',
             
-            // Payment Info
-            'insurance_paid_at' => 'nullable|date',
-            'insurance_evident_file' => 'nullable|string',
-            'insurance_evident_number' => 'nullable|string',
+            // Step 4: Premi Parameters
+            'premi_percentages' => 'required|numeric|min:0|max:1',
+            'tax_percentages' => 'required|numeric|min:0|max:1',
+            'commision_percentages' => 'required|numeric|min:0|max:1',
+            'discount' => 'nullable|numeric|min:0',
+            
+            // Calculated Fields (read-only but submitted)
+            'objects_value' => 'required|numeric|min:0',
+            'production_value' => 'required|numeric|min:0',
+            'premi' => 'required|numeric|min:0',
+            'commision_bruto' => 'required|numeric|min:0',
+            'commision_netto' => 'required|numeric|min:0',
+            'tax' => 'required|numeric|min:0',
+            'insurance_pay' => 'required|numeric|min:0',
         ];
+
+        // Conditional: parent_card_id required only if card_type_id is renewal
+        if ($this->input('card_type_id') == config('constants.card_type.renewal')) {
+            $rules['parent_card_id'] = 'required|exists:cards,id';
+        }
+
+        return $rules;
     }
 
     public function messages(): array
     {
         return [
+            // Card Details
+            'card_type_id.required' => 'Tipe kartu harus dipilih.',
+            'card_type_id.exists' => 'Tipe kartu tidak valid.',
+            'parent_card_id.required' => 'Kartu produksi sebelumnya harus dipilih untuk tipe Renewal.',
+            'parent_card_id.exists' => 'Kartu produksi sebelumnya tidak valid.',
             'client_id.required' => 'Client harus dipilih.',
             'client_id.exists' => 'Client tidak valid.',
-            'policy_id.required' => 'Policy harus dipilih.',
-            'policy_id.exists' => 'Policy tidak valid.',
-            'card_status_id.required' => 'Status kartu harus dipilih.',
-            'insurance_payment_status_id.required' => 'Status Pembayaran Asuransi harus dipilih.',
-            'payment_type_id.required' => 'Tipe Pembayaran harus dipilih.',
             
-            'periode_mulai.required' => 'Periode Mulai harus diisi.',
-            'periode_akhir.required' => 'Periode Akhir harus diisi.',
-            'periode_akhir.after' => 'Periode Akhir harus setelah Periode Mulai.',
-            'harga_pertanggungan.required' => 'Harga Pertanggungan harus diisi.',
+            // Policy
+            'policy_id.required_without_all' => 'Polis harus dipilih atau dibuat baru.',
+            'started_date.required_without' => 'Periode awal pertanggungan harus diisi.',
+            'ended_date.required_without' => 'Periode akhir pertanggungan harus diisi.',
+            'ended_date.after' => 'Periode akhir harus setelah periode awal.',
+            'coverage_code.required_without' => 'Coverage harus dipilih.',
+            'coverage_percentage.required_with' => 'Persentase coverage harus diisi.',
+            'insurance_id.required_with' => 'Minimal satu asuransi harus dipilih.',
+            'insurance_id.min' => 'Minimal satu asuransi harus dipilih.',
+            'percentage.*.numeric' => 'Persentase asuransi harus berupa angka.',
+            'percentage.*.max' => 'Persentase asuransi tidak boleh lebih dari 100%.',
             
-            'tarif_premi.required' => 'Tarif Premi harus diisi.',
-            'biaya_polis.required' => 'Biaya Polis harus diisi.',
-            'persentase_komisi.required' => 'Persentase Komisi harus diisi.',
-            'pajak_komisi.required' => 'Pajak Komisi harus diisi.',
+            // Object
+            'object_id.required_without_all' => 'Objek harus dipilih atau dibuat baru.',
+            'object_type_id.required_without' => 'Tipe objek harus dipilih.',
+            'object_address.required_without' => 'Alamat objek harus diisi.',
+            'object_city.required_without' => 'Kota objek harus diisi.',
+            'object_value_input.required_with' => 'Harga pertanggungan harus diisi.',
+            
+            // Premi Parameters
+            'premi_percentages.required' => 'Persentase premi harus diisi.',
+            'premi_percentages.max' => 'Persentase premi tidak boleh lebih dari 1 (100%).',
+            'tax_percentages.required' => 'Persentase pajak harus diisi.',
+            'tax_percentages.max' => 'Persentase pajak tidak boleh lebih dari 1 (100%).',
+            'commision_percentages.required' => 'Persentase komisi harus diisi.',
+            'commision_percentages.max' => 'Persentase komisi tidak boleh lebih dari 1 (100%).',
+            
+            // Calculated Fields
+            'objects_value.required' => 'Harga pertanggungan harus diisi.',
+            'production_value.required' => 'Nilai produksi harus dihitung.',
+            'premi.required' => 'Total premi harus dihitung.',
         ];
     }
     
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->filled(['harga_pertanggungan', 'tarif_premi', 'persentase_komisi', 'pajak_komisi', 'diskon_dari_komisi'])) {
-                // Hitung Komisi Bersih Awal
-                $nilai_produksi = $this->harga_pertanggungan * ($this->tarif_premi / 100);
-                $komisi_bruto = $nilai_produksi * ($this->persentase_komisi / 100);
-                $nilai_pajak = $komisi_bruto * ($this->pajak_komisi / 100);
-                $komisi_bersih_awal = $komisi_bruto - $nilai_pajak;
+            // Validate insurance percentage sum = 100% when creating new policy
+            if ($this->filled('insurance_id') && $this->filled('percentage')) {
+                $totalPercentage = array_sum($this->percentage ?? []);
                 
-                // Validasi: Diskon tidak boleh lebih dari Komisi Bersih Awal
-                if ($this->diskon_dari_komisi > $komisi_bersih_awal) {
+                if ($totalPercentage != 100) {
                     $validator->errors()->add(
-                        'diskon_dari_komisi', 
-                        'Diskon dari komisi (Rp ' . number_format($this->diskon_dari_komisi, 0, ',', '.') . 
-                        ') tidak boleh lebih dari Komisi Bersih Awal (Rp ' . number_format($komisi_bersih_awal, 0, ',', '.') . '). Agen akan rugi!'
+                        'percentage', 
+                        'Total persentase asuransi harus 100%. Saat ini: ' . number_format($totalPercentage, 2) . '%'
+                    );
+                }
+            }
+            
+            // Validate at least one main insurance when creating new policy
+            if ($this->filled('insurance_id') && $this->filled('is_main')) {
+                $hasMainInsurance = false;
+                foreach ($this->is_main ?? [] as $isMain) {
+                    if ($isMain == 1) {
+                        $hasMainInsurance = true;
+                        break;
+                    }
+                }
+                
+                if (!$hasMainInsurance) {
+                    $validator->errors()->add(
+                        'is_main', 
+                        'Minimal satu asuransi harus dipilih sebagai asuransi utama'
+                    );
+                }
+            }
+            
+            // Validate discount tidak lebih dari commision_netto
+            if ($this->filled(['discount', 'commision_bruto', 'tax'])) {
+                $commision_netto = $this->commision_bruto - $this->tax;
+                
+                if ($this->discount > $commision_netto) {
+                    $validator->errors()->add(
+                        'discount', 
+                        'Diskon (Rp ' . number_format($this->discount, 0, ',', '.') . 
+                        ') tidak boleh lebih dari Komisi Bersih (Rp ' . number_format($commision_netto, 0, ',', '.') . ')'
                     );
                 }
             }
