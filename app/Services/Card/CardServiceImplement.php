@@ -89,7 +89,7 @@ class CardServiceImplement extends Service implements CardService
             DB::beginTransaction();
 
             //Find or Create Object
-            if ($data['object_id'] == null) {
+            if (!isset($data['object_id']) || $data['object_id'] == null) {
                 //Find or Create Object Type
                 $objectType = $this->objectTypeRepository->find($data['object_type_id']);
                 if (!$objectType) {
@@ -126,21 +126,24 @@ class CardServiceImplement extends Service implements CardService
                         ]);
                     }
                 }
-            }
+                $data['object_id'] = $object->id;
 
+            }
             //Find or Create Policy
-            if ($data['policy_id'] == null) {
-                $policyData = [
-                    'object_id'    => $data['object_id'],
-                    'client_id'    => $data['client_id'],
-                    'started_date' => $data['started_date'],
-                    'ended_date'   => $data['ended_date'],
-                ];
-                $policy = $this->policyRepository->create($policyData);
+            if (!isset($data['policy_id']) || $data['policy_id'] == null) {
+                $policy = $this->policyRepository->create([
+                    'policy_number'       => $data['policy_number'],
+                    'object_id'           => $data['object_id'],
+                    'coverage_code'       => $data['coverage_code'],
+                    'coverage_percentage' => $data['coverage_percentage'] / 100,
+                    'started_date'        => $data['started_date'],
+                    'ended_date'          => $data['ended_date'],
+                ]);
 
                 //Assign Coverage
                 $coverage = $this->coverageRepository->find($data['coverage_code']);
-                if ($coverage) {
+
+                if (!$coverage) {
                     $this->coverageRepository->create([
                         'code'  => $data['coverage_code'],
                         'name' => $data['coverage_code'],
@@ -153,7 +156,7 @@ class CardServiceImplement extends Service implements CardService
                         $this->policyInsuranceRepository->create([
                             'policy_id'    => $policy->id,
                             'insurance_id' => $insuranceId,
-                            'percentage'  => $data['percentage'][$index] ?? 100,
+                            'percentage'  => $data['percentage'][$index] / 100,
                             'is_main'     => isset($data['is_main']) && in_array($insuranceId, $data['is_main']),
                         ]);
                     }
@@ -161,6 +164,7 @@ class CardServiceImplement extends Service implements CardService
 
                 $data['policy_id'] = $policy->id;
             }
+
             //Create Card
             $card = $this->mainRepository->create([
                 'client_id'             => $data['client_id'],
@@ -188,7 +192,7 @@ class CardServiceImplement extends Service implements CardService
             ]);
 
             //Create Payment
-            $this->paymentRepository->create([
+            $payment = $this->paymentRepository->create([
                 'card_id'                  => $card->id,
                 'sequence'                 => 1,
                 'created_by'               => $data['created_by'] ?? auth()->id(),
@@ -196,7 +200,7 @@ class CardServiceImplement extends Service implements CardService
                 'client_payment_status_id' => config('constants.payment_status.pending'),
                 'deadline_at'              => $data['deadline_at'] ?? null,
             ]);
-            
+
             DB::commit();
             return $card;
         } catch (\Exception $e) {

@@ -66,35 +66,45 @@ function initCustomSelect2(selector) {
                 // Show new form, hide existing details
                 if (config.newId) {
                     $(config.newId).show();
+                    $(config.newId).find(".required").attr("required", true);
                 }
                 if (config.newName) {
                     $element.attr("name", config.newName);
                 }
                 if (config.existingId) {
                     $(config.existingId).hide();
+                    $(config.existingId)
+                        .find(".required")
+                        .removeAttr("required");
                 }
             } else {
                 // Show existing details, hide new form
                 if (config.existingId) {
                     $(config.existingId).show();
+                    $(config.existingId)
+                        .find(".required")
+                        .attr("required", true);
                 }
                 if (config.existingName) {
                     $element.attr("name", config.existingName);
                 }
                 if (config.newId) {
                     $(config.newId).hide();
+                    $(config.newId).find(".required").removeAttr("required");
                 }
             }
         })
         .on("select2:unselect", function (e) {
             if (config.newId) {
                 $(config.newId).hide();
+                $(config.newId).find(".required").removeAttr("required");
             }
             if (config.existingName) {
                 $element.attr("name", config.existingName);
             }
             if (config.existingId) {
                 $(config.existingId).show();
+                $(config.existingId).find(".required").attr("required", true);
             }
         });
 }
@@ -103,7 +113,7 @@ setTimeout(function () {
     (function ($) {
         "use strict";
 
-        $('.basic-select2').select2({
+        $(".basic-select2").select2({
             placeholder: "Pilih Data",
             allowClear: true,
         });

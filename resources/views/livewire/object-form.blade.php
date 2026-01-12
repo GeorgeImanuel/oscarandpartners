@@ -4,7 +4,7 @@
     <div class="col-md-12 mb-3">
         <label class="form-label"
             for="object_type_id">Tipe Objek <span class="text-danger">*</span></label>
-        <select class="form-select required add-single-select2 @error('object_type_id') is-invalid @enderror"
+        <select class="form-select required add-select2 @error('object_type_id') is-invalid @enderror"
             name="object_type_id"
             id="object_type_id"
             data-placeholder="Pilih Tipe Objek"
@@ -59,7 +59,7 @@
                 <div class="row align-items-end">
                     <div class="col-md">
                         <label class="form-label">Bagian <span class="item-count">1</span></label>
-                        <select class="form-select add-select2"
+                        <select class="form-select add-select2 required"
                             name="part_id[]"
                             data-placeholder="Pilih Bagian"
                             style="width: 100%;">
@@ -75,7 +75,7 @@
                         <label class="form-label">Harga Bagian <span class="item-count">1</span></label>
                         <input type="number"
                             class="form-control"
-                            name="value">
+                            name="value" onkeyup="updateObjectValue()">
                     </div>
                     <div class="col-md-1 pt-3">
                         <button type="button"

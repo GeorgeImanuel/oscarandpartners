@@ -555,10 +555,15 @@
                 if (cardTypeId == '{{ config('constants.card_type.renewal') }}') {
                     parentContainer.show();
                     parentSelect.attr('required', true);
+                    
+                    parentContainer.find('.required').attr('required', true);
+
                 } else {
                     parentContainer.hide();
                     parentSelect.removeAttr('required');
                     parentSelect.val('').trigger('change'); // Clear selection
+
+                    parentContainer.find('.required').removeAttr('required');
                 }
             });
 
@@ -605,6 +610,17 @@
                     }
                 }
             });
+
+            function updateObjectValue() {
+                var totalValue = 0;
+                $('input[name="value"]').each(function() {
+                    var value = parseInt($(this).val(), 10) || 0;
+                    totalValue += value;
+                });
+                $('#object_value').val(totalValue);
+                $('#object_value_input').val(totalValue);
+                update_payment();
+            }
 
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
@@ -667,7 +683,7 @@
                 });
 
                 $('#production_value').val(productionValue.toFixed(2));
-                $('#premi').val(premiValue.toFixed(2));
+                $('#premi_value').val(premiValue.toFixed(2));
                 $('#commision_bruto').val(commisionBruto.toFixed(2));
                 $('#commision_netto').val(commisionNetto.toFixed(2));
                 $('#tax').val(taxValue.toFixed(2));

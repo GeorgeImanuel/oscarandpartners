@@ -30,7 +30,7 @@
     <div class="col-md-12 mb-3">
         <label class="form-label"
             for="coverage_code">Coverage <span class="text-danger">*</span></label>
-        <select class="form-select add-single-select2 required @error('coverage_code') is-invalid @enderror"
+        <select class="form-select add-select2 required @error('coverage_code') is-invalid @enderror"
             name="coverage_code"
             id="coverage_code"
             data-placeholder="Pilih Coverage"
