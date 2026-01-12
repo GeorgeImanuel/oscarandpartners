@@ -58,7 +58,8 @@
       </div>
     </div>
     <!-- latest jquery-->
-    @livewireScripts
+    {{-- @livewireScripts --}}
+    <script src="{{ env('LIVEWIRE_ASSET_URL') }}/livewire/livewire.js?id=0f6341c0" data-csrf="{{ csrf_token() }}" data-update-uri="{{ env('LIVEWIRE_ASSET_URL') }}/livewire/update" data-navigate-once="true"></script>
     @includeIf('layouts.partials.js')
     @include('layouts.partials.alert')
   </body>

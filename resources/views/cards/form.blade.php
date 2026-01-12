@@ -584,8 +584,8 @@
 
                 // Find the Livewire component and update policyId
                 var container = document.querySelector('#policy-details-container [wire\\:id]');
-                if (container) {
-                    var livewireComponent = Livewire.find(container.getAttribute('wire:id'));
+                if (container && typeof window.Livewire !== 'undefined') {
+                    var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
                     if (livewireComponent) {
                         livewireComponent.set('policyId', policyId);
                     }
@@ -598,8 +598,8 @@
                 console.log('Object ID changed:', objectId);
 
                 var container = document.querySelector('#object-details-container [wire\\:id]');
-                if (container) {
-                    var livewireComponent = Livewire.find(container.getAttribute('wire:id'));
+                if (container && typeof window.Livewire !== 'undefined') {
+                    var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
                     if (livewireComponent) {
                         livewireComponent.set('objectId', objectId);
                     }

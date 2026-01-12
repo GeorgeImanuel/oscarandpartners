@@ -64,13 +64,13 @@
     @push('scripts')
         <script>
             // Re-initialize feather icons after Livewire updates
-            document.addEventListener('livewire:load', function() {
+            document.addEventListener('livewire:init', function() {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
             });
 
-            Livewire.hook('message.processed', (message, component) => {
+            document.addEventListener('livewire:navigated', () => {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
