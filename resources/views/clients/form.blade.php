@@ -68,30 +68,8 @@
 	                        <div class="row mb-3">
 	                            <label class="col-sm-3 col-form-label">Full Name <span class="text-danger">*</span></label>
 	                            <div class="col-sm-9">
-	                                <input class="form-control @error('name') is-invalid @enderror" type="text" name="name" value="{{ old('name', $client->name ?? '') }}" required>
+	                                <input class="form-control @error('name') is-invalid @enderror" type="text" name="name" value="{{ old('name', $client->id_name ?? '') }}" required>
 	                                @error('name')
-	                                    <div class="invalid-feedback">{{ $message }}</div>
-	                                @enderror
-	                            </div>
-	                        </div>
-
-	                        <!-- Phone -->
-	                        <div class="row mb-3">
-	                            <label class="col-sm-3 col-form-label">Phone <span class="text-danger">*</span></label>
-	                            <div class="col-sm-9">
-	                                <input class="form-control @error('phone') is-invalid @enderror" type="text" name="phone" value="{{ old('phone', $client->phone ?? '') }}" required>
-	                                @error('phone')
-	                                    <div class="invalid-feedback">{{ $message }}</div>
-	                                @enderror
-	                            </div>
-	                        </div>
-
-	                        <!-- Email -->
-	                        <div class="row mb-3">
-	                            <label class="col-sm-3 col-form-label">Email</label>
-	                            <div class="col-sm-9">
-	                                <input class="form-control @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email', $client->email ?? '') }}">
-	                                @error('email')
 	                                    <div class="invalid-feedback">{{ $message }}</div>
 	                                @enderror
 	                            </div>
@@ -101,7 +79,7 @@
 	                        <div class="row mb-3">
 	                            <label class="col-sm-3 col-form-label">ID Card Number</label>
 	                            <div class="col-sm-9">
-	                                <input class="form-control @error('id_card_number') is-invalid @enderror" type="text" name="id_card_number" value="{{ old('id_card_number', $client->id_card_number ?? '') }}">
+	                                <input class="form-control @error('id_card_number') is-invalid @enderror" type="text" name="id_card_number" value="{{ old('id_card_number', $client->id_number ?? '') }}">
 	                                @error('id_card_number')
 	                                    <div class="invalid-feedback">{{ $message }}</div>
 	                                @enderror
@@ -130,7 +108,7 @@
 	                        <div class="row mb-3">
 	                            <label class="col-sm-3 col-form-label">Address</label>
 	                            <div class="col-sm-9">
-	                                <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address', $client->address ?? '') }}</textarea>
+	                                <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address', $client->id_address ?? '') }}</textarea>
 	                                @error('address')
 	                                    <div class="invalid-feedback">{{ $message }}</div>
 	                                @enderror
