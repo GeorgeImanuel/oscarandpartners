@@ -27,6 +27,11 @@ class Payment extends Model
         'paid_at' => 'datetime',
     ];
 
+    public function paymentStatus(): BelongsTo
+    {
+        return $this->belongsTo(PaymentStatus::class, 'client_payment_status_id');
+    }
+
     public function card(): BelongsTo
     {
         return $this->belongsTo(Card::class, 'card_id');

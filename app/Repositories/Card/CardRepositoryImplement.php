@@ -19,6 +19,10 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     {
         $this->model = $model;
     }
+    public function findWithRelation($id)
+    {
+        return $this->model->with(['client','policy.policyInsurances.insurance','policy.object.objectParts.part','payments.paymentStatus'])->find($id);
+    }
 
     public function getAllParent()
     {
@@ -40,8 +44,9 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
         ])->get();
     }
 
-    public function getAllWithFilter(array $data){
-        $query = $this->model->with(['client.relation', 'policy.object', 'cardType','cardStatus', 'insurancePaymentStatus']);
+    public function getAllWithFilter(array $data)
+    {
+        $query = $this->model->with(['client.relation', 'policy.object', 'cardType', 'cardStatus', 'insurancePaymentStatus']);
 
         $user = auth()->user();
         if ($user && $user->hasRole('client')) {
@@ -52,29 +57,29 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             }
         }
 
-        if(isset($data['started_date']) && isset($data['ended_date'])){
-            $query->whereHas('policy', function($q) use ($data) {
+        if (isset($data['started_date']) && isset($data['ended_date'])) {
+            $query->whereHas('policy', function ($q) use ($data) {
                 $q->whereBetween('ended_date', [$data['started_date'], $data['ended_date']]);
             });
         }
 
 
-        if(isset($data['card_status_id'])){
+        if (isset($data['card_status_id'])) {
             $query->where('card_status_id', $data['card_status_id']);
         }
 
-        if(isset($data['client_id']) && (!$user || !$user->hasRole('client'))){
+        if (isset($data['client_id']) && (!$user || !$user->hasRole('client'))) {
             $query->where('client_id', $data['client_id']);
         }
 
-        if(isset($data['relation_id'])){
-            $query->whereHas('client', function($q) use ($data) {
+        if (isset($data['relation_id'])) {
+            $query->whereHas('client', function ($q) use ($data) {
                 $q->where('relation_id', $data['relation_id']);
             });
         }
 
-        if(isset($data['object_id'])){
-            $query->whereHas('policy', function($q) use ($data) {
+        if (isset($data['object_id'])) {
+            $query->whereHas('policy', function ($q) use ($data) {
                 $q->where('object_id', $data['object_id']);
             });
         }

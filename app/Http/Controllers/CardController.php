@@ -113,9 +113,10 @@ class CardController extends Controller
      */
     public function show(Card $productionCard)
     {
-        $productionCard = $this->cardService->find($productionCard->id);
-
-        return view('cards.detail', compact('productionCard'));
+        
+        $card = $this->cardService->findWithRelation($productionCard->id);
+// return $card->policy->policyInsurances;
+        return view('cards.detail', compact('card'));
     }
 
     /**
