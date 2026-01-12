@@ -22,12 +22,12 @@ class UpdatePoliciesRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('policy'); // Assuming the route parameter is named 'policy'
+        $id = $this->route('policy');
 
         return [
-            'object_id' => 'nullable|exists:objects,id',
-            'coverage_code' => 'nullable|exists:coverages,code',
-            'coverage_percentage' => 'required|numeric',
+            'object_id' => 'required|exists:objects,id',
+            'coverage_code' => 'required|exists:coverages,code',
+            'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
             'policy_number' => [
                 'required',
                 'string',
@@ -36,13 +36,10 @@ class UpdatePoliciesRequest extends FormRequest
             ],
             'started_date' => 'required|date',
             'ended_date' => 'required|date|after_or_equal:started_date',
-            'insurance_id' => 'nullable|array',
-            'insurance_id.*' => 'nullable|integer|exists:insurances,id',
-            'insurance_new_name' => 'nullable|array',
-            'insurance_new_name.*' => 'nullable|string|max:255',
-            'is_main' => 'nullable|array',
-            'percentage' => 'nullable|array',
-            'percentage.*' => 'nullable|numeric|min:0|max:100',
+            
+            'insurance_id' => 'required|array|min:1',
+            'percentage' => 'required|array|min:1',
+            'percentage.*' => 'required|numeric|min:0.0000001|max:100',
         ];
     }
 
