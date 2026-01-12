@@ -151,8 +151,7 @@
                             </div>
                         </div>
 
-                        {{-- SECTION 1: PENGATURAN PEMBAYARAN (Only show for payment_type_id = 1) --}}
-                        @if($card->payment_type_id == 2)
+                        @if($card->payment_type_id == 1)
                         <div class="row mb-3 no-print">
                             <div class="col-12">
                                 {{-- Hapus bg-light, tambah shadow-sm dan card-header biar tegas --}}
@@ -227,7 +226,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td class="text-muted">Komisi</td>
-                                                        <td class="fw-bold">: {{ number_format($card->commision_percentages ?? 0, 2) }}%</td>
+                                                        <td class="fw-bold">: {{ number_format(($card->commision_percentages ?? 0) * 100, 2) }}%</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="text-muted">Pajak</td>
@@ -339,7 +338,7 @@
                                                 @endif
 
                                                 <td>{{ $pi->insurance->name }}</td>
-                                                <td class="text-center">{{ number_format($share, 2) }}%</td>
+                                                <td class="text-center">{{ number_format(($share * 100), 2) }}%</td>
                                                 <td class="text-end">{{ numberFormat($premi) }}</td>
                                                 
                                                 @if($loop->first)
