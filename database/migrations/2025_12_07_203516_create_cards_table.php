@@ -25,9 +25,9 @@ return new class extends Migration
             // Parameter Input
             $table->decimal('object_value', 22, 2)->comment('Harga Asset dari object_component');
             $table->decimal('policy_fee', 22, 2)->comment('Biaya Polis');
-            $table->decimal('premi_percentages', 7, 6)->comment('Tarif Premi (%)');
-            $table->decimal('commision_percentages', 7, 6)->comment('Komisi Agen (%)');
-            $table->decimal('tax_percentages', 7, 6)->comment('Pajak (%)');
+            $table->decimal('premi_percentages',  8, 7)->comment('Tarif Premi (%)');
+            $table->decimal('commision_percentages',  8, 7)->comment('Komisi Agen (%)');
+            $table->decimal('tax_percentages',  8, 7)->comment('Pajak (%)');
             $table->decimal('discount', 22, 2)->comment('Diskon');
 
             // Value (calculated)

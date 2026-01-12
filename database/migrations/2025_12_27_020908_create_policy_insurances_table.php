@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('policy_id')->constrained()->onDelete('cascade');
             $table->foreignId('insurance_id')->constrained()->onDelete('cascade');
             $table->boolean('is_main')->default(true);
-            $table->decimal('percentage', 7, 6)->default(0)->comment('Share percentage dalam desimal (0.60 = 60%)');
+            $table->decimal('percentage',  8, 7)->default(0)->comment('Share percentage dalam desimal (0.60 = 60%)');
             $table->timestamps();
 
             $table->primary(['policy_id', 'insurance_id']);
