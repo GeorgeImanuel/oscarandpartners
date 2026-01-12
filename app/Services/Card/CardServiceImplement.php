@@ -127,7 +127,6 @@ class CardServiceImplement extends Service implements CardService
                     }
                 }
                 $data['object_id'] = $object->id;
-
             }
             //Find or Create Policy
             if (!isset($data['policy_id']) || $data['policy_id'] == null) {
@@ -177,17 +176,17 @@ class CardServiceImplement extends Service implements CardService
                 'created_by'            => $data['created_by'] ?? auth()->id(),
                 'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
                 'tax_percentages'       => $data['tax_percentages'] / 100 ?? 0,
-                'commision_percentages' => $data['commision_percentages'] / 100 ?? 0,
-                'object_value'          => $data['object_value'] ?? 0,
-                'policy_fee'            => $data['policy_fee'] ?? 0,
-                'discount'              => $data['discount'] ?? 0,
-                'production_value'      => $data['production_value'] ?? 0,
-                'premi_value'           => $data['premi_value'] ?? 0,
-                'commision_bruto'       => $data['commision_bruto'] ?? 0,
-                'commision_netto'       => $data['commision_netto'] ?? 0,
-                'tax_value'             => $data['tax_value'] ?? 0,
-                'client_pay'            => $data['client_pay'] ?? 0,
-                'insurance_pay'         => $data['insurance_pay'] ?? 0,
+                'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
+                'object_value'          => (float)($data['object_value']),
+                'policy_fee'            => (float)($data['policy_fee'] ?? 0),
+                'discount'              => (float)($data['discount'] ?? 0),
+                'production_value'      => (float)($data['production_value'] ?? 0),
+                'premi_value'           => (float)($data['premi_value'] ?? 0),
+                'commision_bruto'       => (float)($data['commision_bruto'] ?? 0),
+                'commision_netto'       => (float)($data['commision_netto'] ?? 0),
+                'tax_value'             => (float)($data['tax_value'] ?? 0),
+                'client_pay'            => (float)($data['client_pay'] ?? 0),
+                'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
 
             ]);
 

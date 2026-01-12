@@ -359,7 +359,7 @@
                                     for="object_value">Harga Pertanggungan (Rp)</label>
                                 <input id="object_value"
                                     class="form-control @error('object_value') is-invalid @enderror"
-                                    name="objects_value"
+                                    name="object_value"
                                     type="number"
                                     value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}"
                                     required
@@ -429,7 +429,7 @@
                                     for="tax">Nilai Pajak (Rp)</label>
                                 <input id="tax"
                                     class="form-control @error('tax_value') is-invalid @enderror"
-                                    name="tax"
+                                    name="tax_value"
                                     type="number"
                                     value="{{ isset($card) ? $card->tax : old('tax_value', 0) }}"
                                     readonly>
