@@ -105,7 +105,10 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="coverage_percentage">Persentase Coverage <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input class="form-control @error('coverage_percentage') is-invalid @enderror" id="coverage_percentage" name="coverage_percentage" type="number" step="0.00001" min="0" max="100" value="{{ old('coverage_percentage', isset($policy) ? $policy->coverage_percentage * 100 : '') }}" placeholder="Contoh: 80.50" required />
+                            <input class="form-control" name="coverage_percentage" type="number" 
+                            step="0.0000001" min="0.0000001" max="100" 
+                            value="{{ old('coverage_percentage', isset($policy) ? number_format($policy->coverage_percentage * 100, 7, '.', '') : '') }}" 
+                            required />
                             <span class="input-group-text">%</span>
                             @error('coverage_percentage')
                                 <div class="invalid-feedback">{{ $message }}</div>

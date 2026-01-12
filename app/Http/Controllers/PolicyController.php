@@ -57,18 +57,24 @@ class PolicyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePoliciesRequest $request)
-    {
-        try {
-            $this->policyService->createPolicy($request->validated());
+    // Pastikan use di bagian atas:
 
-            return redirect()->route('policies.index')
-                ->with('success', 'Policy berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan policy: ' . $e->getMessage());
-        }
+    public function store(StorePoliciesRequest $request) // <-- Pakai class request kamu
+    {
+        // 1. Ambil data yang sudah lolos validasi
+        // Ini otomatis menyertakan object_id, coverage_code, started_date, dll.
+        $data = $request->validated();
+
+        // 2. Simpan ke database
+        // Catatan: Jangan bagi 100 di sini karena di Model Policy sudah ada Mutator
+        // yang otomatis membagi nilai dengan 100.
+        $policy = Policy::create($data);
+
+        // 3. Logika tambahan untuk Detail Asuransi (Opsional)
+        // Karena di request ada 'insurance_id' dan 'percentage' (array)
+        // Kamu bisa melanjutkannya di sini jika dibutuhkan...
+
+        return redirect()->route('policies.index')->with('success', 'Policy created successfully');
     }
 
     /**
@@ -91,14 +97,25 @@ class PolicyController extends Controller
     public function update(UpdatePoliciesRequest $request, string $id)
     {
         try {
-            $this->policyService->updatePolicy($id, $request->validated());
+            $data = $request->validated();
+            
+            // KONVERSI KE DESIMAL 0.0 - 1.0
+            $data['coverage_percentage'] = $request->coverage_percentage / 100;
+            
+            // Jika ada array percentage untuk detail asuransi:
+            if ($request->has('percentage')) {
+                $formattedPercentages = [];
+                foreach ($request->percentage as $val) {
+                    $formattedPercentages[] = $val / 100;
+                }
+                $data['percentage'] = $formattedPercentages;
+            }
 
-            return redirect()->route('policies.index')
-                ->with('success', 'Policy berhasil diubah.');
+            $this->policyService->updatePolicy($id, $data);
+
+            return redirect()->route('policies.index')->with('success', 'Policy berhasil diubah.');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal mengubah policy: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
 

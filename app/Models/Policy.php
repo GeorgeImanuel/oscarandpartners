@@ -32,7 +32,7 @@ class Policy extends Model
     protected function coveragePercentage(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => is_numeric($value) ? $value / 100 : null,
+            set: fn ($value) => is_numeric($value) ? (float) $value : null,
         );
     }
 
