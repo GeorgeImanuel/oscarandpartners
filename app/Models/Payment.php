@@ -11,8 +11,6 @@ class Payment extends Model
         'card_id',
         'sequence',
         'created_by',
-        'collected_by',
-        'collector_type_id',
         'amount',
         'note',
         'client_payment_status_id',

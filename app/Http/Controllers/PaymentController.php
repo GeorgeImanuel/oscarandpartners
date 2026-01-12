@@ -98,8 +98,6 @@ class PaymentController extends Controller
             // Ambil data dari payment existing sebagai template
             $templateData = [
                 'created_by' => $payment->created_by,
-                'collected_by' => $payment->collected_by,
-                'collector_type_id' => $payment->collector_type_id,
                 'client_payment_status_id' => $payment->client_payment_status_id ?? 1,
             ];
 
@@ -117,8 +115,6 @@ class PaymentController extends Controller
                     'amount' => $installment['amount'],
                     'deadline_at' => $installment['due_date'],
                     'created_by' => $templateData['created_by'],
-                    'collected_by' => $templateData['collected_by'],
-                    'collector_type_id' => $templateData['collector_type_id'],
                     'client_payment_status_id' => $templateData['client_payment_status_id'],
                     'note' => '',
                 ]);
