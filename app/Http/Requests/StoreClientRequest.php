@@ -25,8 +25,6 @@ class StoreClientRequest extends FormRequest
             'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'email' => 'nullable|email',
             'address' => 'nullable|string',
             'id_card_number' => 'nullable|string|max:255',
             'relation_id' => 'nullable|exists:relations,id',
@@ -47,8 +45,6 @@ class StoreClientRequest extends FormRequest
             'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'name.required' => 'Nama harus diisi.',
-            'phone.required' => 'Nomor telepon harus diisi.',
-            'email.email' => 'Format email tidak valid.',
             'relation_id.exists' => 'Group/Family tidak valid.',
         ];
     }
