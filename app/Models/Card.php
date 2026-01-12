@@ -14,7 +14,9 @@ class Card extends Model
     protected $fillable = [
         'client_id',
         'policy_id',
+        'card_type_id',
         'card_status_id',
+        'collector_type_id',
         'parent_card_id',
         'payment_type_id',
         'created_by',

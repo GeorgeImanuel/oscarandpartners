@@ -125,6 +125,40 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label"
+                                    for="client_id">Tipe Kolektor</label>
+                                <select id="collector_type_id"
+                                    class="form-control select2-basic-single @error('collector_type_id') is-invalid @enderror"
+                                    name="collector_type_id"
+                                    required>
+                                    <option value=""></option>
+                                    @foreach ($collectorTypes as $collector_type)
+                                        <option value="{{ $collector_type->id }}"
+                                            {{ isset($card) ? ($card->collector_type_id == $collector_type->id ? 'selected' : '') : (old('collector_type_id') == $collector_type->id ? 'selected' : '') }}>
+                                            {{ $collector_type->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('collector_type_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label"
+                                    for="deadline_at">Tanggal Deadline</label>
+                                <input id="deadline_at"
+                                    class="form-control @error('deadline_at') is-invalid @enderror"
+                                    name="deadline_at"
+                                    type="date"
+                                    value="{{ isset($card) ? $card->deadline_at : old('deadline_at') }}"
+                                    required />
+                                @error('deadline_at')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                     {{-- CARD INFO END --}}
@@ -234,6 +268,20 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"
+                                    for="policy_fee">Biaya Polis</label>
+                                <input id="policy_fee"
+                                    class="form-control @error('policy_fee') is-invalid @enderror"
+                                    name="policy_fee"
+                                    type="number"
+                                    value="{{ isset($card) ? $card->policy_fee : old('policy_fee', 0) }}"
+                                    required>
+                                <small class="text-muted">0% - 100%</small>
+                                @error('premi_percentages')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"
                                     for="premi_percentages">Presentase Premi (%)</label>
                                 <input id="premi_percentages"
                                     class="form-control @error('premi_percentages') is-invalid @enderror"
@@ -241,10 +289,10 @@
                                     type="number"
                                     step="0.001"
                                     min="0"
-                                    max="1"
+                                    max="100"
                                     value="{{ isset($card) ? $card->premi_percentages : old('premi_percentages', 0) }}"
                                     required>
-                                <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                                <small class="text-muted">0% - 100%</small>
                                 @error('premi_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -258,27 +306,26 @@
                                     type="number"
                                     step="0.001"
                                     min="0"
-                                    max="1"
+                                    max="100"
                                     value="{{ isset($card) ? $card->tax_percentages : old('tax_percentages', 0) }}"
                                     required>
-                                <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                                <small class="text-muted">0% - 100%</small>
                                 @error('tax_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"
-                                    for="commision_percentages">Presentasi Komisi (%)</label>
+                                    for="commision_percentages">Presentasi Komisi Agent (%)</label>
                                 <input id="commision_percentages"
                                     class="form-control @error('commision_percentages') is-invalid @enderror"
                                     name="commision_percentages"
                                     type="number"
-                                    step="0.01"
                                     min="0"
-                                    max="1"
+                                    max="100"
                                     value="{{ isset($card) ? $card->commision_percentages : old('commision_percentages', 0) }}"
                                     required>
-                                <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
+                                <small class="text-muted">0% - 100%</small>
                                 @error('commision_percentages')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -290,7 +337,6 @@
                                     class="form-control @error('discount') is-invalid @enderror"
                                     name="discount"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
                                 <small class="text-muted">Masukkan nilai diskon dalam rupiah</small>
                                 @error('discount')
@@ -308,14 +354,13 @@
                             </div>
                             {{-- SECTION: HARGA PERTANGGUNGAN --}}
                             <div id="policy-prices"
-                                class="col-md-12 input-group-solid">
+                                class="col-md-6 input-group-solid">
                                 <label class="form-label"
                                     for="object_value">Harga Pertanggungan (Rp)</label>
                                 <input id="object_value"
                                     class="form-control @error('object_value') is-invalid @enderror"
                                     name="objects_value"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}"
                                     required
                                     readonly>
@@ -330,7 +375,6 @@
                                     class="form-control @error('production_value') is-invalid @enderror"
                                     name="production_value"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}"
                                     readonly>
                                 @error('production_value')
@@ -340,12 +384,11 @@
 
                             <div class="col-md-6">
                                 <label class="form-label"
-                                    for="premi">Total Premi (Rp)</label>
-                                <input id="premi"
+                                    for="premi_value">Total Premi (Rp)</label>
+                                <input id="premi_value"
                                     class="form-control @error('premi') is-invalid @enderror"
-                                    name="premi"
+                                    name="premi_value"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->premi : old('premi', 0) }}"
                                     readonly>
                                 @error('premi')
@@ -360,7 +403,6 @@
                                     class="form-control @error('commision_bruto') is-invalid @enderror"
                                     name="commision_bruto"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}"
                                     readonly>
                                 @error('commision_bruto')
@@ -375,7 +417,6 @@
                                     class="form-control @error('commision_netto') is-invalid @enderror"
                                     name="commision_netto"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}"
                                     readonly>
                                 @error('commision_netto')
@@ -390,14 +431,25 @@
                                     class="form-control @error('tax_value') is-invalid @enderror"
                                     name="tax"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->tax : old('tax_value', 0) }}"
                                     readonly>
                                 @error('tax_value')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
+                            <div class="col-md-6">
+                                <label class="form-label"
+                                    for="client_pay">Tagihan ke Client (Rp)</label>
+                                <input id="client_pay"
+                                    class="form-control @error('client_pay') is-invalid @enderror"
+                                    name="client_pay"
+                                    type="number"
+                                    value="{{ isset($card) ? $card->client_pay : old('client_pay', 0) }}"
+                                    readonly>
+                                @error('client_pay')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="col-md-6">
                                 <label class="form-label"
                                     for="insurance_pay">Bayar Asuransi (Rp)</label>
@@ -405,7 +457,6 @@
                                     class="form-control @error('insurance_pay') is-invalid @enderror"
                                     name="insurance_pay"
                                     type="number"
-                                    step="0.01"
                                     value="{{ isset($card) ? $card->insurance_pay : old('insurance_pay', 0) }}"
                                     readonly>
                                 @error('insurance_pay')
@@ -493,6 +544,7 @@
 
             initCustomSelect2("#policy_id");
             initCustomSelect2("#object_id");
+            initCustomSelect2(".add-select2");
 
             // Toggle parent_card_id based on card_status_id
             $('#card_type_id').on('change', function() {
@@ -554,51 +606,78 @@
                 }
             });
 
-
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
                 Livewire.on('policyLoaded', (event) => {
                     const objectId = event.objectId || event[0]?.objectId || null;
 
                     if (objectId) {
-                        $('#object_id').val(objectId).trigger('change').prop('disabled', true);
+                        // Set value and disable the Select2 dropdown
+                        $('#object_id').val(objectId).trigger('change');
+                        $('#object_id').prop('disabled', true);
+
+                        // Add hidden input to ensure value is submitted
+                        if (!$('#object_id_hidden').length) {
+                            $('<input>').attr({
+                                type: 'hidden',
+                                id: 'object_id_hidden',
+                                name: 'object_id',
+                                value: objectId
+                            }).insertAfter('#object_id');
+                        }
                     }
-                    update_payment(); // Trigger calculation when policy is loaded
                 });
 
                 Livewire.on('objectLoaded', (event) => {
                     const object = event.object || event[0]?.object || 0;
-                    console.log('Object received:', object);
+
+                    if (object) {
+                        $('#object_value').val(object.object_value);
+                    }
+                    console.log('Object received:', object.object_value);
+                    update_payment(); // Trigger calculation when policy is loaded
+
                 });
             });
 
             function update_payment() {
-                var object_value = parseFloat($('#object_value').val()) || 0;
+                var object_value = parseInt($('#object_value').val()) || 0;
                 var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
-                var policy_fee = 0; // No policy_fee field in the form, defaulting to 0
+                var policy_fee = parseInt($('#policy_fee').val()) || 0;
                 var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
                 var tax_percentages = parseFloat($('#tax_percentages').val()) || 0;
-                var discount = parseFloat($('#discount').val()) || 0;
+                var discount = parseInt($('#discount').val()) || 0;
 
-                const productionValue = production_value(object_value, premi_percentages);
+                const productionValue = production_value(object_value, premi_percentages / 100);
                 const premiValue = premi_value(productionValue, policy_fee);
-                const commisionBruto = commision_bruto(productionValue, commision_percentages);
-                const taxValue = tax_value(commisionBruto, tax_percentages);
+                const commisionBruto = commision_bruto(productionValue, commision_percentages / 100);
+                const taxValue = tax_value(commisionBruto, tax_percentages / 100);
                 const commisionNetto = commision_netto(commisionBruto, taxValue, discount);
                 const clientPay = client_pay(premiValue, discount);
                 const insurancePay = insurance_pay(premiValue, taxValue, discount);
+
+                console.log('Calculated values:', {
+                    productionValue,
+                    premiValue,
+                    commisionBruto,
+                    taxValue,
+                    commisionNetto,
+                    clientPay,
+                    insurancePay
+                });
 
                 $('#production_value').val(productionValue.toFixed(2));
                 $('#premi').val(premiValue.toFixed(2));
                 $('#commision_bruto').val(commisionBruto.toFixed(2));
                 $('#commision_netto').val(commisionNetto.toFixed(2));
                 $('#tax').val(taxValue.toFixed(2));
+                $('#client_pay').val(clientPay.toFixed(2));
                 $('#insurance_pay').val(insurancePay.toFixed(2));
             }
 
             // Add event listeners to trigger calculation when parameters change
             $(document).ready(function() {
-                $('#object_value, #premi_percentages, #tax_percentages, #commision_percentages, #discount').on('input change', function() {
+                $('#object_value, #policy_fee, #premi_percentages, #tax_percentages, #commision_percentages, #discount').on('input change', function() {
                     update_payment();
                 });
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use Illuminate\Http\Request;
+use App\Models\CollectorType;
 use App\Services\Card\CardService;
 use App\Services\Client\ClientService;
 use App\Services\Object\ObjectService;
@@ -13,6 +14,7 @@ use App\Services\CardType\CardTypeService;
 use App\Services\Relation\RelationService;
 use App\Services\CardStatus\CardStatusService;
 use App\Services\PaymentType\PaymentTypeService;
+use App\Services\CollectorType\CollectorTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
 
 class CardController extends Controller
@@ -26,6 +28,7 @@ class CardController extends Controller
     private $paymentTypeService;
     private $relationService;
     private $objectService;
+    private $collectorTypeService;
 
     public function __construct(
         CardService $cardService,
@@ -36,7 +39,8 @@ class CardController extends Controller
         PaymentStatusService $paymentStatusService,
         PaymentTypeService $paymentTypeService,
         RelationService $relationService,
-        ObjectService $objectService
+        ObjectService $objectService,
+        CollectorTypeService $collectorTypeService
     ) {
         $this->cardService          = $cardService;
         $this->clientService        = $clientService;
@@ -47,6 +51,7 @@ class CardController extends Controller
         $this->paymentTypeService   = $paymentTypeService;
         $this->relationService      = $relationService;
         $this->objectService        = $objectService;
+        $this->collectorTypeService = $collectorTypeService;
     }
 
     /**
@@ -76,13 +81,14 @@ class CardController extends Controller
      */
     public function create()
     {
-        $objects     = $this->objectService->all();
-        $clients     = $this->clientService->all();
-        $policies    = $this->policyService->allActivePolicies();
-        $cardTypes   = $this->cardTypeService->all();
-        $parentCards = $this->cardService->getAllParent();
-
-        return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards'));
+        $objects        = $this->objectService->all();
+        $clients        = $this->clientService->all();
+        $policies       = $this->policyService->allActivePolicies();
+        $cardTypes      = $this->cardTypeService->all();
+        $parentCards    = $this->cardService->getAllParent();
+        $collectorTypes = $this->collectorTypeService->all();
+        // return $objects;
+        return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards','collectorTypes'));
     }
 
     /**
@@ -90,12 +96,12 @@ class CardController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
-        $card = $this->cardService->createCard($request->all());
+        $card = $this->cardService->create($request->all());
 
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }
+        // return $card;
 
         return redirect()->route('cards.index')->with('success', 'Berhasil menambah kartu produksi.');
     }

@@ -8,7 +8,7 @@ interface CardService extends BaseService
 {
     public function getAllParent();
     public function getAllWithRelations();
-    public function createCard(array $data);
+    public function create($data);
     public function updateCard($id, array $data);
     public function deleteCard($id);
     public function getAllWithFilter(array $data);

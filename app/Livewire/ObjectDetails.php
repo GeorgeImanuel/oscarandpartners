@@ -42,7 +42,6 @@ class ObjectDetails extends Component
     {
         if ($this->objectId) {
             $this->object = $this->objectService->find($this->objectId);
-
             // If object not found, do nothing
             if (!$this->object) {
                 $this->notFound = true;

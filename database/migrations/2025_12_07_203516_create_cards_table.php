@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('cascade')->comment('RENEWAL LINK (Self-Join)');
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade')->comment('Staff Inputter');
+            $table->foreignId('collector_type_id')->constrained('collector_types')->comment('STAFF, OWNER');
 
             // Parameter Input
             $table->decimal('object_value', 22, 2)->comment('Harga Asset dari object_component');

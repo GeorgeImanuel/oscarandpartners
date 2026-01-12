@@ -19,6 +19,11 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
         $this->model = $model;
     }
 
+    public function find($id)
+    {
+        return $this->model->with(['objectType', 'objectParts.part'])->withSum('objectParts as object_value', 'value')->find($id);
+    }
+    
     /**
      * Get all objects with object type relation
      */

@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('card_id')->constrained('cards');
             $table->integer('sequence')->comment('Urutan Pembayaran');
             $table->foreignId('created_by')->constrained('users')->comment('Finance yg buat Request');
-            $table->foreignId('collected_by')->constrained('users')->comment('User tanggungjawab penagih');
-            $table->foreignId('collector_type_id')->constrained('collector_types')->comment('STAFF, OWNER');
             $table->decimal('amount', 15, 2);
             
             $table->text('note')->nullable();

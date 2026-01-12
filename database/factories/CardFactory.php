@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Policy;
 use App\Models\CardType;
 use App\Models\CardStatus;
+use App\Models\CollectorType;
 use App\Models\PaymentType;
 use App\Models\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -44,13 +45,14 @@ class CardFactory extends Factory
         $insurancePay    = $clientPay - $commisionNetto;
 
         return [
-            'client_id'       => Client::inRandomOrder()->first()?->id ?? Client::factory(),
-            'policy_id'       => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
-            'card_type_id'    => CardType::inRandomOrder()->first()?->id,
-            'card_status_id'  => CardStatus::inRandomOrder()->first()?->id,
-            'parent_card_id'  => null,
-            'payment_type_id' => PaymentType::inRandomOrder()->first()?->id,
-            'created_by'      => User::inRandomOrder()->first()?->id ?? User::factory(),
+            'client_id'         => Client::inRandomOrder()->first()?->id ?? Client::factory(),
+            'policy_id'         => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
+            'card_type_id'      => CardType::inRandomOrder()->first()?->id,
+            'card_status_id'    => CardStatus::inRandomOrder()->first()?->id,
+            'collector_type_id' => CollectorType::inRandomOrder()->first()?->id,
+            'parent_card_id'    => null,
+            'payment_type_id'   => PaymentType::inRandomOrder()->first()?->id,
+            'created_by'        => User::inRandomOrder()->first()?->id ?? User::factory(),
 
             // Parameter Input
             'object_value'          => $objectValue,
