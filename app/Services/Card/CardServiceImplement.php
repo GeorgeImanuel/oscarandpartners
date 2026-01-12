@@ -195,9 +195,9 @@ class CardServiceImplement extends Service implements CardService
                 'client_payment_status_id' => config('constants.payment_status.pending'),
                 'deadline_at'              => $data['deadline_at'] ?? null,
             ]);
-            return $card;
-
+            
             \DB::commit();
+            return $card;
         } catch (\Exception $e) {
             \DB::rollBack();
             throw $e;
