@@ -26,13 +26,13 @@ class Policy extends Model
     protected $casts = [
         'started_date' => 'date',
         'ended_date' => 'date',
-        'coverage_percentage' => 'decimal:2',
+        'coverage_percentage' => 'decimal:7',
     ];
 
     protected function coveragePercentage(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => is_numeric($value) ? $value / 100 : null,
+            set: fn ($value) => is_numeric($value) ? (float) $value : null,
         );
     }
 
