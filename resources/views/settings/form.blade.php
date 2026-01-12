@@ -32,7 +32,7 @@
                                    id="inputcommision_percentage" 
                                    name="commision_percentage" 
                                    type="number" 
-                                   step="0.01"
+                                   step="0.00001"
                                    value="{{ old('commision_percentage', $setting->commision_percentage ?? '') }}" 
                                    required="" />
                             @error('commision_percentage')
@@ -47,7 +47,7 @@
                                    id="inputTaxPercentage" 
                                    name="tax_percentage" 
                                    type="number" 
-                                   step="0.01"
+                                   step="0.00001"
                                    value="{{ old('tax_percentage', $setting->tax_percentage ?? '') }}" 
                                    required="" />
                             @error('tax_percentage')
