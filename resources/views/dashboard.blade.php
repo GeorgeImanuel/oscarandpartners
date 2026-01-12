@@ -20,7 +20,7 @@
   <div class="container-fluid dashboard-default-sec">
     <div class="row">
       <div class="col-sm-12">
-        <h1>Selamat Datang</h1>
+        <h1>Selamat Datang!</h1>
         <h2>{{ auth()->user()->name }}</h2>
       </div>
     </div>
