@@ -26,7 +26,7 @@ class Policy extends Model
     protected $casts = [
         'started_date' => 'date',
         'ended_date' => 'date',
-        'coverage_percentage' => 'decimal:2',
+        'coverage_percentage' => 'decimal:7',
     ];
 
     protected function coveragePercentage(): Attribute

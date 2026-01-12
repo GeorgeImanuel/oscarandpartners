@@ -41,19 +41,19 @@ class Card extends Model
     ];
 
     protected $casts = [
-        'premi_percentages' => 'decimal:2',
-        'tax_percentages' => 'decimal:2',
-        'commision_percentages' => 'decimal:2',
-        'object_value' => 'decimal:2',
-        'policy_fee' => 'decimal:2',
-        'discount' => 'decimal:2',
-        'production_value' => 'decimal:2',
-        'premi_value' => 'decimal:2',
-        'commision_bruto' => 'decimal:2',
-        'commision_netto' => 'decimal:2',
-        'tax_value' => 'decimal:2',
-        'client_pay' => 'decimal:2',
-        'insurance_pay' => 'decimal:2',
+        'premi_percentages' => 'decimal:7',
+        'tax_percentages' => 'decimal:7',
+        'commision_percentages' => 'decimal:7',
+        'object_value' => 'decimal:7',
+        'policy_fee' => 'decimal:7',
+        'discount' => 'decimal:7',
+        'production_value' => 'decimal:7',
+        'premi_value' => 'decimal:7',
+        'commision_bruto' => 'decimal:7',
+        'commision_netto' => 'decimal:7',
+        'tax_value' => 'decimal:7',
+        'client_pay' => 'decimal:7',
+        'insurance_pay' => 'decimal:7',
         'insurance_paid_at' => 'datetime',
     ];
 
