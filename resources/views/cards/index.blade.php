@@ -134,11 +134,11 @@
                                                         title="Detail">
                                                         <i class="fa fa-eye"></i> Detail
                                                     </a>
-                                                    <a href="{{ route('cards.edit', $card->id) }}"
+                                                    {{-- <a href="{{ route('cards.edit', $card->id) }}"
                                                         class="btn btn-warning btn-sm me-1"
                                                         title="Edit">
                                                         <i class="fa fa-edit"></i> Edit
-                                                    </a>
+                                                    </a> --}}
                                                     <form action="{{ route('cards.destroy', $card->id) }}"
                                                         method="POST"
                                                         style="display: inline">
