@@ -62,24 +62,24 @@
 						<h5>Komponen Objek (Parts)</h5>
 					</div>
 					<div class="card-body">
-						@if($object->objectParts && $object->objectParts->count() > 0)
-							<div class="table-responsive">
-								<table class="table table-bordered">
-									<thead>
+					@if($object->objectPart && $object->objectPart->count() > 0)
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th width="50">No</th>
+										<th>Nama Part</th>
+										<th width="200">Nilai (Rp)</th>
+									</tr>
+								</thead>
+								<tbody>
+									@php $totalValue = 0; @endphp
+									@foreach($object->objectPart as $index => $objectPartItem)
+										@php $totalValue += $objectPartItem->value; @endphp
 										<tr>
-											<th width="50">No</th>
-											<th>Nama Part</th>
-											<th width="200">Nilai (Rp)</th>
-										</tr>
-									</thead>
-									<tbody>
-										@php $totalValue = 0; @endphp
-										@foreach($object->objectParts as $index => $objectPart)
-											@php $totalValue += $objectParts->value; @endphp
-											<tr>
-												<td>{{ $index + 1 }}</td>
-												<td>{{ $objectParts->part->name ?? '-' }}</td>
-												<td class="text-end">{{ number_format($objectParts->value, 2, ',', '.') }}</td>
+											<td>{{ $index + 1 }}</td>
+											<td>{{ $objectPartItem->part->name ?? '-' }}</td>
+											<td class="text-end">{{ number_format($objectPartItem->value, 2, ',', '.') }}</td>
 											</tr>
 										@endforeach
 									</tbody>
