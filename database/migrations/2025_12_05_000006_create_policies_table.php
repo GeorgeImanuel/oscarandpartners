@@ -1,3 +1,6 @@
+
+
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -17,7 +20,7 @@ return new class extends Migration
             $table->foreignId('object_id')->constrained('objects')->onDelete('cascade')->comment('Link ke Objek Asuransi');
             $table->string('coverage_code');
             $table->foreign('coverage_code')->references('code')->on('coverages')->onDelete('cascade')->comment('Link ke Coverage');
-            $table->decimal('coverage_percentage', 3, 2)->comment('Persentase coverage');
+            $table->decimal('coverage_percentage', 8, 7)->comment('Persentase coverage');
             $table->date('started_date')->comment('Periode mulai polis');
             $table->date('ended_date')->comment('Periode berakhir polis');
             $table->timestamps();
