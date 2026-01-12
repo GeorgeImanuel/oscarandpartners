@@ -109,7 +109,7 @@
                                                     <select class="form-select part-select" name="part_id[]" style="width: 100%;">
                                                         <option value="">- Pilih Part -</option>
                                                         @foreach($parts as $part)
-                                                            <option value="{{ $part->id }}" {{ $objectParts->part_id == $part->id ? 'selected' : '' }}>
+                                                            <option value="{{ $part->id }}" {{ $objectPart->part_id == $part->id ? 'selected' : '' }}>
                                                                 {{ $part->name }}
                                                             </option>
                                                         @endforeach
@@ -123,7 +123,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2 mb-md-0">
                                             <label class="form-label">Nilai (Rp)</label>
-                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectParts->value }}" placeholder="0" min="0" step="0.01">
+                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectPart->value }}" placeholder="0" min="0" step="0.01">
                                         </div>
                                         <div class="col-md-1 pt-3">
                                             <button type="button" class="btn btn-danger btn-xs remove-part-btn" style="{{ $index == 0 ? 'display:none' : '' }}">
@@ -159,7 +159,7 @@
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script>
-        let partIndex = {{ isset($object) ? $object->objectPart->count() : 0 }};
+        let partIndex = {{ isset($object) ? $object->objectParts->count() : 0 }};
         const partsData = @json($parts);
 
         $(document).ready(function() {
