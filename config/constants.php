@@ -3,6 +3,14 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    | This value is the version of your application.
+    | [flow update].[feature update].[bug fix update]
+    */
+    'version' => '0.1.1',
+    /*
+    |--------------------------------------------------------------------------
     | Card Status IDs
     |--------------------------------------------------------------------------
     | Card status identifiers used throughout the application

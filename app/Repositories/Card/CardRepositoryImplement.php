@@ -41,7 +41,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     }
 
     public function getAllWithFilter(array $data){
-        $query = $this->model->with(['client.relation', 'policy.object', 'cardStatus', 'insurancePaymentStatus']);
+        $query = $this->model->with(['client.relation', 'policy.object', 'cardType','cardStatus', 'insurancePaymentStatus']);
 
         $user = auth()->user();
         if ($user && $user->hasRole('client')) {

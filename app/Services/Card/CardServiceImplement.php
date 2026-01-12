@@ -2,7 +2,9 @@
 
 namespace App\Services\Card;
 
+use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
+use Illuminate\Container\AttributesDB;
 use App\Repositories\Card\CardRepository;
 use App\Repositories\Part\PartRepository;
 use App\Repositories\Object\ObjectRepository;
@@ -12,7 +14,6 @@ use App\Repositories\Coverage\CoverageRepository;
 use App\Repositories\ObjectPart\ObjectPartRepository;
 use App\Repositories\ObjectType\ObjectTypeRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
-use Illuminate\Container\Attributes\DB;
 
 class CardServiceImplement extends Service implements CardService
 {
@@ -85,7 +86,7 @@ class CardServiceImplement extends Service implements CardService
     public function create($data)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             //Find or Create Object
             if ($data['object_id'] == null) {
@@ -138,7 +139,7 @@ class CardServiceImplement extends Service implements CardService
                 $policy = $this->policyRepository->create($policyData);
 
                 //Assign Coverage
-                $coverage = $this->coverageRepository->findByCode($data['coverage_code']);
+                $coverage = $this->coverageRepository->find($data['coverage_code']);
                 if ($coverage) {
                     $this->coverageRepository->create([
                         'code'  => $data['coverage_code'],
@@ -196,10 +197,10 @@ class CardServiceImplement extends Service implements CardService
                 'deadline_at'              => $data['deadline_at'] ?? null,
             ]);
             
-            \DB::commit();
+            DB::commit();
             return $card;
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             throw $e;
         }
     }
@@ -264,14 +265,6 @@ class CardServiceImplement extends Service implements CardService
         ];
 
         return $this->mainRepository->update($id, $mappedData);
-    }
-
-    /**
-     * Delete production card
-     */
-    public function deleteCard($id)
-    {
-        return $this->mainRepository->delete($id);
     }
 
     public function getAllWithFilter(array $data)

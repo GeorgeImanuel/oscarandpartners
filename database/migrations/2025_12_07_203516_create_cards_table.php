@@ -46,6 +46,7 @@ return new class extends Migration
             $table->string('insurance_evident_number')->nullable()->comment('Nomer Bukti Transfer Asurasi');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

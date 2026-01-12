@@ -73,6 +73,8 @@ class CardController extends Controller
         $clients      = $this->clientService->getAllWithRelations();
         $cardStatuses = $this->cardStatusService->all();
 
+        // return $cards;
+
         return view('cards.index', compact('cards', 'clients', 'cardStatuses'));
     }
 
@@ -159,7 +161,7 @@ class CardController extends Controller
      */
     public function destroy(Card $productionCard)
     {
-        $this->cardService->deleteCard($productionCard->id);
+        $this->cardService->delete($productionCard->id);
         return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
     }
 
