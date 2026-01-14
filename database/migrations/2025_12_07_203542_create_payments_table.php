@@ -4,37 +4,24 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('card_id')->constrained('cards');
+            $table->foreignId('card_id')->constrained('cards')->onDelete('cascade');
             $table->integer('sequence')->comment('Urutan Pembayaran');
             $table->foreignId('created_by')->constrained('users')->comment('Finance yg buat Request');
-            $table->decimal('amount', 15, 2);
-            
+            $table->decimal('amount', 20, 2);
             $table->text('note')->nullable();
-
-            $table->foreignId('client_payment_status_id')->constrained('payment_statuses');
-            $table->dateTime('deadline_at')->nullable()->comment('START TIMER 24 JAM');
-            $table->dateTime('paid_at')->nullable();
+            $table->foreignId('payment_status_id')->constrained('payment_statuses');
+            $table->datetime('deadline_at')->comment('tambah dari tanggal start +30');
+            $table->datetime('paid_at')->nullable();
             $table->string('client_evident_file')->nullable()->comment('Bukti Transfer Nasabah');
             $table->string('client_evident_number')->nullable()->comment('Nomer Bukti Transfer Nasabah');
-
             $table->timestamps();
+
+            $table->index('deadline_at');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('payments');
-    }
+    public function down(): void { Schema::dropIfExists('payments'); }
 };
