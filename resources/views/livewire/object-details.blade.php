@@ -18,8 +18,8 @@
                         <td>{{ $object->name }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Tipe Objek</strong></td>
-                        <td>{{ $object->objectType->name ?? '-' }}</td>
+                        <td><strong>Objek Occupation</strong></td>
+                        <td>{{ $object->objectOccupation->name ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Harga Pertanggungan</strong></td>
@@ -33,12 +33,12 @@
                         <td><strong>Kota</strong></td>
                         <td>{{ $object->city ?? '-' }}</td>
                     </tr>
-                    @if ($object->objectPart && $object->objectPart->count() > 0)
+                    @if ($object->objectInterest && $object->objectInterest->count() > 0)
                         <tr>
-                            <td><strong>Parts</strong></td>
+                            <td><strong>Interests</strong></td>
                             <td>
-                                @foreach ($object->objectPart as $objectPartItem)
-                                    <span class="badge badge-info">{{ $objectPartItem->part->name ?? '-' }}</span>
+                                @foreach ($object->objectInterest as $objectInterestItem)
+                                    <span class="badge badge-info">{{ $objectInterestItem->interest->name ?? '-' }}</span>
                                 @endforeach
                             </td>
                         </tr>

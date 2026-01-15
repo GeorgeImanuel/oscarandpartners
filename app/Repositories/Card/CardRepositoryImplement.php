@@ -21,7 +21,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     }
     public function findWithRelation($id)
     {
-        return $this->model->with(['client','policy.policyInsurances.insurance','policy.object.objectParts.part','payments.paymentStatus'])->find($id);
+        return $this->model->with(['client','policy.policyInsurances.insurance','policy.object.objectInterests.interest','payments.paymentStatus'])->find($id);
     }
 
     public function getAllParent()

@@ -21,15 +21,15 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
 
     public function find($id)
     {
-        return $this->model->with(['objectType', 'objectParts.part'])->withSum('objectParts as object_value', 'value')->find($id);
+        return $this->model->with(['objectOccupation', 'objectInterests.interest'])->withSum('objectInterests as object_value', 'value')->find($id);
     }
     
     /**
-     * Get all objects with object type relation
+     * Get all objects with object occupation relation
      */
     public function getAllWithRelations()
     {
-        return $this->model->with('objectType')->latest()->get();
+        return $this->model->with('objectOccupation')->latest()->get();
     }
 
     /**
@@ -41,11 +41,11 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
         
         $query = $this->model
             ->with([
-                'objectParts.part',
+                'objectInterests.interest',
                 'policies.mainInsurance',
                 'policies.productionCard.client.relation',
                 'policies.coverage',
-                'objectType'
+                'objectOccupation'
             ]);
         
         // Jika user adalah client, filter berdasarkan relation_id mereka

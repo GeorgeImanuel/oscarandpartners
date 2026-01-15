@@ -3,28 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ObjectType;
+use App\Models\ObjectOccupation;
 use App\Services\Object\ObjectService;
-use App\Services\ObjectType\ObjectTypeService;
-use App\Services\Part\PartService;
+use App\Services\ObjectOccupation\ObjectOccupationService;
+use App\Services\Interest\InterestService;
 use App\Http\Requests\StoreObjectRequest;
 use App\Http\Requests\UpdateObjectRequest;
+
 
 class ObjectController extends Controller
 {
     private $objectService;
-    private $objectTypeService;
-    private $partService;
+    private $objectOccupationService;
+    private $interestService;
 
     public function __construct(
         ObjectService $objectService,
-        ObjectTypeService $objectTypeService,
-        PartService $partService
+        ObjectOccupationService $objectOccupationService,
+        InterestService $interestService
     )
     {
         $this->objectService = $objectService;
-        $this->objectTypeService = $objectTypeService;
-        $this->partService = $partService;
+        $this->objectOccupationService = $objectOccupationService;
+        $this->interestService = $interestService;
     }
 
     /**
@@ -41,9 +42,9 @@ class ObjectController extends Controller
      */
     public function create()
     {
-        $objectTypes = $this->objectTypeService->getAll();
-        $parts = $this->partService->getAll();
-        return view('objects.form', compact('objectTypes', 'parts'));
+        $objectOccupations = $this->objectOccupationService->getAll();
+        $interests = $this->interestService->getAll();
+        return view('objects.form', compact('objectOccupations', 'interests'));
     }
 
     /**
@@ -62,7 +63,7 @@ class ObjectController extends Controller
                 'validated' => $validated
             ]);
 
-            $object = $this->objectService->createWithParts($validated);
+            $object = $this->objectService->createWithInterests($validated);
             
             if (!$object) {
                 \Log::error('Failed to create object - service returned null');
@@ -90,7 +91,7 @@ class ObjectController extends Controller
     public function show(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts.part');
+        $object->load('objectInterests.interest');
         return view('objects.detail', compact('object'));
     }
 
@@ -100,10 +101,10 @@ class ObjectController extends Controller
     public function edit(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts.part');
-        $objectTypes = $this->objectTypeService->getAll();
-        $parts = $this->partService->getAll();
-        return view('objects.form', compact('object', 'objectTypes', 'parts'));
+        $object->load('objectInterests.interest');
+        $objectOccupations = $this->objectOccupationService->getAll();
+        $interests = $this->interestService->getAll();
+        return view('objects.form', compact('object', 'objectOccupations', 'interests'));
     }
 
     /**
@@ -113,7 +114,7 @@ class ObjectController extends Controller
     {
         $validated = $request->validated();
 
-        $updated = $this->objectService->updateWithParts($id, $validated);
+        $updated = $this->objectService->updateWithInterests($id, $validated);
         
         if (!$updated) {
             return redirect()->back()->withInput()->with('error', 'Gagal mengubah object.');

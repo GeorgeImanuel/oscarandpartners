@@ -3,21 +3,21 @@
     style="display:none;">
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="object_type_id">Tipe Objek <span class="text-danger">*</span></label>
-        <select class="form-select required add-select2 @error('object_type_id') is-invalid @enderror"
-            name="object_type_id"
-            id="object_type_id"
-            data-placeholder="Pilih Tipe Objek"
+            for="object_occupation_id">Objek Occupation<span class="text-danger">*</span></label>
+        <select class="form-select required add-select2 @error('object_occupation_id') is-invalid @enderror"
+            name="object_occupation_id"
+            id="object_occupation_id"
+            data-placeholder="Pilih Objek Occupation"
             style="width: 100%;">
-            <option value="">- Pilih Tipe Objek -</option>
-            @foreach ($objectTypes ?? [] as $objectType)
-                <option value="{{ $objectType->id }}"
-                    {{ isset($object) && $object->object_type_id == $objectType->id ? 'selected' : (old('object_type_id') == $objectType->id ? 'selected' : '') }}>
-                    {{ $objectType->name }}
+            <option value="">- Pilih Objek Occupation -</option>
+            @foreach ($objectOccupations ?? [] as $objectOccupation)
+                <option value="{{ $objectOccupation->id }}"
+                    {{ isset($object) && $object->object_occupation_id == $objectOccupation->id ? 'selected' : (old('object_occupation_id') == $objectOccupation->id ? 'selected' : '') }}>
+                    {{ $objectOccupation->name }}
                 </option>
             @endforeach
         </select>
-        @error('object_type_id')
+        @error('object_occupation_id')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
@@ -51,22 +51,22 @@
         <label>Bagian Objek</label>
         <button type="button"
             class="btn btn-primary btn-sm float-end add-item-btn"
-            data-target="object-part-item">
+            data-target="object-interest-item">
             <i class="fa fa-plus"></i> Tambah Bagian
         </button>
         <div class="item-list pt-2">
-            <div class="mt-2 px-3 py-2 border rounded item object-part-item">
+            <div class="mt-2 px-3 py-2 border rounded item object-interest-item">
                 <div class="row align-items-end">
                     <div class="col-md">
                         <label class="form-label">Bagian <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
-                            name="part_id[]"
+                            name="interest_id[]"
                             data-placeholder="Pilih Bagian"
                             style="width: 100%;">
                             <option value=""></option>
-                            @foreach ($parts as $part)
-                                <option value="{{ $part->id }}">
-                                    {{ $part->name }}
+                            @foreach ($interests as $interest)
+                                <option value="{{ $interest->id }}">
+                                    {{ $interest->name }}
                                 </option>
                             @endforeach
                         </select>

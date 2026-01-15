@@ -38,8 +38,8 @@
 								<table class="table table-borderless">
 									<tbody>
 										<tr>
-											<th>Tipe Objek</th>
-											<td>{{ $object->objectType->name ?? '-' }}</td>
+											<th>Objek Occupation</th>
+											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 										</tr>
 										<tr>
 											<th>Nama Objek</th>
@@ -56,30 +56,30 @@
 					</div>
 				</div>
 
-				<!-- Parts Section -->
+				<!-- Interests Section -->
 				<div class="card">
 					<div class="card-header pb-0">
-						<h5>Komponen Objek (Parts)</h5>
+						<h5>Komponen Objek (Interests)</h5>
 					</div>
 					<div class="card-body">
-					@if($object->objectParts && $object->objectParts->count() > 0)
+					@if($object->objectInterests && $object->objectInterests->count() > 0)
 						<div class="table-responsive">
 							<table class="table table-bordered">
 								<thead>
 									<tr>
 										<th width="50">No</th>
-										<th>Nama Part</th>
+										<th>Nama Interest</th>
 										<th width="200">Nilai (Rp)</th>
 									</tr>
 								</thead>
 								<tbody>
 									@php $totalValue = 0; @endphp
-									@foreach($object->objectParts as $index => $objectPart)
-										@php $totalValue += $objectPart->value; @endphp
+									@foreach($object->objectInterests as $index => $objectInterest)
+										@php $totalValue += $objectInterest->value; @endphp
 										<tr>
 											<td>{{ $index + 1 }}</td>
-											<td>{{ $objectPart->part->name ?? '-' }}</td>
-											<td class="text-end">{{ number_format($objectPart->value, 2, ',', '.') }}</td>
+											<td>{{ $objectInterest->interest->name ?? '-' }}</td>
+											<td class="text-end">{{ number_format($objectInterest->value, 2, ',', '.') }}</td>
 											</tr>
 										@endforeach
 									</tbody>

@@ -166,7 +166,7 @@ var __module2__ = (function(__dependency1__, __dependency2__) {
   var isArray = Utils.isArray,
       isFunction = Utils.isFunction,
       toString = Utils.toString,
-      objectType = '[object Object]';
+      objectOccupation = '[object Object]';
 
   function HandlebarsEnvironment(helpers, partials) {
     this.helpers = helpers || {};
@@ -182,7 +182,7 @@ var __module2__ = (function(__dependency1__, __dependency2__) {
     log: log,
 
     registerHelper: function(name, fn, inverse) {
-      if (toString.call(name) === objectType) {
+      if (toString.call(name) === objectOccupation) {
         if (inverse || fn) { throw new Exception('Arg not supported with multiple helpers'); }
         Utils.extend(this.helpers, name);
       } else {
@@ -192,7 +192,7 @@ var __module2__ = (function(__dependency1__, __dependency2__) {
     },
 
     registerPartial: function(name, str) {
-      if (toString.call(name) === objectType) {
+      if (toString.call(name) === objectOccupation) {
         Utils.extend(this.partials,  name);
       } else {
         this.partials[name] = str;

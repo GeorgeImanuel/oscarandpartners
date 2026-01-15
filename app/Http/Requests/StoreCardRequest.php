@@ -33,17 +33,17 @@ class StoreCardRequest extends FormRequest
             'is_main' => 'nullable|array',
             
             // Step 3: Object (either existing or new)
-            'object_id' => 'required_without_all:object_type_id,object_address,object_city|nullable|exists:objects,id',
+            'object_id' => 'required_without_all:object_occupation_id,object_address,object_city|nullable|exists:objects,id',
             
             // New Object Fields (conditional)
-            'object_type_id' => 'required_without:object_id|nullable|exists:object_types,id',
+            'object_occupation_id' => 'required_without:object_id|nullable|exists:object_occupations,id',
             'object_address' => 'required_without:object_id|nullable|string',
             'object_city' => 'required_without:object_id|nullable|string',
-            'part_id' => 'nullable|array',
-            'part_id.*' => 'nullable|exists:parts,id',
+            'interest_id' => 'nullable|array',
+            'interest_id.*' => 'nullable|exists:interests,id',
             'value' => 'nullable|array',
             'value.*' => 'nullable|numeric|min:0',
-            'object_value_input' => 'required_with:object_type_id|nullable|numeric|min:0',
+            'object_value_input' => 'required_with:object_occupation_id|nullable|numeric|min:0',
             
             // Step 4: Premi Parameters
             'premi_percentages' => 'required|numeric|min:0|max:1',
@@ -94,7 +94,7 @@ class StoreCardRequest extends FormRequest
             
             // Object
             'object_id.required_without_all' => 'Objek harus dipilih atau dibuat baru.',
-            'object_type_id.required_without' => 'Tipe objek harus dipilih.',
+            'object_occupation_id.required_without' => 'Objek Occupation harus dipilih.',
             'object_address.required_without' => 'Alamat objek harus diisi.',
             'object_city.required_without' => 'Kota objek harus diisi.',
             'object_value_input.required_with' => 'Harga pertanggungan harus diisi.',
