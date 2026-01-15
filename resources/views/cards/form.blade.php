@@ -466,12 +466,20 @@
                         </div>
                         {{-- COMMISION CALCULATION END --}}
                     </div>
+
                 </div>
                 <div class="card-footer	">
-                    <a class="btn btn-light"
-                        href="{{ route('cards.index') }}">Kembali</a>
-                    <button class="btn btn-primary float-end"
-                        type="submit">Simpan</button>
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <a class="btn btn-light"
+                                href="{{ route('cards.index') }}">Kembali</a>
+                        </div>
+                        <div class="col-md-auto">
+                            <span class="btn btn-outline-primary ms-3 mb-2 stepwizard-prev">Sebelumnya</span>
+                            <span class="btn btn-primary ms-3 mb-2 stepwizard-next">Selanjutnya</span>
+                            <button class="btn btn-primary ms-3 mb-2 stepwizard-submit" type="submit" style="display: none;">Simpan</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
@@ -555,7 +563,7 @@
                 if (cardTypeId == '{{ config('constants.card_type.renewal') }}') {
                     parentContainer.show();
                     parentSelect.attr('required', true);
-                    
+
                     parentContainer.find('.required').attr('required', true);
 
                 } else {

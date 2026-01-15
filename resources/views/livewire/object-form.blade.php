@@ -95,7 +95,7 @@
             id="object_value_input"
             name="object_value_input"
             type="number"
-            step="0.01"
+            step="0.00001"
             min="0"
             value="{{ isset($object) ? $object->object_value : old('object_value_input', 0) }}" />
         @error('object_value_input')

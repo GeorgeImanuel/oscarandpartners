@@ -31,7 +31,7 @@ class ObjectModel extends Model
 
     public function objectParts()
     {
-    return $this->hasMany(ObjectPart::class, 'object_id');
+        return $this->hasMany(ObjectPart::class, 'object_id');
     }
 
     public function getObjectValue()

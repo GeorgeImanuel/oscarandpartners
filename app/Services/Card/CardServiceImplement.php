@@ -67,6 +67,11 @@ class CardServiceImplement extends Service implements CardService
         $this->paymentRepository = $paymentRepository;
     }
 
+    public function findWithRelation($id)
+    {
+        return $this->mainRepository->findWithRelation($id);
+    }
+
     public function getAllParent()
     {
         return $this->mainRepository->getAllParent();

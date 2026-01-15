@@ -43,9 +43,8 @@
 	                                <tr>
 	                                    <th>Username</th>
 	                                    <th>Name</th>
-	                                    <th>Phone</th>
-	                                    <th>Email</th>
-	                                    <th>ID Card</th>
+	                                    <th>ID Number</th>
+	                                    <th>Address</th>
 	                                    <th>Group/Family</th>
 	                                    <th>Actions</th>
 	                                </tr>
@@ -54,10 +53,9 @@
 	                                @forelse($clients as $client)
 	                                <tr>
 	                                    <td>{{ $client->user->username }}</td>
-	                                    <td>{{ $client->name }}</td>
-	                                    <td>{{ $client->phone }}</td>
-	                                    <td>{{ $client->email ?? '-' }}</td>
-	                                    <td>{{ $client->id_card_number ?? '-' }}</td>
+	                                    <td>{{ $client->id_name ?? '-' }}</td>
+	                                    <td>{{ $client->id_number ?? '-' }}</td>
+	                                    <td>{{ $client->id_address ?? '-' }}</td>
 	                                    <td>{{ $client->relation ? $client->relation->name : '-' }}</td>
 	                                    <td style="white-space: nowrap;">
 	                                        <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-warning">Edit</a>
@@ -70,7 +68,7 @@
 	                                </tr>
 	                                @empty
 	                                <tr>
-	                                    <td colspan="7" class="text-center">No clients found</td>
+	                                    <td colspan="6" class="text-center">No clients found</td>
 	                                </tr>
 	                                @endforelse
 	                            </tbody>

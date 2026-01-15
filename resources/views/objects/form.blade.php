@@ -123,7 +123,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2 mb-md-0">
                                             <label class="form-label">Nilai (Rp)</label>
-                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectPart->value }}" placeholder="0" min="0" step="0.01">
+                                            <input type="number" class="form-control" name="part_value[]" value="{{ $objectPart->value }}" placeholder="0" min="0" step="0.00001">
                                         </div>
                                         <div class="col-md-1 pt-3">
                                             <button type="button" class="btn btn-danger btn-xs remove-part-btn" style="{{ $index == 0 ? 'display:none' : '' }}">
@@ -342,7 +342,7 @@
                         </div>
                         <div class="col-md-3 mb-2 mb-md-0">
                             <label class="form-label">Nilai (Rp)</label>
-                            <input type="number" class="form-control" name="part_value[]" placeholder="0" min="0" step="0.01">
+                            <input type="number" class="form-control" name="part_value[]" placeholder="0" min="0" step="0.00001">
                         </div>
                         <div class="col-md-1 pt-3">
                             <button type="button" class="btn btn-danger btn-xs remove-part-btn">

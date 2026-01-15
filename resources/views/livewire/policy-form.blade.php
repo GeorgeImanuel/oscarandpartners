@@ -55,7 +55,7 @@
             id="coverage_percentage"
             name="coverage_percentage"
             type="number"
-            step="0.01"
+            step="0.00001"
             min="0"
             max="100"
             value="{{ isset($policy) ? $policy->coverage_percentage : old('coverage_percentage', 0) }}" />
@@ -110,7 +110,7 @@
                             placeholder="0"
                             min="0"
                             max="100"
-                            step="0.01">
+                            step="0.00001">
                     </div>
                     <div class="col-md-auto pt-3">
                         <div class="form-check">
