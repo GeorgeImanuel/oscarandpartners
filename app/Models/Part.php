@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Part extends Model
 {
+    protected $table = 'interests';
+    
     public $timestamps = false;
 
     protected $fillable = [

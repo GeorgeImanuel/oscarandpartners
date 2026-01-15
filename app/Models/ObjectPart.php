@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ObjectPart extends Model
 {
-    protected $primaryKey = ['object_id', 'part_id'];
+    protected $table = 'object_interests';
+    
+    protected $primaryKey = ['object_id', 'interest_id'];
     
     public $incrementing = false;
     
@@ -16,7 +18,8 @@ class ObjectPart extends Model
     
     protected $fillable = [
         'object_id',
-        'part_id',
+        'interest_id',
+        'part_id', // alias for interest_id (backward compatibility)
         'value',
     ];
 
@@ -25,8 +28,16 @@ class ObjectPart extends Model
         return $this->belongsTo(ObjectModel::class, 'object_id');
     }
 
+    public function interest(): BelongsTo
+    {
+        return $this->belongsTo(Interest::class, 'interest_id');
+    }
+
+    /**
+     * Alias for interest() for backward compatibility
+     */
     public function part(): BelongsTo
     {
-        return $this->belongsTo(Part::class, 'part_id');
+        return $this->interest();
     }
 }

@@ -13,11 +13,20 @@ return new class extends Migration {
             $table->foreignId('created_by')->constrained('users')->comment('Finance yg buat Request');
             $table->decimal('amount', 20, 2);
             $table->text('note')->nullable();
+            
+            // CLIENT PAYMENT
             $table->foreignId('payment_status_id')->constrained('payment_statuses');
             $table->datetime('deadline_at')->comment('tambah dari tanggal start +30');
             $table->datetime('paid_at')->nullable();
             $table->string('client_evident_file')->nullable()->comment('Bukti Transfer Nasabah');
             $table->string('client_evident_number')->nullable()->comment('Nomer Bukti Transfer Nasabah');
+            
+            // INSURANCE PAYMENT
+            $table->foreignId('insurance_payment_status_id')->nullable()->constrained('payment_statuses');
+            $table->datetime('insurance_paid_at')->nullable()->comment('STOP TIMER 24 JAM');
+            $table->string('insurance_evident_file')->nullable()->comment('Bukti Transfer Asuransi');
+            $table->string('insurance_evident_number')->nullable()->comment('Nomer Bukti Transfer Asuransi');
+            
             $table->timestamps();
 
             $table->index('deadline_at');

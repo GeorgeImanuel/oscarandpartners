@@ -14,14 +14,22 @@ class ObjectModel extends Model
     protected $table = 'objects';
 
     protected $fillable = [
-        'object_type_id',
+        'object_occupation_id',
         'name',
-        'address',
+        'keterangan',
     ];
 
+    public function objectOccupation(): BelongsTo
+    {
+        return $this->belongsTo(ObjectOccupation::class);
+    }
+
+    /**
+     * Alias for objectOccupation() for backward compatibility
+     */
     public function objectType(): BelongsTo
     {
-        return $this->belongsTo(ObjectType::class);
+        return $this->objectOccupation();
     }
 
     public function policies()
@@ -29,6 +37,15 @@ class ObjectModel extends Model
         return $this->hasMany(Policy::class, 'object_id');
     }
 
+    public function interests()
+    {
+        return $this->belongsToMany(Interest::class, 'object_interests', 'object_id', 'interest_id')
+            ->withPivot('value');
+    }
+
+    /**
+     * Alias for backward compatibility - returns objectParts as a hasMany relationship
+     */
     public function objectParts()
     {
         return $this->hasMany(ObjectPart::class, 'object_id');
@@ -36,6 +53,6 @@ class ObjectModel extends Model
 
     public function getObjectValue()
     {
-        return $this->objectParts()->sum('value');
+        return $this->interests()->sum('value');
     }
 }

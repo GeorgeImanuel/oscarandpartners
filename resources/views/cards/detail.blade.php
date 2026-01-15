@@ -46,13 +46,12 @@
 
                         <!-- Detail Information -->
                         <div class="row">
-                            <!-- Left Column -->
                             <div class="col-md-6">
-                                <table class="table table-borderless">
+                                <h6 class="text-primary mb-3">Identitas Kartu</h6>
+                                <table class="table table-borderless table-sm">
                                     <tbody>
                                         <tr>
-                                            <td width="40%"
-                                                class="fw-bold">Status Kartu</td>
+                                            <td width="40%" class="fw-bold">Status Kartu</td>
                                             <td width="5%">:</td>
                                             <td>
                                                 @if ($card->cardStatus)
@@ -70,7 +69,24 @@
                                         <tr>
                                             <td class="fw-bold">Nama Asuransi</td>
                                             <td>:</td>
-                                            <td>{{ $card->policy->policyInsurances->firstWhere('is_main', true)?->insurance->name ?? '-' }}</td>
+                                            <td>
+                                                @if($card->policy && $card->policy->policyInsurances->count() > 0)
+                                                    <ul class="list-unstyled mb-0">
+                                                        @foreach($card->policy->policyInsurances->sortByDesc('is_main') as $polIns)
+                                                            <li>
+                                                                {{ $polIns->insurance->name ?? '-' }}
+                                                                @if($polIns->is_main)
+                                                                    <span class="badge badge-info" style="font-size: 9px; padding: 2px 4px;">Leader</span>
+                                                                @else
+                                                                    <span class="text-muted" style="font-size: 11px;">(Member)</span>
+                                                                @endif
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="fw-bold">Nama Tertanggung</td>
@@ -78,83 +94,54 @@
                                             <td>{{ $card->client->id_name ?? $card->client->user->name }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="fw-bold">Kode Relasi</td>
-                                            <td>:</td>
-                                            <td>
-                                                @if ($card->client && $card->client->relation)
-                                                    <span class="badge badge-info">{{ $card->client->relation->code }}</span>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td class="fw-bold">Obyek Asuransi</td>
                                             <td>:</td>
                                             <td>{{ $card->policy->object->name ?? '-' }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="fw-bold">Periode Awal</td>
+                                            <td class="fw-bold">Periode</td>
                                             <td>:</td>
-                                            <td>{{ $card->policy->started_date ? $card->policy->started_date->format('d/m/Y') : '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">Periode Akhir</td>
-                                            <td>:</td>
-                                            <td>{{ $card->policy->ended_date ? $card->policy->ended_date->format('d/m/Y') : '-' }}</td>
+                                            <td>
+                                                {{ $card->policy->started_date ? $card->policy->started_date->format('d/m/Y') : '-' }} s/d
+                                                {{ $card->policy->ended_date ? $card->policy->ended_date->format('d/m/Y') : '-' }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
 
-                            <!-- Right Column -->
                             <div class="col-md-6">
-                                <table class="table table-borderless">
+                                <h6 class="text-primary mb-3">Parameter Perhitungan</h6>
+                                <table class="table table-borderless table-sm">
                                     <tbody>
+                                        {{-- HARGA PERTANGGUNGAN --}}
                                         <tr>
-                                            <td width="40%"
-                                                class="fw-bold">Harga Pertanggungan</td>
+                                            <td width="40%" class="fw-bold">Harga Pertanggungan</td>
                                             <td width="5%">:</td>
-                                            <td>Rp {{ number_format($card->object_value, 0, ',', '.') }}</td>
+                                            <td class="fw-bold">Rp {{ number_format($card->object_value, 0, ',', '.') }}</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td class="fw-bold">Persentase Premi</td>
+                                            <td>:</td>
+                                            <td>{{ number_format($card->premi_percentages * 100, 5, ',', '.') }}%</td>
                                         </tr>
                                         <tr>
-                                            <td class="fw-bold">Tarif Premi</td>
+                                            <td class="fw-bold">Persentase Komisi</td>
                                             <td>:</td>
-                                            <td>{{ number_format($card->premi_value, 3) }}%</td>
+                                            <td>{{ number_format($card->commision_percentages * 100, 5, ',', '.') }}%</td>
+                                        </tr>
+
+                                        {{-- BIAYA & DISKON --}}
+                                        <tr>
+                                            <td class="fw-bold">Nilai TJH</td>
+                                            <td>:</td>
+                                            <td>Rp {{ number_format($card->tjh_value, 0, ',', '.') }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="fw-bold">Tipe Pembayaran</td>
+                                            <td class="fw-bold">Disc</td>
                                             <td>:</td>
-                                            <td>{{ $card->paymentType->name ?? '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">Status Pembayaran</td>
-                                            <td>:</td>
-                                            <td>
-                                                @if ($card->insurancePaymentStatus)
-                                                    <span class="badge"
-                                                        style="background-color: {{ $card->insurancePaymentStatus->color }}">
-                                                        {{ $card->insurancePaymentStatus->name }}
-                                                    </span>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">Dibuat Oleh</td>
-                                            <td>:</td>
-                                            <td>{{ $card->creator->name ?? '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">Tanggal Dibuat</td>
-                                            <td>:</td>
-                                            <td>{{ $card->created_at ? $card->created_at->format('d/m/Y H:i') : '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="fw-bold">Terakhir Diubah</td>
-                                            <td>:</td>
-                                            <td>{{ $card->updated_at ? $card->updated_at->format('d/m/Y H:i') : '-' }}</td>
+                                            <td>Rp {{ number_format($card->discount, 0, ',', '.') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -164,13 +151,13 @@
                         <hr>
 
                         <!-- Premi Section -->
-                        <h6 class="mb-3">Informasi Premi</h6>
+                        <h6 class="mb-3">Perhitungan Premi</h6>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered text-center">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Nilai Produksi</th>
-                                        <th>Biaya Admin</th>
+                                        <th>Biaya Polis</th>
                                         <th>Total Premi</th>
                                     </tr>
                                 </thead>
@@ -178,56 +165,55 @@
                                     <tr>
                                         <td>Rp {{ number_format($card->production_value, 0, ',', '.') }}</td>
                                         <td>Rp {{ number_format($card->policy_fee, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->commision_bruto, 0, ',', '.') }}</td>
+                                        <td class="fw-bold table-active">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <!-- Komisi Section -->
-                        <h6 class="mb-3 mt-4">Informasi Komisi</h6>
+                        <h6 class="mb-3 mt-4">Perhitungan Komisi</h6>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered text-center">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Komisi Bruto</th>
-                                        <th>Nilai Pajak</th>
-                                        <th>Komisi Bersih Awal</th>
-                                        <th>Sisa Komisi Agen</th>
+                                        <th>Komisi Total</th>
+                                        <th>Pajak</th>
+                                        <th>Diskon/Agen</th>
+                                        <th>Komisi Bersih (Diterima)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>Rp {{ number_format($card->commision_bruto, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->tax_value, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->commision_nettos, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($card->tax, 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($card->disc_agent, 0, ',', '.') }}</td>
+                                        <td class="fw-bold table-success">Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Pembayaran Section -->
-                        {{-- <h6 class="mb-3 mt-4">Informasi Pembayaran</h6>
+                        <h6 class="mb-3 mt-4">Informasi Pembayaran</h6>
 						<div class="row">
 							<div class="col-md-6">
 								<div class="card border">
-									<div class="card-header bg-light">
+									<div class="card-header border-bottom" style="background-color: #f8f9fa;">
 										<strong>Tagihan ke Nasabah</strong>
 									</div>
 									<div class="card-body">
 										<table class="table table-sm table-borderless mb-0">
 											<tr>
 												<td>Total Premi</td>
-												<td class="text-end">Rp {{ number_format($card->total_premi, 0, ',', '.') }}</td>
+												<td class="text-end">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
 											</tr>
 											<tr>
 												<td>Discount/Agen</td>
-												<td class="text-end">Rp {{ number_format($card->discount ?? 0, 0, ',', '.') }}</td>
+												<td class="text-end">Rp {{ number_format($card->disc_agent ?? 0, 0, ',', '.') }}</td>
 											</tr>
 											<tr class="border-top">
 												<td><strong>Netto Tagihan</strong></td>
-												<td class="text-end"><strong>Rp {{ number_format($card->tagihan_ke_nasabah, 0, ',', '.') }}</strong></td>
+												<td class="text-end"><strong>Rp {{ number_format($card->client_pay, 0, ',', '.') }}</strong></td>
 											</tr>
 										</table>
 									</div>
@@ -235,28 +221,28 @@
 							</div>
 							<div class="col-md-6">
 								<div class="card border">
-									<div class="card-header bg-light">
+									<div class="card-header border-bottom" style="background-color: #f8f9fa;">
 										<strong>Pembayaran ke Asuransi</strong>
 									</div>
 									<div class="card-body">
 										<table class="table table-sm table-borderless mb-0">
 											<tr>
 												<td>Total Premi</td>
-												<td class="text-end">Rp {{ number_format($card->total_premi, 0, ',', '.') }}</td>
+												<td class="text-end">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
 											</tr>
 											<tr>
 												<td>Komisi</td>
-												<td class="text-end">Rp {{ number_format($card->komisi_bersih_awal, 0, ',', '.') }}</td>
+												<td class="text-end">Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
 											</tr>
 											<tr class="border-top">
 												<td><strong>Netto Bayar</strong></td>
-												<td class="text-end"><strong>Rp {{ number_format($card->netto_bayar_asuransi, 0, ',', '.') }}</strong></td>
+												<td class="text-end"><strong>Rp {{ number_format($card->insurance_pay, 0, ',', '.') }}</strong></td>
 											</tr>
 										</table>
 									</div>
 								</div>
 							</div>
-						</div> --}}
+						</div>
 
                         <!-- Pelunasan Info -->
                         {{-- <h6 class="mb-3 mt-4">Informasi Pelunasan</h6>

@@ -49,7 +49,6 @@ class CardFactory extends Factory
             'policy_id'         => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
             'card_type_id'      => CardType::inRandomOrder()->first()?->id,
             'card_status_id'    => CardStatus::inRandomOrder()->first()?->id,
-            'collector_type_id' => CollectorType::inRandomOrder()->first()?->id,
             'parent_card_id'    => null,
             'payment_type_id'   => PaymentType::inRandomOrder()->first()?->id,
             'created_by'        => User::inRandomOrder()->first()?->id ?? User::factory(),
@@ -67,15 +66,10 @@ class CardFactory extends Factory
             'premi_value'      => $premiValue,
             'commision_bruto'  => $commisionBruto,
             'commision_netto'  => $commisionNetto,
-            'tax_value'        => $taxValue,
+            'tax'              => $taxValue,
+            'disc_agent'       => 0,
             'client_pay'       => $clientPay,
             'insurance_pay'    => $insurancePay,
-
-            // Insurance Payment
-            'insurance_payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id,
-            'insurance_paid_at'           => fake()->boolean(60) ? fake()->dateTimeBetween('-6 months', 'now') : null,
-            'insurance_evident_file'      => fake()->boolean(60) ? 'evidence_' . fake()->uuid() . '.pdf' : null,
-            'insurance_evident_number'    => fake()->boolean(60) ? 'TRF-' . fake()->numerify('##########') : null,
         ];
     }
 

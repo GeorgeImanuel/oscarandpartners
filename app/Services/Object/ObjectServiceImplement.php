@@ -63,9 +63,9 @@ class ObjectServiceImplement extends Service implements ObjectService
         }
 
         $object = $this->mainRepository->create([
-            'object_type_id' => $data['object_type_id'],
+            'object_occupation_id' => $data['object_type_id'],
             'name' => $data['name'],
-            'address' => $data['address'],
+            'keterangan' => $data['address'] ?? null,
         ]);
 
         // Save parts if provided
@@ -84,7 +84,7 @@ class ObjectServiceImplement extends Service implements ObjectService
 
                 ObjectPart::create([
                     'object_id' => $object->id,
-                    'part_id' => $finalPartId,
+                    'interest_id' => $finalPartId,
                     'value' => floatval($partValue),
                 ]);
             }
@@ -113,9 +113,9 @@ class ObjectServiceImplement extends Service implements ObjectService
         }
 
         $updated = $this->mainRepository->update($id, [
-            'object_type_id' => $data['object_type_id'],
+            'object_occupation_id' => $data['object_type_id'],
             'name' => $data['name'],
-            'address' => $data['address'],
+            'keterangan' => $data['address'] ?? null,
         ]);
 
         // Delete existing parts and re-create
@@ -136,7 +136,7 @@ class ObjectServiceImplement extends Service implements ObjectService
 
                 ObjectPart::create([
                     'object_id' => $id,
-                    'part_id' => $finalPartId,
+                    'interest_id' => $finalPartId,
                     'value' => floatval($partValue),
                 ]);
             }

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ObjectType;
+use App\Models\ObjectOccupation;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -13,7 +13,7 @@ class ObjectTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        ObjectType::insert([
+        ObjectOccupation::insert([
             ['name' => 'Bangunan'],
             ['name' => 'Unit'],
             ['name' => 'Rumah'],

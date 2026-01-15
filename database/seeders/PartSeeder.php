@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Part;
+use App\Models\Interest;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -13,7 +13,7 @@ class PartSeeder extends Seeder
      */
     public function run(): void
     {
-        Part::insert([
+        Interest::insert([
             ['name' => 'Build'],
             ['name' => 'Mesin'],
             ['name' => 'Gudang'],

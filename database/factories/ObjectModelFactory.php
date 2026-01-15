@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\ObjectType;
+use App\Models\ObjectOccupation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Object>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ObjectModel>
  */
 class ObjectModelFactory extends Factory
 {
@@ -18,9 +18,9 @@ class ObjectModelFactory extends Factory
     public function definition(): array
     {
         return [
-            'object_type_id' => ObjectType::inRandomOrder()->first()?->id ?? ObjectType::factory(),
+            'object_occupation_id' => ObjectOccupation::inRandomOrder()->first()?->id ?? ObjectOccupation::factory(),
             'name' => fake()->words(3, true),
-            'address' => fake()->address(),
+            'keterangan' => fake()->sentence(),
         ];
     }
 }

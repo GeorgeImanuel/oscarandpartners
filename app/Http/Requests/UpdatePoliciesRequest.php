@@ -26,7 +26,7 @@ class UpdatePoliciesRequest extends FormRequest
 
         return [
             'object_id' => 'required|exists:objects,id',
-            'coverage_code' => 'required|exists:coverages,code',
+            'coverage_id' => 'required|exists:coverages,id',
             'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
             'policy_number' => [
                 'required',
@@ -52,7 +52,7 @@ class UpdatePoliciesRequest extends FormRequest
     {
         return [
             'object_id.exists' => 'The selected object is invalid.',
-            'coverage_code.exists' => 'The selected coverage code is invalid.',
+            'coverage_id.exists' => 'The selected coverage code is invalid.',
             'coverage_percentage.required' => 'Coverage percentage is required.',
             'coverage_percentage.numeric' => 'Coverage percentage must be a number.',
             'policy_number.required' => 'Policy number is required.',

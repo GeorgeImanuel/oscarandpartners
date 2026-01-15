@@ -6,12 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        // Master status/types pendukung card
-        Schema::create('payment_types', function (Blueprint $table) { $table->id(); $table->string('name'); $table->timestamps(); });
-        Schema::create('card_types', function (Blueprint $table) { $table->id(); $table->string('name'); $table->string('color', 7); $table->timestamps(); });
-        Schema::create('card_statuses', function (Blueprint $table) { $table->id(); $table->string('name'); $table->string('color', 7); $table->timestamps(); });
-        Schema::create('payment_statuses', function (Blueprint $table) { $table->id(); $table->string('name'); $table->string('color', 7); $table->timestamps(); });
-
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
@@ -38,18 +32,10 @@ return new class extends Migration {
             $table->bigInteger('insurance_pay');
             $table->bigInteger('client_pay');
             
-            $table->foreignId('insurance_payment_status_id')->nullable()->constrained('payment_statuses');
-            $table->datetime('insurance_paid_at')->nullable()->comment('STOP TIMER 24 JAM');
-            $table->string('insurance_evident_file')->nullable();
-            $table->string('insurance_evident_number')->nullable();
             $table->timestamps();
         });
     }
     public function down(): void {
         Schema::dropIfExists('cards');
-        Schema::dropIfExists('payment_statuses');
-        Schema::dropIfExists('card_statuses');
-        Schema::dropIfExists('card_types');
-        Schema::dropIfExists('payment_types');
     }
 };

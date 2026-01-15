@@ -29,21 +29,21 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="coverage_code">Coverage <span class="text-danger">*</span></label>
-        <select class="form-select add-select2 required @error('coverage_code') is-invalid @enderror"
-            name="coverage_code"
-            id="coverage_code"
+            for="coverage_id">Coverage <span class="text-danger">*</span></label>
+        <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
+            name="coverage_id"
+            id="coverage_id"
             data-placeholder="Pilih Coverage"
             style="width: 100%;">
             <option value="">- Pilih Coverage -</option>
             @foreach ($coverages ?? [] as $coverage)
-                <option value="{{ $coverage->code }}"
-                    {{ isset($policy) && $coverage->code == $policy->coverage_code ? 'selected' : (old('coverage_code') == $coverage->code ? 'selected' : '') }}>
+                <option value="{{ $coverage->id }}"
+                    {{ isset($policy) && $coverage->id == $policy->coverage_id ? 'selected' : (old('coverage_id') == $coverage->id ? 'selected' : '') }}>
                     {{ $coverage->name }}
                 </option>
             @endforeach
         </select>
-        @error('coverage_code')
+        @error('coverage_id')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>

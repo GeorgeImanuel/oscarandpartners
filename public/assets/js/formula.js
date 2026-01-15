@@ -7,7 +7,7 @@ function premi_value(production_value, policy_fee) {
 }
 
 function commision_bruto(production_value, commision_percentage, discount) {
-    return (commision_percentage + discount) * production_value;
+    return commision_percentage *(production_value + discount);
 }
 
 function tax_value(commision_bruto, tax_percentage) {
@@ -23,7 +23,7 @@ function client_pay(premi_value, discount_agent) {
 }
 
 function insurance_pay(premi_value, commision_netto) {
-    return premi_value + commision_netto;
+    return premi_value - commision_netto;
 }
 
 function calculate_payment(

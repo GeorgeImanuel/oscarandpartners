@@ -26,8 +26,8 @@ class PolicyFactory extends Factory
         return [
             'policy_number' => 'POL-' . fake()->unique()->numerify('######'),
             'object_id' => ObjectModel::inRandomOrder()->first()?->id ?? ObjectModel::factory(),
-            'coverage_code' => Coverage::inRandomOrder()->first()?->code ?? Coverage::factory(),
-            'coverage_percentage' => fake()->randomFloat(2, 0.01, 0.99),
+            'coverage_id' => Coverage::inRandomOrder()->first()?->id ?? Coverage::factory(),
+            'coverage_percentage' => fake()->randomFloat(7, 0.01, 0.99),
             'started_date' => $startDate,
             'ended_date' => fake()->dateTimeBetween($startDate, '+2 years'),
         ];

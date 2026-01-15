@@ -33,11 +33,19 @@ class PaymentSeeder extends Seeder
                     'created_by'               => User::inRandomOrder()->first()->id,
                     'amount'                   => round($amountPerPayment, 2),
                     'note'                     => fake()->optional()->sentence(),
-                    'client_payment_status_id' => PaymentStatus::inRandomOrder()->first()->id,
+                    
+                    // CLIENT PAYMENT
+                    'payment_status_id'        => PaymentStatus::inRandomOrder()->first()->id,
                     'deadline_at'              => now()->addDays($i * 30),
                     'paid_at'                  => fake()->boolean(60) ? now()->subDays(rand(1, 30)) : null,
                     'client_evident_file'      => fake()->boolean(60) ? 'payment_' . fake()->uuid() . '.pdf' : null,
                     'client_evident_number'    => fake()->boolean(60) ? 'PAY-' . fake()->numerify('##########') : null,
+                    
+                    // INSURANCE PAYMENT
+                    'insurance_payment_status_id' => fake()->boolean(60) ? PaymentStatus::inRandomOrder()->first()->id : null,
+                    'insurance_paid_at'           => fake()->boolean(50) ? now()->subDays(rand(1, 30)) : null,
+                    'insurance_evident_file'      => fake()->boolean(50) ? 'insurance_' . fake()->uuid() . '.pdf' : null,
+                    'insurance_evident_number'    => fake()->boolean(50) ? 'INS-' . fake()->numerify('##########') : null,
                 ]);
             }
         }

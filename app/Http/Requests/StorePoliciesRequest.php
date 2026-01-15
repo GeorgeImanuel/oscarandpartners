@@ -22,7 +22,7 @@ class StorePoliciesRequest extends FormRequest
         return [
             // Diubah dari nullable ke required
             'object_id' => 'required|exists:objects,id',
-            'coverage_code' => 'required|exists:coverages,code',
+            'coverage_id' => 'required|exists:coverages,id',
             'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
             'started_date' => 'required|date',
@@ -50,7 +50,7 @@ class StorePoliciesRequest extends FormRequest
 
             'object_id.exists' => 'Objek yang dipilih tidak valid.',
 
-            'coverage_code.exists' => 'Coverage yang dipilih tidak valid.',
+            'coverage_id.exists' => 'Coverage yang dipilih tidak valid.',
 
             'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
             'coverage_percentage.numeric' => 'Persentase Coverage harus berupa angka.',

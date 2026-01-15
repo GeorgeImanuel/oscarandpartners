@@ -22,7 +22,7 @@ class UpdateObjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'object_type_id' => 'nullable|exists:object_types,id',
+            'object_type_id' => 'nullable|exists:object_occupations,id',
             'object_type_name' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
             'address' => 'required|string',

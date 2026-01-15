@@ -21,7 +21,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     }
     public function findWithRelation($id)
     {
-        return $this->model->with(['client','policy.policyInsurances.insurance','policy.object.objectParts.part','payments.paymentStatus'])->find($id);
+        return $this->model->with(['client','policy.policyInsurances.insurance','policy.object.objectParts.part','payments.paymentStatus','payments.insurancePaymentStatus'])->find($id);
     }
 
     public function getAllParent()
@@ -39,14 +39,14 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             'policy',
             'cardStatus',
             'creator',
-            'insurancePaymentStatus',
-            'paymentType'
+            'paymentType',
+            'payments.insurancePaymentStatus'
         ])->get();
     }
 
     public function getAllWithFilter(array $data)
     {
-        $query = $this->model->with(['client.relation', 'policy.object', 'cardType', 'cardStatus', 'insurancePaymentStatus']);
+        $query = $this->model->with(['client.relation', 'policy.object', 'cardType', 'cardStatus', 'payments.insurancePaymentStatus']);
 
         $user = auth()->user();
         if ($user && $user->hasRole('client')) {

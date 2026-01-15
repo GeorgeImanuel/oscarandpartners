@@ -16,17 +16,8 @@ return new class extends Migration {
             $table->date('ended_date');
             $table->timestamps();
         });
-
-        Schema::create('policy_insurances', function (Blueprint $table) {
-            $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
-            $table->foreignId('insurance_id')->constrained('insurances');
-            $table->boolean('is_main');
-            $table->decimal('percentage', 8, 7);
-            $table->primary(['policy_id', 'insurance_id']);
-        });
     }
     public function down(): void {
-        Schema::dropIfExists('policy_insurances');
         Schema::dropIfExists('policies');
     }
 };

@@ -17,7 +17,7 @@ class Policy extends Model
     protected $fillable = [
         'policy_number',
         'object_id',
-        'coverage_code',
+        'coverage_id',
         'coverage_percentage',
         'started_date',
         'ended_date',
