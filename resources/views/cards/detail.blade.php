@@ -186,7 +186,7 @@
                                     <tr>
                                         <td>Rp {{ number_format($card->commision_bruto, 0, ',', '.') }}</td>
                                         <td>Rp {{ number_format($card->tax, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->disc_agent, 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($card->discount_agent, 0, ',', '.') }}</td>
                                         <td class="fw-bold table-success">Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
@@ -209,7 +209,7 @@
 											</tr>
 											<tr>
 												<td>Discount/Agen</td>
-												<td class="text-end">Rp {{ number_format($card->disc_agent ?? 0, 0, ',', '.') }}</td>
+												<td class="text-end">Rp {{ number_format($card->discount_agent ?? 0, 0, ',', '.') }}</td>
 											</tr>
 											<tr class="border-top">
 												<td><strong>Netto Tagihan</strong></td>

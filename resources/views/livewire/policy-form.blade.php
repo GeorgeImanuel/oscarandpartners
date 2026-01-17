@@ -101,18 +101,21 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-auto">
-                        <label class="form-label">Persentase (%)</label>
-                        <input type="number"
-                            class="form-control insurance-percentage"
-                            name="percentage[]"
-                            value=""
-                            placeholder="0"
-                            min="0"
-                            max="100"
-                            step="0.00001">
+                    <div class="col-md-3">
+                        <label class="form-label">Persentase</label>
+                        <div class="input-group mb-3">
+                            <input type="number"
+                                class="form-control insurance-percentage"
+                                name="percentage[]"
+                                value=""
+                                placeholder="0"
+                                min="0"
+                                max="100"
+                                step="0.00001">
+                            <span class="input-group-text">%</span>
+                        </div>
                     </div>
-                    <div class="col-md-auto pt-3">
+                    <div class="col-md-auto pt-4">
                         <div class="form-check">
                             <input class="form-check-input is-main-checkbox"
                                 type="checkbox"

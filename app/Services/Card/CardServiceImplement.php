@@ -181,7 +181,7 @@ class CardServiceImplement extends Service implements CardService
                 'commision_bruto'       => (float)($data['commision_bruto'] ?? 0),
                 'commision_netto'       => (float)($data['commision_netto'] ?? 0),
                 'tax'                   => (float)($data['tax'] ?? 0),
-                'disc_agent'            => (float)($data['discount_agent'] ?? 0),
+                'discount_agent'            => (float)($data['discount_agent'] ?? 0),
                 'client_pay'            => (float)($data['client_pay'] ?? 0),
                 'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
 
@@ -219,7 +219,7 @@ class CardServiceImplement extends Service implements CardService
         $tax_pct        = (float)($data['tax_percentages'] ?? 0) / 100;
         $discount       = (float)($data['discount'] ?? 0);
         $tjh_value      = (float)($data['tjh_value'] ?? 0);
-        $disc_agent     = (float)($data['discount_agent'] ?? 0); // Nama input form: discount_agent
+        $discount_agent     = (float)($data['discount_agent'] ?? 0); // Nama input form: discount_agent
 
         // 2. Kalkulasi Ulang (Sesuai Logic JavaScript)
         // Nilai Produksi = (Pertanggungan * %Premi) + TJH
@@ -237,7 +237,7 @@ class CardServiceImplement extends Service implements CardService
         $tax = (float)($data['tax'] ?? ($commision_bruto * $tax_pct)); 
 
         // Komisi Bersih = Bruto - Pajak - Diskon Agen
-        $commision_netto  = $commision_bruto - $tax - $disc_agent;
+        $commision_netto  = $commision_bruto - $tax - $discount_agent;
 
         // Tagihan Nasabah (Client Pay) = Total Premi - Diskon Nasabah
         $client_pay       = $premi_value - $discount;
@@ -272,7 +272,7 @@ class CardServiceImplement extends Service implements CardService
             'premi_value'           => $premi_value,      // DB: premi_value (Bukan premi_amount)
             'commision_bruto'       => $commision_bruto,  // DB: commision_bruto (Bukan commission_amount)
             'tax'                   => $tax,              // DB: tax (Bukan tax_amount)
-            'disc_agent'            => $disc_agent,       // DB: disc_agent (Bukan discount_amount)
+            'discount_agent'            => $discount_agent,       // DB: discount_agent (Bukan discount_amount)
             'commision_netto'       => $commision_netto,  // DB: commision_netto
             
             // Field yang hilang sebelumnya:

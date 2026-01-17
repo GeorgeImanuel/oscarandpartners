@@ -51,7 +51,7 @@
                         <label class="form-label" for="object_occupation_id">Objek Occupation<span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
                             <div class="flex-grow-1">
-                                <select class="form-select @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
+                                <select class="form-select add-select2 @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
                                     <option value="">- Pilih Objek Occupation -</option>
                                     @foreach ($objectOccupations as $occupation)
                                         <option value="{{ $occupation->id }}" {{ isset($object) && $object->object_occupation_id == $occupation->id ? 'selected' : (old('object_occupation_id') == $occupation->id ? 'selected' : '') }}>
@@ -106,7 +106,7 @@
                                             <label class="form-label">Interest {{ $index + 1 }}</label>
                                             <div class="input-group">
                                                 <div class="flex-grow-1">
-                                                    <select class="form-select interest-select" name="interest_id[]" style="width: 100%;">
+                                                    <select class="form-select add-select2 interest-select" name="interest_id[]" style="width: 100%;">
                                                         <option value="">- Pilih Interest -</option>
                                                         @foreach($Interests as $Interest)
                                                             <option value="{{ $Interest->id }}" {{ $objectInterest->interest_id == $Interest->id ? 'selected' : '' }}>
@@ -160,9 +160,11 @@
     <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script>
         let interestIndex = {{ isset($object) ? $object->objectInterests->count() : 0 }};
-        const interestsData = @json($Interests);
+        const interestsData = @json($interests);
 
         $(document).ready(function() {
+            initCustomSelect2(".add-select2");
+
             // Add default Interest if no Interests exist
             if ($('#interests-container .interest-row').length === 0) {
                 interestIndex = 1;

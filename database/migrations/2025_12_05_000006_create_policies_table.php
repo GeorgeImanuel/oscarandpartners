@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->date('started_date');
             $table->date('ended_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
     public function down(): void {

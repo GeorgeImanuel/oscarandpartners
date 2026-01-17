@@ -240,8 +240,9 @@
 
                     {{-- PREMI PARAMETER START --}}
                     {{-- STEP 4: PARAMETER & PERHITUNGAN --}}
-                    <div id="step-4" class="setup-content">
-                        
+                    <div id="step-4"
+                        class="setup-content">
+
                         {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
                         <div class="row mb-4">
                             <div class="col-md-12">
@@ -251,31 +252,76 @@
                             {{-- KIRI: Harga Pertanggungan --}}
                             <div class="col-md-6">
                                 <div class="h-100 d-flex flex-column justify-content">
-                                    <label class="form-label fw-bold">Harga Pertanggungan (Rp)</label>
-                                    <input id="object_value" class="form-control form-control-lg fw-bold border-secondary" 
-                                        name="object_value" type="number"
-                                        value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}" readonly 
-                                        style="background-color: #f8f9fa;">
+                                    <label class="form-label fw-bold">Harga Pertanggungan</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">Rp</span>
+                                        <input id="object_value"
+                                            class="form-control form-control-lg fw-bold"
+                                            name="object_value"
+                                            type="number"
+                                            value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}"
+                                            readonly
+                                            style="background-color: #f8f9fa;">
+                                    </div>
                                 </div>
+
                             </div>
 
                             {{-- KANAN: Parameter Tarif (Stacked) --}}
                             <div class="col-md-6">
                                 <div class="row g-2">
                                     <div class="col-md-12">
-                                        <label class="form-label mb-1">Tarif Premi (%)</label>
-                                        <input id="premi_percentages" class="form-control" name="premi_percentages" type="number" step="0.00001"
-                                            value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}" required>
+                                        <label class="form-label mb-1">Tarif Premi</label>
+                                        <div class="input-group">
+                                            <input id="premi_percentages"
+                                                class="form-control"
+                                                name="premi_percentages"
+                                                type="number"
+                                                step="0.00001"
+                                                value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}"
+                                                required>
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label mb-1">Nilai TJH</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input id="tjh_value"
+                                                class="form-control"
+                                                name="tjh_value"
+                                                type="number"
+                                                value="{{ isset($card) ? $card->tjh_value : old('tjh_value', 0) }}"
+                                                required>
+                                        </div>
                                     </div>
                                     <div class="col-md-12">
-                                        <label class="form-label mb-1">Nilai TJH (Rp)</label>
-                                        <input id="tjh_value" class="form-control" name="tjh_value" type="number"
-                                            value="{{ isset($card) ? $card->tjh_value : old('tjh_value', 0) }}" required>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label mb-1">Disc (Rp)</label>
-                                        <input id="discount" class="form-control" name="discount" type="number"
-                                            value="{{ isset($card) ? $card->discount : old('discount', 0) }}">
+                                        <label class="form-label mb-1">Discount</label>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="input-group mb-3">
+                                                    <input id="discount_percentage"
+                                                        class="form-control"
+                                                        type="number"
+                                                        name="discount_percentage"
+                                                        aria-label="Amount (to the nearest dollar)"
+                                                        value="{{ isset($card) ? $card->discount_percentage : old('discount_percentage', 0) }}">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input id="discount_value"
+                                                        class="form-control"
+                                                        type="number"
+                                                        name="discount_value"
+                                                        aria-label="Amount (to the nearest dollar)"
+                                                        value="{{ isset($card) ? $card->discount_value : old('discount_value', 0) }}">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -288,24 +334,45 @@
                             <div class="col-md-12">
                                 <h5 class="text-primary mb-3">2. Perhitungan Premi</h5>
                             </div>
-                            
+
                             {{-- Flow Horizontal: Produksi + Biaya = Total --}}
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Nilai Produksi (Output)</label>
-                                <input id="production_value" class="form-control bg-light" name="production_value" type="number"
-                                    value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}" readonly>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="production_value"
+                                        class="form-control bg-light"
+                                        name="production_value"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}"
+                                        readonly>
+                                </div>
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-primary">Biaya Polis (Input)</label>
-                                <input id="policy_fee" class="form-control" name="policy_fee" type="number"
-                                    value="{{ isset($card) ? $card->policy_fee : old('policy_fee', 0) }}" required>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="policy_fee"
+                                        class="form-control"
+                                        name="policy_fee"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->policy_fee : old('policy_fee', 0) }}"
+                                        required>
+                                </div>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Total Premi (Output)</label>
-                                <input id="premi_value" class="form-control fw-bold bg-light" name="premi_value" type="number"
-                                    value="{{ isset($card) ? $card->premi : old('premi', 0) }}" readonly>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="premi_value"
+                                        class="form-control fw-bold bg-light"
+                                        name="premi_value"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->premi : old('premi', 0) }}"
+                                        readonly>
+                                </div>
                             </div>
                         </div>
 
@@ -319,59 +386,87 @@
 
                             {{-- BAGIAN ATAS: Persentase Total & Total Komisi --}}
                             <div class="col-md-12">
-                                <label class="form-label">Persentase Total Komisi (%)</label>
-                                <input id="commision_percentages" class="form-control" name="commision_percentages" type="number" step="0.01"
-                                    value="{{ isset($card) ? $card->commision_percentages * 100 : old('commision_percentages', 0) }}" required>
+                                <label class="form-label">Persentase Total Komisi</label>
+                                <div class="input-group">
+                                    <input id="commision_percentages"
+                                        class="form-control"
+                                        name="commision_percentages"
+                                        type="number"
+                                        step="0.01"
+                                        value="{{ isset($card) ? $card->commision_percentages * 100 : old('commision_percentages', 0) }}"
+                                        required>
+                                    <span class="input-group-text">%</span>
+                                </div>
                             </div>
-                            
+
                             <div class="col-md-12">
                                 <label class="form-label text-muted">Total Komisi (Output)</label>
-                                <input id="commision_bruto" class="form-control bg-light fw-bold" name="commision_bruto" type="number"
-                                    value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}" readonly>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="commision_bruto"
+                                        class="form-control bg-light fw-bold"
+                                        name="commision_bruto"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}"
+                                        readonly>
+                                </div>
                             </div>
 
                             {{-- BAGIAN TENGAH: KOTAK RINCIAN ASURANSI (THE BOX) --}}
                             <div class="col-md-12 mt-4">
-                                <div class="card mb-0" style="border: 2px solid #333; background-color: #fcfcfc;">
+                                <div class="card mb-0"
+                                    style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
-                                        <h6 class="card-title mb-3 text-center" style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Share & Pajak Per Asuransi</h6>
-                                        
+                                        <h6 class="card-title mb-3 text-center"
+                                            style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Share & Pajak Per Asuransi</h6>
+
                                         {{-- Dynamic Insurance List Container --}}
                                         <div id="insurance-list-container">
                                             {{-- Server-side rendered (for edit mode) --}}
-                                            @if(isset($card->policy) && $card->policy->policyInsurances->count() > 0)
-                                                @foreach($card->policy->policyInsurances as $index => $polIns)
+                                            @if (isset($card->policy) && $card->policy->policyInsurances->count() > 0)
+                                                @foreach ($card->policy->policyInsurances as $index => $polIns)
                                                     <div class="row g-2 align-items-center mb-2 insurance-item">
                                                         {{-- Kolom 1: Nama Asuransi --}}
                                                         <div class="col-md-5">
                                                             <label class="small text-muted mb-0">Asuransi</label>
-                                                            <input type="text" class="form-control form-control-sm bg-white" 
-                                                                value="{{ $polIns->insurance->name ?? '-' }}" readonly>
+                                                            <input type="text"
+                                                                class="form-control form-control-sm bg-white"
+                                                                value="{{ $polIns->insurance->name ?? '-' }}"
+                                                                readonly>
                                                         </div>
 
                                                         {{-- Kolom 2: Share % --}}
                                                         <div class="col-md-3">
                                                             <label class="small text-muted mb-0">Share</label>
                                                             <div class="input-group input-group-sm">
-                                                                <input type="text" class="form-control text-center bg-white" 
-                                                                    value="{{ ($polIns->percentage ?? 0) * 100 }}" readonly>
+                                                                <input type="text"
+                                                                    class="form-control text-center bg-white"
+                                                                    value="{{ ($polIns->percentage ?? 0) * 100 }}"
+                                                                    readonly>
                                                                 <span class="input-group-text">%</span>
                                                             </div>
                                                         </div>
 
                                                         {{-- Kolom 3: Input Pajak (Rp) --}}
                                                         <div class="col-md-4">
-                                                            <label class="small text-muted mb-0 fw-bold">Pajak (Input Rp)</label>
-                                                            <input type="number" class="form-control form-control-sm border-secondary insurance-tax-per-item" 
-                                                                data-insurance-id="{{ $polIns->id }}" 
-                                                                placeholder="0"
-                                                                value="0"> 
+                                                            <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">Rp</span>
+                                                                <input type="number"
+                                                                    class="form-control form-control-sm insurance-tax-per-item"
+                                                                    data-insurance-id="{{ $polIns->id }}"
+                                                                    placeholder="0"
+                                                                    value="0">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    @if(!$loop->last) <hr class="my-2 text-muted"> @endif
+                                                    @if (!$loop->last)
+                                                        <hr class="my-2 text-muted">
+                                                    @endif
                                                 @endforeach
                                             @else
-                                                <div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>
+                                                <div class="text-center text-muted small"
+                                                    id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>
                                             @endif
                                         </div>
 
@@ -382,20 +477,40 @@
                             {{-- BAGIAN BAWAH: TOTAL PAJAK, DISC, BERSIH (SEJAJAR) --}}
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Total Pajak (Auto Sum)</label>
-                                <input id="tax" class="form-control bg-light" name="tax" type="number" 
-                                    value="{{ isset($card) ? $card->tax : old('tax', 0) }}" readonly>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="tax"
+                                        class="form-control bg-light"
+                                        name="tax"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->tax : old('tax', 0) }}"
+                                        readonly>
+                                </div>
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label">Disc/Agen</label>
-                                <input id="discount_agent" class="form-control" name="discount_agent" type="number"
-                                    value="{{ isset($card) ? $card->discount_agent : old('discount_agent', 0) }}">
+                                <label class="form-label">Discount Agent</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="discount_agent"
+                                        class="form-control"
+                                        name="discount_agent"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->discount_agent : old('discount_agent', 0) }}">
+                                </div>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Komisi Bersih</label>
-                                <input id="commision_netto" class="form-control bg-light" name="commision_netto" type="number"
-                                    value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}" readonly>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input id="commision_netto"
+                                        class="form-control bg-light"
+                                        name="commision_netto"
+                                        type="number"
+                                        value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}"
+                                        readonly>
+                                </div>
                             </div>
                         </div>
 
@@ -407,7 +522,8 @@
                             {{-- KARTU KIRI: TAGIHAN NASABAH --}}
                             <div class="col-md-6">
                                 <div class="card border">
-                                    <div class="card-header border-bottom py-2" style="background-color: #f8f9fa;">
+                                    <div class="card-header border-bottom py-2"
+                                        style="background-color: #f8f9fa;">
                                         <strong>Tagihan ke Nasabah</strong>
                                     </div>
                                     <div class="card-body">
@@ -416,25 +532,29 @@
                                                 <td>Total Premi</td>
                                                 {{-- Class: lbl-total-premi --}}
                                                 <td class="text-end lbl-total-premi">
-                                                    Rp {{ isset($card) ? number_format($card->premi, 0, ',', '.') : '0' }}
+                                                    Rp{{ isset($card) ? number_format($card->premi, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Diskon/Agen</td>
                                                 {{-- Class: lbl-discount-agent --}}
                                                 <td class="text-end text-danger lbl-discount-agent">
-                                                    Rp {{ isset($card) ? number_format($card->discount, 0, ',', '.') : '0' }}
+                                                    Rp{{ isset($card) ? number_format($card->discount, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                             <tr class="border-top">
                                                 <td><strong>Netto Tagihan</strong></td>
                                                 {{-- Class: lbl-netto-tagihan --}}
-                                                <td class="text-end fw-bold lbl-netto-tagihan" style="font-size: 1.1em;">
-                                                    Rp {{ isset($card) ? number_format($card->client_pay, 0, ',', '.') : '0' }}
+                                                <td class="text-end fw-bold lbl-netto-tagihan"
+                                                    style="font-size: 1.1em;">
+                                                    Rp{{ isset($card) ? number_format($card->client_pay, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                         </table>
-                                        <input type="hidden" name="client_pay" id="client_pay" value="{{ isset($card) ? $card->client_pay : 0 }}">
+                                        <input type="hidden"
+                                            name="client_pay"
+                                            id="client_pay"
+                                            value="{{ isset($card) ? $card->client_pay : 0 }}">
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +562,8 @@
                             {{-- KARTU KANAN: PEMBAYARAN KE ASURANSI --}}
                             <div class="col-md-6">
                                 <div class="card border">
-                                    <div class="card-header border-bottom py-2" style="background-color: #f8f9fa;">
+                                    <div class="card-header border-bottom py-2"
+                                        style="background-color: #f8f9fa;">
                                         <strong>Pembayaran ke Asuransi</strong>
                                     </div>
                                     <div class="card-body">
@@ -451,31 +572,33 @@
                                                 <td>Total Premi</td>
                                                 {{-- Class: lbl-total-premi (Sama kayak kiri) --}}
                                                 <td class="text-end lbl-total-premi">
-                                                    Rp {{ isset($card) ? number_format($card->premi, 0, ',', '.') : '0' }}
+                                                    Rp{{ isset($card) ? number_format($card->premi, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Komisi Bersih</td>
                                                 {{-- Class: lbl-komisi-bersih --}}
                                                 <td class="text-end text-success lbl-komisi-bersih">
-                                                    Rp {{ isset($card) ? number_format($card->commision_netto, 0, ',', '.') : '0' }}
+                                                    Rp{{ isset($card) ? number_format($card->commision_netto, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                             <tr class="border-top">
                                                 <td><strong>Netto Bayar</strong></td>
                                                 {{-- Class: lbl-netto-bayar --}}
-                                                <td class="text-end fw-bold lbl-netto-bayar" style="font-size: 1.1em;">
-                                                    Rp {{ isset($card) ? number_format($card->insurance_pay, 0, ',', '.') : '0' }}
+                                                <td class="text-end fw-bold lbl-netto-bayar"
+                                                    style="font-size: 1.1em;">
+                                                    Rp{{ isset($card) ? number_format($card->insurance_pay, 0, ',', '.') : '0' }}
                                                 </td>
                                             </tr>
                                         </table>
-                                        <input type="hidden" name="insurance_pay" id="insurance_pay" value="{{ isset($card) ? $card->insurance_pay : 0 }}">
+                                        <input type="hidden"
+                                            name="insurance_pay"
+                                            id="insurance_pay"
+                                            value="{{ isset($card) ? $card->insurance_pay : 0 }}">
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
 
                     </div>
                     {{-- END STEP 4 --}}
@@ -490,7 +613,9 @@
                         <div class="col-md-auto">
                             <span class="btn btn-outline-primary ms-3 mb-2 stepwizard-prev">Sebelumnya</span>
                             <span class="btn btn-primary ms-3 mb-2 stepwizard-next">Selanjutnya</span>
-                            <button class="btn btn-primary ms-3 mb-2 stepwizard-submit" type="submit" style="display: none;">Simpan</button>
+                            <button class="btn btn-primary ms-3 mb-2 stepwizard-submit"
+                                type="submit"
+                                style="display: none;">Simpan</button>
                         </div>
                     </div>
                 </div>
@@ -668,7 +793,7 @@
                 Livewire.on('insurancesLoaded', (event) => {
                     const insurances = event.insurances || event[0]?.insurances || [];
                     console.log('Insurances loaded:', insurances);
-                    
+
                     const container = $('#insurance-list-container');
                     container.empty();
 
@@ -690,11 +815,14 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="small text-muted mb-0 fw-bold">Pajak (Input Rp)</label>
-                                        <input type="number" class="form-control form-control-sm border-secondary insurance-tax-per-item" 
-                                            data-insurance-id="${insurance.id}" 
-                                            placeholder="0"
-                                            value="0">
+                                        <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="number" class="form-control form-control-sm insurance-tax-per-item" 
+                                                data-insurance-id="${insurance.id}" 
+                                                placeholder="0"
+                                                value="0">
+                                        </div>
                                     </div>
                                 </div>
                                 ${index < insurances.length - 1 ? '<hr class="my-2 text-muted">' : ''}
@@ -727,9 +855,9 @@
                 var tjh_value = parseInt($('#tjh_value').val()) || 0;
                 var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
-                const productionValue = production_value(object_value, premi_percentages/100, tjh_value, discount);
+                const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
                 const premiValue = premi_value(productionValue, policy_fee);
-                const commisionBruto = commision_bruto(productionValue, commision_percentages/100, discount);
+                const commisionBruto = commision_bruto(productionValue, commision_percentages / 100, discount);
                 const taxValue = parseFloat($('#tax').val()) || 0; // Get current tax value from field
                 const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
                 const clientPay = client_pay(premiValue, discount_agent);
@@ -774,7 +902,7 @@
             // Format number to Rupiah
             function formatRupiah(value) {
                 var number = parseFloat(value) || 0;
-                return 'Rp ' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                return 'Rp' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
 
             // Add event listeners to trigger calculation when parameters change

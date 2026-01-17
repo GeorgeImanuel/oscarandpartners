@@ -17,22 +17,24 @@ return new class extends Migration {
             $table->foreignId('created_by')->constrained('users');
             
             $table->bigInteger('object_value')->comment('Harga Asset dari object_component');
-            $table->double('premi_percentages');
-            $table->double('tax_percentages');
-            $table->double('commision_percentages');
-            $table->double('policy_fee');
-            $table->integer('discount');
+            $table->decimal('premi_percentages', 8, 7);
+            $table->decimal('tax_percentages', 8, 7);
+            $table->decimal('commision_percentages', 8, 7);
+            $table->decimal('policy_fee', 20, 2);
+            $table->decimal('discount_percentages', 8, 7);
+            $table->decimal('discount_value', 20, 2);
             
-            $table->bigInteger('production_value');
-            $table->bigInteger('premi_value');
-            $table->bigInteger('commision_bruto');
-            $table->bigInteger('commision_netto');
-            $table->double('tax');
-            $table->integer('disc_agent');
-            $table->bigInteger('insurance_pay');
-            $table->bigInteger('client_pay');
+            $table->decimal('production_value', 20, 2);
+            $table->decimal('premi_value', 20, 2);
+            $table->decimal('commision_bruto', 20, 2);
+            $table->decimal('commision_netto', 20, 2);
+            $table->decimal('tax', 20, 2);
+            $table->decimal('discount_agent', 20, 2);
+            $table->decimal('insurance_pay', 20, 2);
+            $table->decimal('client_pay', 20, 2);
             
             $table->timestamps();
+            $table->softDeletes();
         });
     }
     public function down(): void {

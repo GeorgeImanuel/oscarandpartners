@@ -133,17 +133,6 @@
                         </li>
                     @endhasanyrole
 
-                    @hasanyrole('owner|admin|finance')
-                        <li class="sidebar-main-title">
-                            <div>
-                                <h6>Pengaturan</h6>
-                            </div>
-                        </li>
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('settings.index') }}" href="{{ route('settings.index') }}"><i data-feather="settings"></i><span>Presentase</span></a>
-                        </li>
-                    @endhasanyrole
-
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Profile</h6>
