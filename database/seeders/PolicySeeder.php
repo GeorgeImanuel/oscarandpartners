@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Policy;
 use App\Models\Insurance;
-use App\Models\ObjectType;
+use App\Models\ObjectOccupation;
 use App\Models\ObjectModel;
 use App\Models\PolicyInsurance;
 use Illuminate\Database\Seeder;

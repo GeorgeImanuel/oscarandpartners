@@ -115,8 +115,8 @@
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('object-types.index') }}" href="{{ route('object-types.index') }}"><i data-feather="layers"></i><span>Tipe Objek</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('parts.index') }}" href="{{ route('parts.index') }}"><i data-feather="box"></i><span>Bagian Objek</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}" href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Occupation</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}" href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
                         </li>
                     @endhasanyrole
 

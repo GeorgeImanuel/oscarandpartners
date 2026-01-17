@@ -34,8 +34,8 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
     {
         return $this->model->with([
             'object' => function ($q) {
-                $q->with(['objectType', 'objectParts',]);
-                $q->withSum('objectParts as object_value', 'value');
+                $q->with(['objectOccupation', 'objectInterests.interest']);
+                $q->withSum('objectInterests as object_value', 'value');
             },
             'coverage',
             'policyInsurances.insurance'

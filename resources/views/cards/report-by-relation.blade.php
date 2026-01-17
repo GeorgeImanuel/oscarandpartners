@@ -129,7 +129,7 @@
                                             <tbody>
                                                 @foreach($objects as $index => $object)
                                                     @php
-                                                        $objectPartTotal = $object->objectParts->sum('value');
+                                                        $objectInterestTotal = $object->objectInterests->sum('value');
                                                         $policiesCount = $object->policies->count();
                                                     @endphp
                                                     <tr>
@@ -152,7 +152,7 @@
                                                         <td style="vertical-align: top;">
                                                             {{ $object->name ?? '-' }} / {{ $object->address ?? '-' }}
                                                         </td>
-                                                        <td style="vertical-align: top;">{{ $object->objectType?->name ?? '-' }}</td>
+                                                        <td style="vertical-align: top;">{{ $object->objectOccupation?->name ?? '-' }}</td>
                                                         <td style="vertical-align: top;">
                                                             @if($policiesCount > 0)
                                                                 @foreach($object->policies as $policyIndex => $policy)
@@ -177,9 +177,9 @@
                                                             @endif
                                                         </td>
                                                         <td style="white-space: normal; vertical-align: top; text-align: right;">
-                                                            @if($object->objectParts->isNotEmpty())
+                                                            @if($object->objectInterests->isNotEmpty())
                                                                 <div style="display: table; width: 100%; font-size: 0.85em;">
-                                                                    @foreach($object->objectParts as $part)
+                                                                    @foreach($object->objectInterests as $interest)
                                                                         <div style="display: table-row;">
                                                                             <div style="display: table-cell; text-align: left; padding-bottom: 3px; padding-right: 20px;">
                                                                                 {{ $part->part->name }}:
@@ -197,7 +197,7 @@
                                                                             Total :
                                                                         </div>
                                                                         <div style="display: table-cell; text-align: right;">
-                                                                            {{ numberFormat($objectPartTotal) }}
+                                                                            {{ numberFormat($objectInterestTotal) }}
                                                                         </div>
                                                                     </div>
                                                                 </div>

@@ -22,26 +22,26 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Object\ObjectRepositoryImplement::class
         );
 
-        // Register ObjectType Service and Repository
+        // Register ObjectOccupation Service and Repository
         $this->app->bind(
-            \App\Services\ObjectType\ObjectTypeService::class,
-            \App\Services\ObjectType\ObjectTypeServiceImplement::class
+            \App\Services\ObjectOccupation\ObjectOccupationService::class,
+            \App\Services\ObjectOccupation\ObjectOccupationServiceImplement::class
         );
         
         $this->app->bind(
-            \App\Repositories\ObjectType\ObjectTypeRepository::class,
-            \App\Repositories\ObjectType\ObjectTypeRepositoryImplement::class
+            \App\Repositories\ObjectOccupation\ObjectOccupationRepository::class,
+            \App\Repositories\ObjectOccupation\ObjectOccupationRepositoryImplement::class
         );
 
-        // Register Part Service and Repository
+        // Register Interest Service and Repository
         $this->app->bind(
-            \App\Services\Part\PartService::class,
-            \App\Services\Part\PartServiceImplement::class
+            \App\Services\Interest\InterestService::class,
+            \App\Services\Interest\InterestServiceImplement::class
         );
         
         $this->app->bind(
-            \App\Repositories\Part\PartRepository::class,
-            \App\Repositories\Part\PartRepositoryImplement::class
+            \App\Repositories\Interest\InterestRepository::class,
+            \App\Repositories\Interest\InterestRepositoryImplement::class
         );
     }
 

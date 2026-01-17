@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use Illuminate\Container\AttributesDB;
 use App\Repositories\Card\CardRepository;
-use App\Repositories\Part\PartRepository;
+use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Object\ObjectRepository;
 use App\Repositories\Policy\PolicyRepository;
 use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\Coverage\CoverageRepository;
-use App\Repositories\ObjectPart\ObjectPartRepository;
-use App\Repositories\ObjectType\ObjectTypeRepository;
+use App\Repositories\ObjectInterest\ObjectInterestRepository;
+use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
 
 class CardServiceImplement extends Service implements CardService
@@ -35,10 +35,10 @@ class CardServiceImplement extends Service implements CardService
      * because used in extends service class
      */
     protected $mainRepository;
-    protected $objectTypeRepository;
+    protected $objectOccupationRepository;
     protected $objectRepository;
-    protected $partRepository;
-    protected $objectPartRepository;
+    protected $interestRepository;
+    protected $objectInterestRepository;
     protected $policyRepository;
     protected $coverageRepository;
     protected $policyCoverageRepository;
@@ -47,20 +47,20 @@ class CardServiceImplement extends Service implements CardService
 
     public function __construct(
         CardRepository $mainRepository,
-        ObjectTypeRepository $objectTypeRepository,
+        ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
-        PartRepository $partRepository,
-        ObjectPartRepository $objectPartRepository,
+        InterestRepository $interestRepository,
+        ObjectInterestRepository $objectInterestRepository,
         PolicyRepository $policyRepository,
         CoverageRepository $coverageRepository,
         PolicyInsuranceRepository $policyInsuranceRepository,
         PaymentRepository $paymentRepository
     ) {
         $this->mainRepository = $mainRepository;
-        $this->objectTypeRepository = $objectTypeRepository;
+        $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository = $objectRepository;
-        $this->partRepository = $partRepository;
-        $this->objectPartRepository = $objectPartRepository;
+        $this->interestRepository = $interestRepository;
+        $this->objectInterestRepository = $objectInterestRepository;
         $this->policyRepository = $policyRepository;
         $this->coverageRepository = $coverageRepository;
         $this->policyInsuranceRepository = $policyInsuranceRepository;
@@ -95,39 +95,39 @@ class CardServiceImplement extends Service implements CardService
 
             //Find or Create Object
             if (!isset($data['object_id']) || $data['object_id'] == null) {
-                //Find or Create Object Type
-                $objectType = $this->objectTypeRepository->find($data['object_type_id']);
-                if (!$objectType) {
-                    $objectType = $this->objectTypeRepository->create([
-                        'name' => $data['object_type_id'],
+                //Find or Create Object occupation
+                $objectOccupation = $this->objectOccupationRepository->find($data['object_occupation_id']);
+                if (!$objectOccupation) {
+                    $objectOccupation = $this->objectOccupationRepository->create([
+                        'name' => $data['object_occupation_id'],
                     ]);
                 }
-                $data['object_type_id'] = $objectType->id;
+                $data['object_occupation_id'] = $objectOccupation->id;
 
                 //Create Object
                 $object = $this->objectRepository->create([
-                    'object_occupation_id' => $data['object_type_id'],
+                    'object_occupation_id' => $data['object_occupation_id'],
                     'name'           => $data['object_name'],
                     'keterangan'     => $data['object_address'] ?? null,
                 ]);
 
-                //Find or Create Part
-                if (isset($data['part_id']) && is_array($data['part_id'])) {
-                    foreach ($data['part_id'] as $partIndex => $part_id) {
-                        $partId = $data['part_id'][$partIndex];
-                        $part = $this->partRepository->find($partId);
-                        if (!$part) {
-                            $part = $this->partRepository->create([
-                                'name' => $data['part_id'][$partIndex],
+                //Find or Create Interests and Object Interests
+                if (isset($data['interest_id']) && is_array($data['interest_id'])) {
+                    foreach ($data['interest_id'] as $interestIndex => $interest_id) {
+                        $interestId = $data['interest_id'][$interestIndex];
+                        $interest = $this->interestRepository->find($interestId);
+                        if (!$interest) {
+                            $interest = $this->interestRepository->create([
+                                'name' => $data['interest_id'][$interestIndex],
                             ]);
-                            $partId = $part->id;
+                            $interestId = $interest->id;
                         }
 
-                        //Create Object Part
-                        $this->objectPartRepository->create([
+                        //Create Object Interest
+                        $this->objectInterestRepository->create([
                             'object_id' => $object->id,
-                            'interest_id'   => $partId,
-                            'value'     => $data['value'][$partIndex] ?? 0,
+                            'interest_id'   => $interestId,
+                            'value'     => $data['value'][$interestIndex] ?? 0,
                         ]);
                     }
                 }

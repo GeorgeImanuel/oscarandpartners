@@ -24,35 +24,18 @@ class ObjectModel extends Model
         return $this->belongsTo(ObjectOccupation::class);
     }
 
-    /**
-     * Alias for objectOccupation() for backward compatibility
-     */
-    public function objectType(): BelongsTo
-    {
-        return $this->objectOccupation();
-    }
-
     public function policies()
     {
         return $this->hasMany(Policy::class, 'object_id');
     }
 
-    public function interests()
+    public function objectInterests()
     {
-        return $this->belongsToMany(Interest::class, 'object_interests', 'object_id', 'interest_id')
-            ->withPivot('value');
-    }
-
-    /**
-     * Alias for backward compatibility - returns objectParts as a hasMany relationship
-     */
-    public function objectParts()
-    {
-        return $this->hasMany(ObjectPart::class, 'object_id');
+        return $this->hasMany(ObjectInterest::class, 'object_id');
     }
 
     public function getObjectValue()
     {
-        return $this->interests()->sum('value');
+        return $this->objectInterests()->sum('value');
     }
 }

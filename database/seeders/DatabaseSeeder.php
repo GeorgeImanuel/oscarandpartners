@@ -6,13 +6,14 @@ use App\Models\User;
 use App\Models\Policy;
 use Illuminate\Database\Seeder;
 use Database\Seeders\CardSeeder;
-use Database\Seeders\PartSeeder;
+use Database\Seeders\InterestSeeder;
 use Database\Seeders\ObjectSeeder;
 use Database\Seeders\PolicySeeder;
 use Database\Seeders\CardTypeSeeder;
 use Database\Seeders\CoverageSeeder;
 use Database\Seeders\CardStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Validation\Rules\In;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,7 +27,7 @@ class DatabaseSeeder extends Seeder
         // Master Data Seeders
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(ObjectTypeSeeder::class);
+        $this->call(ObjectOccupationSeeder::class);
         $this->call(PaymentTypeSeeder::class);
         $this->call(PaymentStatusSeeder::class);
         $this->call(CardStatusSeeder::class);
@@ -35,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BankSeeder::class);
 
         // Application Data Seeders
-        $this->call(PartSeeder::class);
+        $this->call(InterestSeeder::class);
         $this->call(CoverageSeeder::class);
         $this->call(ObjectSeeder::class);
         

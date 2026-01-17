@@ -4,9 +4,10 @@ namespace App\Services\Object;
 
 use LaravelEasyRepository\Service;
 use App\Repositories\Object\ObjectRepository;
-use App\Repositories\ObjectType\ObjectTypeRepository;
-use App\Repositories\Part\PartRepository;
-use App\Models\ObjectPart;
+use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
+use App\Repositories\Interest\InterestRepository;
+use App\Models\ObjectInterest;
+use Illuminate\Validation\Rules\In;
 
 class ObjectServiceImplement extends Service implements ObjectService
 {
@@ -28,17 +29,17 @@ class ObjectServiceImplement extends Service implements ObjectService
      * because used in extends service class
      */
     protected ObjectRepository $mainRepository;
-    protected ObjectTypeRepository $objectTypeRepository;
-    protected PartRepository $partRepository;
+    protected ObjectOccupationRepository $objectOccupationRepository;
+    protected InterestRepository $interestRepository;
 
     public function __construct(
         ObjectRepository $mainRepository,
-        ObjectTypeRepository $objectTypeRepository,
-        PartRepository $partRepository
+        ObjectOccupationRepository $objectOccupationRepository,
+        InterestRepository $interestRepository
     ) {
         $this->mainRepository = $mainRepository;
-        $this->objectTypeRepository = $objectTypeRepository;
-        $this->partRepository = $partRepository;
+        $this->objectOccupationRepository = $objectOccupationRepository;
+        $this->interestRepository = $interestRepository;
     }
 
     /**
@@ -50,42 +51,42 @@ class ObjectServiceImplement extends Service implements ObjectService
     }
 
     /**
-     * Create object with parts
+     * Create object with interests
      */
-    public function createWithParts(array $data)
+    public function createWithInterests(array $data)
     {
-        // Handle new object type
-        if (!empty($data['object_type_name'])) {
-            $objectType = $this->objectTypeRepository->firstOrCreate(
-                ['name' => $data['object_type_name']]
+        // Handle new object occupation
+        if (!empty($data['object_occupation_name'])) {
+            $objectOccupation = $this->objectOccupationRepository->firstOrCreate(
+                ['name' => $data['object_occupation_name']]
             );
-            $data['object_type_id'] = $objectType->id;
+            $data['object_occupation_id'] = $objectOccupation->id;
         }
 
         $object = $this->mainRepository->create([
-            'object_occupation_id' => $data['object_type_id'],
+            'object_occupation_id' => $data['object_occupation_id'],
             'name' => $data['name'],
             'keterangan' => $data['address'] ?? null,
         ]);
 
-        // Save parts if provided
-        if (isset($data['part_id']) && is_array($data['part_id'])) {
-            foreach ($data['part_id'] as $index => $partId) {
-                $partName = $data['part_name'][$index] ?? null;
-                $partValue = $data['part_value'][$index] ?? 0;
+        // Save interests if provided
+        if (isset($data['interest_id']) && is_array($data['interest_id'])) {
+            foreach ($data['interest_id'] as $index => $interestId) {
+                $interestName = $data['interest_name'][$index] ?? null;
+                $interestValue = $data['interest_value'][$index] ?? 0;
 
-                // If part_id is not null, use part_id; else use part_name
-                if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
-                    $finalPartId = intval($partId);
+                // If interest_id is not null, use interest_id; else use interest_name
+                if (!empty($interestId) && is_numeric($interestId) && intval($interestId) > 0) {
+                    $finalInterestId = intval($interestId);
                 } else {
-                    $part = $this->partRepository->firstOrCreate(['name' => $partName]);
-                    $finalPartId = $part->id;
+                    $interest = $this->interestRepository->firstOrCreate(['name' => $interestName]);
+                    $finalInterestId = $interest->id;
                 }
 
-                ObjectPart::create([
+                ObjectInterest::create([
                     'object_id' => $object->id,
-                    'interest_id' => $finalPartId,
-                    'value' => floatval($partValue),
+                    'interest_id' => $finalInterestId,
+                    'value' => floatval($interestValue),
                 ]);
             }
         }
@@ -94,9 +95,9 @@ class ObjectServiceImplement extends Service implements ObjectService
     }
 
     /**
-     * Update object with parts
+     * Update object with interests
      */
-    public function updateWithParts($id, array $data)
+    public function updateWithInterests($id, array $data)
     {
         $object = $this->mainRepository->find($id);
 
@@ -104,40 +105,40 @@ class ObjectServiceImplement extends Service implements ObjectService
             return false;
         }
 
-        // Handle new object type
-        if (!empty($data['object_type_name'])) {
-            $objectType = $this->objectTypeRepository->firstOrCreate(
-                ['name' => $data['object_type_name']]
+        // Handle new object occupation
+        if (!empty($data['object_occupation_name'])) {
+            $objectOccupation = $this->objectOccupationRepository->firstOrCreate(
+                ['name' => $data['object_occupation_name']]
             );
-            $data['object_type_id'] = $objectType->id;
+            $data['object_occupation_id'] = $objectOccupation->id;
         }
 
         $updated = $this->mainRepository->update($id, [
-            'object_occupation_id' => $data['object_type_id'],
+            'object_occupation_id' => $data['object_occupation_id'],
             'name' => $data['name'],
             'keterangan' => $data['address'] ?? null,
         ]);
 
-        // Delete existing parts and re-create
-        ObjectPart::where('object_id', $id)->delete();
+        // Delete existing interests and re-create
+        ObjectInterest::where('object_id', $id)->delete();
 
-        if (isset($data['part_id']) && is_array($data['part_id'])) {
-            foreach ($data['part_id'] as $index => $partId) {
-                $partName = $data['part_name'][$index] ?? null;
-                $partValue = $data['part_value'][$index] ?? 0;
+        if (isset($data['interest_id']) && is_array($data['interest_id'])) {
+            foreach ($data['interest_id'] as $index => $interestId) {
+                $interestName = $data['interest_name'][$index] ?? null;
+                $interestValue = $data['interest_value'][$index] ?? 0;
 
-                // If part_id is not null, use part_id; else use part_name
-                if (!empty($partId) && is_numeric($partId) && intval($partId) > 0) {
-                    $finalPartId = intval($partId);
+                // If interest_id is not null, use interest_id; else use interest_name
+                if (!empty($interestId) && is_numeric($interestId) && intval($interestId) > 0) {
+                    $finalInterestId = intval($interestId);
                 } else {
-                    $part = $this->partRepository->firstOrCreate(['name' => $partName]);
-                    $finalPartId = $part->id;
+                    $interest = $this->interestRepository->firstOrCreate(['name' => $interestName]);
+                    $finalInterestId = $interest->id;
                 }
 
-                ObjectPart::create([
+                ObjectInterest::create([
                     'object_id' => $id,
-                    'interest_id' => $finalPartId,
-                    'value' => floatval($partValue),
+                    'interest_id' => $finalInterestId,
+                    'value' => floatval($interestValue),
                 ]);
             }
         }
