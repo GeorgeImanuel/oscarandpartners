@@ -35,8 +35,8 @@
                         <td>{{ $policy->object->name ?? '-' }} ({{ $policy->object->objectOccupation->name ?? '-' }})</td>
                     </tr>
                     <tr>
-                        <td><strong>Alamat</strong></td>
-                        <td>{{ $policy->object->address ?? '-' }}</td>
+                        <td><strong>Keterangan</strong></td>
+                        <td>{{ $policy->object->keterangan ?? '-' }}</td>
                     </tr>
                     @if ($policy->policyInsurances->count() > 0)
                         <tr>

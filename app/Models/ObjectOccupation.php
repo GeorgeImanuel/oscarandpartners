@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ObjectOccupation extends Model
 {
     use HasFactory;
+    protected $table = 'object_occupation';
     protected $fillable = ['name'];
     public $timestamps = false;
 }

@@ -24,12 +24,12 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="object_address">Alamat <span class="text-danger">*</span></label>
-        <textarea class="form-control required @error('object_address') is-invalid @enderror"
-            id="object_address"
-            name="object_address"
-            rows="3">{{ isset($object) ? $object->address : old('object_address', '') }}</textarea>
-        @error('object_address')
+            for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
+        <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
+            id="object_keterangan"
+            name="object_keterangan"
+            rows="3">{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
+        @error('object_keterangan')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>

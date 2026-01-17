@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients');
-            $table->foreignId('policy_id')->constrained('policies');
+            $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
             $table->foreignId('card_type_id')->constrained('card_types');
             $table->foreignId('card_status_id')->constrained('card_statuses');
             $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('set null');

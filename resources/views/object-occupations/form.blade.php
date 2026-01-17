@@ -57,7 +57,7 @@
 
             <div class="card">
                 <div class="card-footer text-end">
-                    <a href="{{ route('object-types.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('object-occupations.index') }}" class="btn btn-secondary">
                         <i class="fa fa-times"></i> Batal
                     </a>
                     <button class="btn btn-primary" type="submit">

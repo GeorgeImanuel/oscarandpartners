@@ -127,10 +127,11 @@ class ObjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $this->objectService->delete($id);
-        return redirect()->route('objects.index')
-            ->with('success', 'Object berhasil dihapus.');
+        // PASTI-KAN memanggil SERVICE, bukan repository
+        $this->objectService->delete($id); 
+        
+        return redirect()->route('objects.index')->with('success', 'Berhasil dihapus');
     }
 }

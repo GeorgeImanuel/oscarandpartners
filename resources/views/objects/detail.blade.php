@@ -46,8 +46,8 @@
 											<td>{{ $object->name }}</td>
 										</tr>
 										<tr>
-											<th>Alamat</th>
-											<td>{{ $object->address }}</td>
+											<th>Keterangan</th>
+											<td>{{ $object->keterangan }}</td>
 										</tr>
 									</tbody>
 								</table>

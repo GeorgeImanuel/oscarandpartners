@@ -22,15 +22,15 @@ class StoreObjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'object_type_id' => 'nullable|exists:object_occupations,id',
-            'object_type_name' => 'nullable|string|max:255',
+            'object_occupation_id' => 'nullable|exists:object_occupation,id',
+            'object_occupation_name' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'part_id' => 'nullable|array',
-            'part_name' => 'nullable|array',
-            'part_name.*' => 'nullable|string|max:255',
-            'part_value' => 'nullable|array',
-            'part_value.*' => 'nullable|numeric|min:0',
+            'keterangan' => 'required|string',
+            'interest_id' => 'nullable|array',
+            'interest_name' => 'nullable|array',
+            'interest_name.*' => 'nullable|string|max:255',
+            'interest_value' => 'nullable|array',
+            'interest_value.*' => 'nullable|numeric|min:0',
         ];
     }
 }

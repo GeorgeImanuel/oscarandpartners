@@ -2,12 +2,14 @@
 
 namespace App\Services\Object;
 
+use App\Models\ObjectModel;
 use LaravelEasyRepository\Service;
 use App\Repositories\Object\ObjectRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\Interest\InterestRepository;
 use App\Models\ObjectInterest;
 use Illuminate\Validation\Rules\In;
+use Illuminate\Support\Facades\DB; // Jika ingin menggunakan DB::transaction()
 
 class ObjectServiceImplement extends Service implements ObjectService
 {
@@ -56,17 +58,25 @@ class ObjectServiceImplement extends Service implements ObjectService
     public function createWithInterests(array $data)
     {
         // Handle new object occupation
+        $occupationId = $data['object_occupation_id'] ?? null;
+
+        // 2. Handle jika ada nama baru (Mode Tambah Baru)
         if (!empty($data['object_occupation_name'])) {
             $objectOccupation = $this->objectOccupationRepository->firstOrCreate(
                 ['name' => $data['object_occupation_name']]
             );
-            $data['object_occupation_id'] = $objectOccupation->id;
+            $occupationId = $objectOccupation->id;
+        }
+
+        // Pastikan occupationId tidak kosong sebelum insert ke DB
+        if (!$occupationId) {
+             throw new \Exception("Harap pilih atau isi Objek Occupation.");
         }
 
         $object = $this->mainRepository->create([
-            'object_occupation_id' => $data['object_occupation_id'],
+            'object_occupation_id' => $occupationId,
             'name' => $data['name'],
-            'keterangan' => $data['address'] ?? null,
+            'keterangan' => $data['keterangan'] ?? null,
         ]);
 
         // Save interests if provided
@@ -100,23 +110,28 @@ class ObjectServiceImplement extends Service implements ObjectService
     public function updateWithInterests($id, array $data)
     {
         $object = $this->mainRepository->find($id);
+        if (!$object) return false;
 
-        if (!$object) {
-            return false;
-        }
+        // 1. Ambil ID Okupasi (Gunakan null coalescing ?? null)
+        $occupationId = $data['object_occupation_id'] ?? null;
 
-        // Handle new object occupation
+        // 2. Handle jika ada nama baru
         if (!empty($data['object_occupation_name'])) {
             $objectOccupation = $this->objectOccupationRepository->firstOrCreate(
                 ['name' => $data['object_occupation_name']]
             );
-            $data['object_occupation_id'] = $objectOccupation->id;
+            $occupationId = $objectOccupation->id;
+        }
+
+        // 3. Fallback: Jika keduanya kosong, gunakan yang sudah ada di database sebelumnya
+        if (!$occupationId) {
+            $occupationId = $object->object_occupation_id;
         }
 
         $updated = $this->mainRepository->update($id, [
-            'object_occupation_id' => $data['object_occupation_id'],
+            'object_occupation_id' => $occupationId,
             'name' => $data['name'],
-            'keterangan' => $data['address'] ?? null,
+            'keterangan' => $data['keterangan'] ?? null,
         ]);
 
         // Delete existing interests and re-create
@@ -152,5 +167,12 @@ class ObjectServiceImplement extends Service implements ObjectService
     public function getAllByRelationWithFilter(array $filters = [])
     {
         return $this->mainRepository->getAllByRelationWithFilter($filters);
+    }
+
+    public function delete($id)
+    {
+        // Cukup panggil delete pada induknya. 
+        // MySQL akan otomatis menghapus data di 'policies' dan 'object_interests'
+        return $this->mainRepository->delete($id);
     }
 }

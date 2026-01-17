@@ -32,7 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentStatusSeeder::class);
         $this->call(CardStatusSeeder::class);
         $this->call(CardTypeSeeder::class);
-        $this->call(CollectorTypeSeeder::class);
         $this->call(BankSeeder::class);
 
         // Application Data Seeders
