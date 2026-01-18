@@ -14,6 +14,7 @@ use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\ObjectOccupationController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ClaimController;
 use App\Models\Relation;
 use App\Models\Payment;
 
@@ -75,6 +76,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);
+    Route::resource('claims', ClaimController::class);
 });
 
 

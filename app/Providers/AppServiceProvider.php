@@ -43,6 +43,17 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Interest\InterestRepository::class,
             \App\Repositories\Interest\InterestRepositoryImplement::class
         );
+
+        // Register Claim Service and Repository
+        $this->app->bind(
+            \App\Services\Claim\ClaimService::class,
+            \App\Services\Claim\ClaimServiceImplement::class
+        );
+        
+        $this->app->bind(
+            \App\Repositories\Claim\ClaimRepository::class,
+            \App\Repositories\Claim\ClaimRepositoryImplement::class
+        );
     }
 
     /**
