@@ -96,6 +96,16 @@
                             </ul>
 
                         </li>
+                        
+                        <li class="sidebar-main-title">
+                            <div>
+                                <h6>Claim</h6>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a class="nav-link menu-title link-nav {{ routeActive('claims.index') }}" href="{{ route('claims.index') }}"><i data-feather="alert-circle"></i><span>Claim</span></a>
+                        </li>
+
                         <li class="sidebar-main-title">
                             <div>
                                 <h6>Polis</h6>
