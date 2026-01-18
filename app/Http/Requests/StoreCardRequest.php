@@ -47,7 +47,6 @@ class StoreCardRequest extends FormRequest
             
             // Step 4: Premi Parameters
             'premi_percentages' => 'required|numeric|min:0|max:1',
-            'tax_percentages' => 'required|numeric|min:0|max:1',
             'commision_percentages' => 'required|numeric|min:0|max:1',
             'discount' => 'nullable|numeric|min:0',
             
@@ -102,8 +101,6 @@ class StoreCardRequest extends FormRequest
             // Premi Parameters
             'premi_percentages.required' => 'Persentase premi harus diisi.',
             'premi_percentages.max' => 'Persentase premi tidak boleh lebih dari 1 (100%).',
-            'tax_percentages.required' => 'Persentase pajak harus diisi.',
-            'tax_percentages.max' => 'Persentase pajak tidak boleh lebih dari 1 (100%).',
             'commision_percentages.required' => 'Persentase komisi harus diisi.',
             'commision_percentages.max' => 'Persentase komisi tidak boleh lebih dari 1 (100%).',
             

@@ -22,7 +22,6 @@ class Card extends Model
         'created_by',
         'object_value',
         'premi_percentages',
-        'tax_percentages',
         'commision_percentages',
         'policy_fee',
         'discount_percentages',
@@ -40,7 +39,6 @@ class Card extends Model
     protected $casts = [
         'object_value'          => 'integer',
         'premi_percentages'     => 'decimal:7',
-        'tax_percentages'       => 'decimal:7',
         'commision_percentages' => 'decimal:7',
         'policy_fee'            => 'decimal:2',
         'discount_percentages'  => 'decimal:7',

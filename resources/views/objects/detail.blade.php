@@ -47,7 +47,7 @@
 										</tr>
 										<tr>
 											<th>Alamat</th>
-											<td>{{ $object->address }}</td>
+											<td>{{ $object->keterangan }}</td>
 										</tr>
 									</tbody>
 								</table>

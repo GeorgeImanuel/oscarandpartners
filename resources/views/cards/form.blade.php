@@ -273,14 +273,19 @@
                                     <div class="col-md-12">
                                         <label class="form-label mb-1">Tarif Premi</label>
                                         <div class="input-group">
+                                            {{-- Tambahkan class 'validate-percent' dan min/max --}}
                                             <input id="premi_percentages"
-                                                class="form-control"
+                                                class="form-control validate-percent"
                                                 name="premi_percentages"
                                                 type="number"
                                                 step="0.00001"
+                                                min="0" max="100"
                                                 value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}"
                                                 required>
                                             <span class="input-group-text">%</span>
+                                        </div>
+                                        <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                            <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                         </div>
                                     </div>
 
@@ -301,13 +306,18 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="input-group mb-3">
+                                                    {{-- Tambahkan class 'validate-percent' dan min/max --}}
                                                     <input id="discount_percentage"
-                                                        class="form-control"
+                                                        class="form-control validate-percent"
                                                         type="number"
+                                                        min="0" max="100"
                                                         name="discount_percentage"
-                                                        aria-label="Amount (to the nearest dollar)"
                                                         value="{{ isset($card) ? $card->discount_percentage : old('discount_percentage', 0) }}">
                                                     <span class="input-group-text">%</span>
+                                                </div>
+                                                {{-- ALERT MERAH --}}
+                                                <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                                    <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
@@ -388,14 +398,20 @@
                             <div class="col-md-12">
                                 <label class="form-label">Persentase Total Komisi</label>
                                 <div class="input-group">
+                                    {{-- Tambahkan class 'validate-percent' dan min/max --}}
                                     <input id="commision_percentages"
-                                        class="form-control"
+                                        class="form-control validate-percent"
                                         name="commision_percentages"
                                         type="number"
                                         step="0.01"
+                                        min="0" max="100"
                                         value="{{ isset($card) ? $card->commision_percentages * 100 : old('commision_percentages', 0) }}"
                                         required>
                                     <span class="input-group-text">%</span>
+                                </div>
+                                {{-- ALERT MERAH --}}
+                                <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                    <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                 </div>
                             </div>
 
@@ -846,12 +862,36 @@
                 });
             });
 
+            function sync_discount(source) {
+                var object_value = parseFloat($('#object_value').val()) || 0;
+                var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
+                var tjh_value = parseFloat($('#tjh_value').val()) || 0;
+
+                // Hitung Premi Dasar (Sebelum Diskon) untuk basis perhitungan persen
+                // Rumus: (Harga Pertanggungan * Tarif) + TJH
+                var base_premium = (object_value * (premi_percentages / 100)) + tjh_value;
+
+                if (base_premium > 0) {
+                    if (source === 'percentage') {
+                        // User isi persen, hitung rupiah
+                        var disc_pct = parseFloat($('#discount_percentage').val()) || 0;
+                        var disc_val = base_premium * (disc_pct / 100);
+                        $('#discount_value').val(disc_val.toFixed(2)); // Update Input Rupiah
+                    } else if (source === 'value') {
+                        // User isi rupiah, hitung persen
+                        var disc_val = parseFloat($('#discount_value').val()) || 0;
+                        var disc_pct = (disc_val / base_premium) * 100;
+                        $('#discount_percentage').val(disc_pct.toFixed(2)); // Update Input Persen
+                    }
+                }
+            }
+
             function update_payment() {
                 var object_value = parseInt($('#object_value').val()) || 0;
                 var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
                 var policy_fee = parseInt($('#policy_fee').val()) || 0;
                 var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
-                var discount = parseInt($('#discount').val()) || 0;
+                var discount = parseInt($('#discount_value').val()) || 0;
                 var tjh_value = parseInt($('#tjh_value').val()) || 0;
                 var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
@@ -865,6 +905,7 @@
 
                 console.log('Calculated values:', {
                     productionValue,
+                    discount,
                     premiValue,
                     commisionBruto,
                     taxValue,
@@ -905,16 +946,66 @@
                 return 'Rp' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
 
+            // --- FUNGSI BARU: VALIDASI PERSEN LANGSUNG ---
+            function setupPercentValidation() {
+                // Saat mengetik (input/keyup)
+                $('.validate-percent').on('input keyup change', function() {
+                    var value = parseFloat($(this).val());
+                    // Cari pesan error di bawah input ini
+                    var alertBox = $(this).closest('div[class^="col-"]').find('.percent-alert');
+
+                    // Reset dulu (hapus merah & sembunyikan pesan)
+                    $(this).removeClass('is-invalid border-danger');
+                    alertBox.hide();
+
+                    // Validasi
+                    if (value < 0) {
+                        $(this).val(0); // Auto fix ke 0
+                    } else if (value > 100) {
+                        // Munculkan merah & pesan error
+                        $(this).addClass('is-invalid border-danger');
+                        alertBox.slideDown('fast'); 
+                    }
+                });
+
+                // Saat pindah kolom (Blur) -> Paksa balik ke 100 jika masih salah
+                $('.validate-percent').on('blur', function() {
+                    var value = parseFloat($(this).val());
+                    if (value > 100) {
+                        $(this).val(100).trigger('change'); // Paksa 100
+                        $(this).removeClass('is-invalid border-danger');
+                        $(this).closest('div[class^="col-"]').find('.percent-alert').hide();
+                    }
+                });
+            }
+
             // Add event listeners to trigger calculation when parameters change
             $(document).ready(function() {
+                setupPercentValidation();
+                
                 // Listen to insurance tax inputs (using event delegation for dynamic elements)
                 $(document).on('input change', '.insurance-tax-per-item', function() {
                     calculateTotalTax();
                     update_payment(); // Trigger payment calculation after tax changes
                 });
 
-                $('#object_value, #policy_fee, #premi_percentages, #commision_percentages, #discount, #tjh_value, #discount_agent').on('input change', function() {
+               // 1. Hapus #discount dari list ini karena ID itu salah & butuh logic khusus
+                $('#object_value, #policy_fee, #premi_percentages, #commision_percentages, #tjh_value, #discount_agent').on('input change', function() {
                     update_payment();
+                });
+
+                // 2. Tambahkan Listener Khusus Diskon Rupiah (#discount_value)
+                // Supaya pas ketik Rupiah -> Hitung Persen -> Masuk ke Nilai Produksi
+                $('#discount_value').on('input change', function() {
+                    sync_discount('value'); // Sinkronisasi: Hitung % dari Rp yang diketik
+                    update_payment();       // Hitung ulang semua (Nilai Produksi berubah)
+                });
+
+                // 3. Tambahkan Listener Khusus Diskon Persen (#discount_percentage)
+                // Supaya pas ketik Persen -> Hitung Rupiah -> Masuk ke Nilai Produksi
+                $('#discount_percentage').on('input change', function() {
+                    sync_discount('percentage'); // Sinkronisasi: Hitung Rp dari % yang diketik
+                    update_payment();            // Hitung ulang semua
                 });
 
                 // Initial calculation on page load

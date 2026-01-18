@@ -175,7 +175,8 @@ class CardServiceImplement extends Service implements CardService
                 'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
                 'object_value'          => (float)($data['object_value']),
                 'policy_fee'            => (float)($data['policy_fee'] ?? 0),
-                'discount'              => (float)($data['discount'] ?? 0),
+                'discount_percentages'  => (float)($data['discount_percentage'] / 100 ?? 0),
+                'discount_value'        => (float)($data['discount_value'] ?? 0),
                 'production_value'      => (float)($data['production_value'] ?? 0),
                 'premi_value'           => (float)($data['premi_value'] ?? 0),
                 'commision_bruto'       => (float)($data['commision_bruto'] ?? 0),
@@ -216,8 +217,8 @@ class CardServiceImplement extends Service implements CardService
         $premi_pct      = (float)($data['premi_percentages'] ?? 0) / 100; // Dibagi 100 karena dari form raw (misal 2.5)
         $policy_fee     = (float)($data['policy_fee'] ?? 0);
         $comm_pct       = (float)($data['commision_percentages'] ?? 0) / 100;
-        $tax_pct        = (float)($data['tax_percentages'] ?? 0) / 100;
-        $discount       = (float)($data['discount'] ?? 0);
+        $discount_pct   = (float)($data['discount_percentage'] ?? 0) / 100;
+        $discount_value = (float)($data['discount_value'] ?? 0);
         $tjh_value      = (float)($data['tjh_value'] ?? 0);
         $discount_agent     = (float)($data['discount_agent'] ?? 0); // Nama input form: discount_agent
 
@@ -233,14 +234,13 @@ class CardServiceImplement extends Service implements CardService
         
         // Pajak = Komisi Bruto * %Pajak
         // (Atau ambil dari input 'tax' jika user input manual pajak per asuransi)
-        // $tax = $commision_bruto * $tax_pct; 
-        $tax = (float)($data['tax'] ?? ($commision_bruto * $tax_pct)); 
+        $tax = (float)($data['tax'] ?? 0); 
 
         // Komisi Bersih = Bruto - Pajak - Diskon Agen
         $commision_netto  = $commision_bruto - $tax - $discount_agent;
 
         // Tagihan Nasabah (Client Pay) = Total Premi - Diskon Nasabah
-        $client_pay       = $premi_value - $discount;
+        $client_pay       = $premi_value - $discount_value;
 
         // Bayar Asuransi (Insurance Pay) = Total Premi - Komisi Bersih
         $insurance_pay    = $premi_value - $commision_netto;
@@ -264,7 +264,8 @@ class CardServiceImplement extends Service implements CardService
             'premi_percentages'     => $premi_pct,
             'policy_fee'            => $policy_fee,
             'commision_percentages' => $comm_pct,
-            'discount'              => $discount,
+            'discount_percentages'  => $discount_pct,
+            'discount_value'        => $discount_value,
             'tjh_value'             => $tjh_value, // Jangan lupa field ini
             
             // Hasil Kalkulasi

@@ -143,7 +143,7 @@
                         <a href="{{ route('cards.show', $productionCard->id) }}" class="btn btn-secondary btn-sm">
                             <i class="fa fa-arrow-left"></i> Kembali ke Detail
                         </a>
-                        <button onclick="window.print()" class="btn btn-info btn-sm">
+                        <button onclick="printCard()" class="btn btn-info btn-sm">
                             <i class="fa fa-print"></i> Print (A4)
                         </button>
                     </div>
@@ -193,7 +193,7 @@
                 <span class="section-number">3</span>
                 <span class="info-label">Obyek Asuransi</span>
                 <span class="info-separator">:</span>
-                <span class="info-value">{{ $productionCard->policy->object->objectType->name ?? '-' }} - {{ $productionCard->policy->object->keterangan ?? '-' }}</span>
+                <span class="info-value">{{ $productionCard->policy->object->ObjectOccupation->name ?? '-' }} - {{ $productionCard->policy->object->keterangan ?? '-' }}</span>
             </div>
 
             <div class="info-row">
@@ -246,7 +246,7 @@
                         <span style="width: 100px; text-align: right;">Disc</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            Rp {{ number_format($productionCard->discount, 0, ',', '.') }}
+                            Rp {{ number_format($productionCard->discount_value, 0, ',', '.') }}
                         </span>
                     </div>
 
@@ -294,7 +294,7 @@
                 <tbody>
                     <tr>
                         <td>Rp {{ number_format($productionCard->commision_bruto, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->tax_percentages * $productionCard->commision_bruto), 0, ',', '.' }}</td>
+                        <td>Rp {{ number_format($productionCard->tax, 0, ',', '.') }}</td>
                         <td>Rp {{ number_format($productionCard->discount_agent, 0, ',', '.') }}</td>
                         <td>Rp {{ number_format($productionCard->commision_netto, 0, ',', '.') }}</td>
                     </tr>
@@ -374,3 +374,35 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+function printCard() {
+    var content = document.querySelector('.production-card-detail').innerHTML;
+    
+    var styles = '';
+    var styleTags = document.querySelectorAll('style');
+    styleTags.forEach(function(tag) {
+        styles += tag.outerHTML;
+    });
+
+    var printWindow = window.open('', '', 'height=600,width=800');
+    
+    printWindow.document.write('<html><head><title>Print Kartu Produksi</title>');
+    printWindow.document.write(styles);
+    printWindow.document.write('</head><body >');
+    printWindow.document.write('<div class="production-card-detail" style="margin:0; padding:0; border:none;">');
+    printWindow.document.write(content);
+    printWindow.document.write('</div>');
+    printWindow.document.write('</body></html>');
+    
+    printWindow.document.close();
+    printWindow.focus();
+    
+    setTimeout(function() {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+</script>
+@endpush

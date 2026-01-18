@@ -141,7 +141,7 @@
                                         <tr>
                                             <td class="fw-bold">Disc</td>
                                             <td>:</td>
-                                            <td>Rp {{ number_format($card->discount, 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($card->discount_value, 0, ',', '.') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

@@ -57,7 +57,6 @@ class CardFactory extends Factory
             // Parameter Input
             'object_value'          => $objectValue,
             'premi_percentages'     => $premiPercentages,
-            'tax_percentages'       => $taxPercentages,
             'commision_percentages' => $commisionPercentages,
             'policy_fee'            => $policyFee,
             'discount_percentages'  => $discountPercentages,
