@@ -4,17 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void {
+return new class extends Migration
+{
+    public function up(): void
+    {
         Schema::create('objects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('object_occupation_id')->constrained('object_occupations');
-            $table->string('name')->comment('Nama Tertanggung');
-            $table->string('keterangan')->comment('Alamat / Jenis Kendaraan');
-            $table->decimal('tjh_value', 20, 2)->comment('Nilai Tanggung Jawab Hukum hanya untuk kategori mobil')->default(0);
+            $table->foreignId('object_occupation_id')
+                  ->constrained('object_occupation')
+                  ->onDelete('restrict');
+            $table->string('name'); // Nama Tertanggung
+            $table->text('keterangan'); // Alamat / Jenis Kendaraan
             $table->timestamps();
-            $table->softDeletes();
         });
     }
-    public function down(): void { Schema::dropIfExists('objects'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('objects');
+    }
 };

@@ -8,7 +8,6 @@ use App\Models\Client;
 use App\Models\Policy;
 use App\Models\CardType;
 use App\Models\CardStatus;
-use App\Models\CollectorType;
 use App\Models\PaymentType;
 use App\Models\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;

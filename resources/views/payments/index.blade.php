@@ -47,7 +47,7 @@
 											<td>{{ $loop->iteration }}</td>
 											<td>{{ $payment->card?->policy?->policy_number ?? '-' }}</td>
 											<td>{{ $payment->insured_name }}</td>
-											<td>{{ $payment->card?->policy?->object?->address ?? '-' }}</td>
+											<td>{{ $payment->card?->policy?->object?->keterangan ?? '-' }}</td>
 											<td>{{ number_format($payment->card?->object_value ?? 0, 2, ',', '.') }}</td>
                                             <td>{{ $payment->note ?? '-' }}</td>
 											<td>{{ number_format($payment->amount ?? 0, 2, ',', '.') }}</td>

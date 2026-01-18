@@ -50,7 +50,7 @@
 										<th>No</th>
 										<th>Objek Occupation</th>
 										<th>Nama</th>
-										<th>Alamat</th>
+										<th>Keterangan</th>
 										<th>Actions</th>
 									</tr>
 								</thead>
@@ -60,7 +60,7 @@
 											<td>{{ $index + 1 }}</td>
 											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 											<td>{{ $object->name }}</td>
-											<td>{{ $object->address }}</td>
+											<td>{{ $object->keterangan }}</td>
 											<td>
 												<div style="white-space: nowrap;">
 													<a href="{{ route('objects.show', $object->id) }}" class="btn btn-info btn-sm me-2" title="Detail">

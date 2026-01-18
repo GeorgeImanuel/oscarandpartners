@@ -10,4 +10,5 @@ interface ObjectService extends BaseService
     public function createWithInterests(array $data);
     public function updateWithInterests($id, array $data);
     public function getAllByRelationWithFilter(array $filters = []);
+    public function delete($id);
 }

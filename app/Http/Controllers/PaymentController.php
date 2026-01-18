@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateInstallmentsRequest;
 use App\Services\Payment\PaymentService;
 use App\Services\Card\CardService;
 use App\Services\User\UserService;
-use App\Services\CollectorType\CollectorTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
 use App\Repositories\Payment\PaymentRepositoryImplement;
 
@@ -16,20 +15,17 @@ class PaymentController extends Controller
     private $paymentService;
     private $cardService;
     private $userService;
-    private $collectorTypeService;
     private $paymentStatusService;
 
     public function __construct(
         PaymentService $paymentService,
         CardService $cardService,
         UserService $userService,
-        CollectorTypeService $collectorTypeService,
         PaymentStatusService $paymentStatusService
     ) {
         $this->paymentService = $paymentService;
         $this->cardService = $cardService;
         $this->userService = $userService;
-        $this->collectorTypeService = $collectorTypeService;
         $this->paymentStatusService = $paymentStatusService;
     }
 

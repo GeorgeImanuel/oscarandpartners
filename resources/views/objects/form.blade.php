@@ -79,9 +79,9 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label" for="address">Alamat <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3" placeholder="Contoh: Jl. Buntu no.12, Jakarta Selatan" required>{{ isset($object) ? $object->keterangan : old('keterangan', '') }}</textarea>
-                        @error('address')
+                        <label class="form-label" for="kqqqeterangan">Keterangan<span class="text-danger">*</span></label>
+                        <textarea class="form-control @error('keterangan') is-invalid @enderror" id="keterangan" name="keterangan" rows="3" placeholder="Contoh: Jl. Buntu no.12, Jakarta Selatan" required>{{ isset($object) ? $object->keterangan : old('keterangan', '') }}</textarea>
+                        @error('keterangan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

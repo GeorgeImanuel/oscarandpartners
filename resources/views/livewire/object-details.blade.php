@@ -26,8 +26,8 @@
                         <td>Rp {{ number_format($object->object_value ?? 0, 2, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Alamat</strong></td>
-                        <td>{{ $object->address ?? '-' }}</td>
+                        <td><strong>Keterangan</strong></td>
+                        <td>{{ $object->keterangan ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Kota</strong></td>

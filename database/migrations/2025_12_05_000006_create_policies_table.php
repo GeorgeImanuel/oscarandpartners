@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
             $table->string('policy_number');
-            $table->foreignId('object_id')->constrained('objects');
+            $table->foreignId('object_id')->constrained('objects')->onDelete('cascade');
             $table->foreignId('coverage_id')->constrained('coverages');
             $table->decimal('coverage_percentage', 8, 7);
             $table->date('started_date');

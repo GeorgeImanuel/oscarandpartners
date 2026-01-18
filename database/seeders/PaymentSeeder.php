@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Payment;
 use App\Models\Card;
 use App\Models\User;
-use App\Models\CollectorType;
 use App\Models\PaymentStatus;
 use Illuminate\Database\Seeder;
 
