@@ -136,7 +136,7 @@
                     </div>
                     <div class="card-body">
                         @php
-                            $card = $payment->productionCard;
+                            $card = $payment->card;
                             $policy = $card->policy;
                             $client = $card->client;
                         @endphp
@@ -294,7 +294,7 @@
 
                                     @foreach($allPayments as $index => $pmt)
                                         @php
-                                            $policyInsurances = $pmt->productionCard->policy->policyInsurances;
+                                            $policyInsurances = $pmt->card->policy->policyInsurances;
                                             $insuranceCount = $policyInsurances->count();
                                             $rowSpanCount = $insuranceCount;
                                             
