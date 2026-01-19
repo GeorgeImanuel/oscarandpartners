@@ -113,6 +113,7 @@
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Polis</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('currencies.index') }}" href="{{ route('currencies.index') }}"><i data-feather="airplay"></i><span>Mata Uang</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Asuransi</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}" href="{{ route('coverages.index') }}"><i data-feather="airplay"></i><span>Coverages</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>

@@ -9,6 +9,7 @@ use App\Http\Controllers\RelationController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CoverageController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\ObjectOccupationController;
 use App\Http\Controllers\InterestController;
@@ -68,6 +69,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
+    Route::resource('currencies', CurrencyController::class);
     Route::resource('coverages', CoverageController::class);
     Route::resource('objects', ObjectController::class);
     Route::resource('object-occupations', ObjectOccupationController::class);
