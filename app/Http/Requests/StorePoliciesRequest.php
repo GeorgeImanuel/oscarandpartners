@@ -17,9 +17,12 @@ class StorePoliciesRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
+    // App\Http\Requests\StorePoliciesRequest.php
+
     public function rules(): array
     {
         return [
+<<<<<<< Updated upstream
             'object_id' => 'nullable|exists:objects,id',
             'coverage_code' => 'nullable|exists:coverages,code',
             'coverage_percentage' => 'required|numeric',
@@ -33,6 +36,27 @@ class StorePoliciesRequest extends FormRequest
             'is_main' => 'nullable|array',
             'percentage' => 'nullable|array',
             'percentage.*' => 'nullable|numeric|min:0|max:100',
+=======
+            'object_id' => 'required|exists:objects,id',
+            'coverage_id' => 'required|exists:coverages,id',
+            'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
+            'policy_number' => 'required|string|max:255|unique:policies,policy_number',
+            'started_date' => 'required|date',
+            'ended_date' => 'required|date|after_or_equal:started_date',
+            'currency_code' => 'required|string|exists:currencies,code', 
+
+            // Detail Asuransi
+            'insurance_id' => 'required|array|min:1',
+            'insurance_id.*' => 'required_without:insurance_new_name.*|nullable|integer|exists:insurances,id',
+            'insurance_new_name.*' => 'required_without:insurance_id.*|nullable|string|max:255',
+            
+            // Hapus 'is_main' dari rules array utama jika ingin validasi custom di withValidator,
+            // TAPI sebaiknya biarkan 'nullable|array' disini agar lolos validated()
+            'is_main' => 'nullable|array', 
+            
+            'percentage' => 'required|array|min:1',
+            'percentage.*' => 'required|numeric|min:0.0000001|max:100',
+>>>>>>> Stashed changes
         ];
     }
 

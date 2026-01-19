@@ -114,6 +114,21 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
+                        <label class="form-label" for="currency_code">Mata Uang</label>
+                        <select class="form-select @error('currency_code') is-invalid @enderror" name="currency_code" id="currency_code" style="width: 100%;">
+                            <option value="">- Pilih Mata Uang -</option>
+                            @foreach ($currencies ?? [] as $currency)
+                                <option value="{{ $currency->code }}" {{ isset($policy) && $currency->code == $policy->currency_code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
+                                    {{ $currency->code }} - {{ $currency->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('currency_code')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 mb-3">
                         <label class="form-label" for="started_date">Tanggal Mulai <span class="text-danger">*</span></label>
                         <input class="form-control @error('started_date') is-invalid @enderror" id="started_date" name="started_date" type="date" value="{{ isset($policy) ? $policy->started_date->format('Y-m-d') : old('started_date', '') }}" required />
                         @error('started_date')

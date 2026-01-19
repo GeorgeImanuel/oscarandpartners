@@ -29,6 +29,7 @@
                                         <th>No Polis</th>
                                         <th>ID Objek</th>
                                         <th>ID Coverage</th>
+                                        <th>Mata Uang</th>
                                         <th>Presentase Coverage</th>
                                         <th>Tanggal Mulai</th>
                                         <th>Tanggal Selesai</th>
@@ -42,7 +43,12 @@
                                             <td>{{ $policy->policy_number }}</td>
                                             <td>{{ $policy->object_id }}</td>
                                             <td>{{ $policy->coverage_code }}</td>
+<<<<<<< Updated upstream
                                             <td>{{ $policy->coverage_percentage }}</td>
+=======
+                                            <td>{{ $policy->currency_code ?? '-' }}</td>
+                                            <td>{{ number_format($policy->coverage_percentage, 7, '.', '') }}</td>
+>>>>>>> Stashed changes
                                             <td>{{ $policy->started_date }}</td>
                                             <td>{{ $policy->ended_date }}</td>
                                             <td>

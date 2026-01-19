@@ -32,6 +32,10 @@
                         <td>{{ $policy->coverage->name ?? '-' }} ({{ $policy->coverage->code ?? '-' }})</td>
                     </tr>
                     <tr>
+                        <td><strong>Mata Uang</strong></td>
+                        <td>{{ $policy->currency ? $policy->currency->code . ' - ' . $policy->currency->name : '-' }}</td>
+                    </tr>
+                    <tr>
                         <td><strong>Periode Pertangguhan</strong></td>
                         <td>{{ $policy->started_date?->format('d F Y') ?? '-' }} - {{ $policy->ended_date?->format('d F Y') ?? '-' }}</td>
                     </tr>
