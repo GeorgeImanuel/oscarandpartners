@@ -15,17 +15,19 @@ return new class extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
             $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
-            $table->foreignId('card_status_id')->constrained('card_statuses')->onDelete('cascade');
+            $table->foreignId('card_type_id')->constrained('card_types')->onDelete('cascade');
+            $table->foreignId('card_status_id')->constrained('card_statuses')->onDelete('cascade')->default(1);
             $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('cascade')->comment('RENEWAL LINK (Self-Join)');
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade')->comment('Staff Inputter');
+            $table->foreignId('collector_type_id')->constrained('collector_types')->comment('STAFF, OWNER');
 
             // Parameter Input
             $table->decimal('object_value', 22, 2)->comment('Harga Asset dari object_component');
             $table->decimal('policy_fee', 22, 2)->comment('Biaya Polis');
-            $table->decimal('premi_percentages', 5, 4)->comment('Tarif Premi (%)');
-            $table->decimal('commision_percentages', 5, 4)->comment('Komisi Agen (%)');
-            $table->decimal('tax_percentages', 5, 4)->comment('Pajak (%)');
+            $table->decimal('premi_percentages',  8, 7)->comment('Tarif Premi (%)');
+            $table->decimal('commision_percentages',  8, 7)->comment('Komisi Agen (%)');
+            $table->decimal('tax_percentages',  8, 7)->comment('Pajak (%)');
             $table->decimal('discount', 22, 2)->comment('Diskon');
 
             // Value (calculated)
@@ -44,6 +46,7 @@ return new class extends Migration
             $table->string('insurance_evident_number')->nullable()->comment('Nomer Bukti Transfer Asurasi');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

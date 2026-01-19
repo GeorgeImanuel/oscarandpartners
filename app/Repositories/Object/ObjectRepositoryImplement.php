@@ -19,6 +19,11 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
         $this->model = $model;
     }
 
+    public function find($id)
+    {
+        return $this->model->with(['objectType', 'objectParts.part'])->withSum('objectParts as object_value', 'value')->find($id);
+    }
+    
     /**
      * Get all objects with object type relation
      */
@@ -36,39 +41,35 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
         
         $query = $this->model
             ->with([
-                'objectPart.part',
+                'objectParts.part',
                 'policies.mainInsurance',
                 'policies.productionCard.client.relation',
+                'policies.coverage',
                 'objectType'
             ]);
         
-        // Hanya filter di level database jika ada filter spesifik atau user adalah client
-        $hasFilter = isset($filters['client_id']) || isset($filters['relation_id']) || ($user && $user->hasRole('client') && $user->client);
-        
-        if ($hasFilter) {
-            $query->whereHas('policies', function($policyQuery) use ($filters, $user) {
-                $policyQuery->whereHas('productionCard', function($cardQuery) use ($filters, $user) {
-                    // For client users, only show their relation
-                    if ($user && $user->hasRole('client') && $user->client) {
-                        $cardQuery->whereHas('client', function($clientQuery) use ($user) {
-                            $clientQuery->where('relation_id', $user->client->relation_id);
-                        });
-                    }
-                    
-                    // For owner/admin filters
-                    if (isset($filters['client_id'])) {
-                        $cardQuery->where('client_id', $filters['client_id']);
-                    }
-                    
-                    if (isset($filters['relation_id'])) {
-                        $cardQuery->whereHas('client', function($clientQuery) use ($filters) {
-                            $clientQuery->where('relation_id', $filters['relation_id']);
-                        });
-                    }
-                });
+        // Jika user adalah client, filter berdasarkan relation_id mereka
+        if ($user && $user->hasRole('client') && $user->client && $user->client->relation_id) {
+            $query->whereHas('policies.productionCard.client', function($clientQuery) use ($user) {
+                $clientQuery->where('relation_id', $user->client->relation_id);
             });
-        } else {
-            // Kalau tidak ada filter, load semua objects yang punya policies
+        }
+        // Jika owner/admin dengan filter
+        elseif (isset($filters['client_id']) || isset($filters['relation_id'])) {
+            $query->whereHas('policies.productionCard', function($cardQuery) use ($filters) {
+                if (isset($filters['client_id'])) {
+                    $cardQuery->where('client_id', $filters['client_id']);
+                }
+                
+                if (isset($filters['relation_id'])) {
+                    $cardQuery->whereHas('client', function($clientQuery) use ($filters) {
+                        $clientQuery->where('relation_id', $filters['relation_id']);
+                    });
+                }
+            });
+        }
+        // Jika owner/admin tanpa filter
+        else {
             $query->has('policies');
         }
 

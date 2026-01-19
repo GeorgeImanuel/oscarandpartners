@@ -6,15 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Card extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     
     protected $fillable = [
         'client_id',
         'policy_id',
+        'card_type_id',
         'card_status_id',
+        'collector_type_id',
         'parent_card_id',
         'payment_type_id',
         'created_by',
@@ -22,12 +25,14 @@ class Card extends Model
         'tax_percentages',
         'commision_percentages',
         'object_value',
+        'policy_fee',
         'discount',
         'production_value',
-        'premi',
+        'premi_value',
         'commision_bruto',
         'commision_netto',
-        'tax',
+        'tax_value',
+        'client_pay',
         'insurance_pay',
         'insurance_payment_status_id',
         'insurance_paid_at',
@@ -40,12 +45,14 @@ class Card extends Model
         'tax_percentages' => 'decimal:2',
         'commision_percentages' => 'decimal:2',
         'object_value' => 'decimal:2',
+        'policy_fee' => 'decimal:2',
         'discount' => 'decimal:2',
         'production_value' => 'decimal:2',
-        'premi' => 'decimal:2',
+        'premi_value' => 'decimal:2',
         'commision_bruto' => 'decimal:2',
         'commision_netto' => 'decimal:2',
-        'tax' => 'decimal:2',
+        'tax_value' => 'decimal:2',
+        'client_pay' => 'decimal:2',
         'insurance_pay' => 'decimal:2',
         'insurance_paid_at' => 'datetime',
     ];
@@ -63,6 +70,11 @@ class Card extends Model
     public function cardStatus(): BelongsTo
     {
         return $this->belongsTo(CardStatus::class);
+    }
+
+    public function cardType(): BelongsTo
+    {
+        return $this->belongsTo(CardType::class);
     }
 
     public function parent(): BelongsTo

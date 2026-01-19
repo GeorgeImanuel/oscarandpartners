@@ -3,21 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
-use App\Models\Client;
-use App\Models\Policy;
-use App\Models\CardStatus;
-use App\Models\PaymentType;
 use Illuminate\Http\Request;
-use App\Models\PaymentStatus;
+use App\Models\CollectorType;
 use App\Services\Card\CardService;
 use App\Services\Client\ClientService;
 use App\Services\Object\ObjectService;
 use App\Services\Policy\PolicyService;
-use App\Services\Relation\RelationService;
-use App\Http\Requests\StoreCardRequest;
 use App\Http\Requests\UpdateCardRequest;
+use App\Services\CardType\CardTypeService;
+use App\Services\Relation\RelationService;
 use App\Services\CardStatus\CardStatusService;
 use App\Services\PaymentType\PaymentTypeService;
+use App\Services\CollectorType\CollectorTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
 
 class CardController extends Controller
@@ -26,29 +23,35 @@ class CardController extends Controller
     private $clientService;
     private $policyService;
     private $cardStatusService;
+    private $cardTypeService;
     private $paymentStatusService;
     private $paymentTypeService;
     private $relationService;
     private $objectService;
+    private $collectorTypeService;
 
     public function __construct(
         CardService $cardService,
         ClientService $clientService,
         PolicyService $policyService,
         CardStatusService $cardStatusService,
+        CardTypeService $cardTypeService,
         PaymentStatusService $paymentStatusService,
         PaymentTypeService $paymentTypeService,
         RelationService $relationService,
-        ObjectService $objectService
+        ObjectService $objectService,
+        CollectorTypeService $collectorTypeService
     ) {
-        $this->cardService = $cardService;
-        $this->clientService = $clientService;
-        $this->policyService = $policyService;
-        $this->cardStatusService = $cardStatusService;
+        $this->cardService          = $cardService;
+        $this->clientService        = $clientService;
+        $this->policyService        = $policyService;
+        $this->cardStatusService    = $cardStatusService;
+        $this->cardTypeService      = $cardTypeService;
         $this->paymentStatusService = $paymentStatusService;
-        $this->paymentTypeService = $paymentTypeService;
-        $this->relationService = $relationService;
-        $this->objectService = $objectService;
+        $this->paymentTypeService   = $paymentTypeService;
+        $this->relationService      = $relationService;
+        $this->objectService        = $objectService;
+        $this->collectorTypeService = $collectorTypeService;
     }
 
     /**
@@ -57,19 +60,21 @@ class CardController extends Controller
     public function index(Request $request)
     {
         $filters = [];
-        
+
         if ($request->has('client_id') && $request->client_id != '') {
             $filters['client_id'] = $request->client_id;
         }
-        
+
         if ($request->has('card_status_id') && $request->card_status_id != '') {
             $filters['card_status_id'] = $request->card_status_id;
         }
-        
-        $cards = $this->cardService->getAllWithFilter($filters);
-        $clients = $this->clientService->getAllWithRelations();
+
+        $cards        = $this->cardService->getAllWithFilter($filters);
+        $clients      = $this->clientService->getAllWithRelations();
         $cardStatuses = $this->cardStatusService->all();
-        
+
+        // return $cards;
+
         return view('cards.index', compact('cards', 'clients', 'cardStatuses'));
     }
 
@@ -78,13 +83,14 @@ class CardController extends Controller
      */
     public function create()
     {
-        $objects      = $this->objectService->all();
-        $clients      = $this->clientService->all();
-        $policies     = $this->policyService->getAllFreePolicies();
-        $cardStatuses = $this->cardStatusService->all();
-        $parentCards  = $this->cardService->getAllParent();
-
-        return view('cards.form', compact('objects','clients', 'policies', 'cardStatuses','parentCards'));
+        $objects        = $this->objectService->all();
+        $clients        = $this->clientService->all();
+        $policies       = $this->policyService->allActivePolicies();
+        $cardTypes      = $this->cardTypeService->all();
+        $parentCards    = $this->cardService->getAllParent();
+        $collectorTypes = $this->collectorTypeService->all();
+        // return $objects;
+        return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards','collectorTypes'));
     }
 
     /**
@@ -92,9 +98,9 @@ class CardController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
-        $card = $this->cardService->createCard($request->all());
-
+        // return $request->all();
+        $card = $this->cardService->create($request->all());
+        // return $card;
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }
@@ -155,7 +161,7 @@ class CardController extends Controller
      */
     public function destroy(Card $productionCard)
     {
-        $this->cardService->deleteCard($productionCard->id);
+        $this->cardService->delete($productionCard->id);
         return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
     }
 
@@ -198,70 +204,39 @@ class CardController extends Controller
     {
         $filters = [];
         $user = auth()->user();
-        
+
+        // Set filter untuk client
         if ($user->hasRole('client') && $user->client) {
             $filters['relation_id'] = $user->client->relation_id;
         }
-        
+
+        // Set filter untuk owner/admin
         if ($user->hasRole(['owner', 'admin'])) {
             if ($request->has('client_id') && $request->client_id != '') {
                 $filters['client_id'] = $request->client_id;
             }
-            
+
             if ($request->has('relation_id') && $request->relation_id != '') {
                 $filters['relation_id'] = $request->relation_id;
             }
         }
-        
+
+        // Get objects dari database (sudah di-filter di repository)
         $objects = $this->objectService->getAllByRelationWithFilter($filters);
-        
-        $hasActiveFilter = isset($filters['client_id']) || isset($filters['relation_id']);
-        
-        $objects->each(function($object) use ($filters, $user, $hasActiveFilter) {
-            $object->setRelation('policies', $object->policies->filter(function($policy) use ($filters, $user, $hasActiveFilter) {
-                if (!$hasActiveFilter && !($user->hasRole('client') && $user->client)) {
-                    return true;
-                }
-                
-                if (!$policy->productionCard || !$policy->productionCard->client) {
-                    return false;
-                }
-                
-                $client = $policy->productionCard->client;
-                
-                if ($user->hasRole('client') && $user->client) {
-                    if ($client->relation_id != $user->client->relation_id) {
-                        return false;
-                    }
-                }
-                
-                if (isset($filters['client_id']) && $client->id != $filters['client_id']) {
-                    return false;
-                }
-                
-                if (isset($filters['relation_id']) && $client->relation_id != $filters['relation_id']) {
-                    return false;
-                }
-                
-                return true;
-            })->values());
-        });
-        
-        $objects = $objects->filter(function($object) {
-            return $object->policies->isNotEmpty();
-        });
-        
-        $objectsByRelation = $objects->groupBy(function($object) {
+
+        // Group objects by relation
+        $objectsByRelation = $objects->groupBy(function ($object) {
+            // Ambil relation_id dari policy pertama
             $firstPolicy = $object->policies->first();
-            if ($firstPolicy && $firstPolicy->productionCard && $firstPolicy->productionCard->client && $firstPolicy->productionCard->client->relation_id) {
-                return $firstPolicy->productionCard->client->relation_id;
+            if ($firstPolicy && $firstPolicy->productionCard && $firstPolicy->productionCard->client) {
+                return $firstPolicy->productionCard->client->relation_id ?? 0;
             }
-            return 0; 
+            return 0;
         });
-        
+
         $relations = $this->relationService->all();
         $clients = $user->hasRole(['owner', 'admin']) ? $this->clientService->getAllWithRelations() : collect();
-        
+
         return view('cards.report-by-relation', compact('objectsByRelation', 'relations', 'clients'));
     }
 
@@ -276,15 +251,14 @@ class CardController extends Controller
         }
 
         $filters = [];
-        
+
         if ($request->has('object_id') && $request->object_id != '') {
             $filters['object_id'] = $request->object_id;
         }
-        
+
         $cards = $this->cardService->getAllWithFilter($filters);
-        $objects = $this->objectService->getAllWithRelations();
-        
+        $objects = $this->objectService->allWithRelations();
+
         return view('cards.report-by-object', compact('cards', 'objects'));
     }
-
 }

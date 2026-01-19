@@ -6,6 +6,7 @@ use LaravelEasyRepository\Repository;
 
 interface PolicyRepository extends Repository
 {
-    public function getAllFreePolicies();
+    public function allFreePolicies();
+    public function allActivePolicies();
     public function findPoliciesWithRelations($policyId);
 }

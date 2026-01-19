@@ -13,6 +13,9 @@ use App\Http\Controllers\CoverageController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\ObjectTypeController;
 use App\Http\Controllers\PartController;
+use App\Http\Controllers\PaymentController;
+use App\Models\Relation;
+use App\Models\Payment;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +44,9 @@ Route::group(['middleware' => ['auth:web']], function () {
             return redirect()->route('login');
         }
         return view('dashboard');
-    })->name('dashboard');  
+    })->name('dashboard');
+    Route::get('user-profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::put('user-profile', [UserController::class, 'profileUpdate'])->name('profile.update');  
     
     Route::resource('relations', RelationController::class);
 
@@ -51,6 +56,14 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('/cards/report-by-object', [CardController::class, 'reportByObject'])->name('cards.reportByObject');
     Route::resource('cards', CardController::class)->parameters(['cards' => 'productionCard']);
     Route::get('cards/{productionCard}/preview', [CardController::class, 'preview'])->name('cards.preview');
+
+        // PINDAHKAN KE ATAS resource
+    Route::get('/payments/overdue', [PaymentController::class, 'overdue'])->name('payments.overdue');
+
+    // Route resource diletakkan di bawahnya
+    Route::resource('payments', PaymentController::class);
+    Route::post('payments/{payment}/update-installments', [PaymentController::class, 'updateInstallments'])->name('payments.updateInstallments');
+
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

@@ -71,11 +71,19 @@ class UserServiceImplement extends Service implements UserService{
 
         // Prepare update data
         $updateData = [
-            'username' => $data['username'],
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'is_active' => isset($data['is_active']) ? true : false,
+            'name' => $data['name'] ?? $user->name,
+            'email' => $data['email'] ?? $user->email,
         ];
+
+        // Only update username if provided (admin update only)
+        if (isset($data['username'])) {
+            $updateData['username'] = $data['username'];
+        }
+
+        // Only update is_active if provided (admin update only)
+        if (isset($data['is_active'])) {
+            $updateData['is_active'] = true;
+        }
 
         // Update password if provided
         if (!empty($data['password'])) {
@@ -85,7 +93,7 @@ class UserServiceImplement extends Service implements UserService{
         // Update user
         $updated = $this->mainRepository->update($id, $updateData);
 
-        // Sync roles
+        // Sync roles only if provided (admin update only)
         if ($updated && isset($data['role'])) {
             $user->syncRoles([$data['role']]);
         }

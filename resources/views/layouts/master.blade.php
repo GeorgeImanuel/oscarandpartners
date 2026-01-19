@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -46,10 +47,10 @@
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-6 footer-copyright">
-                <p class="mb-0">Copyright {{date('Y')}}-{{date('y', strtotime('+1 year'))}} © viho All rights reserved.</p>
+                <p class="mb-0">Copyright {{date('Y')}}-{{date('y', strtotime('+1 year'))}} © Oscar & Partners All rights reserved.</p>
               </div>
               <div class="col-md-6">
-                <p class="pull-right mb-0">Hand crafted & made with <i class="fa fa-heart font-secondary"></i></p>
+                <p class="pull-right mb-0">Version {{ config('constants.version') }}</p>
               </div>
             </div>
           </div>
@@ -57,8 +58,9 @@
       </div>
     </div>
     <!-- latest jquery-->
+    {{-- @livewireScripts --}}
+    <script src="{{ secure_asset('livewire/livewire.js?id=0f6341c0') }}" data-csrf="{{ csrf_token() }}" data-update-uri="{{ url('/livewire/update') }}" data-navigate-once="true"></script>
     @includeIf('layouts.partials.js')
     @include('layouts.partials.alert')
-    @livewireScripts
   </body>
 </html>

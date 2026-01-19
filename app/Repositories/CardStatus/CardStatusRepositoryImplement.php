@@ -19,5 +19,18 @@ class CardStatusRepositoryImplement extends Eloquent implements CardStatusReposi
         $this->model = $model;
     }
 
-    // Write something awesome :)
+    public function getActiveId()
+    {
+        return 1;
+    }
+
+    public function getGressPeriodId()
+    {
+        return 2;
+    }
+
+    public function getOverDeadlineId()
+    {
+        return 3;
+    }
 }

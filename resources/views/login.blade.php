@@ -11,10 +11,14 @@
     <section>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xl-5"><img class="bg-img-cover bg-center" src="{{ asset('assets/images/login/2.jpg') }}" alt="looginpage" /></div>
+                <div class="col-xl-5"><img class="bg-img-cover bg-center"
+                        src="{{ asset('assets/images/login/2.jpg') }}"
+                        alt="looginpage" /></div>
                 <div class="col-xl-7 p-0">
                     <div class="login-card">
-                        <form class="theme-form login-form" action="{{ route('auth') }}" method="POST">
+                        <form class="theme-form login-form" style="position: relative"
+                            action="{{ route('auth') }}"
+                            method="POST">
                             @csrf
                             <h4>Login</h4>
                             <h6>Welcome back! Log in to your account.</h6>
@@ -27,26 +31,38 @@
                                 <label>Username</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="icon-email"></i></span>
-                                    <input class="form-control" name="username" type="text" required="" placeholder="Username" />
+                                    <input class="form-control"
+                                        name="username"
+                                        type="text"
+                                        required=""
+                                        placeholder="Username" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="icon-lock"></i></span>
-                                    <input class="form-control" type="password" name="password" required="" placeholder="*********" />
+                                    <input class="form-control"
+                                        type="password"
+                                        name="password"
+                                        required=""
+                                        placeholder="*********" />
                                     <div class="show-hide"><span class="show"> </span></div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="checkbox">
-                                    <input id="checkbox1" type="checkbox" name="remember" />
-                                    <label class="text-muted" for="checkbox1">Remember password</label>
+                                    <input id="checkbox1"
+                                        type="checkbox"
+                                        name="remember" />
+                                    <label class="text-muted"
+                                        for="checkbox1">Remember password</label>
                                 </div>
                                 {{-- <a class="link" href="{{ route('forget-password') }}">Forgot password?</a> --}}
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+                                <button class="btn btn-primary btn-block"
+                                    type="submit">Sign in</button>
                             </div>
                             {{-- <div class="login-social-title">
                                 <h5>Sign in with</h5>
@@ -68,6 +84,7 @@
                                 </ul>
                             </div> --}}
                             {{-- <p>Don't have account?<a class="ms-2" href="{{ route('sign-up') }}">Create Account</a></p> --}}
+                            <small class="text-secondary" style="position: absolute; bottom: -20px; right:0px;">Version {{ config('constants.version') }}</small>
                         </form>
                     </div>
                 </div>
@@ -75,8 +92,6 @@
         </div>
     </section>
 
-
     @push('scripts')
     @endpush
-
 @endsection

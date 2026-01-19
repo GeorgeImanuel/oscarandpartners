@@ -56,14 +56,18 @@
                             <table class="display" id="basic-1">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Nomor Polis</th> <th>Nama Objek</th>  <th>Alamat</th>      <th>Client</th>
+                                        <th style="width: 5%;">No</th>
+                                        <th style="min-width: 120px;">Nomor Polis</th> 
+                                        <th style="min-width: 150px;">Nama Objek</th>  
+                                        {{-- Berikan min-width besar pada Alamat agar lebar --}}
+                                        <th style="min-width: 300px;">Alamat</th>      
+                                        <th style="min-width: 120px;">Client</th>
                                         <th>Status</th>
-                                        <th>Tanggal Awal</th>
-                                        <th>Tanggal Akhir</th>
-                                        <th>Premi Bruto</th>
+                                        <th style="min-width: 100px;">Tanggal Awal</th>
+                                        <th style="min-width: 100px;">Tanggal Akhir</th>
+                                        <th style="min-width: 100px;">Premi Bruto</th>
                                         <th>Status Pembayaran</th>
-                                        <th>Actions</th>
+                                        <th style="min-width: 150px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

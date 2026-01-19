@@ -6,7 +6,8 @@ use LaravelEasyRepository\BaseService;
 
 interface PolicyService extends BaseService
 {
-    public function getAllFreePolicies();
+    public function allFreePolicies();
+    public function allActivePolicies();
     public function findPoliciesWithRelations($policyId);
     public function createPolicy(array $data);
     public function updatePolicy($id, array $data);

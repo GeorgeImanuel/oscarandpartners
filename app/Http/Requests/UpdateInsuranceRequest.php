@@ -22,7 +22,7 @@ class UpdateInsuranceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:10' . $this->route('insurance'),
+            'name' => 'required|string|max:255' . $this->route('insurance'),
         ];
         }
 
@@ -36,7 +36,7 @@ class UpdateInsuranceRequest extends FormRequest
         return [
             'name.required' => 'Nama harus diisi.',
             'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama maksimal 10 karakter.',
+            'name.max' => 'Nama maksimal 255 karakter.',
         ];
     }
 }

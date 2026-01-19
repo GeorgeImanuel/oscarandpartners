@@ -20,17 +20,22 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
         $this->model = $model;
     }
 
-    public function getAllFreePolicies()
+    public function allFreePolicies()
     {
         return $this->model->whereDoesntHave('productionCard')->get();
+    }
+
+    public function allActivePolicies()
+    {
+        return $this->model->where('ended_date', '>', now())->get();
     }
 
     public function findPoliciesWithRelations($policyId)
     {
         return $this->model->with([
             'object' => function ($q) {
-                $q->with(['objectType', 'objectPart',]);
-                $q->withSum('objectPart as object_value', 'value');
+                $q->with(['objectType', 'objectParts',]);
+                $q->withSum('objectParts as object_value', 'value');
             },
             'coverage'
         ])->find($policyId);

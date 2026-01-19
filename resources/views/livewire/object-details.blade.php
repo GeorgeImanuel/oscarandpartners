@@ -33,12 +33,12 @@
                         <td><strong>Kota</strong></td>
                         <td>{{ $object->city ?? '-' }}</td>
                     </tr>
-                    @if ($object->objectParts && $object->objectParts->count() > 0)
+                    @if ($object->objectPart && $object->objectPart->count() > 0)
                         <tr>
                             <td><strong>Parts</strong></td>
                             <td>
-                                @foreach ($object->objectParts as $objectPart)
-                                    <span class="badge badge-info">{{ $objectPart->part->name ?? '-' }}</span>
+                                @foreach ($object->objectPart as $objectPartItem)
+                                    <span class="badge badge-info">{{ $objectPartItem->part->name ?? '-' }}</span>
                                 @endforeach
                             </td>
                         </tr>
@@ -57,13 +57,13 @@
     @push('scripts')
         <script>
             // Re-initialize feather icons after Livewire updates
-            document.addEventListener('livewire:load', function() {
+            document.addEventListener('livewire:init', function() {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
             });
 
-            Livewire.hook('message.processed', (message, component) => {
+            document.addEventListener('livewire:navigated', () => {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }

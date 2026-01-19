@@ -1,8 +1,11 @@
 <div id="existing-policy">
     {{-- Loading State --}}
-    <div wire:loading class="alert alert-info" role="alert">
+    <div wire:loading
+        class="alert alert-info"
+        role="alert">
         <div class="d-flex align-items-center">
-            <div class="spinner-border spinner-border-sm me-2" role="status">
+            <div class="spinner-border spinner-border-sm me-2"
+                role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <span>Memuat detail policy...</span>
@@ -10,19 +13,11 @@
     </div>
 
     @if ($policy)
-        <div wire:loading.remove class="border py-2" role="alert">
+        <div wire:loading.remove
+            class="border py-2"
+            role="alert">
             <table class="table table-sm table-borderless">
                 <tbody>
-                    @if ($policy->policyInsurances->count() > 0)
-                        <tr>
-                            <td><strong>Insurances</strong></td>
-                            <td>
-                                @foreach ($policy->policyInsurances as $pi)
-                                    <span class="badge badge-info">{{ $pi->insurance->name ?? '-' }}</span>
-                                @endforeach
-                            </td>
-                        </tr>
-                    @endif
                     <tr>
                         <td style="width: 200px;"><strong>Nomor Polis</strong></td>
                         <td>{{ $policy->policy_number }}</td>
@@ -47,12 +42,24 @@
                         <td><strong>Alamat</strong></td>
                         <td>{{ $policy->object->address ?? '-' }}</td>
                     </tr>
+                    @if ($policy->policyInsurances->count() > 0)
+                        <tr>
+                            <td><strong>Asuransi</strong></td>
+                            <td>
+                                @foreach ($policy->policyInsurances as $pi)
+                                    <span class="badge badge-info ms-0 me-2">{{ $pi->insurance->name ?? '-' }}</span>
+                                @endforeach
+                            </td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
     @else
-        @if (!$notFound || $policyId =="")
-            <div wire:loading.remove class="alert alert-secondary" role="alert">
+        @if (!$notFound || $policyId == '')
+            <div wire:loading.remove
+                class="alert alert-secondary"
+                role="alert">
                 Pilih nomor polis untuk melihat detail!
             </div>
         @endif
@@ -61,13 +68,13 @@
     @push('scripts')
         <script>
             // Re-initialize feather icons after Livewire updates
-            document.addEventListener('livewire:load', function() {
+            document.addEventListener('livewire:init', function() {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
             });
 
-            Livewire.hook('message.processed', (message, component) => {
+            document.addEventListener('livewire:navigated', () => {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
                 }
