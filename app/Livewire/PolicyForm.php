@@ -41,12 +41,12 @@ class PolicyForm extends Component
         $insurances       = $this->insuranceService->all();
         $policyInsurances = $this->policyInsuranceService->all();
 
-        return view('livewire.policy-form', [
-            'objects'          => $objects,
-            'coverages'        => $coverages,
-            'currencies'       => $currencies,
-            'insurances'       => $insurances,
-            'policyInsurances' => $policyInsurances,
-        ]);
+        return view('livewire.policy-form', compact(
+            'objects',
+            'coverages',
+            'currencies',
+            'insurances',
+            'policyInsurances'
+        ));
     }
 }
