@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('object_occupation_id')
                   ->constrained('object_occupation')
-                  ->onDelete('restrict');
+                  ->onDelete('cascade'); // Jenis Objek
             $table->string('name'); // Nama Tertanggung
             $table->text('keterangan'); // Alamat / Jenis Kendaraan
             $table->timestamps();

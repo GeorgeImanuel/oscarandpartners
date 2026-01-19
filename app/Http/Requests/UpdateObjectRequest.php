@@ -23,11 +23,11 @@ class UpdateObjectRequest extends FormRequest
     {
         return [
             // PERBAIKAN: Samakan dengan StoreObjectRequest
-            'object_occupation_id' => 'nullable|exists:object_occupations,id',
+            'object_occupation_id' => 'nullable|exists:object_occupation,id',
             'object_occupation_name' => 'required_without:object_occupation_id|nullable|string|max:255',
             
             'name' => 'required|string|max:255',
-            'address' => 'required|string',
+            'keterangan' => 'required|string',
             
             // PERBAIKAN: Ganti 'part' menjadi 'interest'
             'interest_id' => 'nullable|array',

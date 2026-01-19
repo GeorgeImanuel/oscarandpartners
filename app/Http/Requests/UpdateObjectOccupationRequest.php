@@ -27,7 +27,7 @@ class UpdateObjectOccupationRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('object_occupations', 'name')->ignore($this->route('object_occupation'))
+                Rule::unique('object_occupation', 'name')->ignore($this->route('object_occupation'))
             ],
         ];
     }
