@@ -26,7 +26,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
             'card',
             'card.policy.object', 
             'card.client.user', 
-            'clientPaymentStatus',
+            'paymentStatus',
             'card.paymentType',
         ])->latest()->get();
     }
@@ -34,10 +34,10 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     public function getByCardIdWithRelations($cardId)
     {
         return $this->model->with([
-            'productionCard.policy.policyInsurances.insurance',
-            'productionCard.policy.object',
-            'productionCard.client.user',
-            'clientPaymentStatus'
+            'card.policy.policyInsurances.insurance',
+            'card.policy.object',
+            'card.client.user',
+            'paymentStatus'
         ])->where('card_id', $cardId)->get();
     }
 
@@ -49,13 +49,13 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
             'card.policy.object',
             'card.client.user',
             'card.paymentType',
-            'clientPaymentStatus'
+            'paymentStatus'
         ])
         // 1. Filter: Tanggal Deadline sudah lewat dari hari ini
         ->whereDate('deadline_at', '<=', now()->toDateString()) 
         
         // 2. Filter: Status Pembayaran adalah Pending (ID: 1)
-        ->where('client_payment_status_id', 1)  
+        ->where('payment_status_id', 1)  
         
         ->latest()
         ->get();
