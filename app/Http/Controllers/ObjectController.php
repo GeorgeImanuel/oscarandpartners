@@ -3,80 +3,96 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ObjectType;
+use App\Models\ObjectOccupation;
 use App\Services\Object\ObjectService;
-use App\Services\ObjectType\ObjectTypeService;
-use App\Services\Part\PartService;
+use App\Services\ObjectOccupation\ObjectOccupationService;
+use App\Services\Interest\InterestService;
 use App\Http\Requests\StoreObjectRequest;
 use App\Http\Requests\UpdateObjectRequest;
+use Illuminate\Support\Facades\Log; // Pastikan ini ada
 
 class ObjectController extends Controller
 {
     private $objectService;
-    private $objectTypeService;
-    private $partService;
+    private $objectOccupationService;
+    private $interestService;
 
     public function __construct(
         ObjectService $objectService,
-        ObjectTypeService $objectTypeService,
-        PartService $partService
+        ObjectOccupationService $objectOccupationService,
+        InterestService $interestService
     )
     {
         $this->objectService = $objectService;
-        $this->objectTypeService = $objectTypeService;
-        $this->partService = $partService;
+        $this->objectOccupationService = $objectOccupationService;
+        $this->interestService = $interestService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $objects = $this->objectService->allWithRelations();
         return view('objects.index', compact('objects'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $objectTypes = $this->objectTypeService->getAll();
-        $parts = $this->partService->getAll();
-        return view('objects.form', compact('objectTypes', 'parts'));
+        $objectOccupations = $this->objectOccupationService->getAll();
+        $interests = $this->interestService->getAll();
+        return view('objects.form', compact('objectOccupations', 'interests'));
     }
 
     /**
      * Store a newly created resource in storage.
+     * BAGIAN INI YANG DIPERBAIKI
      */
     public function store(StoreObjectRequest $request)
     {
         try {
-            \Log::info('Store Object Request', [
-                'data' => $request->all()
-            ]);
+            Log::info('Store Object Request', ['data' => $request->all()]);
 
             $validated = $request->validated();
 
-            \Log::info('Validated Data', [
-                'validated' => $validated
-            ]);
+            // --- MULAI PERBAIKAN ---
+            // 1. Ambil ID Occupation (gunakan input() agar aman jika null)
+            $occupationId = $request->input('object_occupation_id');
 
-            $object = $this->objectService->createWithParts($validated);
+            // 2. Cek Logic: Jika ID Kosong TAPI ada Nama Baru (fitur Tambah Baru)
+            if (empty($occupationId) && $request->filled('object_occupation_name')) {
+                // Buat Occupation baru lewat Service
+                try {
+                    // Asumsi service kamu punya method create/store. 
+                    // Jika error, sesuaikan dengan method yang ada di ObjectOccupationService kamu.
+                    $newOccupation = $this->objectOccupationService->create([
+                        'name' => $request->object_occupation_name
+                    ]);
+                    
+                    $occupationId = $newOccupation->id;
+                    Log::info('Created new occupation', ['id' => $occupationId]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->withInput()->with('error', 'Gagal membuat kategori Occupation baru.');
+                }
+            }
+
+            // 3. Masukkan ID yang valid ke dalam array data
+            $validated['object_occupation_id'] = $occupationId;
+            // --- SELESAI PERBAIKAN ---
+
+            Log::info('Validated Data Processing', ['validated' => $validated]);
+
+            $object = $this->objectService->createWithInterests($validated);
             
             if (!$object) {
-                \Log::error('Failed to create object - service returned null');
+                Log::error('Failed to create object - service returned null');
                 return redirect()->back()->withInput()->with('error', 'Gagal menambahkan object.');
             }
 
-            \Log::info('Object created successfully', [
-                'object_id' => $object->id
-            ]);
+            Log::info('Object created successfully', ['object_id' => $object->id]);
 
             return redirect()->route('objects.index')
                 ->with('success', 'Object berhasil ditambahkan.');
+
         } catch (\Exception $e) {
-            \Log::error('Exception in store object', [
+            Log::error('Exception in store object', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -84,48 +100,58 @@ class ObjectController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts.part');
+        $object->load('objectInterests.interest');
         return view('objects.detail', compact('object'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $object = $this->objectService->findOrFail($id);
-        $object->load('objectParts.part');
-        $objectTypes = $this->objectTypeService->getAll();
-        $parts = $this->partService->getAll();
-        return view('objects.form', compact('object', 'objectTypes', 'parts'));
+        $object->load('objectInterests.interest');
+        $objectOccupations = $this->objectOccupationService->getAll();
+        $interests = $this->interestService->getAll();
+        return view('objects.form', compact('object', 'objectOccupations', 'interests'));
     }
 
     /**
      * Update the specified resource in storage.
+     * BAGIAN INI JUGA PERLU DIPERBAIKI (Sama seperti store)
      */
     public function update(UpdateObjectRequest $request, string $id)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $updated = $this->objectService->updateWithParts($id, $validated);
-        
-        if (!$updated) {
-            return redirect()->back()->withInput()->with('error', 'Gagal mengubah object.');
+            // --- MULAI PERBAIKAN UPDATE ---
+            $occupationId = $request->input('object_occupation_id');
+
+            if (empty($occupationId) && $request->filled('object_occupation_name')) {
+                $newOccupation = $this->objectOccupationService->create([
+                    'name' => $request->object_occupation_name
+                ]);
+                $occupationId = $newOccupation->id;
+            }
+            
+            $validated['object_occupation_id'] = $occupationId;
+            // --- SELESAI PERBAIKAN UPDATE ---
+
+            $updated = $this->objectService->updateWithInterests($id, $validated);
+            
+            if (!$updated) {
+                return redirect()->back()->withInput()->with('error', 'Gagal mengubah object.');
+            }
+
+            return redirect()->route('objects.index')
+                ->with('success', 'Object berhasil diperbarui.');
+                
+        } catch (\Exception $e) {
+             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        return redirect()->route('objects.index')
-            ->with('success', 'Object berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $this->objectService->delete($id);

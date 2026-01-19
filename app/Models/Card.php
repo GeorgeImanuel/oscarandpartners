@@ -3,58 +3,54 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Card extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     
     protected $fillable = [
         'client_id',
         'policy_id',
         'card_type_id',
         'card_status_id',
-        'collector_type_id',
         'parent_card_id',
         'payment_type_id',
         'created_by',
-        'premi_percentages',
-        'tax_percentages',
-        'commision_percentages',
         'object_value',
+        'premi_percentages',
+        'commision_percentages',
         'policy_fee',
-        'discount',
+        'discount_percentages',
+        'discount_value',
         'production_value',
         'premi_value',
         'commision_bruto',
         'commision_netto',
-        'tax_value',
-        'client_pay',
+        'tax',
+        'discount_agent',
         'insurance_pay',
-        'insurance_payment_status_id',
-        'insurance_paid_at',
-        'insurance_evident_file',
-        'insurance_evident_number',
+        'client_pay',
     ];
 
     protected $casts = [
-        'premi_percentages' => 'decimal:2',
-        'tax_percentages' => 'decimal:2',
-        'commision_percentages' => 'decimal:2',
-        'object_value' => 'decimal:2',
-        'policy_fee' => 'decimal:2',
-        'discount' => 'decimal:2',
-        'production_value' => 'decimal:2',
-        'premi_value' => 'decimal:2',
-        'commision_bruto' => 'decimal:2',
-        'commision_netto' => 'decimal:2',
-        'tax_value' => 'decimal:2',
-        'client_pay' => 'decimal:2',
-        'insurance_pay' => 'decimal:2',
-        'insurance_paid_at' => 'datetime',
+        'object_value'          => 'integer',
+        'premi_percentages'     => 'decimal:7',
+        'commision_percentages' => 'decimal:7',
+        'policy_fee'            => 'decimal:2',
+        'discount_percentages'  => 'decimal:7',
+        'discount_value'        => 'decimal:2',
+        'production_value'      => 'decimal:2',
+        'premi_value'           => 'decimal:2',
+        'commision_bruto'       => 'decimal:2',
+        'commision_netto'       => 'decimal:2',
+        'tax'                   => 'decimal:2',
+        'discount_agent'        => 'decimal:2',
+        'insurance_pay'         => 'decimal:2',
+        'client_pay'            => 'decimal:2',
     ];
 
     public function client(): BelongsTo
@@ -97,8 +93,23 @@ class Card extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function insurancePaymentStatus(): BelongsTo
+    /**
+     * Get all of the payments for the Card
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payments(): HasMany
     {
-        return $this->belongsTo(PaymentStatus::class, 'insurance_payment_status_id');
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get the insurance payment status from the latest payment
+     * This is a helper method to maintain backward compatibility
+     */
+    public function getInsurancePaymentStatusAttribute()
+    {
+        $latestPayment = $this->payments()->with('insurancePaymentStatus')->latest()->first();
+        return $latestPayment ? $latestPayment->insurancePaymentStatus : null;
     }
 }

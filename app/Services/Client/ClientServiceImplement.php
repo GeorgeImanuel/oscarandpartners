@@ -59,11 +59,9 @@ class ClientServiceImplement extends Service implements ClientService{
         $client = $this->mainRepository->create([
             'user_id' => $user->id,
             'relation_id' => $data['relation_id'] ?? null,
-            'name' => $data['name'],
-            'phone' => $data['phone'],
-            'email' => $data['email'] ?? null,
-            'address' => $data['address'] ?? null,
-            'id_card_number' => $data['id_card_number'] ?? null,
+            'id_name' => $data['name'],
+            'id_number' => $data['id_card_number'] ?? null,
+            'id_address' => $data['address'] ?? null,
         ]);
 
         return $client;
@@ -95,11 +93,9 @@ class ClientServiceImplement extends Service implements ClientService{
         // Update client
         $updated = $this->mainRepository->update($id, [
             'relation_id' => $data['relation_id'] ?? null,
-            'name' => $data['name'],
-            'phone' => $data['phone'],
-            'email' => $data['email'] ?? null,
-            'address' => $data['address'] ?? null,
-            'id_card_number' => $data['id_card_number'] ?? null,
+            'id_name' => $data['name'],
+            'id_number' => $data['id_card_number'] ?? null,
+            'id_address' => $data['address'] ?? null,
         ]);
 
         return $updated;

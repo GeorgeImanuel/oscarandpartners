@@ -44,7 +44,7 @@
                                             <td>{{ $policy->object_id }}</td>
                                             <td>{{ $policy->coverage_code }}</td>
                                             <td>{{ $policy->currency_code ?? '-' }}</td>
-                                            <td>{{ number_format($policy->coverage_percentage, 7, '.', '') }}</td>
+                                            <td>{{ number_format($policy->coverage_percentages, 7, '.', '') }}</td>
                                             <td>{{ $policy->started_date }}</td>
                                             <td>{{ $policy->ended_date }}</td>
                                             <td>

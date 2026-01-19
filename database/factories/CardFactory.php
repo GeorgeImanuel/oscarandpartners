@@ -27,55 +27,50 @@ class CardFactory extends Factory
      */
     public function definition(): array
     {
-        // Parameter Input
-        $premiPercentages = fake()->randomFloat(4, 0, 0.3);
-        $taxPercentages = fake()->randomFloat(4, 0, 0.3);
-        $commisionPercentages = fake()->randomFloat(4, 0, 0.5);
-        $objectValue = fake()->randomFloat(2, 10000000, 500000000);
-        $policyFee = fake()->randomFloat(2, 50000, 500000);
-        $discount = fake()->randomFloat(2, 0, 1000000);
+        // Parameter Input (percentages with 7 decimals, money with 2 decimals)
+        $premiPercentages = round(fake()->randomFloat(7, 0.0000001, 0.3), 7);
+        $taxPercentages = round(fake()->randomFloat(7, 0.0000001, 0.3), 7);
+        $commisionPercentages = round(fake()->randomFloat(7, 0.0000001, 0.5), 7);
+        $discountPercentages = round(fake()->randomFloat(7, 0, 0.1), 7);
+        $objectValue = fake()->numberBetween(10000000, 500000000); // bigInteger
+        $policyFee = round(fake()->randomFloat(2, 50000, 500000), 2);
 
-        // Calculated Values
-        $productionValue = $objectValue * ($premiPercentages / 100);
+        // Calculated Values (all with 2 decimal places for money)
+        $productionValue = round($objectValue * ($premiPercentages / 100), 2);
         $premiValue      = $productionValue;
-        $commisionBruto  = $productionValue * ($commisionPercentages / 100);
-        $taxValue        = $commisionBruto * ($taxPercentages / 100);
-        $commisionNetto  = $commisionBruto - $taxValue;
-        $clientPay       = $premiValue + $policyFee - $discount;
-        $insurancePay    = $clientPay - $commisionNetto;
+        $commisionBruto  = round($productionValue * ($commisionPercentages / 100), 2);
+        $taxValue        = round($commisionBruto * ($taxPercentages / 100), 2);
+        $commisionNetto  = round($commisionBruto - $taxValue, 2);
+        $discountValue   = round($premiValue * ($discountPercentages / 100), 2);
+        $clientPay       = round($premiValue + $policyFee - $discountValue, 2);
+        $insurancePay    = round($clientPay - $commisionNetto, 2);
 
         return [
             'client_id'         => Client::inRandomOrder()->first()?->id ?? Client::factory(),
             'policy_id'         => Policy::inRandomOrder()->first()?->id ?? Policy::factory(),
             'card_type_id'      => CardType::inRandomOrder()->first()?->id,
             'card_status_id'    => CardStatus::inRandomOrder()->first()?->id,
-            'collector_type_id' => CollectorType::inRandomOrder()->first()?->id,
             'parent_card_id'    => null,
             'payment_type_id'   => PaymentType::inRandomOrder()->first()?->id,
             'created_by'        => User::inRandomOrder()->first()?->id ?? User::factory(),
 
             // Parameter Input
             'object_value'          => $objectValue,
-            'policy_fee'            => $policyFee,
             'premi_percentages'     => $premiPercentages,
             'commision_percentages' => $commisionPercentages,
-            'tax_percentages'       => $taxPercentages,
-            'discount'              => $discount,
+            'policy_fee'            => $policyFee,
+            'discount_percentages'  => $discountPercentages,
+            'discount_value'        => $discountValue,
 
             // Calculated Values
             'production_value' => $productionValue,
             'premi_value'      => $premiValue,
             'commision_bruto'  => $commisionBruto,
             'commision_netto'  => $commisionNetto,
-            'tax_value'        => $taxValue,
-            'client_pay'       => $clientPay,
+            'tax'              => $taxValue,
+            'discount_agent'   => 0.00,
             'insurance_pay'    => $insurancePay,
-
-            // Insurance Payment
-            'insurance_payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id,
-            'insurance_paid_at'           => fake()->boolean(60) ? fake()->dateTimeBetween('-6 months', 'now') : null,
-            'insurance_evident_file'      => fake()->boolean(60) ? 'evidence_' . fake()->uuid() . '.pdf' : null,
-            'insurance_evident_number'    => fake()->boolean(60) ? 'TRF-' . fake()->numerify('##########') : null,
+            'client_pay'       => $clientPay,
         ];
     }
 

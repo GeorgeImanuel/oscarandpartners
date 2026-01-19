@@ -9,33 +9,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Policy extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'policy_number',
         'object_id',
-        'coverage_id',
         'currency_code',
-        'coverage_percentage',
         'started_date',
         'ended_date',
+        'coverage_percentages',
     ];
 
     protected $casts = [
         'started_date' => 'date',
         'ended_date' => 'date',
-        'coverage_percentage' => 'decimal:7',
     ];
-
-    protected function coveragePercentage(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => is_numeric($value) ? (float) $value : null,
-        );
-    }
 
     public function productionCard(): HasOne
     {
@@ -47,9 +39,17 @@ class Policy extends Model
         return $this->belongsTo(ObjectModel::class);
     }
 
-    public function coverage(): BelongsTo
+    public function coverages(): BelongsToMany
     {
-        return $this->belongsTo(Coverage::class, 'coverage_id', 'id');
+        return $this->belongsToMany(Coverage::class, 'policy_coverages', 'policy_id', 'coverage_id')
+            ->withPivot('percentage')
+            ->withTimestamps()
+            ->using(PolicyCoverage::class);
+    }
+
+    public function policyCoverages(): HasMany
+    {
+        return $this->hasMany(PolicyCoverage::class);
     }
 
     public function currency(): BelongsTo

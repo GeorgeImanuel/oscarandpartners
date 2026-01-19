@@ -10,10 +10,12 @@ use App\Http\Controllers\RelationController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CoverageController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ObjectController;
-use App\Http\Controllers\ObjectTypeController;
-use App\Http\Controllers\PartController;
+use App\Http\Controllers\ObjectOccupationController;
+use App\Http\Controllers\InterestController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ClaimController;
 use App\Models\Relation;
 use App\Models\Payment;
 
@@ -68,13 +70,15 @@ Route::group(['middleware' => ['auth:web']], function () {
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);
     Route::resource('policies', PolicyController::class);
+    Route::resource('currencies', CurrencyController::class);
     Route::resource('coverages', CoverageController::class);
     Route::resource('objects', ObjectController::class);
-    Route::resource('object-types', ObjectTypeController::class);
-    Route::resource('parts', PartController::class);
+    Route::resource('object-occupations', ObjectOccupationController::class);
+    Route::resource('interests', InterestController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('settings', SettingController::class);
+    Route::resource('claims', ClaimController::class);
 });
 
 

@@ -36,7 +36,7 @@
                     </tr>
                     <tr>
                         <td><strong>Objek</strong></td>
-                        <td>{{ $policy->object->name ?? '-' }} ({{ $policy->object->objectType->name ?? '-' }})</td>
+                        <td>{{ $policy->object->name ?? '-' }} ({{ $policy->object->objectOccupation->name ?? '-' }})</td>
                     </tr>
                     <tr>
                         <td><strong>Alamat</strong></td>

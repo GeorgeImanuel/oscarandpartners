@@ -242,7 +242,7 @@ var REVISION_CHANGES = {
 };
 
 exports.REVISION_CHANGES = REVISION_CHANGES;
-var objectType = '[object Object]';
+var objectOccupation = '[object Object]';
 
 function HandlebarsEnvironment(helpers, partials, decorators) {
   this.helpers = helpers || {};
@@ -260,7 +260,7 @@ HandlebarsEnvironment.prototype = {
   log: _logger2['default'].log,
 
   registerHelper: function registerHelper(name, fn) {
-    if (_utils.toString.call(name) === objectType) {
+    if (_utils.toString.call(name) === objectOccupation) {
       if (fn) {
         throw new _exception2['default']('Arg not supported with multiple helpers');
       }
@@ -274,7 +274,7 @@ HandlebarsEnvironment.prototype = {
   },
 
   registerPartial: function registerPartial(name, partial) {
-    if (_utils.toString.call(name) === objectType) {
+    if (_utils.toString.call(name) === objectOccupation) {
       _utils.extend(this.partials, name);
     } else {
       if (typeof partial === 'undefined') {
@@ -288,7 +288,7 @@ HandlebarsEnvironment.prototype = {
   },
 
   registerDecorator: function registerDecorator(name, fn) {
-    if (_utils.toString.call(name) === objectType) {
+    if (_utils.toString.call(name) === objectOccupation) {
       if (fn) {
         throw new _exception2['default']('Arg not supported with multiple decorators');
       }

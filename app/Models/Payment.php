@@ -13,26 +13,37 @@ class Payment extends Model
         'created_by',
         'amount',
         'note',
-        'client_payment_status_id',
+        // CLIENT PAYMENT
+        'payment_status_id',
         'deadline_at',
         'paid_at',
         'client_evident_file',
         'client_evident_number',
+        // INSURANCE PAYMENT
+        'insurance_payment_status_id',
+        'insurance_paid_at',
+        'insurance_evident_file',
+        'insurance_evident_number',
     ];
 
     protected $casts = [
-        'object_value' => 'decimal:2',
         'amount' => 'decimal:2',
         'deadline_at' => 'datetime',
         'paid_at' => 'datetime',
+        'insurance_paid_at' => 'datetime',
     ];
 
-    public function card(): BelongsTo
+    public function paymentStatus(): BelongsTo
     {
-        return $this->belongsTo(Card::class, 'card_id');
+        return $this->belongsTo(PaymentStatus::class, 'payment_status_id');
     }
 
-    public function productionCard(): BelongsTo
+    public function insurancePaymentStatus(): BelongsTo
+    {
+        return $this->belongsTo(PaymentStatus::class, 'insurance_payment_status_id');
+    }
+
+    public function card(): BelongsTo
     {
         return $this->belongsTo(Card::class, 'card_id');
     }
@@ -40,28 +51,6 @@ class Payment extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function collector(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'collected_by');
-    }
-
-    public function collectorType(): BelongsTo
-    {
-        return $this->belongsTo(CollectorType::class);
-    }
-
-    public function clientPaymentStatus(): BelongsTo
-    {
-        return $this->belongsTo(PaymentStatus::class, 'client_payment_status_id');
-    }
-
-        // app/Models/Card.php
-
-    public function paymentType(): BelongsTo
-    {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
     /**

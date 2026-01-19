@@ -63,20 +63,28 @@ class PolicyController extends Controller
         return DB::transaction(function () use ($request) {
             $data = $request->validated();
 
-            // 1. Simpan Header Policy
-            // Kita bagi 100 manual disini agar konsisten input 50% masuk db 0.5
-            // (Sesuaikan jika mutator kamu sudah membagi otomatis)
+            // Hitung total coverage percentages
+            $totalCoveragePercentages = 0;
+            if ($request->has('coverage_percentage')) {
+                foreach ($request->coverage_percentage as $percentage) {
+                    $totalCoveragePercentages += floatval($percentage);
+                }
+            }
+
+            // 1. Simpan Header Policy (tanpa coverage_id dan coverage_percentage)
             $policy = Policy::create([
-                'policy_number'       => $data['policy_number'],
-                'object_id'           => $data['object_id'],
-                'coverage_id'         => $data['coverage_id'],
-                'currency_code'       => $data['currency_code'], // <-- Ini pasti tersimpan skrg
-                'coverage_percentage' => $data['coverage_percentage'] / 100,
-                'started_date'        => $data['started_date'],
-                'ended_date'          => $data['ended_date'],
+                'policy_number'         => $data['policy_number'],
+                'object_id'             => $data['object_id'],
+                'currency_code'         => $data['currency_code'] ?? null,
+                'started_date'          => $data['started_date'],
+                'ended_date'            => $data['ended_date'],
+                'coverage_percentages'  => $totalCoveragePercentages,
             ]);
 
-            // 2. Simpan Detail Asuransi (Panggil helper function)
+            // 2. Simpan Coverages dengan pivot (many-to-many)
+            $this->processCoverages($policy, $request);
+
+            // 3. Simpan Detail Asuransi
             $this->processInsurances($policy, $request);
 
             return redirect()->route('policies.index')->with('success', 'Polis berhasil dibuat.');
@@ -85,14 +93,15 @@ class PolicyController extends Controller
 
     public function edit(string $id)
     {
-        $policy = $this->policyService->findOrFail($id);
+        $policy = Policy::with(['coverages', 'policyInsurances', 'policyCoverages'])->findOrFail($id);
         $objects = ObjectModel::all();
         $coverages = $this->coverageService->all();
         $currencies = $this->currencyService->all();
         $insurances = $this->insuranceService->all();
         $policyInsurances = $policy->policyInsurances;
+        $policyCoverages = $policy->policyCoverages;
 
-        return view('policies.form', compact('policy', 'objects', 'coverages', 'currencies', 'insurances', 'policyInsurances'));
+        return view('policies.form', compact('policy', 'objects', 'coverages', 'currencies', 'insurances', 'policyInsurances', 'policyCoverages'));
     }
 
     /**
@@ -101,24 +110,34 @@ class PolicyController extends Controller
     public function update(UpdatePoliciesRequest $request, string $id)
     {
         return DB::transaction(function () use ($request, $id) {
-            $policy = Policy::findOrFail($id); // Gunakan Model langsung atau Service
+            $policy = Policy::findOrFail($id);
             $data = $request->validated();
 
-            // 1. Update Header
+            // Hitung total coverage percentages
+            $totalCoveragePercentages = 0;
+            if ($request->has('coverage_percentage')) {
+                foreach ($request->coverage_percentage as $percentage) {
+                    $totalCoveragePercentages += floatval($percentage);
+                }
+            }
+
+            // 1. Update Header (tanpa coverage_id dan coverage_percentage)
             $policy->update([
-                'policy_number'       => $data['policy_number'],
-                'object_id'           => $data['object_id'],
-                'coverage_id'         => $data['coverage_id'],
-                'currency_code'       => $data['currency_code'], // <-- Ini pasti terupdate skrg
-                'coverage_percentage' => $data['coverage_percentage'] / 100,
-                'started_date'        => $data['started_date'],
-                'ended_date'          => $data['ended_date'],
+                'policy_number'         => $data['policy_number'],
+                'object_id'             => $data['object_id'],
+                'currency_code'         => $data['currency_code'] ?? null,
+                'started_date'          => $data['started_date'],
+                'ended_date'            => $data['ended_date'],
+                'coverage_percentages'  => $totalCoveragePercentages,
             ]);
 
-            // 2. Hapus Asuransi Lama (Reset)
+            // 2. Update Coverages (sync pivot table)
+            $this->processCoverages($policy, $request);
+
+            // 3. Hapus Asuransi Lama (Reset)
             $policy->policyInsurances()->delete();
 
-            // 3. Simpan Ulang Asuransi Baru
+            // 4. Simpan Ulang Asuransi Baru
             $this->processInsurances($policy, $request);
 
             return redirect()->route('policies.index')->with('success', 'Polis berhasil diperbarui.');
@@ -136,6 +155,28 @@ class PolicyController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal menghapus policy: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Helper function untuk menyimpan coverages dengan pivot table
+     */
+    private function processCoverages(Policy $policy, $request)
+    {
+        if ($request->has('coverage_id')) {
+            $coverageData = [];
+            
+            foreach ($request->coverage_id as $index => $coverageId) {
+                if (!empty($coverageId) && isset($request->coverage_percentage[$index])) {
+                    // Simpan persentase apa adanya (tidak dibagi 100)
+                    $coverageData[$coverageId] = [
+                        'percentage' => $request->coverage_percentage[$index]
+                    ];
+                }
+            }
+            
+            // Sync coverages (akan auto delete yang tidak ada, dan update/insert yang baru)
+            $policy->coverages()->sync($coverageData);
         }
     }
 

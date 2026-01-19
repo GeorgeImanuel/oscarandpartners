@@ -56,7 +56,7 @@ class PolicyServiceImplement extends Service implements PolicyService
             $policy = $this->mainRepository->create([
                 'policy_number' => $data['policy_number'],
                 'object_id' => $data['object_id'] ?? null,
-                'coverage_code' => $data['coverage_code'] ?? null,
+                'coverage_id' => $data['coverage_id'] ?? null,
                 'coverage_percentage' => $data['coverage_percentage'],
                 'started_date' => $data['started_date'],
                 'ended_date' => $data['ended_date'],

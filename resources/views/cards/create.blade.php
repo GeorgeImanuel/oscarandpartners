@@ -80,7 +80,7 @@
 							<div class="row g-3">
 								<div class="col-md-12">
 									<label class="form-label" for="harga_pertanggungan">Harga Pertanggungan (Rp)</label>
-									<input class="form-control @error('harga_pertanggungan') is-invalid @enderror" id="harga_pertanggungan" name="harga_pertanggungan" type="number" step="0.01" value="{{ old('harga_pertanggungan') }}" required />
+									<input class="form-control @error('harga_pertanggungan') is-invalid @enderror" id="harga_pertanggungan" name="harga_pertanggungan" type="number" step="0.00001" value="{{ old('harga_pertanggungan') }}" required />
 									<small class="text-muted">Contoh: 1500000000 untuk 1.5 Miliar</small>
 									@error('harga_pertanggungan')
 										<div class="invalid-feedback">{{ $message }}</div>
@@ -118,7 +118,7 @@
 								</div>
 								<div class="col-md-6">
 									<label class="form-label" for="biaya_polis">Biaya Polis (Rp)</label>
-									<input class="form-control @error('biaya_polis') is-invalid @enderror" id="biaya_polis" name="biaya_polis" type="number" step="0.01" value="{{ old('biaya_polis') }}" required />
+									<input class="form-control @error('biaya_polis') is-invalid @enderror" id="biaya_polis" name="biaya_polis" type="number" step="0.00001" value="{{ old('biaya_polis') }}" required />
 									<small class="text-muted">Contoh: 40000 untuk biaya administrasi</small>
 									@error('biaya_polis')
 										<div class="invalid-feedback">{{ $message }}</div>
@@ -131,7 +131,7 @@
 							<div class="row g-3">
 								<div class="col-md-6">
 									<label class="form-label" for="persentase_komisi">Persentase Komisi (%)</label>
-									<input class="form-control @error('persentase_komisi') is-invalid @enderror" id="persentase_komisi" name="persentase_komisi" type="number" step="0.01" value="{{ old('persentase_komisi') }}" required />
+									<input class="form-control @error('persentase_komisi') is-invalid @enderror" id="persentase_komisi" name="persentase_komisi" type="number" step="0.00001" value="{{ old('persentase_komisi') }}" required />
 									<small class="text-muted">Contoh: 15 untuk 15%</small>
 									@error('persentase_komisi')
 										<div class="invalid-feedback">{{ $message }}</div>
@@ -139,7 +139,7 @@
 								</div>
 								<div class="col-md-6">
 									<label class="form-label" for="pajak_komisi">Pajak Komisi (%) - PPh 23</label>
-									<input class="form-control @error('pajak_komisi') is-invalid @enderror" id="pajak_komisi" name="pajak_komisi" type="number" step="0.01" value="{{ old('pajak_komisi') }}" required />
+									<input class="form-control @error('pajak_komisi') is-invalid @enderror" id="pajak_komisi" name="pajak_komisi" type="number" step="0.00001" value="{{ old('pajak_komisi') }}" required />
 									<small class="text-muted">Contoh: 5 untuk 5% atau 2.5 untuk 2.5%</small>
 									@error('pajak_komisi')
 										<div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +152,7 @@
 							<div class="row g-3">
 								<div class="col-md-12">
 									<label class="form-label" for="diskon_dari_komisi">Diskon dari Komisi (Rp) - Subsidi Agen</label>
-									<input class="form-control @error('diskon_dari_komisi') is-invalid @enderror" id="diskon_dari_komisi" name="diskon_dari_komisi" type="number" step="0.01" value="{{ old('diskon_dari_komisi', 0) }}" />
+									<input class="form-control @error('diskon_dari_komisi') is-invalid @enderror" id="diskon_dari_komisi" name="diskon_dari_komisi" type="number" step="0.00001" value="{{ old('diskon_dari_komisi', 0) }}" />
 									<small class="text-muted">Potong komisi sendiri untuk diskon ke nasabah. Kosongkan atau isi 0 jika tidak ada subsidi.</small>
 									@error('diskon_dari_komisi')
 										<div class="invalid-feedback">{{ $message }}</div>

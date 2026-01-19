@@ -228,10 +228,6 @@
                                                         <td class="text-muted">Komisi</td>
                                                         <td class="fw-bold">: {{ number_format(($card->commision_percentages ?? 0) * 100, 2) }}%</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="text-muted">Pajak</td>
-                                                        <td class="fw-bold">: {{ number_format(($card->tax_percentages ?? 0) * 100, 2) }}%</td>
-                                                    </tr>
                                                 </table>
                                             </div>
                                         </div>
@@ -310,7 +306,6 @@
                                             @php
                                                 $share = $pi->percentage;
                                                 $premi = $pmt->amount * ($share);
-                                                $taxPercent = $card->tax_percentages;
                                                 $commPercent = $card->commision_percentages;
 
                                                 $biayaPolis = 0;
@@ -319,7 +314,7 @@
                                                 }
 
                                                 $komisi = $premi * $commPercent;
-                                                $pajak = $premi * $taxPercent;
+                                                $pajak = ($pmt->amount > 0) ? ($card->tax * ($premi / $pmt->amount)) : 0;
                                                 $netto = $premi - $komisi - $pajak + $biayaPolis;
 
                                                 $subtotalPremi += $premi;
@@ -377,7 +372,7 @@
                 // Konfigurasi Awal
                 const totalPremi = {{ $payment->amount ?? 0 }};
                 const commissionPercent = {{ $card->commision_percentages ?? 0 }};
-                const taxPercent = {{ $card->tax_percentages ?? 0 }};
+                const totalTax = {{ $card->tax ?? 0 }};
 
                 // 1. Inisialisasi Tampilan Awal
                 checkPaymentType();

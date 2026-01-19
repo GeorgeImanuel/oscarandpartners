@@ -88,35 +88,6 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="coverage_code">Coverage <span class="text-danger">*</span></label>
-                        <select class="form-select @error('coverage_code') is-invalid @enderror" name="coverage_code" id="coverage_code" required style="width: 100%;">
-                            <option value="">- Pilih Coverage -</option>
-                            @foreach ($coverages as $coverage)
-                                <option value="{{ $coverage->code }}" {{ isset($policy) && $coverage->code == $policy->coverage_code ? 'selected' : (old('coverage_code') == $coverage->code ? 'selected' : '') }}>
-                                    {{ $coverage->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('coverage_code')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label" for="coverage_percentage">Persentase Coverage <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input class="form-control" name="coverage_percentage" type="number" 
-                            step="0.0000001" min="0.0000001" max="100" 
-                            value="{{ old('coverage_percentage', isset($policy) ? number_format($policy->coverage_percentage * 100, 7, '.', '') : '') }}" 
-                            required />
-                            <span class="input-group-text">%</span>
-                            @error('coverage_percentage')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
                         <label class="form-label" for="currency_code">Mata Uang</label>
                         <select class="form-select @error('currency_code') is-invalid @enderror" name="currency_code" id="currency_code" style="width: 100%;">
                             <option value="">- Pilih Mata Uang -</option>
@@ -145,6 +116,59 @@
                         @error('ended_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coverages Section -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>Coverage</h5>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="add-coverage-btn">
+                        <i class="fa fa-plus"></i> Tambah Coverage
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert" id="coverage-percentage-info" style="display: none;">
+                        <span>Total Persentase: <strong id="coverage-total-percentage">0</strong>%</span>
+                    </div>
+                    <div id="coverages-container">
+                        <!-- Debug: Coverage count = {{ isset($policyCoverages) ? $policyCoverages->count() : 'N/A' }} -->
+                        @if(isset($policyCoverages) && $policyCoverages->count() > 0)
+                            @foreach($policyCoverages as $index => $policyCoverage)
+                                <div class="coverage-row mb-3 p-3 border rounded" data-index="{{ $index }}">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-8 mb-2 mb-md-0">
+                                            <label class="form-label">Coverage {{ $index + 1 }} <span class="text-danger">*</span></label>
+                                            <select class="form-select coverage-select" name="coverage_id[{{ $index }}]" style="width: 100%;">
+                                                <option value="">- Pilih Coverage -</option>
+                                                @foreach($coverages as $cov)
+                                                    <option value="{{ $cov->id }}" {{ $policyCoverage->coverage_id == $cov->id ? 'selected' : '' }}>
+                                                        {{ $cov->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2 mb-md-0">
+                                            <label class="form-label">Persentase (%)</label>
+                                            <input type="number" class="form-control coverage-percentage" name="coverage_percentage[{{ $index }}]" value="{{ $policyCoverage->percentage }}" placeholder="0" min="0" max="100" step="0.0000001" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger w-100 remove-coverage-btn">
+                                                <i class="fa fa-trash"></i> Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    
+                    <div id="coverage-empty-state" class="text-center py-4 text-muted" style="{{ (isset($policyCoverages) && $policyCoverages->count() > 0) ? 'display: none;' : '' }}">
+                        <i class="fa fa-info-circle fa-2x mb-2 d-block"></i>
+                        <p class="mb-0">Klik tombol <strong class="text-primary">"Tambah Coverage"</strong> untuk menambahkan coverage</p>
                     </div>
                 </div>
             </div>
@@ -193,7 +217,7 @@
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Persentase (%)</label>
-                                            <input type="number" class="form-control insurance-percentage" name="percentage[{{ $index }}]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.01">
+                                            <input type="number" class="form-control insurance-percentage" name="percentage[{{ $index }}]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.00001">
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Asuransi Utama</label>
@@ -266,7 +290,7 @@
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Persentase (%)</label>
-                            <input type="number" class="form-control insurance-percentage" name="percentage[${insuranceIndex}]" placeholder="0" min="0" max="100" step="0.01" required>
+                            <input type="number" class="form-control insurance-percentage" name="percentage[${insuranceIndex}]" placeholder="0" min="0" max="100" step="0.00001" required>
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">
                             <label class="form-label">Asuransi Utama</label>
@@ -330,40 +354,36 @@
             let total = 0;
             
             percentageInputs.forEach(input => {
-                const value = parseFloat(input.value) || 0;
-                total += value;
+                // Perbaikan: Pastikan nilai valid, jika kosong anggap 0
+                let val = parseFloat(input.value);
+                if (isNaN(val)) val = 0;
+                total += val;
             });
 
-            // Pembulatan 2 desimal untuk menghindari floating point error (e.g. 99.99999)
-            total = Math.round(total * 100) / 100;
+            // Pembulatan aman untuk floating point
+            total = Math.round(total * 10000) / 10000;
 
             const infoDiv = document.getElementById('percentage-info');
             const totalPercentageSpan = document.getElementById('total-percentage');
-            const errorDiv = document.getElementById('percentage-error'); // Ambil div error
+            const errorDiv = document.getElementById('percentage-error');
 
             if (percentageInputs.length > 0) {
                 infoDiv.style.display = 'flex';
                 totalPercentageSpan.textContent = total;
                 
-                // Reset Class
                 infoDiv.className = 'alert d-flex justify-content-between align-items-center mb-3';
                 
                 if (total !== 100) {
-                    // Jika TIDAK 100%, beri warna warning/danger
                     infoDiv.classList.add(total > 100 ? 'alert-danger' : 'alert-orange');
-                    // Sembunyikan error text saat sedang mengedit (opsional, agar tidak mengganggu)
-                    // errorDiv.style.display = 'none'; 
                 } else {
-                    // Jika TEPAT 100%, beri warna hijau
                     infoDiv.classList.add('alert-success');
-                    errorDiv.style.display = 'none'; // Sembunyikan error jika sudah benar
-                    
-                    // Hapus invalid class dari semua input
+                    // Sembunyikan error jika sudah benar saat user mengetik
+                    if(errorDiv) errorDiv.style.display = 'none'; 
                     percentageInputs.forEach(input => input.classList.remove('is-invalid'));
                 }
             } else {
                 infoDiv.style.display = 'none';
-                errorDiv.style.display = 'none';
+                if(errorDiv) errorDiv.style.display = 'none';
             }
             
             return total;
@@ -411,58 +431,46 @@
         function validatePercentageBeforeSubmit(e) {
             const percentageInputs = document.querySelectorAll('.insurance-percentage');
             
-            // Jika tidak ada asuransi, biarkan lewat (atau return false jika asuransi wajib)
+            // Jika asuransi tidak wajib, bisa return true. Tapi jika wajib, cek length.
             if (percentageInputs.length === 0) {
-                return true; 
+                // Asumsi: Minimal 1 Asuransi Wajib
+                e.preventDefault(); e.stopPropagation();
+                Swal.fire('Validasi Gagal', 'Harap tambahkan minimal satu asuransi.', 'error');
+                return false; 
             }
 
             // Validasi Asuransi Utama
             const mainCheckboxes = document.querySelectorAll('.is-main-checkbox:checked');
             if (mainCheckboxes.length === 0) {
-                e.preventDefault();
-                e.stopPropagation();
-                
+                e.preventDefault(); e.stopPropagation();
                 const errorDiv = document.getElementById('percentage-error');
                 errorDiv.textContent = 'Gagal Simpan: Harap pilih salah satu sebagai Asuransi Utama.';
                 errorDiv.style.display = 'block';
-                
                 document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return false;
             }
 
-            const total = updatePercentageTotal(); // Ambil total terbaru
+            const total = updatePercentageTotal(); 
 
+            // WAJIB 100% UNTUK ASURANSI
             if (total !== 100) {
-                // STOP PROSES SUBMIT
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 
-                let errorMessage = '';
-                if (total > 100) {
-                    errorMessage = `Gagal Simpan: Total persentase (${total}%) melebihi 100%.`;
-                } else {
-                    errorMessage = `Gagal Simpan: Total persentase (${total}%) kurang dari 100%.`;
-                }
+                let errorMessage = total > 100 
+                    ? `Gagal Simpan: Total persentase asuransi (${total}%) melebihi 100%.`
+                    : `Gagal Simpan: Total persentase asuransi (${total}%) kurang dari 100%.`;
                 
-                // Tampilkan Error
                 const errorDiv = document.getElementById('percentage-error');
                 errorDiv.textContent = errorMessage;
                 errorDiv.style.display = 'block';
 
-                // Beri highlight merah pada semua input persentase
-                percentageInputs.forEach(input => {
-                    input.classList.add('is-invalid');
-                });
-
-                // Scroll ke atas agar user melihat errornya
+                percentageInputs.forEach(input => input.classList.add('is-invalid'));
                 document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
                 return false;
-            } else {
-                // Jika Valid
-                document.getElementById('percentage-error').style.display = 'none';
-                return true;
-            }
+            } 
+            
+            return true;
         }
 
         // Event Listeners Tombol
@@ -535,18 +543,192 @@
                 placeholder: '- Pilih Asuransi -',
                 allowClear: true
             });
+            
+            $('.coverage-select').select2({
+                placeholder: '- Pilih Coverage -',
+                allowClear: true
+            });
         }
+
+        // ==================== COVERAGE FUNCTIONS ====================
+        let coverageIndex = {{ isset($policyCoverages) ? $policyCoverages->count() : 0 }};
+        const coveragesData = {!! json_encode($coverages) !!};
+
+        // Fungsi Menambah Baris Coverage
+        function addCoverageRow() {
+            const row = `
+                <div class="coverage-row mb-3 p-3 border rounded" data-index="${coverageIndex}">
+                    <div class="row align-items-end">
+                        <div class="col-md-8 mb-2 mb-md-0">
+                            <label class="form-label">Coverage ${coverageIndex + 1} <span class="text-danger">*</span></label>
+                            <select class="form-select coverage-select" name="coverage_id[${coverageIndex}]" style="width: 100%;">
+                                <option value="">- Pilih Coverage -</option>
+                                ${coveragesData.map(cov => `<option value="${cov.id}">${cov.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2 mb-md-0">
+                            <label class="form-label">Persentase (%)</label>
+                            <input type="number" class="form-control coverage-percentage" name="coverage_percentage[${coverageIndex}]" placeholder="0" min="0" step="0.0000001" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger w-100 remove-coverage-btn">
+                                <i class="fa fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('coverages-container').insertAdjacentHTML('beforeend', row);
+            document.getElementById('coverage-empty-state').style.display = 'none';
+            
+            // Re-init Select2 untuk elemen baru
+            $('.coverage-select').last().select2({
+                placeholder: '- Pilih Coverage -',
+                allowClear: true
+            });
+            
+            coverageIndex++;
+            updateCoveragePercentageTotal();
+        }
+
+        // Update Total Persentase Coverage
+        function updateCoveragePercentageTotal() {
+            const percentageInputs = document.querySelectorAll('.coverage-percentage');
+            let total = 0;
+
+            percentageInputs.forEach(input => {
+                let val = parseFloat(input.value);
+                if (isNaN(val)) val = 0;
+                total += val;
+            });
+
+            total = Math.round(total * 10000) / 10000;
+
+            const infoDiv = document.getElementById('coverage-percentage-info');
+            const totalPercentageSpan = document.getElementById('coverage-total-percentage');
+
+            if (percentageInputs.length > 0) {
+                infoDiv.style.display = 'flex';
+                totalPercentageSpan.textContent = total;
+                // Selalu biru karena bebas
+                infoDiv.className = 'alert alert-info d-flex justify-content-between align-items-center mb-3';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+            
+            return total;
+        }
+
+        // Validasi Coverage Sebelum Submit
+        function validateCoverageBeforeSubmit(e) {
+            const percentageInputs = document.querySelectorAll('.coverage-percentage');
+            
+            // Validasi Minimal 1 Coverage (Wajib atau Tidak?)
+            // Jika Wajib:
+            if (percentageInputs.length === 0) {
+                e.preventDefault(); e.stopPropagation();
+                const errorDiv = document.getElementById('coverage-percentage-error'); // Pastikan div ini ada di HTML jika ingin dipakai
+                if(errorDiv) {
+                    errorDiv.textContent = 'Gagal Simpan: Harap tambahkan minimal satu coverage.';
+                    errorDiv.style.display = 'block';
+                } else {
+                    // Fallback alert
+                    Swal.fire('Validasi Gagal', 'Harap tambahkan minimal satu coverage.', 'error');
+                }
+                return false;
+            }
+
+            // Validasi Nilai Input (Tidak Boleh Kosong/Negatif)
+            let isValid = true;
+            percentageInputs.forEach(input => {
+                let val = parseFloat(input.value);
+                if (isNaN(val) || val < 0) { // Hapus input.value check karena float 0 dianggap false
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault(); e.stopPropagation();
+                Swal.fire('Validasi Gagal', 'Nilai persentase coverage tidak valid (harus angka positif).', 'error');
+                return false;
+            }
+
+            // TIDAK ADA CEK TOTAL 100% DISINI
+            
+            return true;
+        }
+
+        // Event Listeners untuk Coverage
+        document.getElementById('add-coverage-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            addCoverageRow();
+        });
+
+        document.addEventListener('click', function(e) {
+            const removeBtn = e.target.closest('.remove-coverage-btn');
+            if (removeBtn) {
+                const row = removeBtn.closest('.coverage-row');
+                
+                Swal.fire({
+                    title: 'Hapus Coverage?',
+                    text: "Coverage ini akan dihapus dari daftar.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        row.remove();
+                        const rows = document.querySelectorAll('.coverage-row');
+                        if (rows.length === 0) {
+                            document.getElementById('coverage-empty-state').style.display = 'block';
+                            document.getElementById('coverage-percentage-info').style.display = 'none';
+                            document.getElementById('coverage-percentage-error').style.display = 'none';
+                        }
+                        updateCoveragePercentageTotal();
+                    }
+                });
+            }
+        });
+
+        // Initialize Coverage Percentage Validation
+        function initializeCoveragePercentageValidation() {
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('coverage-percentage')) {
+                    updateCoveragePercentageTotal();
+                }
+            });
+        }
+
+        // ==================== END COVERAGE FUNCTIONS ====================
 
         // Inisialisasi saat Load
         document.addEventListener('DOMContentLoaded', function() {
             initializeSelect2();
             initializeMainCheckboxes();
             initializePercentageValidation();
+            initializeCoveragePercentageValidation(); // Initialize coverage validation
             updatePercentageTotal();
+            updateCoveragePercentageTotal(); // Update coverage total
+            
+            // Tambah 1 baris coverage otomatis jika kosong (biasanya saat create baru)
+            const coverageContainer = document.getElementById('coverages-container');
+            const coverageRows = coverageContainer ? coverageContainer.querySelectorAll('.coverage-row') : [];
+            if (coverageContainer && coverageRows.length === 0) {
+                addCoverageRow();
+                updateCoveragePercentageTotal();
+            }
             
             // Tambah 1 baris asuransi otomatis jika kosong (biasanya saat create baru)
             const insuranceContainer = document.getElementById('insurances-container');
-            if (insuranceContainer && insuranceContainer.children.length === 0) {
+            const insuranceRows = insuranceContainer ? insuranceContainer.querySelectorAll('.insurance-row') : [];
+            if (insuranceContainer && insuranceRows.length === 0) {
                 addInsuranceRow();
                 updatePercentageTotal();
             }
@@ -554,7 +736,22 @@
             // Attach Validasi ke Form Submit
             const form = document.querySelector('.needs-validation');
             if(form) {
-                form.addEventListener('submit', validatePercentageBeforeSubmit);
+                form.addEventListener('submit', function(e) {
+                    // Reset Error Styles dulu
+                    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                    
+                    const insuranceValid = validatePercentageBeforeSubmit(e);
+                    
+                    // Jika asuransi gagal, coverage tidak perlu dicek agar fokus user tidak terpecah
+                    // Tapi jika ingin cek semua:
+                    const coverageValid = validateCoverageBeforeSubmit(e);
+                    
+                    if (!insuranceValid || !coverageValid) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("Form submit prevented due to validation errors.");
+                    }
+                });
             }
         });
     </script>

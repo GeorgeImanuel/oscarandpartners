@@ -19,35 +19,34 @@ class StoreCardRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             
             // Step 2: Policy (either existing or new)
-            'policy_id' => 'required_without_all:started_date,ended_date,coverage_code|nullable|exists:policies,id',
+            'policy_id' => 'required_without_all:started_date,ended_date,coverage_id|nullable|exists:policies,id',
             
             // New Policy Fields (conditional)
             'started_date' => 'required_without:policy_id|nullable|date',
             'ended_date' => 'required_without:policy_id|nullable|date|after:started_date',
-            'coverage_code' => 'required_without:policy_id|nullable|exists:coverages,code',
-            'coverage_percentage' => 'required_with:coverage_code|nullable|numeric|min:0|max:100',
-            'insurance_id' => 'required_with:coverage_code|nullable|array|min:1',
+            'coverage_id' => 'required_without:policy_id|nullable|exists:coverages,id',
+            'coverage_percentage' => 'required_with:coverage_id|nullable|numeric|min:0|max:100',
+            'insurance_id' => 'required_with:coverage_id|nullable|array|min:1',
             'insurance_id.*' => 'exists:insurances,id',
             'percentage' => 'required_with:insurance_id|nullable|array',
             'percentage.*' => 'numeric|min:0|max:100',
             'is_main' => 'nullable|array',
             
             // Step 3: Object (either existing or new)
-            'object_id' => 'required_without_all:object_type_id,object_address,object_city|nullable|exists:objects,id',
+            'object_id' => 'required_without_all:object_occupation_id,object_address,object_city|nullable|exists:objects,id',
             
             // New Object Fields (conditional)
-            'object_type_id' => 'required_without:object_id|nullable|exists:object_types,id',
+            'object_occupation_id' => 'required_without:object_id|nullable|exists:object_occupations,id',
             'object_address' => 'required_without:object_id|nullable|string',
             'object_city' => 'required_without:object_id|nullable|string',
-            'part_id' => 'nullable|array',
-            'part_id.*' => 'nullable|exists:parts,id',
+            'interest_id' => 'nullable|array',
+            'interest_id.*' => 'nullable|exists:interests,id',
             'value' => 'nullable|array',
             'value.*' => 'nullable|numeric|min:0',
-            'object_value_input' => 'required_with:object_type_id|nullable|numeric|min:0',
+            'object_value_input' => 'required_with:object_occupation_id|nullable|numeric|min:0',
             
             // Step 4: Premi Parameters
             'premi_percentages' => 'required|numeric|min:0|max:1',
-            'tax_percentages' => 'required|numeric|min:0|max:1',
             'commision_percentages' => 'required|numeric|min:0|max:1',
             'discount' => 'nullable|numeric|min:0',
             
@@ -85,7 +84,7 @@ class StoreCardRequest extends FormRequest
             'started_date.required_without' => 'Periode awal pertanggungan harus diisi.',
             'ended_date.required_without' => 'Periode akhir pertanggungan harus diisi.',
             'ended_date.after' => 'Periode akhir harus setelah periode awal.',
-            'coverage_code.required_without' => 'Coverage harus dipilih.',
+            'coverage_id.required_without' => 'Coverage harus dipilih.',
             'coverage_percentage.required_with' => 'Persentase coverage harus diisi.',
             'insurance_id.required_with' => 'Minimal satu asuransi harus dipilih.',
             'insurance_id.min' => 'Minimal satu asuransi harus dipilih.',
@@ -94,7 +93,7 @@ class StoreCardRequest extends FormRequest
             
             // Object
             'object_id.required_without_all' => 'Objek harus dipilih atau dibuat baru.',
-            'object_type_id.required_without' => 'Tipe objek harus dipilih.',
+            'object_occupation_id.required_without' => 'Objek Occupation harus dipilih.',
             'object_address.required_without' => 'Alamat objek harus diisi.',
             'object_city.required_without' => 'Kota objek harus diisi.',
             'object_value_input.required_with' => 'Harga pertanggungan harus diisi.',
@@ -102,8 +101,6 @@ class StoreCardRequest extends FormRequest
             // Premi Parameters
             'premi_percentages.required' => 'Persentase premi harus diisi.',
             'premi_percentages.max' => 'Persentase premi tidak boleh lebih dari 1 (100%).',
-            'tax_percentages.required' => 'Persentase pajak harus diisi.',
-            'tax_percentages.max' => 'Persentase pajak tidak boleh lebih dari 1 (100%).',
             'commision_percentages.required' => 'Persentase komisi harus diisi.',
             'commision_percentages.max' => 'Persentase komisi tidak boleh lebih dari 1 (100%).',
             

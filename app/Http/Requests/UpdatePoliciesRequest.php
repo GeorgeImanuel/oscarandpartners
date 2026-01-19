@@ -20,12 +20,11 @@ class UpdatePoliciesRequest extends FormRequest
 
         return [
             'object_id' => 'required|exists:objects,id',
-            'coverage_id' => 'required|exists:coverages,id',
-            
-            // --- FIX 1: Tambahkan Currency Code agar tidak hilang ---
-            'currency_code' => 'required|string|exists:currencies,code',
-            
-            'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
+            'coverage_id' => 'required|array|min:1',
+            'coverage_id.*' => 'required|integer|exists:coverages,id',
+            'coverage_percentage' => 'required|array|min:1',
+            'coverage_percentage.*' => 'required|numeric|min:0.0000001|max:100',
+            'currency_code' => 'nullable|string|exists:currencies,code',
             'policy_number' => [
                 'required',
                 'string',
@@ -53,11 +52,18 @@ class UpdatePoliciesRequest extends FormRequest
     {
         return [
             'object_id.exists' => 'The selected object is invalid.',
-            'currency_code.required' => 'Mata uang wajib dipilih.',
             'currency_code.exists' => 'Mata uang yang dipilih tidak valid.',
-            'coverage_code.exists' => 'The selected coverage code is invalid.',
-            'coverage_percentage.required' => 'Coverage percentage is required.',
-            'coverage_percentage.numeric' => 'Coverage percentage must be a number.',
+            
+            'coverage_id.required' => 'Coverage wajib diisi.',
+            'coverage_id.*.required' => 'Coverage wajib dipilih.',
+            'coverage_id.*.exists' => 'Coverage yang dipilih tidak valid.',
+            
+            'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
+            'coverage_percentage.*.required' => 'Persentase Coverage wajib diisi.',
+            'coverage_percentage.*.numeric' => 'Persentase Coverage harus berupa angka.',
+            'coverage_percentage.*.min' => 'Persentase Coverage minimal 0.0000001.',
+            'coverage_percentage.*.max' => 'Persentase Coverage maksimal 100.',
+            
             'policy_number.required' => 'Policy number is required.',
             'policy_number.string' => 'Policy number must be a string.',
             'policy_number.max' => 'Policy number may not be greater than 255 characters.',
@@ -81,6 +87,7 @@ class UpdatePoliciesRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // Validasi asuransi
             $insurances = $this->input('insurance_id', []);
             $newInsurances = $this->input('insurance_new_name', []);
             $isMain = $this->input('is_main', []);

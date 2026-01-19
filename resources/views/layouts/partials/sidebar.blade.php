@@ -96,6 +96,16 @@
                             </ul>
 
                         </li>
+                        
+                        <li class="sidebar-main-title">
+                            <div>
+                                <h6>Claim</h6>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a class="nav-link menu-title link-nav {{ routeActive('claims.index') }}" href="{{ route('claims.index') }}"><i data-feather="alert-circle"></i><span>Claim</span></a>
+                        </li>
+
                         <li class="sidebar-main-title">
                             <div>
                                 <h6>Polis</h6>
@@ -103,6 +113,7 @@
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}" href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Polis</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('currencies.index') }}" href="{{ route('currencies.index') }}"><i data-feather="airplay"></i><span>Mata Uang</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}" href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Asuransi</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}" href="{{ route('coverages.index') }}"><i data-feather="airplay"></i><span>Coverages</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
@@ -115,8 +126,8 @@
                         </li>
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}" href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('object-types.index') }}" href="{{ route('object-types.index') }}"><i data-feather="layers"></i><span>Tipe Objek</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('parts.index') }}" href="{{ route('parts.index') }}"><i data-feather="box"></i><span>Bagian Objek</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}" href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Occupation</span></a>
+                            <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}" href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
                         </li>
                     @endhasanyrole
 
@@ -130,17 +141,6 @@
                             <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}" href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}" href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi Client</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}" href="{{ route('users.index') }}"><i data-feather="user"></i><span>Staff</span></a>
-                        </li>
-                    @endhasanyrole
-
-                    @hasanyrole('owner|admin|finance')
-                        <li class="sidebar-main-title">
-                            <div>
-                                <h6>Pengaturan</h6>
-                            </div>
-                        </li>
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('settings.index') }}" href="{{ route('settings.index') }}"><i data-feather="settings"></i><span>Presentase</span></a>
                         </li>
                     @endhasanyrole
 

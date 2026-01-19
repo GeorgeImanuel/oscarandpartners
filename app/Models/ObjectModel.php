@@ -4,24 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ObjectModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'objects';
 
     protected $fillable = [
-        'object_type_id',
+        'object_occupation_id',
         'name',
-        'address',
+        'tjh_value',
+        'keterangan',
     ];
 
-    public function objectType(): BelongsTo
+    public function objectOccupation(): BelongsTo
     {
-        return $this->belongsTo(ObjectType::class);
+        return $this->belongsTo(ObjectOccupation::class);
     }
 
     public function policies()
@@ -29,13 +30,13 @@ class ObjectModel extends Model
         return $this->hasMany(Policy::class, 'object_id');
     }
 
-    public function objectParts()
+    public function objectInterests()
     {
-    return $this->hasMany(ObjectPart::class, 'object_id');
+        return $this->hasMany(ObjectInterest::class, 'object_id');
     }
 
     public function getObjectValue()
     {
-        return $this->objectParts()->sum('value');
+        return $this->objectInterests()->sum('value');
     }
 }

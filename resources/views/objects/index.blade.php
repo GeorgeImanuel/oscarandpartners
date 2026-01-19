@@ -48,7 +48,7 @@
 								<thead>
 									<tr>
 										<th>No</th>
-										<th>Tipe Objek</th>
+										<th>Objek Occupation</th>
 										<th>Nama</th>
 										<th>Alamat</th>
 										<th>Actions</th>
@@ -58,7 +58,7 @@
 									@forelse($objects as $index => $object)
 										<tr>
 											<td>{{ $index + 1 }}</td>
-											<td>{{ $object->objectType->name ?? '-' }}</td>
+											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 											<td>{{ $object->name }}</td>
 											<td>{{ $object->address }}</td>
 											<td>

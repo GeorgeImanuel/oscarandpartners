@@ -5,33 +5,33 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\ObjectModel;
 use App\Services\Object\ObjectService;
-use App\Services\ObjectType\ObjectTypeService;
-use App\Services\Part\PartService;
+use App\Services\ObjectOccupation\ObjectOccupationService;
+use App\Services\Interest\InterestService;
 
 class ObjectForm extends Component
 {
     protected $objectService;
-    protected $objectTypeService;
-    protected $partService;
+    protected $objectOccupationService;
+    protected $interestService;
 
     public function boot(
         ObjectService $objectService,
-        ObjectTypeService $objectTypeService,
-        PartService $partService
+        ObjectOccupationService $objectOccupationService,
+        InterestService $interestService
     ) {
         $this->objectService = $objectService;
-        $this->objectTypeService = $objectTypeService;
-        $this->partService = $partService;
+        $this->objectOccupationService = $objectOccupationService;
+        $this->interestService = $interestService;
     }
 
     public function render()
     {
-        $objectTypes = $this->objectTypeService->all();
-        $parts = $this->partService->all();
+        $objectOccupations = $this->objectOccupationService->all();
+        $interests = $this->interestService->all();
 
         return view('livewire.object-form', [
-            'objectTypes' => $objectTypes,
-            'parts' => $parts,
+            'objectOccupations' => $objectOccupations,
+            'interests' => $interests,
         ]);
     }
 }
