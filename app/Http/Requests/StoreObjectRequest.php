@@ -22,11 +22,11 @@ class StoreObjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'object_occupation_id' => 'nullable|exists:object_occupations,id',
+            'object_occupation_id' => 'nullable|exists:object_occupation,id',
             'object_occupation_name' => 'required_without:object_occupation_id|nullable|string|max:255',
 
             'name' => 'required|string|max:255',
-            'address' => 'required|string',
+            'keterangan' => 'required|string',
 
             'interest_id' => 'nullable|array',
             'interest_id.*' => 'nullable|exists:interests,id', 

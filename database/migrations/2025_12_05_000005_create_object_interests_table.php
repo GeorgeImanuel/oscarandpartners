@@ -17,7 +17,7 @@ return new class extends Migration
             // FK ke tabel interests
             $table->foreignId('interest_id')
                   ->constrained('interests')
-                  ->onDelete('restrict');
+                  ->onDelete('cascade');
 
             // Nilai dari komponen objek (decimal 20,2)
             $table->decimal('value', 20, 2);
