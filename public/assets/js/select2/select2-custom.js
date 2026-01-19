@@ -52,7 +52,7 @@ function initCustomSelect2(selector) {
                     $result.append(
                         " <em class='text-primary'>" +
                             config.createTagText +
-                            "</em>"
+                            "</em>",
                     );
                 }
 
@@ -134,9 +134,11 @@ setTimeout(function () {
             });
         });
 
+        initCustomSelect2(".add-select2");
+
         // Single Search Select
-        $(".js-example-basic-single").select2();
-        $(".js-example-disabled-results").select2();
+        // $(".js-example-basic-single").select2();
+        // $(".js-example-disabled-results").select2();
 
         // Multi Select
         // $(".js-example-basic-multiple").select2();

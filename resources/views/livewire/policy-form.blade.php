@@ -66,6 +66,75 @@
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
+        <label>List Coverage</label>
+        <div class="row">
+            <div class="col-md">
+                <div id="percentage-info"
+                    class="alert alert-danger py-2">
+                    <strong>Total Persentase Coverage: <span id="total-percentage">0.00</span>%</strong><br>
+                    <small>Total persentasi harus 100%</small>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <button type="button"
+                    class="btn btn-primary btn-sm add-item-btn float-end mt-4"
+                    class="add-item-btn"
+                    data-target="item-coverage">
+                    <i class="icon-plus me-2"></i> Tambah Coverage
+                </button>
+            </div>
+        </div>
+        <div class="item-list pt-2">
+            <div class="mb-2 px-3 py-2 border rounded item item-coverage">
+                <div class="row">
+                    <div class="col-md-8">
+                        <label class="form-label">Coverage <span class="item-count">1</span></label>
+                        <select class="form-select add-select2 required"
+                            name="coverage_id[]"
+                            data-placeholder="Pilih Coverage"
+                            style="width: 100%;">
+                            <option value="">- Pilih Coverage -</option>
+                            @foreach ($coverages as $coverage)
+                                <option value="{{ $coverage->id }}">
+                                    {{ $coverage->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label class="form-label">Persentase Coverage</label>
+                        <div class="input-group mb-3">
+                            <input type="number"
+                                class="form-control insurance-percentage"
+                                name="percentage[]"
+                                value=""
+                                placeholder="0"
+                                min="0"
+                                max="100"
+                                step="0.00001">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 pt-4">
+                        <button type="button"
+                            class="btn btn-danger btn-xs remove-item-btn"
+                            style="display:none">
+                            <i class="icon-trash me-2"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="empty-state"
+            class="text-center py-4 text-muted"
+            style="{{ isset($policyInsurances) && $policyInsurances->count() > 0 ? 'display: none;' : '' }}">
+            <i class="fa fa-info-circle fa-2x mb-2 d-block"></i>
+            <p class="mb-0">Klik tombol <strong class="text-primary">"Tambah Asuransi"</strong> untuk menambahkan asuransi</p>
+        </div>
+    </div>
+
+    <div class="col-md-12 mb-3 multiple-item-container">
         <label>List Asuransi</label>
         <div class="row">
             <div class="col-md">
@@ -80,14 +149,14 @@
                     class="btn btn-primary btn-sm add-item-btn float-end mt-4"
                     class="add-item-btn"
                     data-target="item-1">
-                    <i class="fa fa-plus"></i> Tambah Asuransi
+                    <i class="icon-plus me-2"></i> Tambah Asuransi
                 </button>
             </div>
         </div>
         <div class="item-list pt-2">
             <div class="mb-2 px-3 py-2 border rounded item item-1">
                 <div class="row">
-                    <div class="col-md">
+                    <div class="col-md-8">
                         <label class="form-label">Asuransi <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
                             name="insurance_id[]"
@@ -101,8 +170,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Persentase</label>
+                    <div class="col-md">
+                        <label class="form-label">Persentase Asuransi</label>
                         <div class="input-group mb-3">
                             <input type="number"
                                 class="form-control insurance-percentage"
@@ -128,7 +197,7 @@
                         <button type="button"
                             class="btn btn-danger btn-xs remove-item-btn"
                             style="display:none">
-                            <i class="fa fa-trash"></i> Hapus
+                            <i class="icon-trash me-2"></i> Hapus
                         </button>
                     </div>
                 </div>
