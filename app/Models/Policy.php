@@ -17,12 +17,8 @@ class Policy extends Model
     protected $fillable = [
         'policy_number',
         'object_id',
-<<<<<<< Updated upstream
-        'coverage_code',
-=======
         'coverage_id',
         'currency_code',
->>>>>>> Stashed changes
         'coverage_percentage',
         'started_date',
         'ended_date',

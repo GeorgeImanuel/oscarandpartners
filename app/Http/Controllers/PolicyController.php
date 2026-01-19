@@ -59,18 +59,6 @@ class PolicyController extends Controller
      */
     public function store(StorePoliciesRequest $request)
     {
-<<<<<<< Updated upstream
-        try {
-            $this->policyService->createPolicy($request->validated());
-
-            return redirect()->route('policies.index')
-                ->with('success', 'Policy berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan policy: ' . $e->getMessage());
-        }
-=======
         // Gunakan Transaction agar Data Konsisten
         return DB::transaction(function () use ($request) {
             $data = $request->validated();
@@ -93,7 +81,6 @@ class PolicyController extends Controller
 
             return redirect()->route('policies.index')->with('success', 'Polis berhasil dibuat.');
         });
->>>>>>> Stashed changes
     }
 
     public function edit(string $id)
@@ -113,18 +100,6 @@ class PolicyController extends Controller
      */
     public function update(UpdatePoliciesRequest $request, string $id)
     {
-<<<<<<< Updated upstream
-        try {
-            $this->policyService->updatePolicy($id, $request->validated());
-
-            return redirect()->route('policies.index')
-                ->with('success', 'Policy berhasil diubah.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal mengubah policy: ' . $e->getMessage());
-        }
-=======
         return DB::transaction(function () use ($request, $id) {
             $policy = Policy::findOrFail($id); // Gunakan Model langsung atau Service
             $data = $request->validated();
@@ -148,7 +123,6 @@ class PolicyController extends Controller
 
             return redirect()->route('policies.index')->with('success', 'Polis berhasil diperbarui.');
         });
->>>>>>> Stashed changes
     }
 
     public function destroy(string $id)
