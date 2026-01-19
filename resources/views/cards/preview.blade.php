@@ -126,6 +126,10 @@
 </style>
 @endpush
 
+@php
+    $currency = $productionCard->policy->currency_code ?? 'Rp';
+@endphp
+
 @section('content')
     <div class="no-print">
         @component('components.breadcrumb')
@@ -211,7 +215,7 @@
                 <span class="section-number">5</span>
                 <span class="info-label">Harga Pertanggungan</span>
                 <span class="info-separator">:</span>
-                <span class="info-value">Rp {{ number_format($productionCard->object_value, 0, ',', '.') }}</span>
+                <span class="info-value">{{ $currency }} {{ number_format($productionCard->object_value, $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
 
                 {{-- BAGIAN KANAN: Tarif, TJH, Disc --}}
                 {{-- margin-left: auto mendorong ke kanan, width: auto agar pas dengan konten --}}
@@ -236,7 +240,7 @@
                         <span style="width: 100px; text-align: right;">TJH</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            Rp {{ number_format($productionCard->tjh_value, 0, ',', '.') }}
+                            {{ $currency }} {{ number_format($productionCard->tjh_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
                         </span>
                     </div>
 
@@ -246,7 +250,7 @@
                         <span style="width: 100px; text-align: right;">Disc</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            Rp {{ number_format($productionCard->discount_value, 0, ',', '.') }}
+                            {{ $currency }} {{ number_format($productionCard->discount_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
                         </span>
                     </div>
 
@@ -269,9 +273,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Rp {{ number_format($productionCard->production_value, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->policy_fee, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->client_pay, 0, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->production_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->policy_fee,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -293,10 +297,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Rp {{ number_format($productionCard->commision_bruto, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->tax, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->discount_agent, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($productionCard->commision_netto, 0, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->commision_bruto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->tax,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->discount_agent,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -311,15 +315,15 @@
                 <h6 style="margin: 0 0 10px 0; font-weight: bold; text-decoration: underline;">Tagihan ke Nasabah</h6>
                 <div class="payment-item">
                     <span>Premi Total</span>
-                    <span>Rp {{ number_format($productionCard->premi_value, 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item">
                     <span>Discount/Agen</span>
-                    <span>Rp {{ number_format($productionCard->discount_agent, 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->discount_agent,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item" style="border-top: 1px solid #ccc; margin-top: 5px; padding-top: 5px; font-weight: bold;">
                     <span>Netto Tagihan</span>
-                    <span>Rp {{ number_format(($productionCard->premi_value - $productionCard->discount_agent), 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format(($productionCard->premi_value - $productionCard->discount_agent),  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
             </div>
 
@@ -327,15 +331,15 @@
                 <h6 style="margin: 0 0 10px 0; font-weight: bold; text-decoration: underline;">Setor ke Asuransi</h6>
                 <div class="payment-item">
                     <span>Premi Total</span>
-                    <span>Rp {{ number_format($productionCard->premi_value, 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item">
                     <span>Komisi</span>
-                    <span>Rp {{ number_format($productionCard->commision_netto, 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item" style="border-top: 1px solid #ccc; margin-top: 5px; padding-top: 5px; font-weight: bold;">
                     <span>Netto Bayar</span>
-                    <span>Rp {{ number_format($productionCard->insurance_pay, 0, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->insurance_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
             </div>
         </div>

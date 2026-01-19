@@ -7,6 +7,10 @@
 @push('css')
 @endpush
 
+@php
+    $currency = $card->policy->currency_code ?? 'Rp';
+@endphp
+
 @section('content')
     @component('components.breadcrumb')
         @slot('breadcrumb_title')
@@ -118,7 +122,7 @@
                                         <tr>
                                             <td width="40%" class="fw-bold">Harga Pertanggungan</td>
                                             <td width="5%">:</td>
-                                            <td class="fw-bold">Rp {{ number_format($card->object_value, 0, ',', '.') }}</td>
+                                            <td class="fw-bold">{{ $currency }} {{ number_format($card->object_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                         </tr>
                                         
                                         <tr>
@@ -136,12 +140,12 @@
                                         <tr>
                                             <td class="fw-bold">Nilai TJH</td>
                                             <td>:</td>
-                                            <td>Rp {{ number_format($card->tjh_value, 0, ',', '.') }}</td>
+                                            <td>{{ $currency }} {{ number_format($card->tjh_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                         </tr>
                                         <tr>
                                             <td class="fw-bold">Disc</td>
                                             <td>:</td>
-                                            <td>Rp {{ number_format($card->discount_value, 0, ',', '.') }}</td>
+                                            <td>{{ $currency }} {{ number_format($card->discount_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -163,9 +167,9 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Rp {{ number_format($card->production_value, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->policy_fee, 0, ',', '.') }}</td>
-                                        <td class="fw-bold table-active">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
+                                        <td>{{ $currency }} {{ number_format($card->production_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        <td>{{ $currency }} {{ number_format($card->policy_fee,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        <td class="fw-bold table-active">{{ $currency }} {{ number_format($card->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -184,10 +188,10 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Rp {{ number_format($card->commision_bruto, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->tax, 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($card->discount_agent, 0, ',', '.') }}</td>
-                                        <td class="fw-bold table-success">Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
+                                        <td>{{ $currency }} {{ number_format($card->commision_bruto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        <td>{{ $currency }} {{ number_format($card->tax,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        <td>{{ $currency }} {{ number_format($card->discount_agent,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        <td class="fw-bold table-success">{{ $currency }} {{ number_format($card->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -205,15 +209,15 @@
 										<table class="table table-sm table-borderless mb-0">
 											<tr>
 												<td>Total Premi</td>
-												<td class="text-end">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
+												<td class="text-end">{{ $currency }} {{ number_format($card->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
 											</tr>
 											<tr>
 												<td>Discount/Agen</td>
-												<td class="text-end">Rp {{ number_format($card->discount_agent ?? 0, 0, ',', '.') }}</td>
+												<td class="text-end">{{ $currency }} {{ number_format($card->discount_agent ?? 0,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
 											</tr>
 											<tr class="border-top">
 												<td><strong>Netto Tagihan</strong></td>
-												<td class="text-end"><strong>Rp {{ number_format($card->client_pay, 0, ',', '.') }}</strong></td>
+												<td class="text-end"><strong>{{ $currency }} {{ number_format($card->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</strong></td>
 											</tr>
 										</table>
 									</div>
@@ -228,15 +232,15 @@
 										<table class="table table-sm table-borderless mb-0">
 											<tr>
 												<td>Total Premi</td>
-												<td class="text-end">Rp {{ number_format($card->premi_value, 0, ',', '.') }}</td>
+												<td class="text-end">{{ $currency }} {{ number_format($card->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
 											</tr>
 											<tr>
 												<td>Komisi</td>
-												<td class="text-end">Rp {{ number_format($card->commision_netto, 0, ',', '.') }}</td>
+												<td class="text-end">{{ $currency }} {{ number_format($card->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
 											</tr>
 											<tr class="border-top">
 												<td><strong>Netto Bayar</strong></td>
-												<td class="text-end"><strong>Rp {{ number_format($card->insurance_pay, 0, ',', '.') }}</strong></td>
+												<td class="text-end"><strong>{{ $currency }} {{ number_format($card->insurance_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</strong></td>
 											</tr>
 										</table>
 									</div>

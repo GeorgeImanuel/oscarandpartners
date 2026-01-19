@@ -167,6 +167,7 @@
                                     <option value=""></option>
                                     @foreach ($policies as $policy)
                                         <option value="{{ $policy->id }}"
+                                            data-currency="{{ $policy->currency_code }}" 
                                             {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
                                             {{ $policy->policy_number }} - {{ $policy->object->name }}
                                         </option>
@@ -254,7 +255,7 @@
                                 <div class="h-100 d-flex flex-column justify-content">
                                     <label class="form-label fw-bold">Harga Pertanggungan</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">Rp</span>
+                                        <span class="input-group-text currency-label">Rp</span>
                                         <input id="object_value"
                                             class="form-control form-control-lg fw-bold"
                                             name="object_value"
@@ -292,7 +293,7 @@
                                     <div class="col-md-12">
                                         <label class="form-label mb-1">Nilai TJH</label>
                                         <div class="input-group">
-                                            <span class="input-group-text">Rp</span>
+                                            <span class="input-group-text currency-label">Rp</span>
                                             <input id="tjh_value"
                                                 class="form-control"
                                                 name="tjh_value"
@@ -322,7 +323,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group mb-3">
-                                                    <span class="input-group-text">Rp</span>
+                                                    <span class="input-group-text currency-label">Rp</span>
                                                     <input id="discount_value"
                                                         class="form-control"
                                                         type="number"
@@ -349,7 +350,7 @@
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Nilai Produksi (Output)</label>
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="production_value"
                                         class="form-control bg-light"
                                         name="production_value"
@@ -362,7 +363,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-primary">Biaya Polis (Input)</label>
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="policy_fee"
                                         class="form-control"
                                         name="policy_fee"
@@ -375,7 +376,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Total Premi (Output)</label>
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="premi_value"
                                         class="form-control fw-bold bg-light"
                                         name="premi_value"
@@ -470,7 +471,7 @@
                             <div class="col-md-12">
                                 <label class="form-label text-muted">Total Komisi (Output)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="commision_bruto"
                                         class="form-control bg-light fw-bold"
                                         name="commision_bruto"
@@ -519,7 +520,7 @@
                                                         <div class="col-md-4">
                                                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
                                                             <div class="input-group">
-                                                                <span class="input-group-text">Rp</span>
+                                                                <span class="input-group-text currency-label">Rp</span>
                                                                 <input type="number"
                                                                     class="form-control form-control-sm insurance-tax-per-item"
                                                                     data-insurance-id="{{ $polIns->id }}"
@@ -546,7 +547,7 @@
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Total Pajak (Auto Sum)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="tax"
                                         class="form-control bg-light"
                                         name="tax"
@@ -559,7 +560,7 @@
                             <div class="col-md-4">
                                 <label class="form-label">Discount Agent</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="discount_agent"
                                         class="form-control"
                                         name="discount_agent"
@@ -571,7 +572,7 @@
                             <div class="col-md-4">
                                 <label class="form-label text-muted">Komisi Bersih</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
+                                    <span class="input-group-text currency-label">Rp</span>
                                     <input id="commision_netto"
                                         class="form-control bg-light"
                                         name="commision_netto"
@@ -756,6 +757,18 @@
                 },
             });
 
+            function updateCurrencyLabel(currencyCode) {
+                // Default ke IDR jika kosong
+                var currency = currencyCode || 'IDR';
+                
+                // Update semua label input group
+                $('.currency-label').text(currency);
+                
+                // Update format rupiah di ringkasan pembayaran (bawah form)
+                // Kita simpan currency code di variabel global agar fungsi formatRupiah bisa akses
+                window.currentCurrency = currency;
+            }
+
             initCustomSelect2("#policy_id");
             initCustomSelect2("#object_id");
             initCustomSelect2(".add-select2");
@@ -801,6 +814,10 @@
                 $('#existing-object').show();
                 console.log('Policy ID changed:', policyId);
 
+                var selectedOption = $(this).find('option:selected');
+                var currencyCode = selectedOption.data('currency');
+                updateCurrencyLabel(currencyCode);
+                update_payment();
                 // Find the Livewire component and update policyId
                 var container = document.querySelector('#policy-details-container [wire\\:id]');
                 if (container && typeof window.Livewire !== 'undefined') {
@@ -885,7 +902,7 @@
                                     <div class="col-md-4">
                                         <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
                                         <div class="input-group input-group-sm">
-                                            <span class="input-group-text">Rp</span>
+                                            <span class="input-group-text currency-label">Rp</span>
                                             <input type="number" class="form-control form-control-sm insurance-tax-per-item" 
                                                 data-insurance-id="${insurance.id}" 
                                                 placeholder="0"
@@ -1029,7 +1046,12 @@
             // Format number to Rupiah
             function formatRupiah(value) {
                 var number = parseFloat(value) || 0;
-                return 'Rp' + number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                var currency = window.currentCurrency || 'Rp';
+                var formattedNumber = number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                if(currency !== 'Rp') {
+                    formattedNumber = number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+                return currency + ' ' + formattedNumber;
             }
 
             // --- FUNGSI BARU: VALIDASI PERSEN LANGSUNG ---
@@ -1153,6 +1175,12 @@
                         $('.is-main-checkbox').not(this).prop('checked', false);
                     }
                 });
+
+                if ($('#policy_id').val()) {
+                    var selectedOption = $('#policy_id').find('option:selected');
+                    var currencyCode = selectedOption.data('currency');
+                    updateCurrencyLabel(currencyCode);
+                }
             });
         </script>
     @endpush
