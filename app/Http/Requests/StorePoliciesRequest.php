@@ -17,22 +17,30 @@ class StorePoliciesRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      */
+    // App\Http\Requests\StorePoliciesRequest.php
+
     public function rules(): array
     {
         return [
-            // Diubah dari nullable ke required
             'object_id' => 'required|exists:objects,id',
-            'coverage_id' => 'required|exists:coverages,id',
-            'coverage_percentage' => 'required|numeric|min:0.0000001|max:100',
+            'coverage_id' => 'required|array|min:1',
+            'coverage_id.*' => 'required|integer|exists:coverages,id',
+            'coverage_percentage' => 'required|array|min:1',
+            'coverage_percentage.*' => 'required|numeric|min:0.0000001|max:100',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
             'started_date' => 'required|date',
             'ended_date' => 'required|date|after_or_equal:started_date',
-            
-            // Detail Asuransi (Minimal harus ada 1 baris yang valid)
+            'currency_code' => 'nullable|string|exists:currencies,code', 
+
+            // Detail Asuransi
             'insurance_id' => 'required|array|min:1',
             'insurance_id.*' => 'required_without:insurance_new_name.*|nullable|integer|exists:insurances,id',
             'insurance_new_name.*' => 'required_without:insurance_id.*|nullable|string|max:255',
-            'is_main' => 'required|array|min:1', // Harus ada asuransi utama
+            
+            // Hapus 'is_main' dari rules array utama jika ingin validasi custom di withValidator,
+            // TAPI sebaiknya biarkan 'nullable|array' disini agar lolos validated()
+            'is_main' => 'nullable|array', 
+            
             'percentage' => 'required|array|min:1',
             'percentage.*' => 'required|numeric|min:0.0000001|max:100',
         ];
@@ -50,10 +58,15 @@ class StorePoliciesRequest extends FormRequest
 
             'object_id.exists' => 'Objek yang dipilih tidak valid.',
 
-            'coverage_id.exists' => 'Coverage yang dipilih tidak valid.',
+            'coverage_id.required' => 'Coverage wajib diisi.',
+            'coverage_id.*.required' => 'Coverage wajib dipilih.',
+            'coverage_id.*.exists' => 'Coverage yang dipilih tidak valid.',
 
             'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
-            'coverage_percentage.numeric' => 'Persentase Coverage harus berupa angka.',
+            'coverage_percentage.*.required' => 'Persentase Coverage wajib diisi.',
+            'coverage_percentage.*.numeric' => 'Persentase Coverage harus berupa angka.',
+            'coverage_percentage.*.min' => 'Persentase Coverage minimal 0.0000001.',
+            'coverage_percentage.*.max' => 'Persentase Coverage maksimal 100.',
 
             'started_date.required' => 'Tanggal Mulai wajib diisi.',
             'started_date.date' => 'Tanggal Mulai harus format tanggal yang valid.',
@@ -79,6 +92,7 @@ class StorePoliciesRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // Validasi asuransi
             $insurances = $this->input('insurance_id', []);
             $newInsurances = $this->input('insurance_new_name', []);
             $isMain = $this->input('is_main', []);

@@ -388,6 +388,58 @@
 
                         <hr>
 
+                        {{-- SECTION 2.5: COVERAGE --}}
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h5 class="text-primary mb-3">2.5. Coverage</h5>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="card mb-0" style="border: 2px solid #ddd; background-color: #fcfcfc;">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-3 text-center" style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Coverage</h6>
+
+                                        {{-- Dynamic Coverage List Container --}}
+                                        <div id="coverage-list-container">
+                                            {{-- Server-side rendered (for edit mode) --}}
+                                            @if (isset($card->policy) && $card->policy->policyCoverages && $card->policy->policyCoverages->count() > 0)
+                                                @foreach ($card->policy->policyCoverages as $index => $polCov)
+                                                    <div class="row g-2 align-items-center mb-2 coverage-item">
+                                                        <div class="col-md-8">
+                                                            <label class="small text-muted mb-0">Coverage</label>
+                                                            <input type="text"
+                                                                class="form-control form-control-sm bg-white"
+                                                                value="{{ $polCov->coverage->name ?? '-' }}"
+                                                                readonly>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <label class="small text-muted mb-0">Persentase</label>
+                                                            <div class="input-group input-group-sm">
+                                                                <input type="text"
+                                                                    class="form-control text-center bg-white"
+                                                                    value="{{ ($polCov->percentage ?? 0) * 100 }}"
+                                                                    readonly>
+                                                                <span class="input-group-text">%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (!$loop->last)
+                                                        <hr class="my-2 text-muted">
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
                         {{-- SECTION 3: KOMISI --}}
                         <div class="row g-3 mb-4">
                             <div class="col-md-12">
@@ -847,6 +899,40 @@
                         });
                     } else {
                         container.html('<div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>');
+                    }
+                });
+
+                Livewire.on('coveragesLoaded', (event) => {
+                    const coverages = event.coverages || event[0]?.coverages || [];
+                    console.log('Coverages loaded:', coverages);
+
+                    const container = $('#coverage-list-container');
+                    container.empty();
+
+                    if (coverages.length > 0) {
+                        coverages.forEach((coverage, index) => {
+                            const html = `
+                                <div class="row g-2 align-items-center mb-2 coverage-item">
+                                    <div class="col-md-8">
+                                        <label class="small text-muted mb-0">Coverage</label>
+                                        <input type="text" class="form-control form-control-sm bg-white" 
+                                            value="${coverage.coverage_name}" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small text-muted mb-0">Persentase</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control text-center bg-white" 
+                                                value="${(coverage.percentage * 100).toFixed(5)}" readonly>
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                ${index < coverages.length - 1 ? '<hr class="my-2 text-muted">' : ''}
+                            `;
+                            container.append(html);
+                        });
+                    } else {
+                        container.html('<div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>');
                     }
                 });
 

@@ -38,6 +38,7 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
                 $q->withSum('objectInterests as object_value', 'value');
             },
             'coverage',
+            'policyCoverages.coverage',
             'policyInsurances.insurance'
         ])->find($policyId);
     }

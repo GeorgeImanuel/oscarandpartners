@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('currencies', function (Blueprint $table) {
-            $table->string('code')->primary();
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('policies', function (Blueprint $table) {
+            $table->decimal('coverage_percentages', 10, 7)->nullable()->after('ended_date');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('currencies');
+        Schema::table('policies', function (Blueprint $table) {
+            $table->dropColumn('coverage_percentages');
+        });
     }
 };

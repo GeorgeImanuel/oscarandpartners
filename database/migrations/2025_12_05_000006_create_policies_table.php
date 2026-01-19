@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->string('policy_number');
             $table->foreignId('object_id')->constrained('objects')->onDelete('cascade');
             $table->foreignId('coverage_id')->constrained('coverages');
+            $table->string('currency_code')->nullable();
+            $table->foreign('currency_code')->references('code')->on('currencies')->onDelete('set null');
             $table->decimal('coverage_percentage', 8, 7);
             $table->date('started_date');
             $table->date('ended_date');

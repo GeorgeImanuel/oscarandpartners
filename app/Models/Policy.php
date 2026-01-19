@@ -18,24 +18,16 @@ class Policy extends Model
     protected $fillable = [
         'policy_number',
         'object_id',
-        'coverage_id',
-        'coverage_percentage',
+        'currency_code',
         'started_date',
         'ended_date',
+        'coverage_percentages',
     ];
 
     protected $casts = [
         'started_date' => 'date',
         'ended_date' => 'date',
-        'coverage_percentage' => 'decimal:7',
     ];
-
-    protected function coveragePercentage(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => is_numeric($value) ? (float) $value : null,
-        );
-    }
 
     public function productionCard(): HasOne
     {
@@ -47,9 +39,22 @@ class Policy extends Model
         return $this->belongsTo(ObjectModel::class);
     }
 
-    public function coverage(): BelongsTo
+    public function coverages(): BelongsToMany
     {
-        return $this->belongsTo(Coverage::class, 'coverage_code', 'code');
+        return $this->belongsToMany(Coverage::class, 'policy_coverages', 'policy_id', 'coverage_id')
+            ->withPivot('percentage')
+            ->withTimestamps()
+            ->using(PolicyCoverage::class);
+    }
+
+    public function policyCoverages(): HasMany
+    {
+        return $this->hasMany(PolicyCoverage::class);
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_code', 'code');
     }
 
     public function policyInsurances(): HasMany

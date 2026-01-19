@@ -63,9 +63,24 @@ class PolicyDetails extends Component
 
                 $this->dispatch('insurancesLoaded', insurances: $insurances);
             }
+
+            // Emit coverage data
+            if ($this->policy->policyCoverages) {
+                $coverages = $this->policy->policyCoverages->map(function($polCov) {
+                    return [
+                        'id' => $polCov->id,
+                        'coverage_id' => $polCov->coverage_id,
+                        'coverage_name' => $polCov->coverage->name ?? '-',
+                        'percentage' => $polCov->percentage
+                    ];
+                })->toArray();
+
+                $this->dispatch('coveragesLoaded', coverages: $coverages);
+            }
         } else {
             $this->policy = null;
             $this->dispatch('insurancesLoaded', insurances: []);
+            $this->dispatch('coveragesLoaded', coverages: []);
         }
     }
 
