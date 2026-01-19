@@ -1152,22 +1152,8 @@
                     }
                 });
 
-                // Update total percentage display in real-time
                 $(document).on('input change', '.insurance-percentage', function() {
-                    var totalPercentage = 0;
-                    $('.insurance-percentage').each(function() {
-                        if ($(this).closest('.item').is(':visible')) {
-                            var value = parseFloat($(this).val()) || 0;
-                            totalPercentage += value;
-                        }
-                    });
-                    $('#total-percentage').text(totalPercentage.toFixed(2));
-                    var infoDiv = $('#percentage-info');
-                    if (totalPercentage > 100 || totalPercentage < 0) {
-                        infoDiv.attr('class', 'alert alert-danger');
-                    } else {
-                        infoDiv.attr('class', 'alert alert-success');
-                    }
+                    updatePercentageTotal('.insurance-percentage', '#total-percentage', '#percentage-info');
                 });
 
                 $(document).on('change', '.is-main-checkbox', function() {
