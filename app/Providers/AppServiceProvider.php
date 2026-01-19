@@ -54,6 +54,17 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Claim\ClaimRepository::class,
             \App\Repositories\Claim\ClaimRepositoryImplement::class
         );
+
+        // Register Currency Service and Repository
+        $this->app->bind(
+            \App\Services\Currency\CurrencyService::class,
+            \App\Services\Currency\CurrencyServiceImplement::class
+        );
+        
+        $this->app->bind(
+            \App\Repositories\Currency\CurrencyRepository::class,
+            \App\Repositories\Currency\CurrencyRepositoryImplement::class
+        );
     }
 
     /**
