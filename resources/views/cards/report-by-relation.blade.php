@@ -131,6 +131,8 @@
                                                     @php
                                                         $objectInterestTotal = $object->objectInterests->sum('value');
                                                         $policiesCount = $object->policies->count();
+                                                        
+                                                        $currency = $object->policies->first()->currency_code ?? 'Rp';
                                                     @endphp
                                                     <tr>
                                                         <td style="vertical-align: top;">{{ $index + 1 }}</td>
@@ -176,16 +178,18 @@
                                                                 <div>-</div>
                                                             @endif
                                                         </td>
+                                                        
+                                                        {{-- KOLOM HARGA BAGIAN --}}
                                                         <td style="white-space: normal; vertical-align: top; text-align: right;">
                                                             @if($object->objectInterests->isNotEmpty())
                                                                 <div style="display: table; width: 100%; font-size: 0.85em;">
                                                                     @foreach($object->objectInterests as $interest)
                                                                         <div style="display: table-row;">
                                                                             <div style="display: table-cell; text-align: left; padding-bottom: 3px; padding-right: 20px;">
-                                                                                {{ $part->part->name }}:
+                                                                                {{ $interest->interest->name }}:
                                                                             </div>
                                                                             <div style="display: table-cell; text-align: right; padding-bottom: 3px;">
-                                                                                {{ numberFormat($part->value) }}
+                                                                                {{ $currency }} {{ number_format($interest->value, $currency == 'Rp' ? 0 : 2, ',', '.') }}
                                                                             </div>
                                                                         </div>
                                                                     @endforeach
@@ -197,7 +201,8 @@
                                                                             Total :
                                                                         </div>
                                                                         <div style="display: table-cell; text-align: right;">
-                                                                            {{ numberFormat($objectInterestTotal) }}
+                                                                            {{-- FORMAT DINAMIS TOTAL --}}
+                                                                            {{ $currency }} {{ number_format($objectInterestTotal, $currency == 'IDR' ? 0 : 2, ',', '.') }}
                                                                         </div>
                                                                     </div>
                                                                 </div>

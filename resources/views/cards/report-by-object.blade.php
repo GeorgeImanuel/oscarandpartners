@@ -94,7 +94,14 @@
                                             </td>
                                             <td>{{ $card->start_date ? $card->start_date->format('d/m/Y') : '-' }}</td>
                                             <td>{{ $card->end_date ? $card->end_date->format('d/m/Y') : '-' }}</td>
-                                            <td>{{ numberFormat($card->premium_gross) }}</td>
+                                            
+                                            <td class="text-end">
+                                                @php
+                                                    $curr = $card->policy->currency_code ?? 'IDR';
+                                                @endphp
+                                                {{ $curr }} {{ number_format($card->premi_value, $curr == 'IDR' ? 0 : 2, ',', '.') }}
+                                            </td>
+                                            
                                             <td>
                                                 @if($card->insurancePaymentStatus)
                                                     <span class="badge" style="background-color: {{ $card->insurancePaymentStatus->color }}">
@@ -122,7 +129,6 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            {{-- Colspan diupdate jadi 11 karena jumlah kolom bertambah --}}
                                             <td colspan="11" class="text-center">Tidak ada data</td>
                                         </tr>
                                     @endforelse

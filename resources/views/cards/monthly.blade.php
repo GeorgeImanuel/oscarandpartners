@@ -79,7 +79,14 @@
                                             <td>{{ $card->client->id_name ?? $card->client->user->name }}</td>
                                             <td>{{ $card->policy->policy_number ?? '-' }}</td>
                                             <td>{{ $card->policy->started_date && $card->policy->started_date ? $card->policy->started_date->format('d M Y') . ' - ' . $card->policy->ended_date->format('d M Y') : '-' }}</td>
-                                            <td>{{ numberFormat($card->object_value) }}</td>
+                                            
+                                            <td class="text-end">
+                                                @php
+                                                    $curr = $card->policy->currency_code ?? 'Rp';
+                                                @endphp
+                                                {{ $curr }} {{ number_format($card->premi_value, $curr == 'Rp' ? 0 : 2, ',', '.') }}
+                                            </td>
+                                            
                                             <td>
                                                 <span class="badge"
                                                     style="background-color: {{ $card->cardType->color }}">
