@@ -88,10 +88,5 @@
             })
         }, false)
     })()
-
-    // Convert code to uppercase
-    document.getElementById('code').addEventListener('input', function(e) {
-        this.value = this.value.toUpperCase();
-    });
 </script>
 @endpush
