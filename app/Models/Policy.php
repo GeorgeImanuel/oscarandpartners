@@ -49,7 +49,7 @@ class Policy extends Model
 
     public function coverage(): BelongsTo
     {
-        return $this->belongsTo(Coverage::class, 'coverage_code', 'code');
+        return $this->belongsTo(Coverage::class, 'coverage_id', 'id');
     }
 
     public function currency(): BelongsTo
