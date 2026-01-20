@@ -28,6 +28,6 @@ class PolicyCoverage extends Pivot
 
     public function coverage(): BelongsTo
     {
-        return $this->belongsTo(Coverage::class);
+        return $this->belongsTo(Coverage::class,'coverage_id','id');
     }
 }

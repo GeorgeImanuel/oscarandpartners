@@ -54,12 +54,12 @@
                     {{-- CARD INFO START --}}
                     <div id="step-1"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12 mt-3">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Kartu Produksi</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12 mt-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="card_type_id">Tipe Kartu</label>
                                 <select id="card_type_id"
@@ -80,7 +80,7 @@
                             </div>
 
                             <div id="parent_card_container"
-                                class="col-md-12"
+                                class="col-md-12 mb-3"
                                 style="display:none;">
                                 <label class="form-label"
                                     for="parent_card_id">Kartu Produksi Sebelumnya</label>
@@ -106,7 +106,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="client_id">Nama Client</label>
                                 <select id="client_id"
@@ -140,7 +140,7 @@
                                 @livewire('client-form')
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="deadline_at">Tanggal Deadline</label>
                                 <input id="deadline_at"
@@ -160,13 +160,13 @@
                     {{-- POLIS INFO START --}}
                     <div id="step-2"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
                             </div>
                             <div id="policy-details-container"
-                                class="col-md-12">
+                                class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="policy_id">Nomor Polis</label>
                                 <select id="policy_id"
@@ -210,12 +210,12 @@
                     {{-- OBJECT INFO START --}}
                     <div id="step-3"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Objek</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select id="object_id"
@@ -260,7 +260,7 @@
 
                         {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">1. Parameter Dasar</h5>
                             </div>
 
@@ -285,7 +285,7 @@
                             {{-- KANAN: Parameter Tarif (Stacked) --}}
                             <div class="col-md-6">
                                 <div class="row g-2">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Tarif Premi</label>
                                         <div class="input-group">
                                             {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -306,7 +306,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Nilai TJH</label>
                                         <div class="input-group">
                                             <span class="input-group-text currency-label">Rp</span>
@@ -318,7 +318,7 @@
                                                 required>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Discount</label>
                                         <div class="row">
                                             <div class="col-md-4">
@@ -360,7 +360,7 @@
 
                         {{-- SECTION 2: PREMI (Produksi -> Biaya Polis -> Total) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2. Perhitungan Premi</h5>
                             </div>
 
@@ -409,11 +409,11 @@
 
                         {{-- SECTION 2.5: COVERAGE --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2.5. Coverage</h5>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <div class="card mb-0"
                                     style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
@@ -463,13 +463,13 @@
                         <hr>
 
                         {{-- SECTION 3: KOMISI --}}
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-12">
+                        <div class="row mb-4">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-2">3. Perhitungan Komisi</h5>
                             </div>
 
                             {{-- BAGIAN ATAS: Persentase Total & Total Komisi --}}
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label">Persentase Total Komisi</label>
                                 <div class="input-group">
                                     {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -491,7 +491,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label text-muted">Total Komisi (Output)</label>
                                 <div class="input-group">
                                     <span class="input-group-text currency-label">Rp</span>
@@ -505,7 +505,7 @@
                             </div>
 
                             {{-- BAGIAN TENGAH: KOTAK RINCIAN ASURANSI (THE BOX) --}}
-                            <div class="col-md-12 mt-4">
+                            <div class="col-md-12 mb-3">
                                 <div class="card mb-0"
                                     style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">

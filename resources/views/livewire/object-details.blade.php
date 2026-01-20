@@ -10,7 +10,7 @@
     </div>
 
     @if ($object)
-        <div wire:loading.remove class="border py-2" role="alert">
+        <div wire:loading.remove class="border py-2 mb-3" role="alert">
             <table class="table table-sm table-borderless">
                 <tbody>
                     <tr>
