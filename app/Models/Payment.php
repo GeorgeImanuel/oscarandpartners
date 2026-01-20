@@ -17,20 +17,20 @@ class Payment extends Model
         'payment_status_id',
         'deadline_at',
         'paid_at',
-        'client_evident_file',
-        'client_evident_number',
+        'paid_amount',
         // INSURANCE PAYMENT
         'insurance_payment_status_id',
         'insurance_paid_at',
-        'insurance_evident_file',
-        'insurance_evident_number',
+        'insurance_paid_amount',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'deadline_at' => 'datetime',
         'paid_at' => 'datetime',
+        'paid_amount' => 'decimal:2',
         'insurance_paid_at' => 'datetime',
+        'insurance_paid_amount' => 'decimal:2',
     ];
 
     public function paymentStatus(): BelongsTo
