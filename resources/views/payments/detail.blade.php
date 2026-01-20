@@ -80,7 +80,54 @@
             margin-bottom: 0;
             line-height: 1.5;
         }
+
+        .status-box {
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            line-height: 1.2;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .status-box .date {
+            display: block; font-weight: normal; font-size: 10px; margin-top: 3px; opacity: 0.8;
+        }
+
+        /* 2. Warna Status */
+        .status-client-lunas { background-color: #e8f5e9; color: #157347; border: 1px solid #c3e6cb; }
+        .status-ins-disetor { background-color: #e3f2fd; color: #0b5ed7; border: 1px solid #b6d4fe; }
         
+        /* 3. Label Merah "Belum Bayar" */
+        .label-belum-bayar {
+            background-color: #f8d7da; /* Background Merah Muda */
+            color: #721c24;            /* Teks Merah Gelap */
+            border: 1px solid #f5c6cb; /* Border Merah Tipis */
+            
+            /* Layout (Disamakan dengan .status-box agar rapi) */
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 4. Tombol Hijau Tua (Custom) */
+        .btn-dark-green {
+            background-color: #154c38; color: white; border: none;
+            font-size: 11px; font-weight: 500; width: 100%;
+            padding: 6px 10px; border-radius: 5px;
+            transition: all 0.2s; text-align: center; display: block; text-decoration: none;
+        }
+        .btn-dark-green:hover { background-color: #0f3929; color: white; }
+
         @media print {
             .no-print { display: none !important; }
             
@@ -269,17 +316,25 @@
 
                         {{-- Tabel View Laporan --}}
                         <div class="table-responsive-custom">
-                             {{-- ... (Isi tabel paymentTable BIARKAN SAMA SEPERTI SEBELUMNYA) ... --}}
-                             {{-- Copy paste tabel dari kode sebelumnya di sini --}}
-                             <table class="table-manual" id="paymentTable">
+                            {{-- ... (Isi tabel paymentTable BIARKAN SAMA SEPERTI SEBELUMNYA) ... --}}
+                            {{-- Copy paste tabel dari kode sebelumnya di sini --}}
+                            <table class="table-manual" id="paymentTable">
                                 <thead>
                                     <tr>
-                                        <th rowspan="2" style="width: 10%;"></th>
+                                        {{-- Kolom 1: Keterangan Angsuran --}}
+                                        <th rowspan="2" style="width: 10%;">Keterangan</th>
+                                        
+                                        {{-- Kolom 2-4: Asuransi --}}
                                         <th colspan="3" style="border-bottom: none;">Ko. Asuransi</th>
+                                        
+                                        {{-- Kolom 5-8: Financials --}}
                                         <th rowspan="2" style="width: 10%;">Biaya<br>Polis</th>
                                         <th rowspan="2" style="width: 10%;">Komisi</th>
                                         <th rowspan="2" style="width: 10%;">Pajak</th>
                                         <th rowspan="2" style="width: 12%;">Premi<br>Netto</th>
+                                        
+                                        {{-- KOLOM BARU (Hanya Tampil di Web, Hide saat Print) --}}
+                                        <th rowspan="2" style="width: 15%;" class="no-print">Status & Aksi</th>
                                     </tr>
                                     <tr>
                                         <th colspan="2" style="width: 25%;">Share</th>
@@ -296,7 +351,7 @@
                                         @php
                                             $policyInsurances = $pmt->card->policy->policyInsurances;
                                             $insuranceCount = $policyInsurances->count();
-                                            $rowSpanCount = $insuranceCount;
+                                            $rowSpanCount = $insuranceCount; // Rowspan mengikuti jumlah asuransi
                                             
                                             $subtotalPremi = 0; $subtotalBiaya = 0; $subtotalKomisi = 0;
                                             $subtotalPajak = 0; $subtotalNetto = 0;
@@ -325,10 +380,11 @@
                                             @endphp
                                             
                                             <tr>
+                                                {{-- KOLOM KETERANGAN (Cuma muncul di baris pertama loop asuransi) --}}
                                                 @if($loop->first)
                                                     <td rowspan="{{ $rowSpanCount }}" class="text-center" style="vertical-align: top; padding-top: 10px;">
-                                                        ANGSURAN {{ $index + 1 }}<br>
-                                                        <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d/m/Y') : '' }}</small>
+                                                        <strong>ANGSURAN {{ $pmt->sequence }}</strong><br>
+                                                        <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d/m/Y') : '-' }}</small>
                                                     </td>
                                                 @endif
 
@@ -336,6 +392,7 @@
                                                 <td class="text-center">{{ number_format(($share * 100), 2) }}%</td>
                                                 <td class="text-end">{{ numberFormat($premi) }}</td>
                                                 
+                                                {{-- KOLOM BIAYA POLIS --}}
                                                 @if($loop->first)
                                                     <td rowspan="{{ $rowSpanCount }}" class="text-end" style="vertical-align: top; padding-top: 8px;">
                                                         {{ numberFormat($biayaPolis) }}
@@ -345,9 +402,72 @@
                                                 <td class="text-end">{{ numberFormat($komisi) }}</td>
                                                 <td class="text-end">{{ numberFormat($pajak) }}</td>
                                                 <td class="text-end">{{ numberFormat($netto) }}</td>
+
+                                                {{-- KOLOM STATUS & AKSI --}}
+                                                @if($loop->first)
+                                                    <td rowspan="{{ $rowSpanCount }}" class="text-center no-print" style="vertical-align: middle; padding: 12px;">
+                                                        
+                                                        {{-- Wrapper Flex: Agar elemen menumpuk rapi ke bawah --}}
+                                                        <div class="d-flex flex-column align-items-center w-100 gap-2">
+
+                                                            {{-- ========================================== --}}
+                                                            {{-- 1. URUSAN NASABAH --}}
+                                                            {{-- ========================================== --}}
+                                                            @if($pmt->payment_status_id != 2)
+                                                                
+                                                                {{-- KONDISI A: BELUM BAYAR (ID: 1, 3, 4) --}}
+                                                                <div class="w-100">
+                                                                    <div class="label-belum-bayar">Belum Bayar</div>
+                                                                    <button type="button" 
+                                                                        class="btn-dark-green btn-trigger-client"
+                                                                        data-id="{{ $pmt->id }}"
+                                                                        data-amount="{{ $pmt->amount }}">
+                                                                        Bayar Nasabah
+                                                                    </button>
+                                                                </div>
+
+                                                            @else
+                                                                
+                                                                {{-- KONDISI B: SUDAH LUNAS (ID: 2) --}}
+                                                                <div class="status-box status-client-lunas">
+                                                                    Nasabah Lunas
+                                                                    <span class="date">{{ $pmt->paid_at ? $pmt->paid_at->format('d/m/y') : '-' }}</span>
+                                                                </div>
+
+                                                            @endif
+
+
+                                                            {{-- ========================================== --}}
+                                                            {{-- 2. URUSAN ASURANSI --}}
+                                                            {{-- (Hanya muncul jika Nasabah SUDAH Lunas) --}}
+                                                            {{-- ========================================== --}}
+                                                            @if($pmt->payment_status_id == 2)
+                                                                
+                                                                @if($pmt->insurance_payment_status_id != 2)
+                                                                    {{-- KONDISI C: MENUNGGU SETOR KE ASURANSI --}}
+                                                                    <button type="button" 
+                                                                        class="btn-dark-green btn-trigger-insurance"
+                                                                        data-id="{{ $pmt->id }}"
+                                                                        data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
+                                                                        Bayar Asuransi
+                                                                    </button>
+                                                                @else
+                                                                    {{-- KONDISI D: SUDAH DISETOR --}}
+                                                                    <div class="status-box status-ins-disetor">
+                                                                        Asuransi Disetor
+                                                                        <span class="date">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d/m/y') : '-' }}</span>
+                                                                    </div>
+                                                                @endif
+
+                                                            @endif
+
+                                                        </div>
+                                                    </td>
+                                                @endif
                                             </tr>
                                         @endforeach
 
+                                        {{-- Row Total per Installment --}}
                                         <tr class="bg-total" style="border-top: 2px solid #000;">
                                             <td colspan="3"></td> 
                                             <td class="text-end">{{ numberFormat($subtotalPremi) }}</td>
@@ -355,6 +475,7 @@
                                             <td class="text-end">{{ numberFormat($subtotalKomisi) }}</td>
                                             <td class="text-end">{{ numberFormat($subtotalPajak) }}</td>
                                             <td class="text-end">{{ numberFormat($subtotalNetto) }}</td>
+                                            <td class="no-print"></td> {{-- Sel Kosong untuk kolom aksi di row total --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -366,9 +487,110 @@
         </div>
     </div>
 
+    {{-- MODAL 1: PEMBAYARAN CLIENT --}}
+    <div class="modal fade" id="modalClientPay" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('payments.update_client_pay', $payment->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Konfirmasi Pembayaran Nasabah</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Bayar <span class="text-danger">*</span></label>
+                            <input type="date" name="paid_at" class="form-control" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jumlah Dibayar (Rp) <span class="text-danger">*</span></label>
+                            {{-- Default value mengambil total tagihan --}}
+                            <input type="number" name="paid_amount" class="form-control" required value="{{ $payment->amount }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">Simpan & Lunaskan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL 2: PEMBAYARAN ASURANSI --}}
+    <div class="modal fade" id="modalInsurancePay" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('payments.update_insurance_pay', $payment->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Konfirmasi Setor ke Asuransi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info py-2 small">
+                            <i class="fa fa-info-circle"></i> Mengisi ini akan mengupdate status pembayaran asuransi menjadi Lunas.
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Setor <span class="text-danger">*</span></label>
+                            <input type="date" name="insurance_paid_at" class="form-control" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jumlah Disetor (Rp) <span class="text-danger">*</span></label>
+                            <input type="number" name="insurance_paid_amount" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-info text-white">Simpan Setoran</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
         <script>
             $(document).ready(function() {
+                $(document).on('click', '.btn-trigger-client', function() {
+                    let paymentId = $(this).data('id');
+                    let amount = $(this).data('amount');
+                    
+                    // Debugging: Cek apakah ID masuk
+                    // console.log('Client Pay ID:', paymentId);
+
+                    // Set Action URL Form Modal secara dinamis
+                    // Kita ganti placeholder ':id' dengan ID asli
+                    let url = "{{ route('payments.update_client_pay', ':id') }}";
+                    url = url.replace(':id', paymentId);
+                    
+                    // Isi data ke Modal
+                    $('#modalClientPay form').attr('action', url);
+                    $('#modalClientPay input[name="paid_amount"]').val(amount);
+                    
+                    // Tampilkan Modal
+                    $('#modalClientPay').modal('show');
+                });
+
+                // --- 2. HANDLE KLIK TOMBOL 'SETOR ASURANSI' ---
+                $(document).on('click', '.btn-trigger-insurance', function() {
+                    let paymentId = $(this).data('id');
+                    let amount = $(this).data('amount');
+                    
+                    // Debugging: Cek apakah ID masuk
+                    // console.log('Insurance Pay ID:', paymentId);
+
+                    let url = "{{ route('payments.update_insurance_pay', ':id') }}";
+                    url = url.replace(':id', paymentId);
+                    
+                    $('#modalInsurancePay form').attr('action', url);
+                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(amount);
+                    
+                    $('#modalInsurancePay').modal('show');
+                });
+
                 // Konfigurasi Awal
                 const totalPremi = {{ $payment->amount ?? 0 }};
                 const commissionPercent = {{ $card->commision_percentages ?? 0 }};
@@ -636,19 +858,68 @@
                 }
             });
             
-            // Function Print (Tetap sama)
+            // Function Print Laporan
             function printTableOnly() {
+                // 1. Ambil Judul & Data Client
                 var objectName = "{{ strtoupper($policy->object->name ?? '-') }}";
                 var policyNo = "{{ $policy->policy_number ?? '-' }}";
                 var clientName = "{{ $client->user->name ?? $client->id_name ?? '-' }}";
+                
+                // 2. Ambil Tabel
                 var tableHTML = document.getElementById('paymentTable').outerHTML;
+                
+                // 3. Buka Jendela Print
                 var win = window.open('', '', 'height=700,width=900');
+                
                 win.document.write('<html><head><title>Print Laporan</title>');
-                win.document.write('<style>body{font-family:Arial,sans-serif;padding:20px}.table-manual{width:100%;border-collapse:collapse;font-size:10px}.table-manual th,.table-manual td{border:1px solid #000;padding:4px;vertical-align:middle}.table-manual thead th{background-color:#d1d1d1!important;font-weight:700;text-align:center;-webkit-print-color-adjust:exact}.bg-total{background-color:#e9ecef!important;font-weight:700;-webkit-print-color-adjust:exact}.text-end{text-align:right}.text-center{text-align:center}.fw-bold{font-weight:700}@page{size:landscape;margin:10mm}</style>');
-                win.document.write('</head><body><div style="text-align:center;margin-bottom:20px"><h3 style="margin:0">PERHITUNGAN PEMBAYARAN PREMI</h3><p style="margin:5px 0;font-weight:700">'+objectName+'</p></div><table style="width:100%;font-size:11px;margin-bottom:10px;border:none"><tr><td style="border:none"><b>NO POLIS:</b> '+policyNo+'</td><td style="border:none;text-align:right"><b>Client:</b> '+clientName+'</td></tr></table>'+tableHTML+'</body></html>');
+                
+                // --- CSS KHUSUS PRINT ---
+                win.document.write('<style>');
+                win.document.write('body { font-family: Arial, sans-serif; padding: 20px; }');
+                win.document.write('.table-manual { width: 100%; border-collapse: collapse; font-size: 10px; }');
+                win.document.write('.table-manual th, .table-manual td { border: 1px solid #000; padding: 4px; vertical-align: middle; }');
+                win.document.write('.table-manual thead th { background-color: #d1d1d1 !important; font-weight: 700; text-align: center; -webkit-print-color-adjust: exact; }');
+                win.document.write('.bg-total { background-color: #e9ecef !important; font-weight: 700; -webkit-print-color-adjust: exact; }');
+                win.document.write('.text-end { text-align: right; }');
+                win.document.write('.text-center { text-align: center; }');
+                win.document.write('.fw-bold { font-weight: 700; }');
+                
+                // [PENTING] Sembunyikan elemen dengan class no-print (Kolom Aksi)
+                win.document.write('.no-print { display: none !important; }');
+                
+                win.document.write('@page { size: landscape; margin: 10mm; }');
+                win.document.write('</style>');
+                // ------------------------
+                
+                win.document.write('</head><body>');
+                
+                // Header Dokumen
+                win.document.write('<div style="text-align:center;margin-bottom:20px">');
+                win.document.write('<h3 style="margin:0">PERHITUNGAN PEMBAYARAN PREMI</h3>');
+                win.document.write('<p style="margin:5px 0;font-weight:700">' + objectName + '</p>');
+                win.document.write('</div>');
+                
+                // Info Client & Polis
+                win.document.write('<table style="width:100%;font-size:11px;margin-bottom:10px;border:none">');
+                win.document.write('<tr>');
+                win.document.write('<td style="border:none"><b>NO POLIS:</b> ' + policyNo + '</td>');
+                win.document.write('<td style="border:none;text-align:right"><b>Client:</b> ' + clientName + '</td>');
+                win.document.write('</tr>');
+                win.document.write('</table>');
+                
+                // Tabel Utama
+                win.document.write(tableHTML);
+                
+                win.document.write('</body></html>');
+                
                 win.document.close();
                 win.focus();
-                setTimeout(function(){win.print();win.close()},500);
+                
+                // Delay sedikit biar style ke-load
+                setTimeout(function() {
+                    win.print();
+                    win.close(); 
+                }, 500);
             }
         </script>
         

@@ -64,6 +64,8 @@ Route::group(['middleware' => ['auth:web']], function () {
     // Route resource diletakkan di bawahnya
     Route::resource('payments', PaymentController::class);
     Route::post('payments/{payment}/update-installments', [PaymentController::class, 'updateInstallments'])->name('payments.updateInstallments');
+    Route::put('payments/{payment}/client-pay', [PaymentController::class, 'updateClientPay'])->name('payments.update_client_pay');
+    Route::put('payments/{payment}/insurance-pay', [PaymentController::class, 'updateInsurancePay'])->name('payments.update_insurance_pay');
 
 
     // Add missing resources referenced in sidebar

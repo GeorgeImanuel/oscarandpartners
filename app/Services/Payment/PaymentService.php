@@ -11,4 +11,8 @@ interface PaymentService extends BaseService{
     public function getByCardId($cardId);
 
     public function getOverduePayments();
+
+    public function processClientPayment($id, array $data);
+    
+    public function processInsurancePayment($id, array $data);
 }

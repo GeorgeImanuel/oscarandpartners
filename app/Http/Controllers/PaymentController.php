@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateInstallmentsRequest;
+use App\Http\Requests\UpdateClientPaymentRequest;
+use App\Http\Requests\UpdateInsurancePaymentRequest;
 use App\Services\Payment\PaymentService;
 use App\Services\Card\CardService;
 use App\Services\User\UserService;
@@ -139,10 +141,30 @@ class PaymentController extends Controller
         }
     }
 
-    // Di PaymentController.php, ganti isi function overdue sementara:
+    public function updateClientPay(UpdateClientPaymentRequest $request, string $id)
+    {
+        try {
+            // Panggil service processClientPayment dengan data yang sudah divalidasi
+            $this->paymentService->processClientPayment($id, $request->validated());
 
-// app/Http/Controllers/PaymentController.php
+            return redirect()->back()->with('success', 'Pembayaran Nasabah berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
 
+    public function updateInsurancePay(UpdateInsurancePaymentRequest $request, string $id)
+    {
+        try {
+            // Panggil service processInsurancePayment dengan data yang sudah divalidasi
+            $this->paymentService->processInsurancePayment($id, $request->validated());
+
+            return redirect()->back()->with('success', 'Pembayaran Asuransi berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+    
     public function overdue()
     {
         // Mengambil data dari Service (yang sudah difilter di Repository)

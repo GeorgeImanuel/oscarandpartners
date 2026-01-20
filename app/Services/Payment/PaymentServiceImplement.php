@@ -4,6 +4,7 @@ namespace App\Services\Payment;
 
 use LaravelEasyRepository\Service;
 use App\Repositories\Payment\PaymentRepository;
+use Illuminate\Http\UploadedFile;
 
 class PaymentServiceImplement extends Service implements PaymentService{
 
@@ -66,5 +67,23 @@ class PaymentServiceImplement extends Service implements PaymentService{
     public function getOverduePayments()
     {
         return $this->mainRepository->getOverduePayments();
+    }
+
+    public function processClientPayment($id, array $data) // Hapus parameter $file
+    {
+        // Langsung set status lunas
+        $data['payment_status_id'] = 2; 
+
+        // Update ke database
+        return $this->mainRepository->update($id, $data);
+    }
+
+    public function processInsurancePayment($id, array $data) // Hapus parameter $file
+    {
+        // Langsung set status lunas
+        $data['insurance_payment_status_id'] = 2;
+
+        // Update ke database
+        return $this->mainRepository->update($id, $data);
     }
 }

@@ -60,4 +60,6 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
         ->latest()
         ->get();
     }
+
+    
 }
