@@ -11,9 +11,10 @@ return new class extends Migration
         Schema::create('objects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('object_occupation_id')
-                  ->constrained('object_occupation')
-                  ->onDelete('cascade'); // Jenis Objek
+                ->constrained('object_occupation')
+                ->onDelete('cascade'); // Jenis Objek
             $table->string('name'); // Nama Tertanggung
+            $table->integer('tjh_value')->nullable(); // Nilai TJH
             $table->text('keterangan'); // Alamat / Jenis Kendaraan
             $table->timestamps();
         });
