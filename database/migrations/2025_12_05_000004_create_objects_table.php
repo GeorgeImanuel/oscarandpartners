@@ -15,6 +15,7 @@ return new class extends Migration
                   ->onDelete('cascade'); // Jenis Objek
             $table->string('name'); // Nama Tertanggung
             $table->text('keterangan'); // Alamat / Jenis Kendaraan
+            $table->decimal('tjh', 20, 2)->default(0)->nullable();
             $table->timestamps();
         });
     }

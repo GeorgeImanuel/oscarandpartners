@@ -76,6 +76,7 @@ class ObjectServiceImplement extends Service implements ObjectService
         $object = $this->mainRepository->create([
             'object_occupation_id' => $occupationId,
             'name' => $data['name'],
+            'tjh'  => $data['tjh'] ?? 0,
             'keterangan' => $data['keterangan'] ?? null,
         ]);
 
@@ -131,6 +132,7 @@ class ObjectServiceImplement extends Service implements ObjectService
         $updated = $this->mainRepository->update($id, [
             'object_occupation_id' => $occupationId,
             'name' => $data['name'],
+            'tjh'  => $data['tjh'] ?? $object->tjh,
             'keterangan' => $data['keterangan'] ?? null,
         ]);
 

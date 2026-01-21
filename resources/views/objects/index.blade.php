@@ -50,6 +50,7 @@
 										<th>No</th>
 										<th>Objek Occupation</th>
 										<th>Nama</th>
+										<th>TJH</th>
 										<th>Keterangan</th>
 										<th>Actions</th>
 									</tr>
@@ -60,6 +61,7 @@
 											<td>{{ $index + 1 }}</td>
 											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 											<td>{{ $object->name }}</td>
+											<td>Rp {{ number_format($object->tjh ?? 0, 2, ',', '.') }}</td>
 											<td>{{ $object->keterangan }}</td>
 											<td>
 												<div style="white-space: nowrap;">
