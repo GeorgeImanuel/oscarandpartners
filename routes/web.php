@@ -15,6 +15,7 @@ use App\Http\Controllers\ObjectOccupationController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\ReportController;
 use App\Models\Relation;
 use App\Models\Payment;
 
@@ -79,6 +80,9 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('claims', ClaimController::class);
+
+    Route::get('/reports/evaluation', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.evaluation');
+    Route::get('/reports/evaluation/data', [App\Http\Controllers\ReportController::class, 'evaluation'])->name('reports.data');
 });
 
 
