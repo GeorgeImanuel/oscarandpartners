@@ -917,6 +917,12 @@
                     } else {
                         container.html('<div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>');
                     }
+                    var selectedOption = $('#policy_id').find('option:selected');
+                    var currencyCode = selectedOption.data('currency');
+                    
+                    if (typeof updateCurrencyLabel === "function") {
+                        updateCurrencyLabel(currencyCode);
+                    }
                 });
 
                 Livewire.on('coveragesLoaded', (event) => {
