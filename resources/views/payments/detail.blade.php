@@ -198,7 +198,8 @@
                             </div>
                         </div>
 
-                        @if($card->payment_type_id == 1)
+                        {{-- HANYA TAMPIL JIKA TIPE = 1 (CASH) DAN STATUS BELUM LUNAS (!= 2) --}}
+                        @if($card->payment_type_id == 1 && $payment->payment_status_id != 2)
                         <div class="row mb-3 no-print">
                             <div class="col-12">
                                 {{-- Hapus bg-light, tambah shadow-sm dan card-header biar tegas --}}
