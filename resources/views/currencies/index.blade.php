@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Mata Uang</h5>
-                        <a href="{{ route('currencies.create') }}" class="btn btn-primary mb-3 float-end">Tambah Mata Uang</a>
+                        <a href="{{ route('currencies.create') }}" class="btn btn-primary mb-3 float-end"><i class="icon-plus me-2"></i>Tambah Mata Uang</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -39,11 +39,11 @@
                                             <td>{{ $currency->code }}</td>
                                             <td>{{ $currency->name }}</td>
                                             <td>
-                                                <a class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('currencies.edit', $currency->code) }}">Edit</a>
-                                                <br><form action="{{ route('currencies.destroy', $currency->code) }}" method="POST" style="display:inline;">
+                                                <a class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('currencies.edit', $currency->code) }}"><i class="icon-pencil me-2"></i>Edit</a>
+                                                <form action="{{ route('currencies.destroy', $currency->code) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
                                                 </form>
                                             </td>
                                         </tr>

@@ -93,7 +93,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Komponen Objek (Interests)</h5>
                     <button type="button" class="btn btn-primary btn-sm" id="add-interest-btn">
-                        <i class="fa fa-plus"></i> Tambah Interest
+                        <i class="icon-plus me-2"></i>Tambah Interest
                     </button>
                 </div>
                 <div class="card-body">

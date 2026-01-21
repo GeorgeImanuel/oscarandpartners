@@ -80,7 +80,7 @@
                     class="btn btn-primary btn-sm add-item-btn float-end mt-4"
                     class="add-item-btn"
                     data-target="item-1">
-                    <i class="fa fa-plus"></i> Tambah Asuransi
+                    <i class="icon-plus me-2"></i>Tambah Asuransi
                 </button>
             </div>
         </div>

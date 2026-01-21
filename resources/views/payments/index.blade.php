@@ -55,7 +55,7 @@
                                         <th class="text-center">Sts. Asuransi</th>
                                         
                                         <th>Tipe Pembayaran</th>
-                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center"width="10%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,7 +112,7 @@
                                             
                                             <td class="text-center">
                                                 <a href="{{ route('payments.show', $payment->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
-                                                    <i class="fa fa-eye"></i> Detail
+                                                    <i class="icon-eye me-2"></i>Detail
                                                 </a>
                                             </td>
                                         </tr>

@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Asuransi</h5>
-                        <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end">Tambah Asuransi</a>
+                        <a href="{{ route('insurances.create') }}" class="btn btn-primary mb-3 float-end"><i class="icon-plus me-2"></i>Tambah Asuransi</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -36,11 +36,11 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $insurance->name }}</td>
                                             <td>
-                                                <a href="{{ route('insurances.edit', $insurance->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <a href="{{ route('insurances.edit', $insurance->id) }}" class="btn btn-warning btn-sm"><i class="icon-pencil me-2"></i>Edit</a>
                                                 <form action="{{ route('insurances.destroy', $insurance->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
                                                 </form>
                                             </td>
                                         </tr>

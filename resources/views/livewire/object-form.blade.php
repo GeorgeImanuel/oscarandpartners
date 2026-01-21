@@ -52,7 +52,7 @@
         <button type="button"
             class="btn btn-primary btn-sm float-end add-item-btn"
             data-target="object-interest-item">
-            <i class="fa fa-plus"></i> Tambah Bagian
+            <i class="icon-plus me-2"></i>Tambah Bagian
         </button>
         <div class="item-list pt-2">
             <div class="mt-2 px-3 py-3 border rounded item object-interest-item">

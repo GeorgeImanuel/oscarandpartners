@@ -24,7 +24,7 @@
 						<div class="d-flex justify-content-between align-items-center">
 							<h5>Objek Interest</h5>
 							<a href="{{ route('interests.create') }}" class="btn btn-primary">
-								<i class="fa fa-plus"></i> Tambah Interest
+								<i class="icon-plus me-2"></i>Tambah Interest
 							</a>
 						</div>
 					</div>
@@ -60,13 +60,13 @@
 											<td>
 												<div style="white-space: nowrap;">
 													<a href="{{ route('interests.edit', $interest->id) }}" class="btn btn-warning btn-sm me-2" title="Edit">
-														<i class="fa fa-edit"></i> <span class="fw-medium">Edit</span>
+														<i class="fa fa-edit"></i> <span class="fw-medium"><i class="icon-pencil me-2"></i>Edit</span>
 													</a>
 													<form action="{{ route('interests.destroy', $interest->id) }}" method="POST" style="display: inline">
 														@csrf
 														@method('DELETE')
-														<button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)" title="Hapus">
-															<i class="fa fa-trash"></i> <span class="fw-medium">Delete</span>
+														<button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)" title="Hapus">
+															<i class="fa fa-trash"></i> <span class="fw-medium"><i class="icon-trash me-2"></i>Delete</span>
 														</button>
 													</form>
 												</div>

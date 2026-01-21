@@ -114,7 +114,7 @@
                                             <td>
                                                 <div style="white-space: nowrap;">
                                                     <a href="{{ route('cards.show', $card->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
-                                                        <i class="fa fa-eye"></i> Detail
+                                                        <i class="icon-eye me-2"></i>Detail
                                                     </a>
                                                     <a href="{{ route('cards.edit', $card->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
                                                         <i class="fa fa-edit"></i> Edit
@@ -122,7 +122,7 @@
                                                     <form action="{{ route('cards.destroy', $card->id) }}" method="POST" style="display: inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+                                                        <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
                                                     </form>
                                                 </div>
                                             </td>

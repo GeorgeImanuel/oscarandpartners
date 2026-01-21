@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Relasi</h5>
-                        <a href="{{ route('relations.create') }}" class="btn btn-primary float-end">Tambah Relasi</a>
+                        <a href="{{ route('relations.create') }}" class="btn btn-primary float-end"><i class="icon-plus me-2"></i>Tambah Relasi</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -36,11 +36,11 @@
                                             <td>{{ $relation->code }}</td>
                                             <td>{{ $relation->name }}</td>
                                             <td>
-                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('relations.edit', $relation->id) }}">Edit</a>
+                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('relations.edit', $relation->id) }}"><i class="icon-pencil me-2"></i>Edit</a>
                                                 <form action="{{ route('relations.destroy', $relation->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
                                                 </form>
                                             </td>
                                         </tr>

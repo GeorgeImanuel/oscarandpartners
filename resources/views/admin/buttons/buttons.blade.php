@@ -121,7 +121,7 @@
                         <button class="btn btn-success btn-sm" type="button">Success Button</button>
                         <button class="btn btn-info btn-sm" type="button">Info Button</button>
                         <button class="btn btn-warning btn-sm" type="button">Warning Button</button>
-                        <button class="btn btn-danger btn-sm" type="button">Danger Button</button>
+                        <button class="btn btn-danger btn-xs" type="button">Danger Button</button>
                         <button class="btn btn-light btn-sm" type="button">Light Button</button>
                         <div class="code-box-copy">
                             <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head2" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
@@ -131,7 +131,7 @@
     &lt;button type="button" class="btn btn-success btn-sm"&gt;Success button&lt;/button&gt;
     &lt;button type="button" class="btn btn-info btn-sm"&gt;Info button&lt;/button&gt;
     &lt;button type="button" class="btn btn-warning btn-sm"&gt;warning button&lt;/button&gt;
-    &lt;button type="button" class="btn btn-danger btn-sm"&gt;danger button&lt;/button&gt;
+    &lt;button type="button" class="btn btn-danger btn-xs"&gt;danger button&lt;/button&gt;
     &lt;button type="button" class="btn btn-light btn-sm"&gt;light button&lt;/button&gt; 
     &lt;!-- Cod Box Copy end --&gt;</code></pre>
                         </div>

@@ -58,11 +58,11 @@
 	                                    <td>{{ $client->id_address ?? '-' }}</td>
 	                                    <td>{{ $client->relation ? $client->relation->name : '-' }}</td>
 	                                    <td style="white-space: nowrap;">
-	                                        <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-warning">Edit</a>
+	                                        <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-warning"><i class="icon-pencil me-2"></i>Edit</a>
 	                                        <form action="{{ route('clients.destroy', $client) }}" method="POST" style="display:inline-block;">
 	                                            @csrf
 	                                            @method('DELETE')
-	                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this client?')">Delete</button>
+	                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this client?')"><i class="icon-trash me-2"></i>Delete</button>
 	                                        </form>
 	                                    </td>
 	                                </tr>

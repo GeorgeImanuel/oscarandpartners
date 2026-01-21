@@ -34,19 +34,19 @@
                         <div class="stepwizard-row setup-panel">
                             <div class="stepwizard-step"><a class="btn btn-primary"
                                     href="#step-1">1</a>
-                                <p>Detail Kartu Produksi</p>
+                                <p><i class="icon-eye me-2"></i>Detail Kartu Produksi</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-2">2</a>
-                                <p>Detail Polis</p>
+                                <p><i class="icon-eye me-2"></i>Detail Polis</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-3">3</a>
-                                <p>Detail Objek</p>
+                                <p><i class="icon-eye me-2"></i>Detail Objek</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-4">4</a>
-                                <p>Detail Premi & Komisi</p>
+                                <p><i class="icon-eye me-2"></i>Detail Premi & Komisi</p>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                         class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12 mt-3">
-                                <h5 class="text-primary">Detail Kartu Produksi</h5>
+                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Kartu Produksi</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12 mt-3">
@@ -148,7 +148,7 @@
                         class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <h5 class="text-primary">Detail Polis</h5>
+                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Polis</h5>
                                 <hr class="separator">
                             </div>
                             <div id="policy-details-container"
@@ -198,7 +198,7 @@
                         class="setup-content">
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <h5 class="text-primary">Detail Objek</h5>
+                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Objek</h5>
                                 <hr class="separator">
                             </div>
                             <div class="col-md-12">
