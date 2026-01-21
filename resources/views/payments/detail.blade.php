@@ -300,7 +300,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 text-end">
-                                            <div class="alert alert-warning mb-0 py-2 text-end border-warning">
+                                            <div class="alert alert-light mb-0 py-2 text-end">
                                                 Total Nilai: <strong id="total-amount-display">Rp 0</strong>
                                             </div>
                                         </div>
@@ -555,90 +555,61 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
-                $(document).on('click', '.btn-trigger-client', function() {
-                    let paymentId = $(this).data('id');
-                    let amount = $(this).data('amount');
-                    
-                    // Debugging: Cek apakah ID masuk
-                    // console.log('Client Pay ID:', paymentId);
-
-                    // Set Action URL Form Modal secara dinamis
-                    // Kita ganti placeholder ':id' dengan ID asli
-                    let url = "{{ route('payments.update_client_pay', ':id') }}";
-                    url = url.replace(':id', paymentId);
-                    
-                    // Isi data ke Modal
-                    $('#modalClientPay form').attr('action', url);
-                    $('#modalClientPay input[name="paid_amount"]').val(amount);
-                    
-                    // Tampilkan Modal
-                    $('#modalClientPay').modal('show');
-                });
-
-                // --- 2. HANDLE KLIK TOMBOL 'SETOR ASURANSI' ---
-                $(document).on('click', '.btn-trigger-insurance', function() {
-                    let paymentId = $(this).data('id');
-                    let amount = $(this).data('amount');
-                    
-                    // Debugging: Cek apakah ID masuk
-                    // console.log('Insurance Pay ID:', paymentId);
-
-                    let url = "{{ route('payments.update_insurance_pay', ':id') }}";
-                    url = url.replace(':id', paymentId);
-                    
-                    $('#modalInsurancePay form').attr('action', url);
-                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(amount);
-                    
-                    $('#modalInsurancePay').modal('show');
-                });
-
-                // Konfigurasi Awal
-                const totalPremi = {{ $payment->amount ?? 0 }};
+                // --- 1. DEFINISI VARIABEL & STATUS ---
+                // Pastikan totalPremi dibaca sebagai Angka (Float), bukan string error
+                const rawAmount = "{{ $payment->amount ?? 0 }}";
+                const totalPremi = parseFloat(rawAmount) || 0;
+                
                 const commissionPercent = {{ $card->commision_percentages ?? 0 }};
                 const totalTax = {{ $card->tax ?? 0 }};
+                
+                // Variabel untuk menghitung persentase pajak per item (jika perlu)
+                // Asumsi: Pajak dipukul rata proporsional, atau sesuaikan rumus Anda
+                const taxPercent = (totalPremi > 0) ? (totalTax / totalPremi) : 0;
 
-                // 1. Inisialisasi Tampilan Awal
+                // Status Lock dari PHP
+                const isPaymentLocked = {{ isset($payment) && $payment->payment_status_id == 2 ? 'true' : 'false' }};
+                
+                // --- 2. INIT HALAMAN ---
+                // Jalankan pengecekan awal saat halaman dimuat
                 checkPaymentType();
 
-                // 2. Handler Ganti Tipe Pembayaran
+                // --- 3. HANDLER UTAMA ---
+                
+                // Ganti Tipe Pembayaran
                 $('#payment-type-select').on('change', function() {
                     checkPaymentType();
                 });
 
-                // 3. Handler Input Jumlah Cicilan (Generator Otomatis)
+                // Input Jumlah Cicilan (Generate Otomatis)
                 $('#installment-count').on('input change', function() {
+                    if(isPaymentLocked) return; // Cegah edit jika lunas
+
                     let count = parseInt($(this).val()) || 0;
                     if (count < 1) count = 1;
                     
-                    // Generate ulang item sesuai jumlah baru
+                    // Generate ulang item
                     generateInstallmentItems(count);
                 });
 
-                // 4. Handler Tombol TAMBAH MANUAL
-                $('#add-installment-btn').on('click', function() {
-                    // Tambah 1 baris kosong
+                // Tombol Tambah Manual
+                $(document).on('click', '#add-installment-btn', function() {
                     addInstallmentRow(0); 
-                    
-                    // Update state (Input Jumlah ikut nambah)
                     syncInstallmentState();
                 });
 
-                // 5. Handler Tombol HAPUS MANUAL
+                // Tombol Hapus Manual
                 $(document).on('click', '.remove-installment-btn', function() {
                     const rowCount = $('#installments-container .installment-row').length;
                     if (rowCount <= 1) {
                         Swal.fire('Minimal 1 cicilan!', '', 'warning');
                         return;
                     }
-
-                    // Hapus baris ini
                     $(this).closest('.installment-row').remove();
-                    
-                    // Update state (Input Jumlah ikut kurang & Renumbering)
                     syncInstallmentState();
                 });
 
-                // 6. Handler Hitung Otomatis saat Nilai Rupiah diketik
+                // Hitung Otomatis saat Nilai Rupiah diketik manual
                 $(document).on('input', '.installment-amount', function() {
                     const $row = $(this).closest('.installment-row');
                     const amount = parseFloat($(this).val()) || 0;
@@ -646,108 +617,23 @@
                     updateTotalDisplay();
                 });
 
-                // 7. Handler SIMPAN PERUBAHAN (AJAX Save)
-                $('#apply-installments-btn').on('click', function() {
-                    const $btn = $(this);
-                    const originalText = $btn.html();
-                    
-                    // Validasi: Cek apakah ada installment
-                    const rows = $('#installments-container .installment-row');
-                    if (rows.length === 0) {
-                        Swal.fire('Error', 'Tidak ada cicilan untuk disimpan!', 'error');
-                        return;
-                    }
-
-                    // Confirm save
-                    Swal.fire({
-                        title: 'Simpan Perubahan?',
-                        html: `Ini akan mengupdate pembayaran cicilan.<br><strong>Total: ${rows.length} cicilan</strong>`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#28a745',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Ya, Simpan!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Disable button & show loading
-                            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
-
-                            // Collect data
-                            const installments = [];
-                            rows.each(function() {
-                                installments.push({
-                                    amount: parseFloat($(this).find('.installment-amount').val()) || 0,
-                                    due_date: $(this).find('.installment-due-date').val()
-                                });
-                            });
-
-                            const paymentTypeId = $('#payment-type-select').val();
-
-                            // Send AJAX
-                            $.ajax({
-                                url: '{{ route("payments.updateInstallments", $payment->id) }}',
-                                method: 'POST',
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    payment_type_id: paymentTypeId,
-                                    installments: installments
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        Swal.fire({
-                                            title: 'Berhasil!',
-                                            text: response.message,
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                            // Redirect ke index payments
-                                            window.location.href = '{{ route("payments.index") }}';
-                                        });
-                                    } else {
-                                        throw new Error(response.message || 'Gagal menyimpan');
-                                    }
-                                },
-                                error: function(xhr) {
-                                    let errorMsg = 'Terjadi kesalahan saat menyimpan';
-                                    
-                                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                                        errorMsg = xhr.responseJSON.message;
-                                    }
-                                    
-                                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                                        const errors = xhr.responseJSON.errors;
-                                        errorMsg += '<br><ul style="text-align:left">';
-                                        Object.keys(errors).forEach(key => {
-                                            errorMsg += `<li>${errors[key][0]}</li>`;
-                                        });
-                                        errorMsg += '</ul>';
-                                    }
-
-                                    Swal.fire('Gagal!', errorMsg, 'error');
-                                },
-                                complete: function() {
-                                    // Re-enable button
-                                    $btn.prop('disabled', false).html(originalText);
-                                }
-                            });
-                        }
-                    });
-                });
-
-                // --- FUNGSI-FUNGSI BANTUAN ---
+                // --- 4. LOGIC CORE (PERBAIKAN DISINI) ---
 
                 function checkPaymentType() {
-                    const selectedType = $('#payment-type-select option:selected').data('name');
+                    // Ambil data-name dengan .attr agar lebih konsisten
+                    const selectedOption = $('#payment-type-select option:selected');
+                    const selectedType = (selectedOption.attr('data-name') || '').toLowerCase();
                     
-                    if (selectedType === 'installment' || selectedType === 'cicilan') {
+                    // Cek apakah tipe mengandung kata 'installment' atau 'cicilan'
+                    if (selectedType.includes('installment') || selectedType.includes('cicilan')) {
                         $('#installment-section').slideDown();
-                        
-                        // Jika container kosong, generate sesuai input yang ada
-                        if ($('#installments-container').children().length === 0) {
-                            $('#installment-count').trigger('change');
-                        }
                         $('#installment-items-section').slideDown();
+                        
+                        // FIX: Jika container kosong, PAKSA generate otomatis berdasarkan jumlah cicilan
+                        if ($('#installments-container').children().length === 0) {
+                            let currentCount = parseInt($('#installment-count').val()) || 1;
+                            generateInstallmentItems(currentCount);
+                        }
                     } else {
                         $('#installment-section').slideUp();
                         $('#installment-items-section').slideUp();
@@ -756,8 +642,14 @@
 
                 function generateInstallmentItems(count) {
                     $('#installments-container').empty();
-                    const amountPerInstallment = totalPremi / count;
                     
+                    // Hitung pembagian rata
+                    // Hati-hati pembagian koma, kita bulatkan 2 desimal atau round
+                    let amountPerInstallment = totalPremi / count;
+                    
+                    // Opsional: Bulatkan ke bawah agar rapi, sisa ditaruh di akhir (logic sederhana dulu)
+                    // amountPerInstallment = Math.floor(amountPerInstallment); 
+
                     for (let i = 0; i < count; i++) {
                         addInstallmentRow(amountPerInstallment);
                     }
@@ -765,13 +657,17 @@
                 }
 
                 function addInstallmentRow(amount = 0) {
-                    // Hitung index sementara berdasarkan jumlah elemen yg ada
                     const newIndex = $('#installments-container .installment-row').length + 1;
                     
-                    // Hitung tanggal jatuh tempo (Default +30 hari per cicilan)
+                    // Hitung due date (+30 hari per index)
                     const today = new Date();
                     today.setDate(today.getDate() + (newIndex * 30));
                     const dueDate = today.toISOString().split('T')[0];
+
+                    // Status Disabled jika Locked
+                    const disabledAttr = isPaymentLocked ? 'disabled style="background-color: #eee;"' : '';
+                    const removeBtnHtml = '';
+                    const colClass = isPaymentLocked ? 'col-md-4' : 'col-md-3';
 
                     const html = `
                         <div class="installment-row mb-2 p-3 bg-white border rounded shadow-sm">
@@ -782,13 +678,13 @@
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">Nilai (Rp)</label>
                                     <input type="number" class="form-control fw-bold installment-amount" 
-                                        value="${amount.toFixed(0)}" min="0">
+                                        value="${amount.toFixed(2)}" min="0" ${disabledAttr}>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small text-muted">Jatuh Tempo</label>
-                                    <input type="date" class="form-control installment-due-date" value="${dueDate}">
+                                    <input type="date" class="form-control installment-due-date" value="${dueDate}" ${disabledAttr}>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="${colClass}">
                                     <div class="row g-0">
                                         <div class="col-4 px-1">
                                             <label class="small text-muted d-block">Komisi</label>
@@ -804,37 +700,31 @@
                                         </div>
                                     </div>
                                 </div>
+                                ${removeBtnHtml}
                             </div>
                         </div>
                     `;
                     
                     $('#installments-container').append(html);
                     
-                    // Hitung ulang nilai baris baru ini
+                    // Hitung rincian baris ini langsung
                     const $newRow = $('#installments-container .installment-row').last();
                     calculateRowValues($newRow, amount);
                 }
 
-                // Fungsi Sync Penting: Agar input manual dan input angka sinkron
                 function syncInstallmentState() {
                     const rows = $('#installments-container .installment-row');
-                    const count = rows.length;
-
-                    // 1. Update Input Angka di atas
-                    $('#installment-count').val(count);
-
-                    // 2. Update Label Urutan (Renumbering Cicilan #1, #2, dst)
+                    $('#installment-count').val(rows.length);
+                    
                     rows.each(function(index) {
                         $(this).find('.installment-label').text(`Cicilan #${index + 1}`);
                     });
-
-                    // 3. Update Total di bawah
                     updateTotalDisplay();
                 }
 
                 function calculateRowValues($row, amount) {
                     const commission = amount * commissionPercent;
-                    const tax = amount * taxPercent;
+                    const tax = amount * taxPercent; 
                     const netto = amount - commission - tax;
                     
                     $row.find('.installment-commission').text(formatNumber(commission));
@@ -844,87 +734,129 @@
 
                 function updateTotalDisplay() {
                     const count = $('#installments-container .installment-row').length;
-                    let totalAmount = 0;
+                    let currentTotal = 0;
                     
                     $('#installments-container .installment-amount').each(function() {
-                        totalAmount += parseFloat($(this).val()) || 0;
+                        currentTotal += parseFloat($(this).val()) || 0;
                     });
                     
                     $('#total-installments-display').text(count);
-                    $('#total-amount-display').text('Rp ' + formatNumber(totalAmount));
+                    $('#total-amount-display').text('Rp ' + formatNumber(currentTotal));
+
+                    // Optional: Kasih warning visual jika total tidak match dengan Tagihan
+                    // Gunakan toleransi kecil (epsilon) untuk komparasi float
+                    if (Math.abs(currentTotal - totalPremi) > 100) { 
+                        $('#total-amount-display').addClass('text-danger').removeClass('text-dark');
+                    } else {
+                        $('#total-amount-display').removeClass('text-danger').addClass('text-dark');
+                    }
                 }
 
                 function formatNumber(num) {
-                    return new Intl.NumberFormat('id-ID').format(num);
+                    return new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(num);
                 }
+
+                // --- 5. AJAX SIMPAN ---
+                $('#apply-installments-btn').on('click', function() {
+                    const $btn = $(this);
+                    const originalText = $btn.html();
+                    
+                    const rows = $('#installments-container .installment-row');
+                    if (rows.length === 0) {
+                        Swal.fire('Error', 'Tidak ada cicilan untuk disimpan!', 'error');
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Simpan Perubahan?',
+                        html: `Ini akan mengupdate pembayaran cicilan.<br><strong>Total: ${rows.length} cicilan</strong>`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Simpan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+
+                            const installments = [];
+                            rows.each(function() {
+                                installments.push({
+                                    amount: parseFloat($(this).find('.installment-amount').val()) || 0,
+                                    due_date: $(this).find('.installment-due-date').val()
+                                });
+                            });
+
+                            const paymentTypeId = $('#payment-type-select').val();
+
+                            $.ajax({
+                                url: '{{ route("payments.updateInstallments", $payment->id) }}',
+                                method: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    payment_type_id: paymentTypeId,
+                                    installments: installments
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                                            window.location.href = '{{ route("payments.index") }}';
+                                        });
+                                    } else {
+                                        throw new Error(response.message || 'Gagal menyimpan');
+                                    }
+                                },
+                                error: function(xhr) {
+                                    let errorMsg = xhr.responseJSON?.message || 'Terjadi kesalahan saat menyimpan';
+                                    Swal.fire('Gagal!', errorMsg, 'error');
+                                },
+                                complete: function() {
+                                    $btn.prop('disabled', false).html(originalText);
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Handler Modal Client & Insurance (Biarkan tetap ada)
+                $(document).on('click', '.btn-trigger-client', function() {
+                    let paymentId = $(this).data('id');
+                    let amount = $(this).data('amount');
+                    let url = "{{ route('payments.update_client_pay', ':id') }}".replace(':id', paymentId);
+                    $('#modalClientPay form').attr('action', url);
+                    $('#modalClientPay input[name="paid_amount"]').val(amount);
+                    $('#modalClientPay').modal('show');
+                });
+
+                $(document).on('click', '.btn-trigger-insurance', function() {
+                    let paymentId = $(this).data('id');
+                    let amount = $(this).data('amount');
+                    let url = "{{ route('payments.update_insurance_pay', ':id') }}".replace(':id', paymentId);
+                    $('#modalInsurancePay form').attr('action', url);
+                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(amount);
+                    $('#modalInsurancePay').modal('show');
+                });
             });
-            
+
             // Function Print Laporan
             function printTableOnly() {
-                // 1. Ambil Judul & Data Client
                 var objectName = "{{ strtoupper($policy->object->name ?? '-') }}";
                 var policyNo = "{{ $policy->policy_number ?? '-' }}";
                 var clientName = "{{ $client->user->name ?? $client->id_name ?? '-' }}";
-                
-                // 2. Ambil Tabel
                 var tableHTML = document.getElementById('paymentTable').outerHTML;
-                
-                // 3. Buka Jendela Print
                 var win = window.open('', '', 'height=700,width=900');
                 
                 win.document.write('<html><head><title>Print Laporan</title>');
-                
-                // --- CSS KHUSUS PRINT ---
-                win.document.write('<style>');
-                win.document.write('body { font-family: Arial, sans-serif; padding: 20px; }');
-                win.document.write('.table-manual { width: 100%; border-collapse: collapse; font-size: 10px; }');
-                win.document.write('.table-manual th, .table-manual td { border: 1px solid #000; padding: 4px; vertical-align: middle; }');
-                win.document.write('.table-manual thead th { background-color: #d1d1d1 !important; font-weight: 700; text-align: center; -webkit-print-color-adjust: exact; }');
-                win.document.write('.bg-total { background-color: #e9ecef !important; font-weight: 700; -webkit-print-color-adjust: exact; }');
-                win.document.write('.text-end { text-align: right; }');
-                win.document.write('.text-center { text-align: center; }');
-                win.document.write('.fw-bold { font-weight: 700; }');
-                
-                // [PENTING] Sembunyikan elemen dengan class no-print (Kolom Aksi)
-                win.document.write('.no-print { display: none !important; }');
-                
-                win.document.write('@page { size: landscape; margin: 10mm; }');
-                win.document.write('</style>');
-                // ------------------------
-                
+                win.document.write('<style>body{font-family:Arial,sans-serif;padding:20px}.table-manual{width:100%;border-collapse:collapse;font-size:10px}.table-manual th,.table-manual td{border:1px solid #000;padding:4px;vertical-align:middle}.table-manual thead th{background-color:#d1d1d1!important;font-weight:700;text-align:center}.text-end{text-align:right}.text-center{text-align:center}.fw-bold{font-weight:700}.no-print{display:none!important}@page{size:landscape;margin:10mm}</style>');
                 win.document.write('</head><body>');
-                
-                // Header Dokumen
-                win.document.write('<div style="text-align:center;margin-bottom:20px">');
-                win.document.write('<h3 style="margin:0">PERHITUNGAN PEMBAYARAN PREMI</h3>');
-                win.document.write('<p style="margin:5px 0;font-weight:700">' + objectName + '</p>');
-                win.document.write('</div>');
-                
-                // Info Client & Polis
-                win.document.write('<table style="width:100%;font-size:11px;margin-bottom:10px;border:none">');
-                win.document.write('<tr>');
-                win.document.write('<td style="border:none"><b>NO POLIS:</b> ' + policyNo + '</td>');
-                win.document.write('<td style="border:none;text-align:right"><b>Client:</b> ' + clientName + '</td>');
-                win.document.write('</tr>');
-                win.document.write('</table>');
-                
-                // Tabel Utama
+                win.document.write('<div style="text-align:center;margin-bottom:20px"><h3 style="margin:0">PERHITUNGAN PEMBAYARAN PREMI</h3><p style="margin:5px 0;font-weight:700">'+objectName+'</p></div>');
+                win.document.write('<table style="width:100%;font-size:11px;margin-bottom:10px;border:none"><tr><td style="border:none"><b>NO POLIS:</b> '+policyNo+'</td><td style="border:none;text-align:right"><b>Client:</b> '+clientName+'</td></tr></table>');
                 win.document.write(tableHTML);
-                
                 win.document.write('</body></html>');
-                
                 win.document.close();
                 win.focus();
-                
-                // Delay sedikit biar style ke-load
-                setTimeout(function() {
-                    win.print();
-                    win.close(); 
-                }, 500);
+                setTimeout(function(){win.print();win.close();},500);
             }
         </script>
-        
-        {{-- Load SweetAlert2 for notifications --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @endpush
 @endsection
