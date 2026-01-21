@@ -110,7 +110,7 @@
                                 <label class="form-label"
                                     for="client_id">Nama Client</label>
                                 <select id="client_id"
-                                    class="form-control @error('client_id') is-invalid @enderror"
+                                    class="form-control add-select2 @error('client_id') is-invalid @enderror"
                                     data-existing-id="#existing-client"
                                     data-existing-name="client_id"
                                     data-new-id="#new-client"
@@ -170,7 +170,7 @@
                                 <label class="form-label"
                                     for="policy_id">Nomor Polis</label>
                                 <select id="policy_id"
-                                    class="form-control policy-select2 @error('policy_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('policy_id') is-invalid @enderror"
                                     data-existing-id="#existing-policy"
                                     data-existing-name="policy_id"
                                     data-new-id="#new-policy"
@@ -219,7 +219,7 @@
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select id="object_id"
-                                    class="form-control object-select2 @error('object_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('object_id') is-invalid @enderror"
                                     data-existing-id="#existing-object"
                                     data-existing-name="object_id"
                                     data-new-id="#new-object"
@@ -782,7 +782,7 @@
 
             function updateCurrencyLabel(currencyCode) {
                 // Default ke IDR jika kosong
-                var currency = currencyCode || 'IDR';
+                var currency = currencyCode || 'Rp';
 
                 // Update semua label input group
                 $('.currency-label').text(currency);
@@ -792,9 +792,7 @@
                 window.currentCurrency = currency;
             }
 
-            initCustomSelect2("#policy_id");
-            initCustomSelect2("#object_id");
-            initCustomSelect2("#client_id");
+            initCustomSelect2(".create-select2");
             initCustomSelect2(".add-select2");
 
             // Toggle parent_card_id based on card_status_id
