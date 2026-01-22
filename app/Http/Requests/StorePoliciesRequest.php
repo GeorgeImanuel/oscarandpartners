@@ -22,7 +22,9 @@ class StorePoliciesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'object_id' => 'required|exists:objects,id',
+            'object_id'   => 'required|array|min:1',
+            'object_id.*' => 'required|exists:objects,id',
+
             'coverage_id' => 'required|array|min:1',
             'coverage_id.*' => 'required|integer|exists:coverages,id',
             'coverage_percentage' => 'required|array|min:1',
@@ -56,7 +58,8 @@ class StorePoliciesRequest extends FormRequest
             'policy_number.unique' => 'Nomor Polis ini sudah terdaftar.',
             'policy_number.max' => 'Nomor Polis maksimal 255 karakter.',
 
-            'object_id.exists' => 'Objek yang dipilih tidak valid.',
+            'object_id.required' => 'Objek wajib dipilih minimal satu.',
+            'object_id.*.exists' => 'Objek yang dipilih tidak valid.',
 
             'coverage_id.required' => 'Coverage wajib diisi.',
             'coverage_id.*.required' => 'Coverage wajib dipilih.',

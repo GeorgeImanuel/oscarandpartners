@@ -17,7 +17,6 @@ class Policy extends Model
 
     protected $fillable = [
         'policy_number',
-        'object_id',
         'currency_code',
         'started_date',
         'ended_date',
@@ -34,9 +33,14 @@ class Policy extends Model
         return $this->hasOne(Card::class);
     }
 
-    public function object(): BelongsTo
+    public function objects(): BelongsToMany
     {
-        return $this->belongsTo(ObjectModel::class);
+        return $this->belongsToMany(
+            ObjectModel::class, 
+            'policy_objects', 
+            'policy_id',
+            'object_id'       
+        )->withTimestamps();
     }
 
     public function coverages(): BelongsToMany
@@ -80,5 +84,48 @@ class Policy extends Model
     public function insurance(): BelongsToMany
     {
         return $this->mainInsurance();
+    }
+
+    // Accessor untuk backward compatibility dengan code lama yang pakai ->object
+    // Mengembalikan object pertama dari list
+    public function getObjectAttribute()
+    {
+        if (!$this->relationLoaded('objects')) {
+            $this->load('objects.objectOccupation', 'objects.objectInterests.interest');
+        }
+        
+        $firstObject = $this->objects->first();
+        
+        // Jika ada object, tambahkan property tjh (total harga pertanggungan)
+        if ($firstObject) {
+            $firstObject->tjh = $this->getTotalObjectValue();
+        }
+        
+        return $firstObject;
+    }
+
+    // Method untuk get total nilai semua objects di policy ini
+    public function getTotalObjectValue()
+    {
+        if (!$this->relationLoaded('objects')) {
+            $this->load('objects.objectInterests');
+        }
+        
+        $total = 0;
+        foreach ($this->objects as $object) {
+            $total += $object->objectInterests->sum('value');
+        }
+        
+        return $total;
+    }
+
+    // Helper untuk get nama semua objects (comma separated)
+    public function getObjectNamesAttribute()
+    {
+        if (!$this->relationLoaded('objects')) {
+            $this->load('objects');
+        }
+        
+        return $this->objects->pluck('name')->join(', ');
     }
 }

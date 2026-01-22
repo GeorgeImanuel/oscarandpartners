@@ -19,7 +19,9 @@ class UpdatePoliciesRequest extends FormRequest
         // Jika route parameter kamu namanya 'policies', ganti jadi $this->route('policies')
 
         return [
-            'object_id' => 'required|exists:objects,id',
+            'object_id'   => 'required|array|min:1',
+            'object_id.*' => 'required|exists:objects,id',
+
             'coverage_id' => 'required|array|min:1',
             'coverage_id.*' => 'required|integer|exists:coverages,id',
             'coverage_percentage' => 'required|array|min:1',
@@ -51,7 +53,9 @@ class UpdatePoliciesRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'object_id.exists' => 'The selected object is invalid.',
+            'object_id.required' => 'Objek wajib dipilih minimal satu.',
+            'object_id.*.exists' => 'Objek yang dipilih tidak valid.',
+
             'currency_code.exists' => 'Mata uang yang dipilih tidak valid.',
             
             'coverage_id.required' => 'Coverage wajib diisi.',

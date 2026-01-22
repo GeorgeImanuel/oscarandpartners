@@ -41,11 +41,20 @@ class PolicyDetails extends Component
                 return;
             }
 
-            // Emit object data
-            if ($this->policy->object) {
+            // Emit objects data (multiple objects support)
+            if ($this->policy->objects && $this->policy->objects->isNotEmpty()) {
+                // Hitung total nilai dari semua objects
+                $totalObjectValue = $this->policy->getTotalObjectValue();
+                
+                // Get first object for backward compatibility
+                $firstObject = $this->policy->objects->first();
+                
                 $this->dispatch(
                     'policyLoaded',
-                    objectId: $this->policy->object->id
+                    objectId: $firstObject->id,
+                    coverage_percentage: $this->policy->coverage_percentages,
+                    totalObjectValue: $totalObjectValue,
+                    objectsCount: $this->policy->objects->count()
                 );
             }
 

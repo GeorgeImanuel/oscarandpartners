@@ -53,40 +53,44 @@ class PolicyServiceImplement extends Service implements PolicyService
     public function createPolicy(array $data)
     {
         return DB::transaction(function () use ($data) {
+            // Hitung total coverage percentages
+            $totalCoveragePercentages = 0;
+            if (isset($data['coverage_percentage']) && is_array($data['coverage_percentage'])) {
+                foreach ($data['coverage_percentage'] as $percentage) {
+                    $totalCoveragePercentages += floatval($percentage);
+                }
+            }
+
+            // 1. Create Policy Header
             $policy = $this->mainRepository->create([
                 'policy_number' => $data['policy_number'],
-                'object_id' => $data['object_id'] ?? null,
-                'coverage_id' => $data['coverage_id'] ?? null,
-                'coverage_percentage' => $data['coverage_percentage'],
+                'currency_code' => $data['currency_code'] ?? null,
                 'started_date' => $data['started_date'],
                 'ended_date' => $data['ended_date'],
+                'coverage_percentages' => $totalCoveragePercentages / 100, // Convert to decimal
             ]);
 
-            if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
-                $newNames = $data['insurance_new_name'] ?? [];
-                $isMains = $data['is_main'] ?? [];
-                $percentages = $data['percentage'] ?? [];
+            // 2. Attach Objects (Many-to-Many)
+            if (isset($data['object_id']) && is_array($data['object_id'])) {
+                $policy->objects()->sync(array_filter($data['object_id']));
+            }
 
-                foreach ($data['insurance_id'] as $index => $insuranceId) {
-                    $newName = $newNames[$index] ?? null;
-
-                    if (!empty($insuranceId) || !empty($newName)) {
-                        $isMain = isset($isMains[$index]) ? (bool)$isMains[$index] : false;
-                        $percentage = isset($percentages[$index]) ? floatval($percentages[$index]) : 0;
-
-                        if (empty($insuranceId) && !empty($newName)) {
-                            $insurance = Insurance::firstOrCreate(['name' => $newName]);
-                            $insuranceId = $insurance->id;
-                        }
-
-                        PolicyInsurance::create([
-                            'policy_id' => $policy->id,
-                            'insurance_id' => $insuranceId,
-                            'is_main' => $isMain,
-                            'percentage' => $percentage,
-                        ]);
+            // 3. Attach Coverages with Percentage (Pivot Table)
+            if (isset($data['coverage_id']) && is_array($data['coverage_id'])) {
+                $coverageData = [];
+                foreach ($data['coverage_id'] as $index => $coverageId) {
+                    if (!empty($coverageId) && isset($data['coverage_percentage'][$index])) {
+                        $coverageData[$coverageId] = [
+                            'percentage' => floatval($data['coverage_percentage'][$index]) / 100 // Convert to decimal
+                        ];
                     }
                 }
+                $policy->coverages()->sync($coverageData);
+            }
+
+            // 4. Process Insurances
+            if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                $this->processInsurances($policy->id, $data);
             }
 
             return $policy;
@@ -98,47 +102,86 @@ class PolicyServiceImplement extends Service implements PolicyService
         return DB::transaction(function () use ($id, $data) {
             $policy = $this->mainRepository->findOrFail($id);
 
+            // Hitung total coverage percentages
+            $totalCoveragePercentages = 0;
+            if (isset($data['coverage_percentage']) && is_array($data['coverage_percentage'])) {
+                foreach ($data['coverage_percentage'] as $percentage) {
+                    $totalCoveragePercentages += floatval($percentage);
+                }
+            }
+
+            // 1. Update Policy Header
             $policy->update([
                 'policy_number' => $data['policy_number'],
-                'object_id' => $data['object_id'] ?? null,
-                'coverage_code' => $data['coverage_code'] ?? null,
-                'coverage_percentage' => $data['coverage_percentage'],
+                'currency_code' => $data['currency_code'] ?? null,
                 'started_date' => $data['started_date'],
                 'ended_date' => $data['ended_date'],
+                'coverage_percentages' => $totalCoveragePercentages / 100, // Convert to decimal
             ]);
 
-            // Delete existing insurances
-            PolicyInsurance::where('policy_id', $id)->delete();
+            // 2. Sync Objects
+            if (isset($data['object_id']) && is_array($data['object_id'])) {
+                $policy->objects()->sync(array_filter($data['object_id']));
+            } else {
+                $policy->objects()->detach();
+            }
 
-            // Save new insurances
-            if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
-                $newNames = $data['insurance_new_name'] ?? [];
-                $isMains = $data['is_main'] ?? [];
-                $percentages = $data['percentage'] ?? [];
-
-                foreach ($data['insurance_id'] as $index => $insuranceId) {
-                    $newName = $newNames[$index] ?? null;
-
-                    if (!empty($insuranceId) || !empty($newName)) {
-                        $isMain = isset($isMains[$index]) ? (bool)$isMains[$index] : false;
-                        $percentage = isset($percentages[$index]) ? floatval($percentages[$index]) : 0;
-
-                        if (empty($insuranceId) && !empty($newName)) {
-                            $insurance = Insurance::firstOrCreate(['name' => $newName]);
-                            $insuranceId = $insurance->id;
-                        }
-
-                        PolicyInsurance::create([
-                            'policy_id' => $id,
-                            'insurance_id' => $insuranceId,
-                            'is_main' => $isMain,
-                            'percentage' => $percentage,
-                        ]);
+            // 3. Sync Coverages with Percentage
+            if (isset($data['coverage_id']) && is_array($data['coverage_id'])) {
+                $coverageData = [];
+                foreach ($data['coverage_id'] as $index => $coverageId) {
+                    if (!empty($coverageId) && isset($data['coverage_percentage'][$index])) {
+                        $coverageData[$coverageId] = [
+                            'percentage' => floatval($data['coverage_percentage'][$index]) / 100
+                        ];
                     }
                 }
+                $policy->coverages()->sync($coverageData);
+            } else {
+                $policy->coverages()->detach();
+            }
+
+            // 4. Delete and Re-create Insurances
+            PolicyInsurance::where('policy_id', $id)->delete();
+            if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                $this->processInsurances($id, $data);
             }
 
             return $policy;
         });
+    }
+
+    private function processInsurances($policyId, $data)
+    {
+        $newNames = $data['insurance_new_name'] ?? [];
+        $isMains = $data['is_main'] ?? [];
+        $percentages = $data['percentage'] ?? [];
+
+        foreach ($data['insurance_id'] as $index => $insuranceId) {
+            $newName = $newNames[$index] ?? null;
+
+            if (!empty($insuranceId) || !empty($newName)) {
+                // Fix: Checkbox hanya kirim key yang checked
+                // Kita cek apakah index ini ada di array is_main
+                $isMain = in_array($index, array_keys($isMains)) ? 1 : 0;
+                
+                $percentage = isset($percentages[$index]) ? floatval($percentages[$index]) : 0;
+
+                // Create insurance baru jika belum ada
+                if (empty($insuranceId) && !empty($newName)) {
+                    $insurance = Insurance::firstOrCreate(['name' => $newName]);
+                    $insuranceId = $insurance->id;
+                }
+
+                if ($insuranceId) {
+                    PolicyInsurance::create([
+                        'policy_id' => $policyId,
+                        'insurance_id' => $insuranceId,
+                        'is_main' => $isMain,
+                        'percentage' => $percentage / 100, // Convert % to decimal (15 -> 0.15)
+                    ]);
+                }
+            }
+        }
     }
 }

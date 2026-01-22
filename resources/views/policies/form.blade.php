@@ -73,21 +73,6 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="object_id">Objek <span class="text-danger">*</span></label>
-                        <select class="form-select @error('object_id') is-invalid @enderror" name="object_id" id="object_id" required style="width: 100%;">
-                            <option value="">- Pilih Objek -</option>
-                            @foreach ($objects ?? [] as $object)
-                                <option value="{{ $object->id }}" {{ isset($policy) && $policy->object_id == $object->id ? 'selected' : (old('object_id') == $object->id ? 'selected' : '') }}>
-                                    {{ $object->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('object_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3">
                         <label class="form-label" for="currency_code">Mata Uang</label>
                         <select class="form-select @error('currency_code') is-invalid @enderror" name="currency_code" id="currency_code" style="width: 100%;">
                             <option value="">- Pilih Mata Uang -</option>
@@ -116,6 +101,66 @@
                         @error('ended_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>Objek Pertanggungan</h5>
+                        <small class="text-muted">Pilih satu atau lebih objek</small>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="add-object-btn">
+                        <i class="icon-plus me-2"></i>Tambah Objek
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-primary d-flex justify-content-between align-items-center mb-3" role="alert" id="object-value-info" style="display: none;">
+                        <span>Total Nilai Objek: <strong><span id="total-object-value">0</span></strong></span>
+                    </div>
+
+                    <div id="objects-container">
+                        {{-- Loop untuk Objek yang sudah tersimpan (Saat Edit) --}}
+                        @if(isset($policy) && $policy->objects->count() > 0)
+                            @foreach($policy->objects as $index => $obj)
+                                <div class="object-row mb-3 p-3 border rounded" data-index="{{ $index }}">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-6 mb-2 mb-md-0">
+                                            <label class="form-label">Objek {{ $index + 1 }} <span class="text-danger">*</span></label>
+                                            <select class="form-select object-select" name="object_id[]" style="width: 100%;" required>
+                                                <option value="">- Pilih Objek -</option>
+                                                @foreach($objects as $item)
+                                                    {{-- PERBAIKAN 1: Ambil sum value dari objectInterests --}}
+                                                    <option value="{{ $item->id }}" 
+                                                        data-value="{{ $item->objectInterests->sum('value') }}" 
+                                                        {{ $obj->id == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-2 mb-md-0">
+                                            <label class="form-label">Nilai Objek (Estimasi)</label>
+                                            {{-- PERBAIKAN 2: Tampilkan sum value dari objectInterests --}}
+                                            <input type="text" class="form-control object-value-display" 
+                                                value="{{ number_format($obj->objectInterests->sum('value'), 0, ',', '.') }}" 
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger w-100 remove-object-btn">
+                                                <i class="fa fa-trash"></i> Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    
+                    <div id="object-empty-state" class="text-center py-4 text-muted" style="{{ (isset($policy) && $policy->objects->count() > 0) ? 'display: none;' : '' }}">
+                        <i class="fa fa-cubes fa-2x mb-2 d-block"></i>
+                        <p class="mb-0">Klik tombol <strong class="text-primary">"Tambah Objek"</strong> untuk menambahkan objek</p>
                     </div>
                 </div>
             </div>
@@ -153,7 +198,7 @@
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Persentase (%)</label>
-                                            <input type="number" class="form-control coverage-percentage" name="coverage_percentage[{{ $index }}]" value="{{ $policyCoverage->percentage }}" placeholder="0" min="0" max="100" step="0.0000001" required>
+                                            <input type="number" class="form-control coverage-percentage" name="coverage_percentage[{{ $index }}]" value="{{ $policyCoverage->percentage * 100 }}" placeholder="0" min="0" max="100" step="0.0000001" required>
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-danger w-100 remove-coverage-btn">
@@ -217,7 +262,7 @@
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Persentase (%)</label>
-                                            <input type="number" class="form-control insurance-percentage" name="percentage[{{ $index }}]" value="{{ $policyInsurance->percentage }}" placeholder="0" min="0" max="100" step="0.00001">
+                                            <input type="number" class="form-control insurance-percentage" name="percentage[{{ $index }}]" value="{{ $policyInsurance->percentage * 100}}" placeholder="0" min="0" max="100" step="0.00001">
                                         </div>
                                         <div class="col-md-2 mb-2 mb-md-0">
                                             <label class="form-label">Asuransi Utama</label>
@@ -265,8 +310,111 @@
     <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
     <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
     <script>
-        let insuranceIndex = {{ isset($policyInsurances) ? $policyInsurances->count() : 0 }};
+        // ==================== GLOBAL DATA ====================
+        const objectsData = {!! json_encode($objects->map(function($obj) {
+            return [
+                'id' => $obj->id,
+                'name' => $obj->name,
+                'total_value' => $obj->objectInterests->sum('value') // Hitung sum disini
+            ];
+        })) !!};
         const insurancesData = {!! json_encode($insurances) !!};
+        const coveragesData = {!! json_encode($coverages) !!};
+
+
+        // ==================== 1. OBJECT FUNCTIONS (BARU) ====================
+        let objectIndex = {{ isset($policy) ? $policy->objects->count() : 0 }};
+
+        function addObjectRow() {
+            const row = `
+                <div class="object-row mb-3 p-3 border rounded" data-index="${objectIndex}">
+                    <div class="row align-items-end">
+                        <div class="col-md-6 mb-2 mb-md-0">
+                            <label class="form-label">Objek ${objectIndex + 1} <span class="text-danger">*</span></label>
+                            <select class="form-select object-select" name="object_id[]" style="width: 100%;" required>
+                                <option value="">- Pilih Objek -</option>
+                                // PERBAIKAN 4: Gunakan property 'total_value' yang sudah kita siapkan diatas
+                                ${objectsData.map(obj => `<option value="${obj.id}" data-value="${obj.total_value}">${obj.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="form-label">Nilai Objek (Estimasi)</label>
+                            <input type="text" class="form-control object-value-display" value="0" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger w-100 remove-object-btn">
+                                <i class="fa fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('objects-container').insertAdjacentHTML('beforeend', row);
+            document.getElementById('object-empty-state').style.display = 'none';
+            
+            $('.object-select').last().select2({
+                placeholder: '- Pilih Objek -',
+                allowClear: true
+            });
+            
+            objectIndex++;
+            updateObjectLabels();
+        }
+
+        function updateObjectLabels() {
+            $('.object-row').each(function(idx) {
+                $(this).find('.form-label').first().html(`Objek ${idx + 1} <span class="text-danger">*</span>`);
+            });
+            objectIndex = $('.object-row').length;
+        }
+
+        // Hitung nilai saat select berubah
+        $(document).on('change', '.object-select', function() {
+            const selectedOption = $(this).find(':selected');
+            const value = parseFloat(selectedOption.data('value')) || 0;
+            const row = $(this).closest('.object-row');
+            
+            // Format Rupiah sederhana
+            const formattedValue = new Intl.NumberFormat('id-ID').format(value);
+            row.find('.object-value-display').val(formattedValue);
+
+            calculateTotalObjectValue();
+        });
+
+        function calculateTotalObjectValue() {
+            let total = 0;
+            $('.object-select').each(function() {
+                const val = parseFloat($(this).find(':selected').data('value')) || 0;
+                total += val;
+            });
+            
+            $('#total-object-value').text(new Intl.NumberFormat('id-ID').format(total));
+            
+            if(total > 0) $('#object-value-info').show();
+            else $('#object-value-info').hide();
+        }
+
+        // Event Listener Object Buttons
+        $('#add-object-btn').click(function(e) {
+            e.preventDefault();
+            addObjectRow();
+        });
+
+        $(document).on('click', '.remove-object-btn', function() {
+            $(this).closest('.object-row').remove();
+            if ($('.object-row').length === 0) {
+                $('#object-empty-state').show();
+                $('#object-value-info').hide();
+            }
+            updateObjectLabels();
+            calculateTotalObjectValue();
+        });
+        // ==================== END OBJECT FUNCTIONS ====================
+
+
+        // ==================== 2. INSURANCE FUNCTIONS (TIDAK DIUBAH) ====================
+        let insuranceIndex = {{ isset($policyInsurances) ? $policyInsurances->count() : 0 }};
 
         // Fungsi Menambah Baris Asuransi
         function addInsuranceRow() {
@@ -354,13 +502,11 @@
             let total = 0;
             
             percentageInputs.forEach(input => {
-                // Perbaikan: Pastikan nilai valid, jika kosong anggap 0
                 let val = parseFloat(input.value);
                 if (isNaN(val)) val = 0;
                 total += val;
             });
 
-            // Pembulatan aman untuk floating point
             total = Math.round(total * 10000) / 10000;
 
             const infoDiv = document.getElementById('percentage-info');
@@ -377,7 +523,6 @@
                     infoDiv.classList.add(total > 100 ? 'alert-danger' : 'alert-orange');
                 } else {
                     infoDiv.classList.add('alert-success');
-                    // Sembunyikan error jika sudah benar saat user mengetik
                     if(errorDiv) errorDiv.style.display = 'none'; 
                     percentageInputs.forEach(input => input.classList.remove('is-invalid'));
                 }
@@ -393,13 +538,11 @@
         function updateInsuranceNumbers() {
             const rows = document.querySelectorAll('.insurance-row');
             rows.forEach((row, index) => {
-                // Update Label No Urut
                 const label = row.querySelector('.form-label');
                 if (label) {
                     label.innerHTML = `Asuransi ${index + 1} <span class="text-danger">*</span>`;
                 }
 
-                // Update Input Names & IDs (agar urutan index array tetap rapi: 0, 1, 2...)
                 const inputs = row.querySelectorAll('[name*="["]');
                 inputs.forEach(input => {
                     const name = input.getAttribute('name');
@@ -411,7 +554,6 @@
                     }
                 });
 
-                // Update Label For Attributes (untuk checkbox/radio)
                 const labels = row.querySelectorAll('label[for]');
                 labels.forEach(lbl => {
                     const forAttr = lbl.getAttribute('for');
@@ -423,7 +565,6 @@
                 row.setAttribute('data-index', index);
             });
             
-            // Update global counter agar sinkron
             insuranceIndex = rows.length;
         }
 
@@ -431,15 +572,12 @@
         function validatePercentageBeforeSubmit(e) {
             const percentageInputs = document.querySelectorAll('.insurance-percentage');
             
-            // Jika asuransi tidak wajib, bisa return true. Tapi jika wajib, cek length.
             if (percentageInputs.length === 0) {
-                // Asumsi: Minimal 1 Asuransi Wajib
                 e.preventDefault(); e.stopPropagation();
                 Swal.fire('Validasi Gagal', 'Harap tambahkan minimal satu asuransi.', 'error');
                 return false; 
             }
 
-            // Validasi Asuransi Utama
             const mainCheckboxes = document.querySelectorAll('.is-main-checkbox:checked');
             if (mainCheckboxes.length === 0) {
                 e.preventDefault(); e.stopPropagation();
@@ -452,7 +590,6 @@
 
             const total = updatePercentageTotal(); 
 
-            // WAJIB 100% UNTUK ASURANSI
             if (total !== 100) {
                 e.preventDefault(); e.stopPropagation();
                 
@@ -473,7 +610,6 @@
             return true;
         }
 
-        // Event Listeners Tombol
         document.getElementById('add-insurance-btn').addEventListener('click', function(e) {
             e.preventDefault();
             addInsuranceRow();
@@ -509,7 +645,6 @@
             }
         });
 
-        // Logic Toggle Input Asuransi (Select vs Text)
         document.addEventListener('click', function(e) {
             const toggleBtn = e.target.closest('.toggle-insurance-input');
             if (toggleBtn) {
@@ -521,17 +656,15 @@
                 const icon = toggleBtn.querySelector('i');
 
                 if (input.classList.contains('d-none')) {
-                    // Switch to Text Input
                     selectContainer.classList.add('d-none');
                     input.classList.remove('d-none');
-                    $(select).val(null).trigger('change'); // Reset select
+                    $(select).val(null).trigger('change');
                     icon.className = 'fa fa-list';
                     toggleBtn.title = 'Pilih dari daftar';
                 } else {
-                    // Switch to Select
                     selectContainer.classList.remove('d-none');
                     input.classList.add('d-none');
-                    input.value = ''; // Reset input
+                    input.value = '';
                     icon.className = 'fa fa-plus';
                     toggleBtn.title = 'Tambah Baru';
                 }
@@ -548,13 +681,18 @@
                 placeholder: '- Pilih Coverage -',
                 allowClear: true
             });
+
+            // Init Select2 Object (Agar konsisten)
+            $('.object-select').select2({
+                placeholder: '- Pilih Objek -',
+                allowClear: true
+            });
         }
 
-        // ==================== COVERAGE FUNCTIONS ====================
-        let coverageIndex = {{ isset($policyCoverages) ? $policyCoverages->count() : 0 }};
-        const coveragesData = {!! json_encode($coverages) !!};
 
-        // Fungsi Menambah Baris Coverage
+        // ==================== 3. COVERAGE FUNCTIONS (TIDAK DIUBAH) ====================
+        let coverageIndex = {{ isset($policyCoverages) ? $policyCoverages->count() : 0 }};
+
         function addCoverageRow() {
             const row = `
                 <div class="coverage-row mb-3 p-3 border rounded" data-index="${coverageIndex}">
@@ -582,7 +720,6 @@
             document.getElementById('coverages-container').insertAdjacentHTML('beforeend', row);
             document.getElementById('coverage-empty-state').style.display = 'none';
             
-            // Re-init Select2 untuk elemen baru
             $('.coverage-select').last().select2({
                 placeholder: '- Pilih Coverage -',
                 allowClear: true
@@ -592,7 +729,6 @@
             updateCoveragePercentageTotal();
         }
 
-        // Update Total Persentase Coverage
         function updateCoveragePercentageTotal() {
             const percentageInputs = document.querySelectorAll('.coverage-percentage');
             let total = 0;
@@ -611,7 +747,6 @@
             if (percentageInputs.length > 0) {
                 infoDiv.style.display = 'flex';
                 totalPercentageSpan.textContent = total;
-                // Selalu biru karena bebas
                 infoDiv.className = 'alert alert-info d-flex justify-content-between align-items-center mb-3';
             } else {
                 infoDiv.style.display = 'none';
@@ -620,30 +755,25 @@
             return total;
         }
 
-        // Validasi Coverage Sebelum Submit
         function validateCoverageBeforeSubmit(e) {
             const percentageInputs = document.querySelectorAll('.coverage-percentage');
             
-            // Validasi Minimal 1 Coverage (Wajib atau Tidak?)
-            // Jika Wajib:
             if (percentageInputs.length === 0) {
                 e.preventDefault(); e.stopPropagation();
-                const errorDiv = document.getElementById('coverage-percentage-error'); // Pastikan div ini ada di HTML jika ingin dipakai
+                const errorDiv = document.getElementById('coverage-percentage-error');
                 if(errorDiv) {
                     errorDiv.textContent = 'Gagal Simpan: Harap tambahkan minimal satu coverage.';
                     errorDiv.style.display = 'block';
                 } else {
-                    // Fallback alert
                     Swal.fire('Validasi Gagal', 'Harap tambahkan minimal satu coverage.', 'error');
                 }
                 return false;
             }
 
-            // Validasi Nilai Input (Tidak Boleh Kosong/Negatif)
             let isValid = true;
             percentageInputs.forEach(input => {
                 let val = parseFloat(input.value);
-                if (isNaN(val) || val < 0) { // Hapus input.value check karena float 0 dianggap false
+                if (isNaN(val) || val < 0) {
                     input.classList.add('is-invalid');
                     isValid = false;
                 } else {
@@ -656,13 +786,9 @@
                 Swal.fire('Validasi Gagal', 'Nilai persentase coverage tidak valid (harus angka positif).', 'error');
                 return false;
             }
-
-            // TIDAK ADA CEK TOTAL 100% DISINI
-            
             return true;
         }
 
-        // Event Listeners untuk Coverage
         document.getElementById('add-coverage-btn').addEventListener('click', function(e) {
             e.preventDefault();
             addCoverageRow();
@@ -697,7 +823,6 @@
             }
         });
 
-        // Initialize Coverage Percentage Validation
         function initializeCoveragePercentageValidation() {
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('coverage-percentage')) {
@@ -706,18 +831,24 @@
             });
         }
 
-        // ==================== END COVERAGE FUNCTIONS ====================
-
-        // Inisialisasi saat Load
+        // ==================== 4. INIT ====================
         document.addEventListener('DOMContentLoaded', function() {
             initializeSelect2();
             initializeMainCheckboxes();
             initializePercentageValidation();
-            initializeCoveragePercentageValidation(); // Initialize coverage validation
+            initializeCoveragePercentageValidation();
             updatePercentageTotal();
-            updateCoveragePercentageTotal(); // Update coverage total
+            updateCoveragePercentageTotal();
             
-            // Tambah 1 baris coverage otomatis jika kosong (biasanya saat create baru)
+            // Auto add row if empty (Object)
+            if ($('.object-row').length === 0) {
+                addObjectRow();
+                calculateTotalObjectValue();
+            } else {
+                calculateTotalObjectValue(); // Recalculate if editing existing
+            }
+
+            // Auto add row if empty (Coverage)
             const coverageContainer = document.getElementById('coverages-container');
             const coverageRows = coverageContainer ? coverageContainer.querySelectorAll('.coverage-row') : [];
             if (coverageContainer && coverageRows.length === 0) {
@@ -725,7 +856,7 @@
                 updateCoveragePercentageTotal();
             }
             
-            // Tambah 1 baris asuransi otomatis jika kosong (biasanya saat create baru)
+            // Auto add row if empty (Insurance)
             const insuranceContainer = document.getElementById('insurances-container');
             const insuranceRows = insuranceContainer ? insuranceContainer.querySelectorAll('.insurance-row') : [];
             if (insuranceContainer && insuranceRows.length === 0) {
@@ -733,17 +864,13 @@
                 updatePercentageTotal();
             }
             
-            // Attach Validasi ke Form Submit
+            // Form Submit Listener
             const form = document.querySelector('.needs-validation');
             if(form) {
                 form.addEventListener('submit', function(e) {
-                    // Reset Error Styles dulu
                     document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
                     
                     const insuranceValid = validatePercentageBeforeSubmit(e);
-                    
-                    // Jika asuransi gagal, coverage tidak perlu dicek agar fokus user tidak terpecah
-                    // Tapi jika ingin cek semua:
                     const coverageValid = validateCoverageBeforeSubmit(e);
                     
                     if (!insuranceValid || !coverageValid) {
