@@ -64,25 +64,39 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
 
     public function getMonthlySumByYears(array $years)
     {
-        return Payment::query()
-            // 1. Join ke Cards (Jembatan)
-            ->join('cards', 'payments.card_id', '=', 'cards.id')
-            // 2. Join ke Policies (Untuk ambil started_date)
+        return Card::query()
+            // 1. Join ke Policies (Untuk ambil started_date & currency_code)
             ->join('policies', 'cards.policy_id', '=', 'policies.id')
-            ->selectRaw('
-                -- Grouping berdasarkan TANGGAL MULAI POLIS
+            
+            // 2. Join ke Currencies (Untuk ambil value/kurs)
+            // Menggunakan LEFT JOIN supaya jika mata uang 'IDR' tidak ada di tabel currencies, data tetap muncul
+            ->leftJoin('currencies', 'policies.currency_code', '=', 'currencies.code')
+            
+            ->selectRaw("
+                -- Grouping Waktu
                 YEAR(policies.started_date) as year,
                 MONTH(policies.started_date) as month,
                 
-                -- Total Premi: Jumlahkan semua payment milik polis tersebut
-                SUM(COALESCE(payments.paid_amount, 0)) as total_premi,
+                -- Total Premi: (Nilai Premi x Nilai Tukar)
+                -- COALESCE(currencies.value, 1) artinya: Jika value NULL (tidak ketemu), kali 1.
+                SUM(cards.premi_value * COALESCE(currencies.value, 1)) as total_premi,
                 
-                -- Total Komisi: (Total Bayar - Total Setor Asuransi)
-                SUM(COALESCE(payments.paid_amount, 0) - COALESCE(payments.insurance_paid_amount, 0)) as total_komisi
-            ')
-            // Filter berdasarkan TAHUN MULAI POLIS
+                -- Total Komisi: (Komisi Netto x Nilai Tukar)
+                SUM(cards.commision_netto * COALESCE(currencies.value, 1)) as total_komisi
+            ")
+            
+            // Filter Tahun
             ->whereIn(DB::raw('YEAR(policies.started_date)'), $years)
-            ->groupBy('year', 'month')
+            
+            // Filter agar data terhapus tidak ikut hitung
+            ->whereNull('cards.deleted_at') 
+            
+            // Grouping (Wajib pakai Raw untuk menghindari error SQL Strict Mode)
+            ->groupBy(DB::raw('YEAR(policies.started_date)'), DB::raw('MONTH(policies.started_date)'))
+            
+            // Urutkan
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
             ->get();
     }
     
