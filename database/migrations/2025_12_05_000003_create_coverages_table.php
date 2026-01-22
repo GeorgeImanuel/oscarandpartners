@@ -10,7 +10,6 @@ return new class extends Migration {
             $table->id();
             $table->string('code')->unique()->comment('PAR, EQ, CIS');
             $table->string('name')->comment('Property All Risk, Machinery Breakdown');
-            $table->timestamps();
         });
     }
     public function down(): void { Schema::dropIfExists('coverages'); }

@@ -93,6 +93,24 @@ class CardServiceImplement extends Service implements CardService
         try {
             DB::beginTransaction();
 
+            //Find or Create Client
+            if (!isset($data['client_id']) || $data['client_id'] == null) {
+                if (!isset($data['relation_id']) || $data['relation_id'] == null) {
+                $relation = $this->relationRepository->create([
+                    'code' => $data['code'],
+                    'name' => $data['name'] ?? null,
+                ]);
+                }
+                //Create Client
+                $client = $this->clientRepository->create([
+                    'name'      => $data['client_name'],
+                    'address'   => $data['client_address'] ?? null,
+                    'phone'     => $data['client_phone'] ?? null,
+                    'email'     => $data['client_email'] ?? null,
+                ]);
+                $data['client_id'] = $client->id;
+            }
+
             //Find or Create Object
             if (!isset($data['object_id']) || $data['object_id'] == null) {
                 //Find or Create Object occupation
@@ -133,6 +151,7 @@ class CardServiceImplement extends Service implements CardService
                 }
                 $data['object_id'] = $object->id;
             }
+
             //Find or Create Policy
             if (!isset($data['policy_id']) || $data['policy_id'] == null) {
                 $policy = $this->policyRepository->create([

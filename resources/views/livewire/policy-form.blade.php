@@ -1,5 +1,5 @@
 <div id="new-policy"
-    class="row gt-3"
+    class="row"
     style="display:none;">
     <div class="col-md-12 mb-3">
         <label class="form-label"
@@ -29,40 +29,90 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="coverage_id">Coverage <span class="text-danger">*</span></label>
-        <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
-            name="coverage_id"
-            id="coverage_id"
-            data-placeholder="Pilih Coverage"
-            style="width: 100%;">
-            <option value="">- Pilih Coverage -</option>
-            @foreach ($coverages ?? [] as $coverage)
-                <option value="{{ $coverage->id }}"
-                    {{ isset($policy) && $coverage->id == $policy->coverage_id ? 'selected' : (old('coverage_id') == $coverage->id ? 'selected' : '') }}>
-                    {{ $coverage->name }}
+            for="currency_code">Mata Uang <span class="text-danger">*</span></label>
+        <select class="form-select add-select2 required @error('currency_code') is-invalid @enderror"
+            name="currency_code"
+            id="currency_code"
+            data-placeholder="Pilih Mata Uang">
+            <option value=""></option>
+            @foreach ($currencies as $currency)
+                <option value="{{ $currency->code }}" {{ isset($policy) && $currency->code == $policy->currency_code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
+                    {{ $currency->name }}
                 </option>
             @endforeach
         </select>
-        @error('coverage_id')
+        @error('currency_code')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
 
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="coverage_percentage">Persentase Coverage (%) <span class="text-danger">*</span></label>
-        <input class="form-control required @error('coverage_percentage') is-invalid @enderror"
-            id="coverage_percentage"
-            name="coverage_percentage"
-            type="number"
-            step="0.00001"
-            min="0"
-            max="100"
-            value="{{ isset($policy) ? $policy->coverage_percentage : old('coverage_percentage', 0) }}" />
-        <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
-        @error('coverage_percentage')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+    <div class="col-md-12 mb-3 multiple-item-container">
+        <label>List Coverage</label>
+        <div class="row">
+            <div class="col-md">
+                <div id="percentage-info"
+                    class="alert alert-danger py-2">
+                    <strong>Total Persentase Coverage: <span id="total-percentage">0.00</span>%</strong><br>
+                    <small>Total persentasi harus 100%</small>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <button type="button"
+                    class="btn btn-primary btn-sm add-item-btn float-end mt-4"
+                    class="add-item-btn"
+                    data-target="item-coverage">
+                    <i class="icon-plus me-2"></i> Tambah Coverage
+                </button>
+            </div>
+        </div>
+        <div class="item-list pt-2">
+            <div class="mb-2 px-3 py-2 border rounded item item-coverage">
+                <div class="row">
+                    <div class="col-md-8">
+                        <label class="form-label">Coverage <span class="item-count">1</span></label>
+                        <select class="form-select add-select2 required"
+                            name="coverage_id[]"
+                            data-placeholder="Pilih Coverage"
+                            style="width: 100%;">
+                            <option value="">- Pilih Coverage -</option>
+                            @foreach ($coverages as $coverage)
+                                <option value="{{ $coverage->id }}">
+                                    {{ $coverage->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md">
+                        <label class="form-label">Persentase Coverage</label>
+                        <div class="input-group mb-3">
+                            <input type="number"
+                                class="form-control insurance-percentage"
+                                name="percentage[]"
+                                value=""
+                                placeholder="0"
+                                min="0"
+                                max="100"
+                                step="0.00001">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 pt-4">
+                        <button type="button"
+                            class="btn btn-danger btn-xs remove-item-btn"
+                            style="display:none">
+                            <i class="icon-trash me-2"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="empty-state"
+            class="text-center py-4 text-muted"
+            style="{{ isset($policyInsurances) && $policyInsurances->count() > 0 ? 'display: none;' : '' }}">
+            <i class="fa fa-info-circle fa-2x mb-2 d-block"></i>
+            <p class="mb-0">Klik tombol <strong class="text-primary">"Tambah Asuransi"</strong> untuk menambahkan asuransi</p>
+        </div>
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
@@ -80,14 +130,14 @@
                     class="btn btn-primary btn-sm add-item-btn float-end mt-4"
                     class="add-item-btn"
                     data-target="item-1">
-                    <i class="icon-plus me-2"></i>Tambah Asuransi
+                    <i class="icon-plus me-2"></i> Tambah Asuransi
                 </button>
             </div>
         </div>
         <div class="item-list pt-2">
             <div class="mb-2 px-3 py-2 border rounded item item-1">
                 <div class="row">
-                    <div class="col-md">
+                    <div class="col-md-8">
                         <label class="form-label">Asuransi <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
                             name="insurance_id[]"
@@ -101,8 +151,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Persentase</label>
+                    <div class="col-md">
+                        <label class="form-label">Persentase Asuransi</label>
                         <div class="input-group mb-3">
                             <input type="number"
                                 class="form-control insurance-percentage"
@@ -128,7 +178,7 @@
                         <button type="button"
                             class="btn btn-danger btn-xs remove-item-btn"
                             style="display:none">
-                            <i class="fa fa-trash"></i> Hapus
+                            <i class="icon-trash me-2"></i> Hapus
                         </button>
                     </div>
                 </div>

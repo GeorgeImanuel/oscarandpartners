@@ -9,104 +9,106 @@
 //              data-existing-details-id="#existing-item-details">
 // JS: initCustomSelect2("#example-select");
 function initCustomSelect2(selector) {
-    var $element = $(selector);
+    $(selector).each(function () {
+        var $element = $(this);
 
-    // Read all config from data attributes
-    var config = {
-        placeholder: $element.data("placeholder") || "Pilih Item",
-        newId: $element.data("new-id"),
-        newName: $element.data("new-name"),
-        existingId: $element.data("existing-id"),
-        existingName: $element.data("existing-name"),
-        allowClear: $element.data("allow-clear") !== false, // default true
-        tags: $element.data("tags") !== false, // default true
-        createTagText:
-            $element.data("create-tag-text") || "(Klik untuk tambah data)",
-    };
+        // Read all config from data attributes for this specific element
+        var config = {
+            placeholder: $element.data("placeholder") || "Pilih Item",
+            newId: $element.data("new-id"),
+            newName: $element.data("new-name"),
+            existingId: $element.data("existing-id"),
+            existingName: $element.data("existing-name"),
+            allowClear: $element.data("allow-clear") !== false, // default true
+            tags: $element.data("tags") !== false, // default true
+            createTagText:
+                $element.data("create-tag-text") || "(Klik untuk tambah data)",
+        };
 
-    console.log(config);
+        console.log(config);
 
-    $element
-        .select2({
-            placeholder: config.placeholder,
-            allowClear: config.allowClear,
-            tags: config.tags,
-            createTag: function (params) {
-                var term = $.trim(params.term);
+        $element
+            .select2({
+                placeholder: config.placeholder,
+                allowClear: config.allowClear,
+                tags: config.tags,
+                createTag: function (params) {
+                    var term = $.trim(params.term);
 
-                if (term === "") {
-                    return null;
-                }
+                    if (term === "") {
+                        return null;
+                    }
 
-                return {
-                    id: term,
-                    text: term,
-                    newTag: true,
-                };
-            },
-            templateResult: function (data) {
-                var $result = $("<span></span>");
-                $result.text(data.text);
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true,
+                    };
+                },
+                templateResult: function (data) {
+                    var $result = $("<span></span>");
+                    $result.text(data.text);
+
+                    if (data.newTag) {
+                        $result.append(
+                            " <em class='text-primary'>" +
+                                config.createTagText +
+                                "</em>",
+                        );
+                    }
+
+                    return $result;
+                },
+            })
+            .on("select2:select", function (e) {
+                var data = e.params.data;
 
                 if (data.newTag) {
-                    $result.append(
-                        " <em class='text-primary'>" +
-                            config.createTagText +
-                            "</em>"
-                    );
+                    // Show new form, hide existing details
+                    if (config.newId) {
+                        $(config.newId).show();
+                        $(config.newId).find(".required").attr("required", true);
+                    }
+                    if (config.newName) {
+                        $element.attr("name", config.newName);
+                    }
+                    if (config.existingId) {
+                        $(config.existingId).hide();
+                        $(config.existingId)
+                            .find(".required")
+                            .removeAttr("required");
+                    }
+                } else {
+                    // Show existing details, hide new form
+                    if (config.existingId) {
+                        $(config.existingId).show();
+                        $(config.existingId)
+                            .find(".required")
+                            .attr("required", true);
+                    }
+                    if (config.existingName) {
+                        $element.attr("name", config.existingName);
+                    }
+                    if (config.newId) {
+                        $(config.newId).hide();
+                        $(config.newId).find(".required").removeAttr("required");
+                    }
                 }
-
-                return $result;
-            },
-        })
-        .on("select2:select", function (e) {
-            var data = e.params.data;
-
-            if (data.newTag) {
-                // Show new form, hide existing details
-                if (config.newId) {
-                    $(config.newId).show();
-                    $(config.newId).find(".required").attr("required", true);
-                }
-                if (config.newName) {
-                    $element.attr("name", config.newName);
-                }
-                if (config.existingId) {
-                    $(config.existingId).hide();
-                    $(config.existingId)
-                        .find(".required")
-                        .removeAttr("required");
-                }
-            } else {
-                // Show existing details, hide new form
-                if (config.existingId) {
-                    $(config.existingId).show();
-                    $(config.existingId)
-                        .find(".required")
-                        .attr("required", true);
-                }
-                if (config.existingName) {
-                    $element.attr("name", config.existingName);
-                }
+            })
+            .on("select2:unselect", function (e) {
                 if (config.newId) {
                     $(config.newId).hide();
                     $(config.newId).find(".required").removeAttr("required");
                 }
-            }
-        })
-        .on("select2:unselect", function (e) {
-            if (config.newId) {
-                $(config.newId).hide();
-                $(config.newId).find(".required").removeAttr("required");
-            }
-            if (config.existingName) {
-                $element.attr("name", config.existingName);
-            }
-            if (config.existingId) {
-                $(config.existingId).show();
-                $(config.existingId).find(".required").attr("required", true);
-            }
-        });
+                if (config.existingName) {
+                    $element.attr("name", config.existingName);
+                }
+                if (config.existingId) {
+                    $(config.existingId).show();
+                    $(config.existingId).find(".required").attr("required", true);
+                }
+            });
+    });
 }
 
 setTimeout(function () {
@@ -134,9 +136,11 @@ setTimeout(function () {
             });
         });
 
+        initCustomSelect2(".add-select2");
+
         // Single Search Select
-        $(".js-example-basic-single").select2();
-        $(".js-example-disabled-results").select2();
+        // $(".js-example-basic-single").select2();
+        // $(".js-example-disabled-results").select2();
 
         // Multi Select
         // $(".js-example-basic-multiple").select2();

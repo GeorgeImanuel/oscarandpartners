@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\PolicyCoverage;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Coverage extends Model
 {
@@ -18,4 +20,14 @@ class Coverage extends Model
         'code',
         'name',
     ];
+
+    /**
+     * Get the policyCoverages for the Coverage
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function policyCoverages(): HasMany
+    {
+        return $this->hasMany(PolicyCoverage::class);
+    }
 }

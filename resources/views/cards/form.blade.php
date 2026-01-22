@@ -54,12 +54,12 @@
                     {{-- CARD INFO START --}}
                     <div id="step-1"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12 mt-3">
-                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Kartu Produksi</h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <h5 class="text-primary">Detail Kartu Produksi</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12 mt-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="card_type_id">Tipe Kartu</label>
                                 <select id="card_type_id"
@@ -80,7 +80,7 @@
                             </div>
 
                             <div id="parent_card_container"
-                                class="col-md-12"
+                                class="col-md-12 mb-3"
                                 style="display:none;">
                                 <label class="form-label"
                                     for="parent_card_id">Kartu Produksi Sebelumnya</label>
@@ -106,11 +106,16 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
-                                    for="client_id">Client</label>
+                                    for="client_id">Nama Client</label>
                                 <select id="client_id"
-                                    class="form-control select2-basic-single @error('client_id') is-invalid @enderror"
+                                    class="form-control add-select2 @error('client_id') is-invalid @enderror"
+                                    data-existing-id="#existing-client"
+                                    data-existing-name="client_id"
+                                    data-new-id="#new-client"
+                                    data-new-name="client_number"
+                                    data-placeholder="Pilih Nama Client"
                                     name="client_id"
                                     required>
                                     <option value=""></option>
@@ -125,8 +130,17 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            {{-- Exist client Detail --}}
+                            <div id="client-details-container"
+                                class="col-md-12">
+                            </div>
 
+                            {{-- New client Input --}}
                             <div class="col-md-12">
+                                @livewire('client-form')
+                            </div>
+
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="deadline_at">Tanggal Deadline</label>
                                 <input id="deadline_at"
@@ -146,17 +160,17 @@
                     {{-- POLIS INFO START --}}
                     <div id="step-2"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Polis</h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
                             </div>
                             <div id="policy-details-container"
-                                class="col-md-12">
+                                class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="policy_id">Nomor Polis</label>
                                 <select id="policy_id"
-                                    class="form-control policy-select2 @error('policy_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('policy_id') is-invalid @enderror"
                                     data-existing-id="#existing-policy"
                                     data-existing-name="policy_id"
                                     data-new-id="#new-policy"
@@ -167,7 +181,7 @@
                                     <option value=""></option>
                                     @foreach ($policies as $policy)
                                         <option value="{{ $policy->id }}"
-                                            data-currency="{{ $policy->currency_code }}" 
+                                            data-currency="{{ $policy->currency_code }}"
                                             {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
                                             {{ $policy->policy_number }} - {{ $policy->object->name }}
                                         </option>
@@ -196,16 +210,16 @@
                     {{-- OBJECT INFO START --}}
                     <div id="step-3"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <h5 class="text-primary"><i class="icon-eye me-2"></i>Detail Objek</h5>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <h5 class="text-primary">Detail Objek</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select id="object_id"
-                                    class="form-control object-select2 @error('object_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('object_id') is-invalid @enderror"
                                     data-existing-id="#existing-object"
                                     data-existing-name="object_id"
                                     data-new-id="#new-object"
@@ -246,7 +260,7 @@
 
                         {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">1. Parameter Dasar</h5>
                             </div>
 
@@ -271,7 +285,7 @@
                             {{-- KANAN: Parameter Tarif (Stacked) --}}
                             <div class="col-md-6">
                                 <div class="row g-2">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Tarif Premi</label>
                                         <div class="input-group">
                                             {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -280,17 +294,19 @@
                                                 name="premi_percentages"
                                                 type="number"
                                                 step="0.00001"
-                                                min="0" max="100"
+                                                min="0"
+                                                max="100"
                                                 value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}"
                                                 required>
                                             <span class="input-group-text">%</span>
                                         </div>
-                                        <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                        <div class="text-danger small percent-alert mt-1"
+                                            style="display:none;">
                                             <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Nilai TJH</label>
                                         <div class="input-group">
                                             <span class="input-group-text currency-label">Rp</span>
@@ -302,7 +318,7 @@
                                                 required>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Discount</label>
                                         <div class="row">
                                             <div class="col-md-4">
@@ -311,13 +327,15 @@
                                                     <input id="discount_percentage"
                                                         class="form-control validate-percent"
                                                         type="number"
-                                                        min="0" max="100"
+                                                        min="0"
+                                                        max="100"
                                                         name="discount_percentage"
                                                         value="{{ isset($card) ? $card->discount_percentage : old('discount_percentage', 0) }}">
                                                     <span class="input-group-text">%</span>
                                                 </div>
                                                 {{-- ALERT MERAH --}}
-                                                <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                                <div class="text-danger small percent-alert mt-1"
+                                                    style="display:none;">
                                                     <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                                 </div>
                                             </div>
@@ -342,7 +360,7 @@
 
                         {{-- SECTION 2: PREMI (Produksi -> Biaya Polis -> Total) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2. Perhitungan Premi</h5>
                             </div>
 
@@ -391,14 +409,16 @@
 
                         {{-- SECTION 2.5: COVERAGE --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2.5. Coverage</h5>
                             </div>
 
-                            <div class="col-md-12">
-                                <div class="card mb-0" style="border: 2px solid #ddd; background-color: #fcfcfc;">
+                            <div class="col-md-12 mb-3">
+                                <div class="card mb-0"
+                                    style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
-                                        <h6 class="card-title mb-3 text-center" style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Coverage</h6>
+                                        <h6 class="card-title mb-3 text-center"
+                                            style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Coverage</h6>
 
                                         {{-- Dynamic Coverage List Container --}}
                                         <div id="coverage-list-container">
@@ -430,7 +450,8 @@
                                                     @endif
                                                 @endforeach
                                             @else
-                                                <div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
+                                                <div class="text-center text-muted small"
+                                                    id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
                                             @endif
                                         </div>
 
@@ -442,13 +463,13 @@
                         <hr>
 
                         {{-- SECTION 3: KOMISI --}}
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-12">
+                        <div class="row mb-4">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-2">3. Perhitungan Komisi</h5>
                             </div>
 
                             {{-- BAGIAN ATAS: Persentase Total & Total Komisi --}}
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label">Persentase Total Komisi</label>
                                 <div class="input-group">
                                     {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -457,18 +478,20 @@
                                         name="commision_percentages"
                                         type="number"
                                         step="0.01"
-                                        min="0" max="100"
+                                        min="0"
+                                        max="100"
                                         value="{{ isset($card) ? $card->commision_percentages * 100 : old('commision_percentages', 0) }}"
                                         required>
                                     <span class="input-group-text">%</span>
                                 </div>
                                 {{-- ALERT MERAH --}}
-                                <div class="text-danger small percent-alert mt-1" style="display:none;">
+                                <div class="text-danger small percent-alert mt-1"
+                                    style="display:none;">
                                     <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label text-muted">Total Komisi (Output)</label>
                                 <div class="input-group">
                                     <span class="input-group-text currency-label">Rp</span>
@@ -482,7 +505,7 @@
                             </div>
 
                             {{-- BAGIAN TENGAH: KOTAK RINCIAN ASURANSI (THE BOX) --}}
-                            <div class="col-md-12 mt-4">
+                            <div class="col-md-12 mb-3">
                                 <div class="card mb-0"
                                     style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
@@ -759,18 +782,17 @@
 
             function updateCurrencyLabel(currencyCode) {
                 // Default ke IDR jika kosong
-                var currency = currencyCode || 'IDR';
-                
+                var currency = currencyCode || 'Rp';
+
                 // Update semua label input group
                 $('.currency-label').text(currency);
-                
+
                 // Update format rupiah di ringkasan pembayaran (bawah form)
                 // Kita simpan currency code di variabel global agar fungsi formatRupiah bisa akses
                 window.currentCurrency = currency;
             }
 
-            initCustomSelect2("#policy_id");
-            initCustomSelect2("#object_id");
+            initCustomSelect2(".create-select2");
             initCustomSelect2(".add-select2");
 
             // Toggle parent_card_id based on card_status_id
@@ -1048,7 +1070,7 @@
                 var number = parseFloat(value) || 0;
                 var currency = window.currentCurrency || 'Rp';
                 var formattedNumber = number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                if(currency !== 'Rp') {
+                if (currency !== 'Rp') {
                     formattedNumber = number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
                 return currency + ' ' + formattedNumber;
@@ -1072,7 +1094,7 @@
                     } else if (value > 100) {
                         // Munculkan merah & pesan error
                         $(this).addClass('is-invalid border-danger');
-                        alertBox.slideDown('fast'); 
+                        alertBox.slideDown('fast');
                     }
                 });
 
@@ -1090,14 +1112,14 @@
             // Add event listeners to trigger calculation when parameters change
             $(document).ready(function() {
                 setupPercentValidation();
-                
+
                 // Listen to insurance tax inputs (using event delegation for dynamic elements)
                 $(document).on('input change', '.insurance-tax-per-item', function() {
                     calculateTotalTax();
                     update_payment(); // Trigger payment calculation after tax changes
                 });
 
-               // 1. Hapus #discount dari list ini karena ID itu salah & butuh logic khusus
+                // 1. Hapus #discount dari list ini karena ID itu salah & butuh logic khusus
                 $('#object_value, #policy_fee, #premi_percentages, #commision_percentages, #tjh_value, #discount_agent').on('input change', function() {
                     update_payment();
                 });
@@ -1106,14 +1128,14 @@
                 // Supaya pas ketik Rupiah -> Hitung Persen -> Masuk ke Nilai Produksi
                 $('#discount_value').on('input change', function() {
                     sync_discount('value'); // Sinkronisasi: Hitung % dari Rp yang diketik
-                    update_payment();       // Hitung ulang semua (Nilai Produksi berubah)
+                    update_payment(); // Hitung ulang semua (Nilai Produksi berubah)
                 });
 
                 // 3. Tambahkan Listener Khusus Diskon Persen (#discount_percentage)
                 // Supaya pas ketik Persen -> Hitung Rupiah -> Masuk ke Nilai Produksi
                 $('#discount_percentage').on('input change', function() {
                     sync_discount('percentage'); // Sinkronisasi: Hitung Rp dari % yang diketik
-                    update_payment();            // Hitung ulang semua
+                    update_payment(); // Hitung ulang semua
                 });
 
                 // Initial calculation on page load
@@ -1152,22 +1174,8 @@
                     }
                 });
 
-                // Update total percentage display in real-time
                 $(document).on('input change', '.insurance-percentage', function() {
-                    var totalPercentage = 0;
-                    $('.insurance-percentage').each(function() {
-                        if ($(this).closest('.item').is(':visible')) {
-                            var value = parseFloat($(this).val()) || 0;
-                            totalPercentage += value;
-                        }
-                    });
-                    $('#total-percentage').text(totalPercentage.toFixed(2));
-                    var infoDiv = $('#percentage-info');
-                    if (totalPercentage > 100 || totalPercentage < 0) {
-                        infoDiv.attr('class', 'alert alert-danger');
-                    } else {
-                        infoDiv.attr('class', 'alert alert-success');
-                    }
+                    updatePercentageTotal('.insurance-percentage', '#total-percentage', '#percentage-info');
                 });
 
                 $(document).on('change', '.is-main-checkbox', function() {
