@@ -12,6 +12,8 @@ use App\Services\User\UserService;
 use App\Services\PaymentStatus\PaymentStatusService;
 use App\Repositories\Payment\PaymentRepositoryImplement;
 
+use Illuminate\Support\Facades\DB;
+
 class PaymentController extends Controller
 {
     private $paymentService;
@@ -81,7 +83,10 @@ class PaymentController extends Controller
      */
     public function updateInstallments(UpdateInstallmentsRequest $request, string $id)
     {
+        DB::beginTransaction();
+
         try {
+            // 1. Ambil data payment lama untuk referensi status
             $payment = $this->paymentService->findOrFail($id);
             $cardId = $payment->card_id;
             
@@ -93,10 +98,12 @@ class PaymentController extends Controller
                 'payment_type_id' => $validated['payment_type_id']
             ]);
 
-            // Ambil data dari payment existing sebagai template
+            // 2. Siapkan template data dari payment lama
+            // Kita simpan status pembayaran lama di sini
             $templateData = [
                 'created_by' => $payment->created_by,
-                'client_payment_status_id' => $payment->client_payment_status_id ?? 1,
+                // Pastikan nama kolom sesuai database: 'payment_status_id'
+                'payment_status_id' => $payment->payment_status_id, 
             ];
 
             // Delete existing payments for this card menggunakan service
@@ -113,10 +120,13 @@ class PaymentController extends Controller
                     'amount' => $installment['amount'],
                     'deadline_at' => $installment['due_date'],
                     'created_by' => $templateData['created_by'],
-                    'client_payment_status_id' => $templateData['client_payment_status_id'],
-                    'note' => '',
+                    // 3. Pakai status dari data lama
+                    'payment_status_id' => $templateData['payment_status_id'], 
+                    'note' => 'Cicilan #' . ($index + 1), // Tambahkan note biar rapi
                 ]);
             }
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
