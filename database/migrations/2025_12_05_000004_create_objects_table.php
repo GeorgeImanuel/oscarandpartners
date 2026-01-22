@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name'); // Nama Tertanggung
             $table->integer('tjh_value')->nullable(); // Nilai TJH
             $table->text('keterangan'); // Alamat / Jenis Kendaraan
+            $table->decimal('tjh', 20, 2)->default(0)->nullable();
             $table->timestamps();
         });
     }

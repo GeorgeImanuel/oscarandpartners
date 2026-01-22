@@ -78,6 +78,24 @@
                         @enderror
                     </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="tjh">Nilai TJH (Rp)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <input class="form-control @error('tjh') is-invalid @enderror" 
+                                   id="tjh" 
+                                   name="tjh" 
+                                   type="number" 
+                                   step="0.01" 
+                                   min="0"
+                                   placeholder="0"
+                                   value="{{ isset($object) ? $object->tjh : old('tjh', 0) }}">
+                        </div>
+                        @error('tjh')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="col-md-12 mb-3">
                         <label class="form-label" for="kqqqeterangan">Keterangan<span class="text-danger">*</span></label>
                         <textarea class="form-control @error('keterangan') is-invalid @enderror" id="keterangan" name="keterangan" rows="3" placeholder="Contoh: Jl. Buntu no.12, Jakarta Selatan" required>{{ isset($object) ? $object->keterangan : old('keterangan', '') }}</textarea>

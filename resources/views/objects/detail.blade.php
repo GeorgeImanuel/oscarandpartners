@@ -46,6 +46,10 @@
 											<td>{{ $object->name }}</td>
 										</tr>
 										<tr>
+                                            <th>Nilai TJH</th>
+                                            <td class="fw-bold">Rp {{ number_format($object->tjh ?? 0, 2, ',', '.') }}</td>
+                                        </tr>
+										<tr>
 											<th>Keterangan</th>
 											<td>{{ $object->keterangan }}</td>
 										</tr>

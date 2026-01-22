@@ -36,6 +36,8 @@ class StoreObjectRequest extends FormRequest
 
             'interest_value' => 'nullable|array',
             'interest_value.*' => 'nullable|numeric|min:0',
+
+            'tjh' => 'nullable|numeric|min:0',
         ];
     }
 }
