@@ -240,7 +240,7 @@
                         <span style="width: 100px; text-align: right;">TJH</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            {{ $currency }} {{ number_format($productionCard->tjh_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
+                            {{ $currency }} {{ number_format($productionCard->policy->object->tjh,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
                         </span>
                     </div>
 
