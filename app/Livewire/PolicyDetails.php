@@ -46,7 +46,8 @@ class PolicyDetails extends Component
             if ($this->policy->object) {
                 $this->dispatch(
                     'policyLoaded',
-                    objectId: $this->policy->object->id
+                    objectId: $this->policy->object->id,
+                    coverage_percentage: $this->policy->coverage_percentages
                 );
             }
 

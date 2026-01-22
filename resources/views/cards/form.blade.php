@@ -296,7 +296,7 @@
                                                 step="0.00001"
                                                 min="0"
                                                 max="100"
-                                                value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}"
+                                                value="{{ old('premi_percentages', isset($card) ? ($card->premi_percentages * 100) : (($policy->coverage_percentage ?? 0) * 100)) }}"
                                                 required>
                                             <span class="input-group-text">%</span>
                                         </div>
@@ -314,7 +314,7 @@
                                                 class="form-control"
                                                 name="tjh_value"
                                                 type="number"
-                                                value="{{ isset($card) ? $card->tjh_value : old('tjh_value', 0) }}"
+                                                value="{{ old('tjh_value', isset($card) ? $card->tjh_value : ($card->object->tjh_value ?? 0)) }}"
                                                 required>
                                         </div>
                                     </div>
@@ -879,6 +879,7 @@
             document.addEventListener('livewire:init', () => {
                 Livewire.on('policyLoaded', (event) => {
                     const objectId = event.objectId || event[0]?.objectId || null;
+                    const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
 
                     if (objectId) {
                         // Set value and disable the Select2 dropdown
@@ -895,6 +896,9 @@
                             }).insertAfter('#object_id');
                         }
                     }
+
+                    var rate = parseFloat(coveragePercentage) * 100;
+                    $('#premi_percentages').val(rate).trigger('change');
                 });
 
                 Livewire.on('insurancesLoaded', (event) => {
@@ -986,6 +990,9 @@
 
                     if (object) {
                         $('#object_value').val(object.object_value);
+
+                        var tjh = object.tjh || 0;
+                        $('#tjh_value').val(tjh).trigger('change');
                     }
                     console.log('Object received:', object.object_value);
                     update_payment(); // Trigger calculation when policy is loaded
