@@ -16,6 +16,7 @@ class Currency extends Model
     protected $fillable = [
         'code',
         'name',
+        'value'
     ];
 
     public function policies(): HasMany
