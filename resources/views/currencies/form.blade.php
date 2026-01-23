@@ -49,13 +49,30 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label" for="name">Nama Mata Uang <span class="text-danger">*</span></label>
                         <input class="form-control @error('name') is-invalid @enderror" 
-                               id="name" 
-                               name="name" 
-                               type="text" 
-                               value="{{ isset($currency) ? $currency->name : old('name', '') }}" 
-                               placeholder="Contoh: US Dollar" 
-                               required />
+                            id="name" 
+                            name="name" 
+                            type="text" 
+                            value="{{ isset($currency) ? $currency->name : old('name', '') }}" 
+                            placeholder="Contoh: US Dollar" 
+                            required />
                         @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- TAMBAHAN: Input Value/Kurs --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label" for="value">Nilai Tukar (Ke IDR) <span class="text-danger">*</span></label>
+                        <input class="form-control @error('value') is-invalid @enderror" 
+                            id="value" 
+                            name="value" 
+                            type="number" 
+                            step="0.01"
+                            value="{{ isset($currency) ? $currency->value : old('value', '1') }}" 
+                            placeholder="Contoh: 16000" 
+                            required />
+                        <small class="text-muted">Isi 1 jika mata uang adalah Rupiah (IDR)</small>
+                        @error('value')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

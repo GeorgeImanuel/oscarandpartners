@@ -29,6 +29,7 @@
                                         <th>No</th>
                                         <th>Kode</th>
                                         <th>Nama</th>
+                                        <th>Nilai Tukar</th> {{-- TAMBAHAN HEADER --}}
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -38,6 +39,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $currency->code }}</td>
                                             <td>{{ $currency->name }}</td>
+                                            <td>{{ number_format($currency->value, 2, ',', '.') }}</td>
                                             <td>
                                                 <a class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('currencies.edit', $currency->code) }}"><i class="icon-pencil me-2"></i>Edit</a>
                                                 <form action="{{ route('currencies.destroy', $currency->code) }}" method="POST" style="display:inline;">

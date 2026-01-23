@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Services\Currency\CurrencyService;
+// Tambahkan Model untuk helper pencarian ID saat update
+use App\Models\Currency; 
 
 class CurrencyController extends Controller
 {
@@ -15,44 +16,36 @@ class CurrencyController extends Controller
         $this->currencyService = $currencyService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $currencies = $this->currencyService->all();
         return view('currencies.index', compact('currencies'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('currencies.form');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:3|unique:currencies,code',
-            'name' => 'required|string|max:255',
+        // 1. Tambahkan validasi 'value'
+        $data = $request->validate([
+            'code'  => 'required|string|max:10|unique:currencies,code',
+            'name'  => 'required|string|max:255',
+            'value' => 'required|numeric|min:0', // Wajib ada untuk hitung-hitungan
         ]);
 
-        Currency::create($request->only(['code', 'name']));
+        // 2. Gunakan Service (jangan model langsung)
+        $this->currencyService->create($data);
 
         return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil ditambahkan.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $code)
     {
-        $currency = $this->currencyService->find($code);
+        // Cari berdasarkan kolom 'code' manual karena service->find() biasanya cari ID
+        $currency = Currency::where('code', $code)->first();
         
         if (!$currency) {
             return redirect()->route('currencies.index')->with('error', 'Mata uang tidak ditemukan.');
@@ -61,43 +54,48 @@ class CurrencyController extends Controller
         return view('currencies.form', compact('currency'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $code)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        // 1. Cari Data (Berdasarkan Code dari URL)
+        $currency = Currency::where('code', $id)->first();
+
+        if (!$currency) {
+            return redirect()->route('currencies.index')->with('error', 'Data tidak ditemukan.');
+        }
+
+        // 2. VALIDASI
+        $data = $request->validate([
+            // FIX: Tambahkan parameter ke-4 ',code' 
+            // Artinya: Cek unik di kolom 'code', KECUALI data yang punya 'code' = $currency->code
+            'code'  => 'required|string|max:10|unique:currencies,code,' . $currency->code . ',code', 
+            'name'  => 'required|string|max:255',
+            'value' => 'required|numeric|min:0',
         ]);
 
-        $currency = $this->currencyService->find($code);
-        
-        if (!$currency) {
-            return redirect()->route('currencies.index')->with('error', 'Mata uang tidak ditemukan.');
+        try {
+            // 3. UPDATE MANUAL
+            // Kita update manual field-nya agar lebih aman jika Model tidak mengenali Primary Key
+            Currency::where('code', $id)->update([
+                'code' => $data['code'],
+                'name' => $data['name'],
+                'value' => $data['value'],
+            ]);
+
+            return redirect()->route('currencies.index')
+                ->with('success', 'Mata uang berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal update data: ' . $e->getMessage())
+                ->withInput();
         }
-
-        $currency->update($request->only(['name']));
-
-        return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil diubah.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $code)
     {
-        try {
-            $currency = $this->currencyService->find($code);
-            
-            if (!$currency) {
-                return redirect()->route('currencies.index')->with('error', 'Mata uang tidak ditemukan.');
-            }
-
-            $currency->delete();
-
-            return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menghapus mata uang: ' . $e->getMessage());
+        $currency = Currency::where('code', $code)->first();
+        if ($currency) {
+            $this->currencyService->delete($currency->id);
         }
+        return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil dihapus.');
     }
 }
