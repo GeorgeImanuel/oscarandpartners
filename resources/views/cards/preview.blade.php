@@ -163,7 +163,7 @@
 			<hr style="border: 0; border-top: 2px solid #000; opacity: 1; margin: 10px 0 15px 0;">
             <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px;">
                 <span>REG. NO: {{ str_pad($productionCard->id, 4, '0', STR_PAD_LEFT) }}</span>
-                <span>BLN: {{ $productionCard->created_at ? $productionCard->created_at->format('m/Y') : '-' }}</span>
+                <span>BLN: {{ $productionCard->policy->started_date->format('M-Y')}}</span>
                 <span>{{ strtoupper($productionCard->cardType->name) }}</span>
             </div>
         </div>
@@ -240,7 +240,7 @@
                         <span style="width: 100px; text-align: right;">TJH</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            {{ $currency }} {{ number_format($productionCard->tjh_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
+                            {{ $currency }} {{ number_format($productionCard->policy->object->tjh,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
                         </span>
                     </div>
 

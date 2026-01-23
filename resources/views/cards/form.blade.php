@@ -267,19 +267,19 @@
                             {{-- KIRI: Harga Pertanggungan --}}
                             <div class="col-md-6">
                                 <div class="h-100 d-flex flex-column justify-content">
-                                    <label class="form-label fw-bold">Harga Pertanggungan</label>
+                                    <label class="form-label fw-bold">Harga Pertanggungan (Total)</label>
+                                    
                                     <div class="input-group">
                                         <span class="input-group-text currency-label">Rp</span>
                                         <input id="object_value"
                                             class="form-control form-control-lg fw-bold"
                                             name="object_value"
-                                            type="number"
-                                            value="{{ isset($card) ? $card->object_value : old('object_value', 0) }}"
+                                            type="text" 
+                                            value="{{ isset($card) ? number_format($card->policy->getTotalObjectValue(), 0, ',', '.') : '0' }}"
                                             readonly
                                             style="background-color: #f8f9fa;">
                                     </div>
                                 </div>
-
                             </div>
 
                             {{-- KANAN: Parameter Tarif (Stacked) --}}
@@ -296,7 +296,7 @@
                                                 step="0.00001"
                                                 min="0"
                                                 max="100"
-                                                value="{{ isset($card) ? $card->premi_percentages * 100 : old('premi_percentages', 0) }}"
+                                                value="{{ old('premi_percentages', isset($card) ? ($card->premi_percentages * 100) : (($policy->coverage_percentage ?? 0) * 100)) }}"
                                                 required>
                                             <span class="input-group-text">%</span>
                                         </div>
@@ -314,7 +314,7 @@
                                                 class="form-control"
                                                 name="tjh_value"
                                                 type="number"
-                                                value="{{ isset($card) ? $card->tjh_value : old('tjh_value', 0) }}"
+                                                value="{{ old('tjh_value', isset($card) ? $card->tjh_value : ($card->object->tjh_value ?? 0)) }}"
                                                 required>
                                         </div>
                                     </div>
@@ -851,50 +851,69 @@
             });
 
             // Listen to object_id dropdown change and update Livewire component
-            $('#object_id').on('change', function() {
-                var objectId = $(this).val();
-                console.log('Object ID changed:', objectId);
+            $(document).on('change', '.object-select', function() {
+                var row = $(this).closest('.object-row');
+                var selectedOption = $(this).find(':selected');
+                var value = parseFloat(selectedOption.data('value')) || 0;
 
-                var container = document.querySelector('#object-details-container [wire\\:id]');
-                if (container && typeof window.Livewire !== 'undefined') {
-                    var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
-                    if (livewireComponent) {
-                        livewireComponent.set('objectId', objectId);
-                    }
-                }
+                // Update tampilan nilai per baris
+                row.find('.object-value-display').val(formatRupiah(value));
+
+                // Hitung total semua objek
+                calculateTotalObjectValue();
             });
 
-            function updateObjectValue() {
+            function calculateTotalObjectValue() {
                 var totalValue = 0;
-                $('input[name="value"]').each(function() {
-                    var value = parseInt($(this).val(), 10) || 0;
+                
+                // Loop semua dropdown objek yang dipilih
+                $('.object-select').each(function() {
+                    var selectedOption = $(this).find(':selected');
+                    var value = parseFloat(selectedOption.data('value')) || 0;
                     totalValue += value;
                 });
-                $('#object_value').val(totalValue);
-                $('#object_value_input').val(totalValue);
+
+                // Update Tampilan Total (Text)
+                $('#total-object-value').text(formatRupiah(totalValue));
+                
+                // Update Input Hidden/Readonly yang dipakai update_payment()
+                // Pastikan di HTML ada input dengan id="object_value"
+                $('#object_value').val(totalValue); 
+
+                // Trigger hitung ulang payment
                 update_payment();
+                
+                if(totalValue > 0) $('#object-value-info').show();
+                else $('#object-value-info').hide();
             }
 
             // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
             document.addEventListener('livewire:init', () => {
                 Livewire.on('policyLoaded', (event) => {
                     const objectId = event.objectId || event[0]?.objectId || null;
+                    const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
+                    const totalObjectValue = event.totalObjectValue || event[0]?.totalObjectValue || 0;
+                    const objectsCount = event.objectsCount || event[0]?.objectsCount || 0;
 
-                    if (objectId) {
-                        // Set value and disable the Select2 dropdown
-                        $('#object_id').val(objectId).trigger('change');
-                        $('#object_id').prop('disabled', true);
+                    console.log('Policy loaded with total object value:', totalObjectValue);
 
-                        // Add hidden input to ensure value is submitted
-                        if (!$('#object_id_hidden').length) {
-                            $('<input>').attr({
-                                type: 'hidden',
-                                id: 'object_id_hidden',
-                                name: 'object_id',
-                                value: objectId
-                            }).insertAfter('#object_id');
-                        }
+                    // Update field Harga Pertanggungan
+                    $('#object_value').val(totalObjectValue);
+                    
+                    // Update display (format Rupiah)
+                    $('#total-object-value').text(formatRupiah(totalObjectValue));
+                    
+                    // Show/hide info based on value
+                    if(totalObjectValue > 0) {
+                        $('#object-value-info').show();
+                    } else {
+                        $('#object-value-info').hide();
                     }
+
+                    var rate = parseFloat(coveragePercentage) * 100;
+                    $('#premi_percentages').val(rate).trigger('change');
+
+                    update_payment();
                 });
 
                 Livewire.on('insurancesLoaded', (event) => {
@@ -981,16 +1000,19 @@
                     }
                 });
 
-                Livewire.on('objectLoaded', (event) => {
-                    const object = event.object || event[0]?.object || 0;
+                // Livewire.on('objectLoaded', (event) => {
+                //     const object = event.object || event[0]?.object || 0;
 
-                    if (object) {
-                        $('#object_value').val(object.object_value);
-                    }
-                    console.log('Object received:', object.object_value);
-                    update_payment(); // Trigger calculation when policy is loaded
+                //     if (object) {
+                //         $('#object_value').val(object.object_value);
 
-                });
+                //         var tjh = object.tjh || 0;
+                //         $('#tjh_value').val(tjh).trigger('change');
+                //     }
+                //     console.log('Object received:', object.object_value);
+                //     update_payment(); // Trigger calculation when policy is loaded
+
+                // });
             });
 
             function sync_discount(source) {
@@ -1018,7 +1040,12 @@
             }
 
             function update_payment() {
-                var object_value = parseInt($('#object_value').val()) || 0;
+                var rawValue = $('#object_value').val();
+                if (typeof rawValue === 'string') {
+                    rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.'); // Sesuaikan dengan format locale
+                }
+
+                var object_value = parseFloat(rawValue) || 0;
                 var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
                 var policy_fee = parseInt($('#policy_fee').val()) || 0;
                 var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
