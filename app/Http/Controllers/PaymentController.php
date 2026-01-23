@@ -67,7 +67,7 @@ class PaymentController extends Controller
     public function show(string $id)
     {
         $payment = $this->paymentService->findOrFail($id);
-        $payment->load('card.policy.object', 'card.client.user', 'card.paymentType');
+        $payment->load('card.policy.objects', 'card.client.user', 'card.paymentType');
         
         // Ambil semua payments dengan card_id yang sama
         $allPayments = $this->paymentService->getByCardId($payment->card_id);

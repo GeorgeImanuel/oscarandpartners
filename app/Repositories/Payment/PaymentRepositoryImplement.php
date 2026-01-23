@@ -25,7 +25,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     {
         return $this->model->with([
             'card',
-            'card.policy.object', 
+            'card.policy.objects', 
             'card.client.user', 
             'paymentStatus',
             'card.paymentType',
@@ -36,7 +36,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     {
         return $this->model->with([
             'card.policy.policyInsurances.insurance',
-            'card.policy.object',
+            'card.policy.objects',
             'card.client.user',
             'paymentStatus'
         ])->where('card_id', $cardId)->get();
@@ -47,7 +47,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
     public function getOverduePayments()
     {
         return $this->model->with([
-            'card.policy.object',
+            'card.policy.objects',
             'card.client.user',
             'card.paymentType',
             'paymentStatus'
