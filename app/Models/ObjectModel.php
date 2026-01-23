@@ -17,7 +17,7 @@ class ObjectModel extends Model
     protected $fillable = [
         'object_occupation_id',
         'name',
-        'tjh_value',
+        'tjh',
         'keterangan',
     ];
 

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Policy;
 use App\Models\Coverage;
+use App\Models\Currency;
 use App\Models\ObjectModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -25,9 +26,10 @@ class PolicyFactory extends Factory
 
         return [
             'policy_number' => 'POL-' . fake()->unique()->numerify('######'),
-            'object_id' => ObjectModel::inRandomOrder()->first()?->id ?? ObjectModel::factory(),
-            'started_date' => $startDate,
-            'ended_date' => fake()->dateTimeBetween($startDate, '+2 years'),
+            'currency_code' => Currency::inRandomOrder()->first()?->code ?? Currency::factory(),
+            'object_id'     => ObjectModel::inRandomOrder()->first()?->id ?? ObjectModel::factory(),
+            'started_date'  => $startDate,
+            'ended_date'    => fake()->dateTimeBetween($startDate, '+2 years'),
         ];
     }
 }

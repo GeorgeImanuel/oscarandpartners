@@ -59,7 +59,7 @@
                                             <td>
 												<div style="white-space: nowrap;">
 													<a href="{{ route('payments.show', $payment->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
-														<i class="fa fa-eye"></i> Detail
+														<i class="icon-eye me-2"></i>Detail
 													</a>
 												</div>
 											</td>

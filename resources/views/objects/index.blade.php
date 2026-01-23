@@ -24,7 +24,7 @@
 						<div class="d-flex justify-content-between align-items-center">
 							<h5>Objek Asuransi</h5>
 							<a href="{{ route('objects.create') }}" class="btn btn-primary">
-								<i class="fa fa-plus"></i> Tambah Objek
+								<i class="icon-plus me-2"></i>Tambah Objek
 							</a>
 						</div>
 					</div>
@@ -50,6 +50,7 @@
 										<th>No</th>
 										<th>Objek Occupation</th>
 										<th>Nama</th>
+										<th>TJH</th>
 										<th>Keterangan</th>
 										<th>Actions</th>
 									</tr>
@@ -60,20 +61,21 @@
 											<td>{{ $index + 1 }}</td>
 											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 											<td>{{ $object->name }}</td>
+											<td>Rp {{ number_format($object->tjh ?? 0, 2, ',', '.') }}</td>
 											<td>{{ $object->keterangan }}</td>
 											<td>
 												<div style="white-space: nowrap;">
 													<a href="{{ route('objects.show', $object->id) }}" class="btn btn-info btn-sm me-2" title="Detail">
-														<i class="fa fa-eye"></i> <span class="fw-medium">Detail</span>
+														<i class="fa fa-eye"></i> <span class="fw-medium"><i class="icon-eye me-2"></i>Detail</span>
 													</a>
 													<a href="{{ route('objects.edit', $object->id) }}" class="btn btn-warning btn-sm me-2" title="Edit">
-														<i class="fa fa-edit"></i> <span class="fw-medium">Edit</span>
+														<i class="fa fa-edit"></i> <span class="fw-medium"><i class="icon-pencil me-2"></i>Edit</span>
 													</a>
 													<form action="{{ route('objects.destroy', $object->id) }}" method="POST" style="display: inline">
 														@csrf
 														@method('DELETE')
-														<button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)" title="Hapus">
-															<i class="fa fa-trash"></i> <span class="fw-medium">Delete</span>
+														<button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)" title="Hapus">
+															<i class="fa fa-trash"></i> <span class="fw-medium"><i class="icon-trash me-2"></i>Delete</span>
 														</button>
 													</form>
 												</div>

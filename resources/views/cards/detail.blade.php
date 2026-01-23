@@ -14,10 +14,10 @@
 @section('content')
     @component('components.breadcrumb')
         @slot('breadcrumb_title')
-            <h3>Detail Kartu Produksi</h3>
+            <h3><i class="icon-eye me-2"></i>Detail Kartu Produksi</h3>
         @endslot
         <li class="breadcrumb-item">Kartu Produksi</li>
-        <li class="breadcrumb-item active">Detail</li>
+        <li class="breadcrumb-item active"><i class="icon-eye me-2"></i>Detail</li>
     @endcomponent
 
     <div class="container-fluid">
@@ -25,7 +25,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Detail Kartu Produksi #{{ str_pad($card->id, 4, '0', STR_PAD_LEFT) }}</h5>
+                        <h5><i class="icon-eye me-2"></i>Detail Kartu Produksi #{{ str_pad($card->id, 4, '0', STR_PAD_LEFT) }}</h5>
                     </div>
                     <div class="card-body">
                         <!-- Action Buttons -->

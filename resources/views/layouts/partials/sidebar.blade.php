@@ -96,6 +96,26 @@
                             </ul>
 
                         </li>
+
+                        <li class="sidebar-main-title">
+                            <div>
+                                <h6>Laporan</h6>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a class="nav-link menu-title {{ routeActive('reports.*') }}" href="javascript:void(0)">
+                                <i data-feather="bar-chart-2"></i>
+                                <span>Laporan</span>
+                            </a>
+                            <ul class="nav-submenu menu-content" style="display: {{ routeBlock('reports.*') }}">
+                                <li>
+                                    <a href="{{ route('reports.evaluation') }}" class="{{ routeActive('reports.evaluation') }}">
+                                        <i data-feather="trending-up"></i>
+                                        <span>Evaluasi Produksi</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         
                         <li class="sidebar-main-title">
                             <div>
@@ -150,7 +170,7 @@
                         </div>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title link-nav {{ routeActive('user.profile') }}" href="{{ route('user.profile') }}"><i data-feather="user"></i><span>Edit Profile</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('user.profile') }}" href="{{ route('user.profile') }}"><i data-feather="user"></i><span><i class="icon-pencil me-2"></i>Edit Profile</span></a>
                     </li>
 
                 </ul>

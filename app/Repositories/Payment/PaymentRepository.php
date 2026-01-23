@@ -11,4 +11,6 @@ interface PaymentRepository extends Repository{
     public function getOverduePayments();
 
     public function getByCardIdWithRelations($cardId);
+
+    public function getMonthlySumByYears(array $years);
 }

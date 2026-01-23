@@ -12,10 +12,10 @@
 @section('content')
     @component('components.breadcrumb')
         @slot('breadcrumb_title')
-            <h3>Edit Claim</h3>
+            <h3><i class="icon-pencil me-2"></i>Edit Claim</h3>
         @endslot
         <li class="breadcrumb-item"><a href="{{ route('claims.index') }}">Claim</a></li>
-        <li class="breadcrumb-item active">Edit</li>
+        <li class="breadcrumb-item active"><i class="icon-pencil me-2"></i>Edit</li>
     @endcomponent
 
     <div class="container-fluid">

@@ -461,7 +461,7 @@
                         <a class="nav-link menu-title {{ prefixActive('/learning') }}" href="javascript:void(0)"><i data-feather="layers"></i><span>Learning</span></a>
                         <ul class="nav-submenu menu-content" style="display: {{ prefixBlock('/learning') }};">
                             <li><a href="{{ route('learning-list-view') }}" class="{{routeActive('learning-list-view')}}">Learning List</a></li>
-                            <li><a href="{{ route('learning-detailed') }}" class="{{routeActive('learning-detailed')}}">Detailed Course</a></li>
+                            <li><a href="{{ route('learning-detailed') }}" class="{{routeActive('learning-detailed')}}"><i class="icon-eye me-2"></i>Detailed Course</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -472,7 +472,7 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a class="nav-link menu-title {{ prefixActive('/editors') }}" href="javascript:void(0)"><i data-feather="git-pull-request"></i><span>Editors</span></a>
+                        <a class="nav-link menu-title {{ prefixActive('/editors') }}" href="javascript:void(0)"><i data-feather="git-pull-request"></i><span><i class="icon-pencil me-2"></i>Editors</span></a>
                         <ul class="nav-submenu menu-content" style="display: {{ prefixBlock('/editors') }};">
                             <li><a href="{{ route('summernote') }}" class="{{routeActive('summernote')}}">Summer Note</a></li>
                             <li><a href="{{ route('ckeditor') }}" class="{{routeActive('ckeditor')}}">CK editor</a></li>

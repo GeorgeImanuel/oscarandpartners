@@ -25,7 +25,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5>Daftar Claim</h5>
                             <a href="{{ route('claims.create') }}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-plus"></i> Tambah Claim
+                                <i class="icon-plus me-2"></i>Tambah Claim
                             </a>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                         <th>Casco</th>
                                         <th>TJH</th>
                                         <th>Jumlah Claim</th>
-                                        <th class="text-center">Aksi</th>
+                                        <th class="text-center"width="10%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,7 +75,7 @@
                                                 <a href="{{ route('claims.show', $claim->id) }}" 
                                                    class="btn btn-info btn-xs" 
                                                    style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">
-                                                    <i class="fa fa-eye"></i> Detail
+                                                    <i class="icon-eye me-2"></i>Detail
                                                 </a>
 
                                                 {{-- Tombol Edit --}}

@@ -5,6 +5,7 @@ namespace App\Repositories\Payment;
 use App\Models\Card;
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 
 class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
 
@@ -60,4 +61,29 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
         ->latest()
         ->get();
     }
+
+    public function getMonthlySumByYears(array $years)
+    {
+        return Payment::query()
+            // 1. Join ke Cards (Jembatan)
+            ->join('cards', 'payments.card_id', '=', 'cards.id')
+            // 2. Join ke Policies (Untuk ambil started_date)
+            ->join('policies', 'cards.policy_id', '=', 'policies.id')
+            ->selectRaw('
+                -- Grouping berdasarkan TANGGAL MULAI POLIS
+                YEAR(policies.started_date) as year,
+                MONTH(policies.started_date) as month,
+                
+                -- Total Premi: Jumlahkan semua payment milik polis tersebut
+                SUM(COALESCE(payments.paid_amount, 0)) as total_premi,
+                
+                -- Total Komisi: (Total Bayar - Total Setor Asuransi)
+                SUM(COALESCE(payments.paid_amount, 0) - COALESCE(payments.insurance_paid_amount, 0)) as total_komisi
+            ')
+            // Filter berdasarkan TAHUN MULAI POLIS
+            ->whereIn(DB::raw('YEAR(policies.started_date)'), $years)
+            ->groupBy('year', 'month')
+            ->get();
+    }
+    
 }

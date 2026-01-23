@@ -1,7 +1,7 @@
 <div id="existing-policy">
     {{-- Loading State --}}
     <div wire:loading
-        class="alert alert-info"
+        class="alert alert-info mb-3"
         role="alert">
         <div class="d-flex align-items-center">
             <div class="spinner-border spinner-border-sm me-2"
@@ -24,7 +24,11 @@
                     </tr>
                     <tr>
                         <td><strong>Coverage</strong></td>
-                        <td>{{ $policy->coverage->name ?? '-' }} ({{ $policy->coverage->code ?? '-' }})</td>
+                        <td>
+                            @foreach ($policy->policyCoverages as $policyCoverage)
+                            {{ $policyCoverage->coverage->name ?? '-' }} ({{ $policyCoverage->coverage->code ?? '-' }})<br>
+                            @endforeach
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Mata Uang</strong></td>

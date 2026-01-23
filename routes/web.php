@@ -15,6 +15,7 @@ use App\Http\Controllers\ObjectOccupationController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\ReportController;
 use App\Models\Relation;
 use App\Models\Payment;
 
@@ -64,6 +65,8 @@ Route::group(['middleware' => ['auth:web']], function () {
     // Route resource diletakkan di bawahnya
     Route::resource('payments', PaymentController::class);
     Route::post('payments/{payment}/update-installments', [PaymentController::class, 'updateInstallments'])->name('payments.updateInstallments');
+    Route::put('payments/{payment}/client-pay', [PaymentController::class, 'updateClientPay'])->name('payments.update_client_pay');
+    Route::put('payments/{payment}/insurance-pay', [PaymentController::class, 'updateInsurancePay'])->name('payments.update_insurance_pay');
 
 
     // Add missing resources referenced in sidebar
@@ -77,6 +80,9 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
     Route::resource('claims', ClaimController::class);
+
+    Route::get('/reports/evaluation', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.evaluation');
+    Route::get('/reports/evaluation/data', [App\Http\Controllers\ReportController::class, 'evaluation'])->name('reports.data');
 });
 
 

@@ -1,5 +1,5 @@
 <div id="new-client"
-    class="row gt-3"
+    class="row"
     style="display:none;">
     <div class="col-md-12 mb-3">
         <label class="form-label"
@@ -29,6 +29,8 @@
             for="coverage_id">Relasi <span class="text-danger">*</span></label>
         <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
             name="relation_id"
+            data-existing-name="relation_id"
+            data-new-name="relation_name"
             data-placeholder="Pilih Relasi">
             <option value="">- Pilih Relasi -</option>
             @foreach ($relations ?? [] as $relation)

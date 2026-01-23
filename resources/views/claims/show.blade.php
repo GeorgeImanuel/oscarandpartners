@@ -7,10 +7,10 @@
 @section('content')
     @component('components.breadcrumb')
         @slot('breadcrumb_title')
-            <h3>Detail Claim</h3>
+            <h3><i class="icon-eye me-2"></i>Detail Claim</h3>
         @endslot
         <li class="breadcrumb-item"><a href="{{ route('claims.index') }}">Claim</a></li>
-        <li class="breadcrumb-item active">Detail</li>
+        <li class="breadcrumb-item active"><i class="icon-eye me-2"></i>Detail</li>
     @endcomponent
 
     <div class="container-fluid">
@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-header pb-0">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5>Detail Claim</h5>
+                            <h5><i class="icon-eye me-2"></i>Detail Claim</h5>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('claims.edit', $claim->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fa fa-edit"></i> Edit

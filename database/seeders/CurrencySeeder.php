@@ -13,7 +13,7 @@ class CurrencySeeder extends Seeder
     public function run(): void
     {
         $currencies = [
-            ['code' => 'IDR', 'name' => 'Indonesian Rupiah'],
+            ['code' => 'Rp', 'name' => 'Indonesian Rupiah'],
             ['code' => 'USD', 'name' => 'US Dollar'],
             ['code' => 'EUR', 'name' => 'Euro'],
             ['code' => 'GBP', 'name' => 'British Pound Sterling'],

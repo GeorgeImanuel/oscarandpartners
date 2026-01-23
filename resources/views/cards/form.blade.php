@@ -34,19 +34,19 @@
                         <div class="stepwizard-row setup-panel">
                             <div class="stepwizard-step"><a class="btn btn-primary"
                                     href="#step-1">1</a>
-                                <p>Detail Kartu Produksi</p>
+                                <p><i class="icon-eye me-2"></i>Detail Kartu Produksi</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-2">2</a>
-                                <p>Detail Polis</p>
+                                <p><i class="icon-eye me-2"></i>Detail Polis</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-3">3</a>
-                                <p>Detail Objek</p>
+                                <p><i class="icon-eye me-2"></i>Detail Objek</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-4">4</a>
-                                <p>Detail Premi & Komisi</p>
+                                <p><i class="icon-eye me-2"></i>Detail Premi & Komisi</p>
                             </div>
                         </div>
                     </div>
@@ -54,12 +54,12 @@
                     {{-- CARD INFO START --}}
                     <div id="step-1"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12 mt-3">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Kartu Produksi</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12 mt-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="card_type_id">Tipe Kartu</label>
                                 <select id="card_type_id"
@@ -80,7 +80,7 @@
                             </div>
 
                             <div id="parent_card_container"
-                                class="col-md-12"
+                                class="col-md-12 mb-3"
                                 style="display:none;">
                                 <label class="form-label"
                                     for="parent_card_id">Kartu Produksi Sebelumnya</label>
@@ -106,11 +106,11 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="client_id">Nama Client</label>
                                 <select id="client_id"
-                                    class="form-control @error('client_id') is-invalid @enderror"
+                                    class="form-control add-select2 @error('client_id') is-invalid @enderror"
                                     data-existing-id="#existing-client"
                                     data-existing-name="client_id"
                                     data-new-id="#new-client"
@@ -140,7 +140,7 @@
                                 @livewire('client-form')
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="deadline_at">Tanggal Deadline</label>
                                 <input id="deadline_at"
@@ -160,17 +160,17 @@
                     {{-- POLIS INFO START --}}
                     <div id="step-2"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Polis</h5>
                                 <hr class="separator">
                             </div>
                             <div id="policy-details-container"
-                                class="col-md-12">
+                                class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="policy_id">Nomor Polis</label>
                                 <select id="policy_id"
-                                    class="form-control policy-select2 @error('policy_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('policy_id') is-invalid @enderror"
                                     data-existing-id="#existing-policy"
                                     data-existing-name="policy_id"
                                     data-new-id="#new-policy"
@@ -210,16 +210,16 @@
                     {{-- OBJECT INFO START --}}
                     <div id="step-3"
                         class="setup-content">
-                        <div class="row g-3">
-                            <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Detail Objek</h5>
                                 <hr class="separator">
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                 <select id="object_id"
-                                    class="form-control object-select2 @error('object_id') is-invalid @enderror"
+                                    class="form-control create-select2 @error('object_id') is-invalid @enderror"
                                     data-existing-id="#existing-object"
                                     data-existing-name="object_id"
                                     data-new-id="#new-object"
@@ -260,7 +260,7 @@
 
                         {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">1. Parameter Dasar</h5>
                             </div>
 
@@ -285,7 +285,7 @@
                             {{-- KANAN: Parameter Tarif (Stacked) --}}
                             <div class="col-md-6">
                                 <div class="row g-2">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Tarif Premi</label>
                                         <div class="input-group">
                                             {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -306,7 +306,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Nilai TJH</label>
                                         <div class="input-group">
                                             <span class="input-group-text currency-label">Rp</span>
@@ -318,7 +318,7 @@
                                                 required>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label mb-1">Discount</label>
                                         <div class="row">
                                             <div class="col-md-4">
@@ -360,7 +360,7 @@
 
                         {{-- SECTION 2: PREMI (Produksi -> Biaya Polis -> Total) --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2. Perhitungan Premi</h5>
                             </div>
 
@@ -409,11 +409,11 @@
 
                         {{-- SECTION 2.5: COVERAGE --}}
                         <div class="row mb-4">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-3">2.5. Coverage</h5>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <div class="card mb-0"
                                     style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
@@ -463,13 +463,13 @@
                         <hr>
 
                         {{-- SECTION 3: KOMISI --}}
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-12">
+                        <div class="row mb-4">
+                            <div class="col-md-12 mb-3">
                                 <h5 class="text-primary mb-2">3. Perhitungan Komisi</h5>
                             </div>
 
                             {{-- BAGIAN ATAS: Persentase Total & Total Komisi --}}
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label">Persentase Total Komisi</label>
                                 <div class="input-group">
                                     {{-- Tambahkan class 'validate-percent' dan min/max --}}
@@ -491,7 +491,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label text-muted">Total Komisi (Output)</label>
                                 <div class="input-group">
                                     <span class="input-group-text currency-label">Rp</span>
@@ -505,7 +505,7 @@
                             </div>
 
                             {{-- BAGIAN TENGAH: KOTAK RINCIAN ASURANSI (THE BOX) --}}
-                            <div class="col-md-12 mt-4">
+                            <div class="col-md-12 mb-3">
                                 <div class="card mb-0"
                                     style="border: 2px solid #ddd; background-color: #fcfcfc;">
                                     <div class="card-body p-3">
@@ -782,7 +782,7 @@
 
             function updateCurrencyLabel(currencyCode) {
                 // Default ke IDR jika kosong
-                var currency = currencyCode || 'IDR';
+                var currency = currencyCode || 'Rp';
 
                 // Update semua label input group
                 $('.currency-label').text(currency);
@@ -792,9 +792,7 @@
                 window.currentCurrency = currency;
             }
 
-            initCustomSelect2("#policy_id");
-            initCustomSelect2("#object_id");
-            initCustomSelect2("#client_id");
+            initCustomSelect2(".create-select2");
             initCustomSelect2(".add-select2");
 
             // Toggle parent_card_id based on card_status_id
@@ -940,6 +938,12 @@
                         });
                     } else {
                         container.html('<div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>');
+                    }
+                    var selectedOption = $('#policy_id').find('option:selected');
+                    var currencyCode = selectedOption.data('currency');
+                    
+                    if (typeof updateCurrencyLabel === "function") {
+                        updateCurrencyLabel(currencyCode);
                     }
                 });
 

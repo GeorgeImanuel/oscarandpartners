@@ -9,10 +9,10 @@
 @section('content')
 	@component('components.breadcrumb')
 	@slot('breadcrumb_title')
-	<h3>Detail Objek Asuransi</h3>
+	<h3><i class="icon-eye me-2"></i>Detail Objek Asuransi</h3>
 	@endslot
 	<li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Objek</a></li>
-	<li class="breadcrumb-item active">Detail</li>
+	<li class="breadcrumb-item active"><i class="icon-eye me-2"></i>Detail</li>
 	@endcomponent
 
 	<div class="container-fluid">
@@ -45,6 +45,10 @@
 											<th>Nama Objek</th>
 											<td>{{ $object->name }}</td>
 										</tr>
+										<tr>
+                                            <th>Nilai TJH</th>
+                                            <td class="fw-bold">Rp {{ number_format($object->tjh ?? 0, 2, ',', '.') }}</td>
+                                        </tr>
 										<tr>
 											<th>Keterangan</th>
 											<td>{{ $object->keterangan }}</td>

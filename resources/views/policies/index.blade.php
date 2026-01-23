@@ -18,7 +18,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 style="display: inline">Daftar Polis</h5>
-                        <a href="{{ route('policies.create') }}" class="btn btn-primary mb-3 float-end">Tambah Polis</a>
+                        <a href="{{ route('policies.create') }}" class="btn btn-primary mb-3 float-end"><i class="icon-plus me-2"></i>Tambah Polis</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -48,11 +48,11 @@
                                             <td>{{ $policy->started_date }}</td>
                                             <td>{{ $policy->ended_date }}</td>
                                             <td>
-                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('policies.edit', $policy->id) }}">Edit</a>
-                                                <br><form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
+                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('policies.edit', $policy->id) }}"><i class="icon-pencil me-2"></i>Edit</a>
+                                                <form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onClick="confirmDelete(this)">Delete</button>
+                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
                                                 </form>
                                             </td>
                                         </tr>

@@ -36,6 +36,7 @@ class PolicyDetails extends Component
     {
         if ($this->policyId) {
             $this->policy = $this->policyService->findPoliciesWithRelations($this->policyId);
+
             if (!$this->policy) {
                 $this->notFound = true;
                 return;
@@ -51,7 +52,7 @@ class PolicyDetails extends Component
 
             // Emit insurance data
             if ($this->policy->policyInsurances) {
-                $insurances = $this->policy->policyInsurances->map(function($polIns) {
+                $insurances = $this->policy->policyInsurances->map(function ($polIns) {
                     return [
                         'id' => $polIns->id,
                         'insurance_id' => $polIns->insurance_id,
@@ -66,7 +67,7 @@ class PolicyDetails extends Component
 
             // Emit coverage data
             if ($this->policy->policyCoverages) {
-                $coverages = $this->policy->policyCoverages->map(function($polCov) {
+                $coverages = $this->policy->policyCoverages->map(function ($polCov) {
                     return [
                         'id' => $polCov->id,
                         'coverage_id' => $polCov->coverage_id,

@@ -4,16 +4,18 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Policy;
+use App\Models\Currency;
 use Illuminate\Database\Seeder;
 use Database\Seeders\CardSeeder;
-use Database\Seeders\InterestSeeder;
 use Database\Seeders\ObjectSeeder;
 use Database\Seeders\PolicySeeder;
+use Illuminate\Validation\Rules\In;
 use Database\Seeders\CardTypeSeeder;
 use Database\Seeders\CoverageSeeder;
+use Database\Seeders\CurrencySeeder;
+use Database\Seeders\InterestSeeder;
 use Database\Seeders\CardStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Validation\Rules\In;
 
 class DatabaseSeeder extends Seeder
 {
@@ -33,6 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CardStatusSeeder::class);
         $this->call(CardTypeSeeder::class);
         $this->call(BankSeeder::class);
+        $this->call(CurrencySeeder::class);
 
         // Application Data Seeders
         $this->call(InterestSeeder::class);

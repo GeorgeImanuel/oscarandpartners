@@ -127,7 +127,7 @@
                         <h5>Coverage</h5>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" id="add-coverage-btn">
-                        <i class="fa fa-plus"></i> Tambah Coverage
+                        <i class="icon-plus me-2"></i>Tambah Coverage
                     </button>
                 </div>
                 <div class="card-body">
@@ -181,7 +181,7 @@
                         <small class="text-muted">Total persentase harus 100%</small>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" id="add-insurance-btn">
-                        <i class="fa fa-plus"></i> Tambah Asuransi
+                        <i class="icon-plus me-2"></i>Tambah Asuransi
                     </button>
                 </div>
                 <div class="card-body">

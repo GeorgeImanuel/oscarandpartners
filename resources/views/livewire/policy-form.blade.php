@@ -1,5 +1,5 @@
 <div id="new-policy"
-    class="row gt-3"
+    class="row"
     style="display:none;">
     <div class="col-md-12 mb-3">
         <label class="form-label"
@@ -29,38 +29,19 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="coverage_id">Coverage <span class="text-danger">*</span></label>
-        <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
-            name="coverage_id"
-            id="coverage_id"
-            data-placeholder="Pilih Coverage"
-            style="width: 100%;">
-            <option value="">- Pilih Coverage -</option>
-            @foreach ($coverages ?? [] as $coverage)
-                <option value="{{ $coverage->id }}"
-                    {{ isset($policy) && $coverage->id == $policy->coverage_id ? 'selected' : (old('coverage_id') == $coverage->id ? 'selected' : '') }}>
-                    {{ $coverage->name }}
+            for="currency_code">Mata Uang <span class="text-danger">*</span></label>
+        <select class="form-select add-select2 required @error('currency_code') is-invalid @enderror"
+            name="currency_code"
+            id="currency_code"
+            data-placeholder="Pilih Mata Uang">
+            <option value=""></option>
+            @foreach ($currencies as $currency)
+                <option value="{{ $currency->code }}" {{ isset($policy) && $currency->code == $policy->currency_code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
+                    {{ $currency->name }}
                 </option>
             @endforeach
         </select>
-        @error('coverage_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="coverage_percentage">Persentase Coverage (%) <span class="text-danger">*</span></label>
-        <input class="form-control required @error('coverage_percentage') is-invalid @enderror"
-            id="coverage_percentage"
-            name="coverage_percentage"
-            type="number"
-            step="0.00001"
-            min="0"
-            max="100"
-            value="{{ isset($policy) ? $policy->coverage_percentage : old('coverage_percentage', 0) }}" />
-        <small class="text-muted">Contoh: 0.03 untuk 0.03%</small>
-        @error('coverage_percentage')
+        @error('currency_code')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
