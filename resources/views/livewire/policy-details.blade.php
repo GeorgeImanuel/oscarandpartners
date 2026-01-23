@@ -40,11 +40,29 @@
                     </tr>
                     <tr>
                         <td><strong>Objek</strong></td>
-                        <td>{{ $policy->object->name ?? '-' }} ({{ $policy->object->objectOccupation->name ?? '-' }})</td>
+                        <td>
+                            @if($policy->objects && $policy->objects->isNotEmpty())
+                                @foreach($policy->objects as $obj)
+                                    {{ $obj->name ?? '-' }} ({{ $obj->objectOccupation->name ?? '-' }})
+                                    @if($obj->keterangan)
+                                        <br><small class="text-muted">{{ $obj->keterangan }}</small>
+                                    @endif
+                                    @if(!$loop->last)<br>@endif
+                                @endforeach
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                     <tr>
-                        <td><strong>Keterangan</strong></td>
-                        <td>{{ $policy->object->keterangan ?? '-' }}</td>
+                        <td><strong>Total Nilai Objek</strong></td>
+                        <td>
+                            @php
+                                $totalValue = $policy->getTotalObjectValue();
+                                $currency = $policy->currency_code ?? 'Rp';
+                            @endphp
+                            {{ $currency }} {{ number_format($totalValue, $currency == 'Rp' ? 0 : 2, ',', '.') }}
+                        </td>
                     </tr>
                     @if ($policy->policyInsurances->count() > 0)
                         <tr>
