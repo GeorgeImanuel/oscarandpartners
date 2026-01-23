@@ -346,6 +346,7 @@
                                     @php
                                         $grandTotalPremi = 0; $grandTotalBiaya = 0; $grandTotalKomisi = 0;
                                         $grandTotalPajak = 0; $grandTotalNetto = 0;
+                                        $activeDetailId = $payment->id ?? null;
                                     @endphp
 
                                     @foreach($allPayments as $index => $pmt)
@@ -419,12 +420,15 @@
                                                                 {{-- KONDISI A: BELUM BAYAR (ID: 1, 3, 4) --}}
                                                                 <div class="w-100">
                                                                     <div class="label-belum-bayar">Belum Bayar</div>
-                                                                    <button type="button" 
-                                                                        class="btn-dark-green btn-trigger-client"
-                                                                        data-id="{{ $pmt->id }}"
-                                                                        data-amount="{{ $pmt->amount }}">
-                                                                        Bayar Nasabah
-                                                                    </button>
+
+                                                                    @if($pmt->id == $activeDetailId)
+                                                                        <button type="button" 
+                                                                            class="btn-dark-green btn-trigger-client"
+                                                                            data-id="{{ $pmt->id }}"
+                                                                            data-amount="{{ $pmt->amount }}">
+                                                                            Bayar Nasabah
+                                                                        </button>
+                                                                    @endif
                                                                 </div>
 
                                                             @else
@@ -446,12 +450,14 @@
                                                                 
                                                                 @if($pmt->insurance_payment_status_id != 2)
                                                                     {{-- KONDISI C: MENUNGGU SETOR KE ASURANSI --}}
-                                                                    <button type="button" 
-                                                                        class="btn-dark-green btn-trigger-insurance"
-                                                                        data-id="{{ $pmt->id }}"
-                                                                        data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
-                                                                        Bayar Asuransi
-                                                                    </button>
+                                                                    @if($pmt->id == $activeDetailId)
+                                                                        <button type="button" 
+                                                                            class="btn-dark-green btn-trigger-insurance"
+                                                                            data-id="{{ $pmt->id }}"
+                                                                            data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
+                                                                            Bayar Asuransi
+                                                                        </button>
+                                                                    @endif
                                                                 @else
                                                                     {{-- KONDISI D: SUDAH DISETOR --}}
                                                                     <div class="status-box status-ins-disetor">
