@@ -24,6 +24,18 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
+            for="object_name">Nilai TJH (Rp)</label>
+        <input class="form-control required @error('tjh') is-invalid @enderror"
+            id="tjh"
+            name="tjh"
+            type="text"
+            value="{{ isset($object) ? $object->tjh : old('tjh', '') }}" />
+        @error('tjh')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+    <div class="col-md-12 mb-3">
+        <label class="form-label"
             for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
@@ -48,20 +60,20 @@
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
-        <label>Bagian Objek</label>
+        <label>Komponen Objek (Interests)</label>
         <button type="button"
             class="btn btn-primary btn-sm float-end add-item-btn"
             data-target="object-interest-item">
-            <i class="icon-plus me-2"></i>Tambah Bagian
+            <i class="icon-plus me-2"></i>Tambah Interest
         </button>
         <div class="item-list pt-2">
             <div class="mt-2 px-3 py-3 border rounded item object-interest-item">
                 <div class="row align-items-end">
-                    <div class="col-md">
-                        <label class="form-label">Bagian <span class="item-count">1</span></label>
+                    <div class="col-md-6">
+                        <label class="form-label">Interest <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
                             name="interest_id[]"
-                            data-placeholder="Pilih Bagian"
+                            data-placeholder="Pilih Interest"
                             style="width: 100%;">
                             <option value=""></option>
                             @foreach ($interests as $interest)
@@ -71,13 +83,13 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-auto">
-                        <label class="form-label">Harga Bagian <span class="item-count">1</span></label>
+                    <div class="col-md-5">
+                        <label class="form-label">Nilai Interest <span class="item-count">1</span></label>
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
                             <input type="number"
                                 class="form-control"
-                                name="value"
+                                name="interest_value[]"
                                 onkeyup="updateObjectValue()">
                         </div>
                     </div>
@@ -85,7 +97,7 @@
                         <button type="button"
                             class="btn btn-danger btn-xs remove-item-btn"
                             style="display:none">
-                            <i class="fa fa-trash"></i> Hapus
+                            <i class="icon-trash me-2"></i>Hapus
                         </button>
                     </div>
                 </div>

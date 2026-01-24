@@ -46,8 +46,7 @@ class CardServiceImplement extends Service implements CardService
     protected $paymentRepository;
 
     public function __construct(
-        ClientRepository $clientRepository,
-        RelationRepository $relationRepository,
+        CardRepository $mainRepository,
         ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
         InterestRepository $interestRepository,
@@ -57,15 +56,15 @@ class CardServiceImplement extends Service implements CardService
         PolicyInsuranceRepository $policyInsuranceRepository,
         PaymentRepository $paymentRepository
     ) {
-        $this->mainRepository = $mainRepository;
+        $this->mainRepository             = $mainRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
-        $this->objectRepository = $objectRepository;
-        $this->interestRepository = $interestRepository;
-        $this->objectInterestRepository = $objectInterestRepository;
-        $this->policyRepository = $policyRepository;
-        $this->coverageRepository = $coverageRepository;
-        $this->policyInsuranceRepository = $policyInsuranceRepository;
-        $this->paymentRepository = $paymentRepository;
+        $this->objectRepository           = $objectRepository;
+        $this->interestRepository         = $interestRepository;
+        $this->objectInterestRepository   = $objectInterestRepository;
+        $this->policyRepository           = $policyRepository;
+        $this->coverageRepository         = $coverageRepository;
+        $this->policyInsuranceRepository  = $policyInsuranceRepository;
+        $this->paymentRepository          = $paymentRepository;
     }
 
     public function findWithRelation($id)
@@ -90,11 +89,11 @@ class CardServiceImplement extends Service implements CardService
      * Create production card
      */
     public function create($data)
-    { 
+    {
 
         try {
             DB::beginTransaction();
-          //1. Handle Client Creation (if requested)
+            //1. Handle Client Creation (if requested)
             if (isset($data['create_new_client']) && $data['create_new_client']) {
                 $data['client_id'] = $this->createNewClient($data);
             }
@@ -104,55 +103,9 @@ class CardServiceImplement extends Service implements CardService
                 $data['object_id'] = $this->createNewObject($data);
             }
 
-<<<<<<< HEAD
             // 3. Handle Policy Creation (if requested)
             if (isset($data['create_new_policy']) && $data['create_new_policy']) {
                 $data['policy_id'] = $this->createNewPolicy($data);
-=======
-            //Find or Create Policy
-            if (!isset($data['policy_id']) || $data['policy_id'] == null) {
-                $policy = $this->policyRepository->create([
-                    'policy_number'       => $data['policy_number'],
-                    'object_id'           => $data['object_id'],
-                    'coverage_id'         => $data['coverage_id'],
-                    'coverage_percentage' => $data['coverage_percentage'] / 100,
-                    'started_date'        => $data['started_date'],
-                    'ended_date'          => $data['ended_date'],
-                ]);
-
-                //Assign Coverage - no longer needed since we're using ID
-                // Coverage should already exist with the given ID
-
-                //Assign Insurances
-                if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
-                    foreach ($data['insurance_id'] as $index => $insuranceId) {
-                        $taxValue = 0;
-                        if (isset($data['insurance_tax'][$insuranceId])) {
-                            $taxValue = (float)$data['insurance_tax'][$insuranceId];
-                        }
-                        
-                        $this->policyInsuranceRepository->create([
-                            'policy_id'    => $policy->id,
-                            'insurance_id' => $insuranceId,
-                            'percentage'  => $data['percentage'][$index] / 100,
-                            'is_main'     => isset($data['is_main']) && in_array($insuranceId, $data['is_main']),
-                            'tax'         => $taxValue,
-                        ]);
-                    }
-                }
-
-                $data['policy_id'] = $policy->id;
-            } else {
-                // Update tax untuk existing policy insurances
-                if (isset($data['insurance_tax']) && is_array($data['insurance_tax'])) {
-                    foreach ($data['insurance_tax'] as $insuranceId => $taxValue) {
-                        DB::table('policy_insurances')
-                            ->where('policy_id', $data['policy_id'])
-                            ->where('insurance_id', $insuranceId)
-                            ->update(['tax' => (float)$taxValue]);
-                    }
-                }
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
             }
 
             // 4. Validate all required IDs are present
@@ -167,13 +120,8 @@ class CardServiceImplement extends Service implements CardService
                 'card_type_id'          => $data['card_type_id'] ?? null,
                 'card_status_id'        => config('constants.card_status.active'),
                 'parent_card_id'        => $data['parent_card_id'] ?? null,
-<<<<<<< HEAD
-                'payment_type_id'       => config('constants.payment_type.penuh'),
-                'created_by'            => auth()->id(),
-=======
                 'payment_type_id'       => $data['payment_type_id'] ?? config('constants.payment_type.penuh'),
                 'created_by'            => $data['created_by'] ?? auth()->id(),
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
                 'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
                 'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
                 'object_value'          => (float)($data['object_value']),
@@ -190,17 +138,7 @@ class CardServiceImplement extends Service implements CardService
                 'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
             ]);
 
-<<<<<<< HEAD
-            // 6. Create Payment
-            $this->paymentRepository->create([
-                'card_id'            => $card->id,
-                'sequence'           => 1,
-                'created_by'         => auth()->id(),
-                'amount'             => $data['client_pay'] ?? 0,
-                'payment_status_id'  => config('constants.payment_status.pending'),
-                'deadline_at'        => $data['deadline_at'] ?? null,
-            ]);
-=======
+
             //Create Payment(s)
             // Check if installments array exists (cicilan/installment)
             if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
@@ -226,7 +164,6 @@ class CardServiceImplement extends Service implements CardService
                     'deadline_at'        => $data['deadline_at'] ?? null,
                 ]);
             }
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
 
             DB::commit();
             return $card;
@@ -354,16 +291,16 @@ class CardServiceImplement extends Service implements CardService
         // 2. Kalkulasi Ulang (Sesuai Logic JavaScript)
         // Nilai Produksi = (Pertanggungan * %Premi) + TJH
         $production_value = ($object_value * $premi_pct) + $tjh_value;
-        
+
         // Total Premi = Produksi + Biaya Polis
         $premi_value      = $production_value + $policy_fee;
-        
+
         // Komisi Bruto = Produksi * %Komisi
         $commision_bruto  = $production_value * $comm_pct;
-        
+
         // Pajak = Komisi Bruto * %Pajak
         // (Atau ambil dari input 'tax' jika user input manual pajak per asuransi)
-        $tax = (float)($data['tax'] ?? 0); 
+        $tax = (float)($data['tax'] ?? 0);
 
         // Komisi Bersih = Bruto - Pajak - Diskon Agen
         $commision_netto  = $commision_bruto - $tax - $discount_agent;
@@ -383,7 +320,7 @@ class CardServiceImplement extends Service implements CardService
             'card_type_id'   => $data['card_type_id'] ?? null,
             'card_status_id' => $data['card_status_id'] ?? config('constants.card_status.active'),
             'parent_card_id' => $data['parent_card_id'] ?? null,
-            
+
             // Field Date
             'start_date' => $data['periode_mulai'] ?? null, // Pastikan name di form 'periode_mulai' atau sesuaikan
             'end_date'   => $data['periode_akhir'] ?? null,
@@ -396,7 +333,7 @@ class CardServiceImplement extends Service implements CardService
             'discount_percentages'  => $discount_pct,
             'discount_value'        => $discount_value,
             'tjh_value'             => $tjh_value, // Jangan lupa field ini
-            
+
             // Hasil Kalkulasi
             'production_value'      => $production_value,
             'premi_value'           => $premi_value,      // DB: premi_value (Bukan premi_amount)
@@ -404,11 +341,11 @@ class CardServiceImplement extends Service implements CardService
             'tax'                   => $tax,              // DB: tax (Bukan tax_amount)
             'discount_agent'            => $discount_agent,       // DB: discount_agent (Bukan discount_amount)
             'commision_netto'       => $commision_netto,  // DB: commision_netto
-            
+
             // Field yang hilang sebelumnya:
             'client_pay'            => $client_pay,       // DB: client_pay (Bukan client_total)
             'insurance_pay'         => $insurance_pay,    // DB: insurance_pay (Bukan net_to_insurance)
-            
+
             // Payment Info
             'payment_type_id'       => $data['payment_type_id'] ?? null,
             // 'insurance_payment_status_id' => ... (sesuaikan jika ada)

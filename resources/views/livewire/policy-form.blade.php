@@ -36,7 +36,8 @@
             data-placeholder="Pilih Mata Uang">
             <option value=""></option>
             @foreach ($currencies as $currency)
-                <option value="{{ $currency->code }}" {{ isset($policy) && $currency->code == $policy->currency_code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
+                <option value="{{ $currency->code }}"
+                    {{ isset($policy) && $currency->code == $policy->currency_code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
                     {{ $currency->name }}
                 </option>
             @endforeach
@@ -53,12 +54,11 @@
                 <div id="percentage-info"
                     class="alert alert-danger py-2">
                     <strong>Total Persentase Coverage: <span id="total-percentage">0.00</span>%</strong><br>
-                    <small>Total persentasi harus 100%</small>
                 </div>
             </div>
             <div class="col-md-auto">
                 <button type="button"
-                    class="btn btn-primary btn-sm add-item-btn float-end mt-4"
+                    class="btn btn-primary btn-sm add-item-btn float-end"
                     class="add-item-btn"
                     data-target="item-coverage">
                     <i class="icon-plus me-2"></i> Tambah Coverage
@@ -68,7 +68,7 @@
         <div class="item-list pt-2">
             <div class="mb-2 px-3 py-2 border rounded item item-coverage">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <label class="form-label">Coverage <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
                             name="coverage_id[]"
@@ -82,7 +82,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md">
+                    <div class="col-md-5">
                         <label class="form-label">Persentase Coverage</label>
                         <div class="input-group mb-3">
                             <input type="number"
@@ -122,7 +122,6 @@
                 <div id="percentage-info"
                     class="alert alert-danger py-2">
                     <strong>Total Persentase Asuransi: <span id="total-percentage">0.00</span>%</strong><br>
-                    <small>Total persentasi harus 100%</small>
                 </div>
             </div>
             <div class="col-md-auto">
@@ -137,7 +136,7 @@
         <div class="item-list pt-2">
             <div class="mb-2 px-3 py-2 border rounded item item-1">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <label class="form-label">Asuransi <span class="item-count">1</span></label>
                         <select class="form-select add-select2 required"
                             name="insurance_id[]"
@@ -151,7 +150,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md">
+                    <div class="col-md-3">
                         <label class="form-label">Persentase Asuransi</label>
                         <div class="input-group mb-3">
                             <input type="number"
@@ -165,7 +164,7 @@
                             <span class="input-group-text">%</span>
                         </div>
                     </div>
-                    <div class="col-md-auto pt-4">
+                    <div class="col-md-2 pt-4">
                         <div class="form-check">
                             <input class="form-check-input is-main-checkbox"
                                 type="checkbox"

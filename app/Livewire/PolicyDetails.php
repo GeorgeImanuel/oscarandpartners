@@ -34,7 +34,7 @@ class PolicyDetails extends Component
 
     public function loadPolicy()
     {
-        if ($this->policyId) {
+        // if ($this->policyId) {
             $this->policy = $this->policyService->findPoliciesWithRelations($this->policyId);
 
             if (!$this->policy) {
@@ -85,13 +85,13 @@ class PolicyDetails extends Component
                     ];
                 })->toArray();
 
-                $this->dispatch('coveragesLoaded', coverages: $coverages);
+                // $this->dispatch('coveragesLoaded', coverages: $coverages);
             }
-        } else {
-            $this->policy = null;
-            $this->dispatch('insurancesLoaded', insurances: []);
-            $this->dispatch('coveragesLoaded', coverages: []);
-        }
+        // } else {
+        //     $this->policy = null;
+        //     $this->dispatch('insurancesLoaded', insurances: []);
+        //     $this->dispatch('coveragesLoaded', coverages: []);
+        // }
     }
 
     public function render()

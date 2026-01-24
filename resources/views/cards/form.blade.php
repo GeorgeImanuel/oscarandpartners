@@ -10,28 +10,24 @@
         href="{{ asset('assets/css/date-picker.css') }}">
     <style>
         /* CSS Khusus Tabel Preview Payment */
-        .table-manual { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 12px; 
-            color: #000; 
+        .table-manual {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            color: #000;
         }
-        .table-manual th, 
-        .table-manual td { 
-            border: 1px solid #dee2e6; 
-            padding: 8px 10px; 
-            vertical-align: middle; 
+
+        .table-manual th,
+        .table-manual td {
+            border: 1px solid #dee2e6;
+            padding: 8px 10px;
+            vertical-align: middle;
         }
-        .table-manual thead th { 
-            background-color: #f8f9fa; 
-            font-weight: bold; 
-            text-align: center; 
-        }
-        .text-end { 
-            text-align: right; 
-        }
-        .text-center { 
-            text-align: center; 
+
+        .table-manual thead th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
         }
     </style>
 @endpush
@@ -60,22 +56,19 @@
                         <div class="stepwizard-row setup-panel">
                             <div class="stepwizard-step"><a class="btn btn-primary"
                                     href="#step-1">1</a>
-                                <p><i class="icon-eye me-2"></i>Detail Kartu Produksi</p>
+                                <p>Detail Kartu Produksi</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-2">2</a>
-                                <p><i class="icon-eye me-2"></i>Detail Polis</p>
+                                <p>Detail Polis & Objek</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-3">3</a>
-                                <p><i class="icon-eye me-2"></i>Detail Objek</p>
+                                <p>Detail Premi & Komisi</p>
                             </div>
                             <div class="stepwizard-step"><a class="btn btn-light"
                                     href="#step-4">4</a>
-                                <p><i class="icon-eye me-2"></i>Detail Premi & Komisi</p>
-                            </div>
-                            <div class="stepwizard-step"><a class="btn btn-light" href="#step-5">5</a>
-                                <p><i class="icon-file-text me-2"></i>Payment</p>
+                                <p>Payment</p>
                             </div>
                         </div>
                     </div>
@@ -229,22 +222,16 @@
                             </div>
 
                             {{-- New Policy Input --}}
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 @livewire('policy-form')
                             </div>
 
-                        </div>
-                    </div>
-                    {{-- POLIS INFO END --}}
-
-                    {{-- OBJECT INFO START --}}
-                    <div id="step-3"
-                        class="setup-content">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <h5 class="text-primary">Detail Objek</h5>
+                            {{-- OBJECT INFO START --}}
+                            <div class="col-md-12 mt-2 mb-3">
+                                <h5 class="text-primary">Objek Pertanggungan</h5>
                                 <hr class="separator">
                             </div>
+
                             <div class="col-md-12 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
@@ -284,10 +271,9 @@
                     {{-- OBJECT INFO END --}}
 
                     {{-- PREMI PARAMETER START --}}
-                    {{-- STEP 4: PARAMETER & PERHITUNGAN --}}
-                    <div id="step-4"
+                    {{-- STEP 3: PARAMETER & PERHITUNGAN --}}
+                    <div id="step-3"
                         class="setup-content">
-
                         {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
                         <div class="row mb-4">
                             <div class="col-md-12 mb-3">
@@ -298,13 +284,13 @@
                             <div class="col-md-6">
                                 <div class="h-100 d-flex flex-column justify-content">
                                     <label class="form-label fw-bold">Harga Pertanggungan (Total)</label>
-                                    
+
                                     <div class="input-group">
                                         <span class="input-group-text currency-label">Rp</span>
                                         <input id="object_value"
                                             class="form-control form-control-lg fw-bold"
                                             name="object_value"
-                                            type="text" 
+                                            type="text"
                                             value="{{ isset($card) ? number_format($card->policy->getTotalObjectValue(), 0, ',', '.') : '0' }}"
                                             readonly
                                             style="background-color: #f8f9fa;">
@@ -326,7 +312,7 @@
                                                 step="0.00001"
                                                 min="0"
                                                 max="100"
-                                                value="{{ old('premi_percentages', isset($card) ? ($card->premi_percentages * 100) : (($policy->coverage_percentage ?? 0) * 100)) }}"
+                                                value="{{ old('premi_percentages', isset($card) ? $card->premi_percentages * 100 : ($policy->coverage_percentage ?? 0) * 100) }}"
                                                 required>
                                             <span class="input-group-text">%</span>
                                         </div>
@@ -344,7 +330,7 @@
                                                 class="form-control"
                                                 name="tjh_value"
                                                 type="number"
-                                                value="{{ old('tjh_value', isset($card) ? $card->tjh_value : ($card->object->tjh_value ?? 0)) }}"
+                                                value="{{ old('tjh_value', isset($card) ? $card->tjh_value : $card->object->tjh_value ?? 0) }}"
                                                 required>
                                         </div>
                                     </div>
@@ -724,10 +710,11 @@
                         </div>
 
                     </div>
-                    {{-- END STEP 4 --}}
+                    {{-- END STEP 3 --}}
 
-                    {{-- STEP 5: PAYMENT CONFIGURATION --}}
-                    <div id="step-5" class="setup-content">
+                    {{-- STEP 4: PAYMENT CONFIGURATION --}}
+                    <div id="step-4"
+                        class="setup-content">
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <h5 class="text-primary">Payment</h5>
@@ -740,17 +727,23 @@
                                     <i class="fa fa-calculator"></i> Preview Perhitungan Premi
                                 </h6>
                                 <div class="table-responsive">
-                                    <table class="table-manual" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                    <table class="table-manual"
+                                        style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                         <thead>
                                             <tr>
                                                 {{-- Kolom Share Asuransi --}}
-                                                <th colspan="3" style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold;">Share Asuransi</th>
-                                                
+                                                <th colspan="3"
+                                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold;">Share Asuransi</th>
+
                                                 {{-- Kolom Financials --}}
-                                                <th rowspan="2" style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Biaya<br>Polis</th>
-                                                <th rowspan="2" style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Komisi</th>
-                                                <th rowspan="2" style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Pajak</th>
-                                                <th rowspan="2" style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Premi<br>Netto</th>
+                                                <th rowspan="2"
+                                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Biaya<br>Polis</th>
+                                                <th rowspan="2"
+                                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Komisi</th>
+                                                <th rowspan="2"
+                                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Pajak</th>
+                                                <th rowspan="2"
+                                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Premi<br>Netto</th>
                                             </tr>
                                             <tr>
                                                 <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:20%; font-weight:bold;">Nama Asuransi</th>
@@ -763,12 +756,24 @@
                                         </tbody>
                                         <tfoot style="background-color: #e9ecef; font-weight:bold;">
                                             <tr>
-                                                <td colspan="2" class="text-center" style="border:1px solid #dee2e6; padding:8px;">TOTAL</td>
-                                                <td class="text-end" id="prev-total-premi" style="border:1px solid #dee2e6; padding:8px;">0</td>
-                                                <td class="text-end" id="prev-total-biaya" style="border:1px solid #dee2e6; padding:8px;">0</td>
-                                                <td class="text-end" id="prev-total-komisi" style="border:1px solid #dee2e6; padding:8px;">0</td>
-                                                <td class="text-end" id="prev-total-pajak" style="border:1px solid #dee2e6; padding:8px;">0</td>
-                                                <td class="text-end" id="prev-total-netto" style="border:1px solid #dee2e6; padding:8px; color:#0d6efd;">0</td>
+                                                <td colspan="2"
+                                                    class="text-center"
+                                                    style="border:1px solid #dee2e6; padding:8px;">TOTAL</td>
+                                                <td class="text-end"
+                                                    id="prev-total-premi"
+                                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                                <td class="text-end"
+                                                    id="prev-total-biaya"
+                                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                                <td class="text-end"
+                                                    id="prev-total-komisi"
+                                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                                <td class="text-end"
+                                                    id="prev-total-pajak"
+                                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                                <td class="text-end"
+                                                    id="prev-total-netto"
+                                                    style="border:1px solid #dee2e6; padding:8px; color:#0d6efd;">0</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -782,15 +787,18 @@
                                 <h6 class="fw-bold mb-3">
                                     <i class="fa fa-cogs"></i> Konfigurasi Pembayaran
                                 </h6>
-                                
+
                                 <div class="row">
                                     {{-- Dropdown Metode Pembayaran --}}
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Tipe Pembayaran <span class="text-danger">*</span></label>
-                                        <select name="payment_type_id" id="payment_type_id" class="form-control form-select" required>
+                                        <select name="payment_type_id"
+                                            id="payment_type_id"
+                                            class="form-control form-select"
+                                            required>
                                             <option value="">Pilih Metode</option>
-                                            @foreach($paymentTypes as $type)
-                                                <option value="{{ $type->id }}" 
+                                            @foreach ($paymentTypes as $type)
+                                                <option value="{{ $type->id }}"
                                                     data-name="{{ strtolower($type->name) }}"
                                                     {{ isset($card) && $card->payment_type_id == $type->id ? 'selected' : '' }}>
                                                     {{ $type->name }}
@@ -800,10 +808,18 @@
                                     </div>
 
                                     {{-- Konfigurasi Cicilan (Hidden by default) --}}
-                                    <div class="col-md-6 mb-3" id="installment-config-area" style="display: none;">
+                                    <div class="col-md-6 mb-3"
+                                        id="installment-config-area"
+                                        style="display: none;">
                                         <label class="form-label fw-bold">Jumlah Termin</label>
                                         <div class="input-group">
-                                            <input type="number" id="termin-count" class="form-control" min="2" max="12" value="2" placeholder="Masukkan jumlah termin">
+                                            <input type="number"
+                                                id="termin-count"
+                                                class="form-control"
+                                                min="2"
+                                                max="12"
+                                                value="2"
+                                                placeholder="Masukkan jumlah termin">
                                         </div>
                                         <small class="text-muted">Masukkan jumlah installment.</small>
                                     </div>
@@ -811,15 +827,19 @@
                             </div>
 
                             {{-- C. TABEL JADWAL PEMBAYARAN (Untuk Cicilan) --}}
-                            <div class="col-md-12" id="installment-rows-container" style="display: none;">
+                            <div class="col-md-12"
+                                id="installment-rows-container"
+                                style="display: none;">
                                 <h6 class="fw-bold mb-3">
                                     <i class="fa fa-calendar"></i> Jadwal Pembayaran
                                 </h6>
                                 <div class="table-responsive">
-                                    <table class="table-manual" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                    <table class="table-manual"
+                                        style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                         <thead>
                                             <tr style="background:#f8f9fa;">
-                                                <th width="5%" class="text-center">#</th>
+                                                <th width="5%"
+                                                    class="text-center">#</th>
                                                 <th width="15%">Jatuh Tempo</th>
                                                 <th width="20%">Nominal Tagihan (Rp)</th>
                                                 <th width="20%">Komisi</th>
@@ -832,12 +852,19 @@
                                         </tbody>
                                         <tfoot style="background-color: #e9ecef; font-weight:bold;">
                                             <tr>
-                                                <td colspan="2" class="text-end" style="border:1px solid #dee2e6; padding:8px;">Total Rencana:</td>
-                                                <td class="text-end" id="installment-total-display" style="border:1px solid #dee2e6; padding:8px;">Rp 0</td>
+                                                <td colspan="2"
+                                                    class="text-end"
+                                                    style="border:1px solid #dee2e6; padding:8px;">Total Rencana:</td>
+                                                <td class="text-end"
+                                                    id="installment-total-display"
+                                                    style="border:1px solid #dee2e6; padding:8px;">Rp 0</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="3" class="text-end" style="border:1px solid #dee2e6; padding:6px;">
-                                                    <small id="installment-diff-display" class="text-muted">Selisih: Rp 0</small>
+                                                <td colspan="3"
+                                                    class="text-end"
+                                                    style="border:1px solid #dee2e6; padding:6px;">
+                                                    <small id="installment-diff-display"
+                                                        class="text-muted">Selisih: Rp 0</small>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -846,6 +873,7 @@
                             </div>
                         </div>
                     </div>
+                    {{-- END STEP 4 --}}
 
                 </div>
                 <div class="card-footer	">
@@ -1017,7 +1045,7 @@
 
             function calculateTotalObjectValue() {
                 var totalValue = 0;
-                
+
                 // Loop semua dropdown objek yang dipilih
                 $('.object-select').each(function() {
                     var selectedOption = $(this).find(':selected');
@@ -1027,15 +1055,15 @@
 
                 // Update Tampilan Total (Text)
                 $('#total-object-value').text(formatRupiah(totalValue));
-                
+
                 // Update Input Hidden/Readonly yang dipakai update_payment()
                 // Pastikan di HTML ada input dengan id="object_value"
-                $('#object_value').val(totalValue); 
+                $('#object_value').val(totalValue);
 
                 // Trigger hitung ulang payment
                 update_payment();
-                
-                if(totalValue > 0) $('#object-value-info').show();
+
+                if (totalValue > 0) $('#object-value-info').show();
                 else $('#object-value-info').hide();
             }
 
@@ -1047,16 +1075,14 @@
                     const totalObjectValue = event.totalObjectValue || event[0]?.totalObjectValue || 0;
                     const objectsCount = event.objectsCount || event[0]?.objectsCount || 0;
 
-                    console.log('Policy loaded with total object value:', totalObjectValue);
-
                     // Update field Harga Pertanggungan
                     $('#object_value').val(totalObjectValue);
-                    
+
                     // Update display (format Rupiah)
                     $('#total-object-value').text(formatRupiah(totalObjectValue));
-                    
+
                     // Show/hide info based on value
-                    if(totalObjectValue > 0) {
+                    if (totalObjectValue > 0) {
                         $('#object-value-info').show();
                     } else {
                         $('#object-value-info').hide();
@@ -1068,91 +1094,89 @@
                     update_payment();
                 });
 
-                Livewire.on('insurancesLoaded', (event) => {
-                    const insurances = event.insurances || event[0]?.insurances || [];
-                    console.log('Insurances loaded:', insurances);
+                // Livewire.on('insurancesLoaded', (event) => {
+                //     const insurances = event.insurances || event[0]?.insurances || [];
+                //     const container = $('#insurance-list-container');
+                //     container.empty();
 
-                    const container = $('#insurance-list-container');
-                    container.empty();
+                //     if (insurances.length > 0) {
+                //         insurances.forEach((insurance, index) => {
+                //             const html = `
+                //                 <div class="row g-2 align-items-center mb-2 insurance-item">
+                //                     <div class="col-md-5">
+                //                         <label class="small text-muted mb-0">Asuransi</label>
+                //                         <input type="text" class="form-control form-control-sm bg-white" 
+                //                             value="${insurance.insurance_name}" readonly>
+                //                     </div>
+                //                     <div class="col-md-3">
+                //                         <label class="small text-muted mb-0">Share</label>
+                //                         <div class="input-group input-group-sm">
+                //                             <input type="text" class="form-control text-center bg-white" 
+                //                                 value="${(insurance.percentage * 100).toFixed(2)}" readonly>
+                //                             <span class="input-group-text">%</span>
+                //                         </div>
+                //                     </div>
+                //                     <div class="col-md-4">
+                //                         <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+                //                         <div class="input-group input-group-sm">
+                //                             <span class="input-group-text currency-label">Rp</span>
+                //                             <input type="number" 
+                //                                 name="insurance_tax[${insurance.insurance_id}]"
+                //                                 class="form-control form-control-sm insurance-tax-per-item" 
+                //                                 data-insurance-id="${insurance.insurance_id}" 
+                //                                 placeholder="0"
+                //                                 value="${insurance.tax || 0}">
+                //                         </div>
+                //                     </div>
+                //                 </div>
+                //                 ${index < insurances.length - 1 ? '<hr class="my-2 text-muted">' : ''}
+                //             `;
+                //             container.append(html);
+                //         });
+                //     } else {
+                //         container.html('<div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>');
+                //     }
+                //     var selectedOption = $('#policy_id').find('option:selected');
+                //     var currencyCode = selectedOption.data('currency');
 
-                    if (insurances.length > 0) {
-                        insurances.forEach((insurance, index) => {
-                            const html = `
-                                <div class="row g-2 align-items-center mb-2 insurance-item">
-                                    <div class="col-md-5">
-                                        <label class="small text-muted mb-0">Asuransi</label>
-                                        <input type="text" class="form-control form-control-sm bg-white" 
-                                            value="${insurance.insurance_name}" readonly>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="small text-muted mb-0">Share</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control text-center bg-white" 
-                                                value="${(insurance.percentage * 100).toFixed(2)}" readonly>
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text currency-label">Rp</span>
-                                            <input type="number" 
-                                                name="insurance_tax[${insurance.insurance_id}]"
-                                                class="form-control form-control-sm insurance-tax-per-item" 
-                                                data-insurance-id="${insurance.insurance_id}" 
-                                                placeholder="0"
-                                                value="${insurance.tax || 0}">
-                                        </div>
-                                    </div>
-                                </div>
-                                ${index < insurances.length - 1 ? '<hr class="my-2 text-muted">' : ''}
-                            `;
-                            container.append(html);
-                        });
-                    } else {
-                        container.html('<div class="text-center text-muted small" id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>');
-                    }
-                    var selectedOption = $('#policy_id').find('option:selected');
-                    var currencyCode = selectedOption.data('currency');
-                    
-                    if (typeof updateCurrencyLabel === "function") {
-                        updateCurrencyLabel(currencyCode);
-                    }
-                });
+                //     if (typeof updateCurrencyLabel === "function") {
+                //         updateCurrencyLabel(currencyCode);
+                //     }
+                // });
 
-                Livewire.on('coveragesLoaded', (event) => {
-                    const coverages = event.coverages || event[0]?.coverages || [];
-                    console.log('Coverages loaded:', coverages);
+                // Livewire.on('coveragesLoaded', (event) => {
+                //     const coverages = event.coverages || event[0]?.coverages || [];
+                //     console.log('Coverages loaded:', coverages);
 
-                    const container = $('#coverage-list-container');
-                    container.empty();
+                //     const container = $('#coverage-list-container');
+                //     container.empty();
 
-                    if (coverages.length > 0) {
-                        coverages.forEach((coverage, index) => {
-                            const html = `
-                                <div class="row g-2 align-items-center mb-2 coverage-item">
-                                    <div class="col-md-8">
-                                        <label class="small text-muted mb-0">Coverage</label>
-                                        <input type="text" class="form-control form-control-sm bg-white" 
-                                            value="${coverage.coverage_name}" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="small text-muted mb-0">Persentase</label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control text-center bg-white" 
-                                                value="${(coverage.percentage * 100).toFixed(5)}" readonly>
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                ${index < coverages.length - 1 ? '<hr class="my-2 text-muted">' : ''}
-                            `;
-                            container.append(html);
-                        });
-                    } else {
-                        container.html('<div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>');
-                    }
-                });
+                //     if (coverages.length > 0) {
+                //         coverages.forEach((coverage, index) => {
+                //             const html = `
+                //                 <div class="row g-2 align-items-center mb-2 coverage-item">
+                //                     <div class="col-md-8">
+                //                         <label class="small text-muted mb-0">Coverage</label>
+                //                         <input type="text" class="form-control form-control-sm bg-white" 
+                //                             value="${coverage.coverage_name}" readonly>
+                //                     </div>
+                //                     <div class="col-md-4">
+                //                         <label class="small text-muted mb-0">Persentase</label>
+                //                         <div class="input-group input-group-sm">
+                //                             <input type="text" class="form-control text-center bg-white" 
+                //                                 value="${(coverage.percentage * 100).toFixed(5)}" readonly>
+                //                             <span class="input-group-text">%</span>
+                //                         </div>
+                //                     </div>
+                //                 </div>
+                //                 ${index < coverages.length - 1 ? '<hr class="my-2 text-muted">' : ''}
+                //             `;
+                //             container.append(html);
+                //         });
+                //     } else {
+                //         container.html('<div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>');
+                //     }
+                // });
 
                 // Livewire.on('objectLoaded', (event) => {
                 //     const object = event.object || event[0]?.object || 0;
@@ -1327,7 +1351,7 @@
                 // Loop setiap baris asuransi dari Step 4
                 insuranceItems.each(function(index) {
                     var inputs = $(this).find('input');
-                    
+
                     // Ambil data dari input readonly/hidden di Step 4
                     var name = inputs.eq(0).val(); // Nama Asuransi
                     var shareStr = inputs.eq(1).val(); // Share %
@@ -1411,7 +1435,7 @@
                         var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
                         var totalPajak = parseFloat($('#tax').val()) || 0;
                         var totalNetto = parseFloat($('#insurance_pay').val()) || 0;
-                        
+
                         renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto);
                     }, 100);
                 });
@@ -1443,25 +1467,25 @@
                 // Payment Type Change Handler - Auto show/hide installment area
                 $('#payment_type_id').on('change', function() {
                     var name = $(this).find(':selected').data('name') || '';
-                    
+
                     // Cek keywords installment/cicilan
-                    if(name.includes('installment') || name.includes('cicilan') || name.includes('termin')) {
+                    if (name.includes('installment') || name.includes('cicilan') || name.includes('termin')) {
                         $('#installment-config-area').slideDown();
                         $('#installment-rows-container').slideDown();
-                        
+
                         // Enable inputs
                         $('#installment-inputs-body input').prop('disabled', false);
-                        
+
                         // Auto generate default 2 rows jika belum ada
                         setTimeout(function() {
-                            if($('#installment-inputs-body').children().length === 0) {
-                                generateSchedule(); 
+                            if ($('#installment-inputs-body').children().length === 0) {
+                                generateSchedule();
                             }
                         }, 300);
                     } else {
                         $('#installment-config-area').slideUp();
                         $('#installment-rows-container').slideUp();
-                        
+
                         // Disable inputs agar tidak tersubmit ke controller
                         $('#installment-inputs-body input').prop('disabled', true);
                     }
@@ -1469,32 +1493,32 @@
 
                 function generateSchedule() {
                     var count = parseInt($('#termin-count').val()) || 2;
-                    
+
                     // Ambil Total Tagihan Netto ke Nasabah (Premi + Biaya - Diskon)
-                    var totalBill = parseFloat($('#client_pay').val()) || 0; 
-                    
+                    var totalBill = parseFloat($('#client_pay').val()) || 0;
+
                     if (count < 1) return;
 
                     // Ambil parameter total dari Step 4 untuk dibagi rata
                     var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
                     var totalPajak = parseFloat($('#tax').val()) || 0;
-                    
+
                     // Hitung rata-rata per termin
                     var amountPerItem = totalBill / count;
                     var komisiPerItem = totalKomisi / count;
                     var pajakPerItem = totalPajak / count;
 
-                    var currencyLabel = window.currentCurrency || 'Rp'; 
-                    
+                    var currencyLabel = window.currentCurrency || 'Rp';
+
                     // Ambil started_date dari policy
                     var selectedOption = $('#policy_id').find('option:selected');
                     var startedDateStr = selectedOption.data('started-date');
                     var baseDate = startedDateStr ? new Date(startedDateStr) : new Date();
-                    
+
                     var tbody = $('#installment-inputs-body');
                     tbody.empty();
-                    
-                    for(var i=0; i<count; i++) {
+
+                    for (var i = 0; i < count; i++) {
                         // Logic Tanggal: +30 hari per termin
                         var d = new Date(baseDate);
                         d.setDate(d.getDate() + ((i + 1) * 30));
@@ -1503,7 +1527,7 @@
 
                         // Estimasi Netto per baris = Tagihan - Komisi
                         // (Disederhanakan untuk visual, real calculation ada di controller/backend)
-                        var nettoPerItem = amountPerItem - komisiPerItem; 
+                        var nettoPerItem = amountPerItem - komisiPerItem;
 
                         var html = `
                             <tr class="installment-row">
@@ -1571,11 +1595,11 @@
 
                 function recalcInstallmentTotal() {
                     var sumAmount = 0;
-                    
+
                     // Ambil total master dari Step 4
                     var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
                     var totalPajak = parseFloat($('#tax').val()) || 0;
-                    
+
                     var rowCount = $('.installment-amount-input').length;
 
                     $('.installment-amount-input').each(function(index) {
@@ -1585,9 +1609,9 @@
                         // Hitung ulang rincian per baris (Dibagi rata sesuai jumlah row)
                         var rowKomisi = totalKomisi / rowCount;
                         var rowPajak = totalPajak / rowCount;
-                        
+
                         // Netto per baris (Estimasi visual)
-                        var rowNetto = val - rowKomisi; 
+                        var rowNetto = val - rowKomisi;
 
                         // Update Text di Kolom Rincian masing-masing
                         var $row = $(this).closest('tr');
@@ -1601,10 +1625,10 @@
                     var diff = totalBill - sumAmount;
 
                     $('#installment-total-display').text(formatRupiah(sumAmount));
-                    
+
                     var diffEl = $('#installment-diff-display');
-                    
-                    if (Math.abs(diff) < 1) { 
+
+                    if (Math.abs(diff) < 1) {
                         diffEl.text('Selisih: 0 (Pas)');
                         diffEl.removeClass('text-danger').addClass('text-success');
                     } else {
