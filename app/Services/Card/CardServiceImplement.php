@@ -4,7 +4,6 @@ namespace App\Services\Card;
 
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
-use Illuminate\Container\AttributesDB;
 use App\Repositories\Card\CardRepository;
 use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Object\ObjectRepository;
@@ -17,7 +16,6 @@ use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
 
 class CardServiceImplement extends Service implements CardService
 {
-
     /**
      * set title message api for CRUD
      * @param string $title
@@ -35,6 +33,8 @@ class CardServiceImplement extends Service implements CardService
      * because used in extends service class
      */
     protected $mainRepository;
+    protected $clientRepository;
+    protected $relationRepository;
     protected $objectOccupationRepository;
     protected $objectRepository;
     protected $interestRepository;
@@ -46,7 +46,8 @@ class CardServiceImplement extends Service implements CardService
     protected $paymentRepository;
 
     public function __construct(
-        CardRepository $mainRepository,
+        ClientRepository $clientRepository,
+        RelationRepository $relationRepository,
         ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
         InterestRepository $interestRepository,
@@ -89,99 +90,31 @@ class CardServiceImplement extends Service implements CardService
      * Create production card
      */
     public function create($data)
-    {
+    { 
+
         try {
             DB::beginTransaction();
-
-            //Find or Create Client
-            if (!isset($data['client_id']) || $data['client_id'] == null) {
-                if (!isset($data['relation_id']) || $data['relation_id'] == null) {
-                $relation = $this->relationRepository->create([
-                    'code' => $data['code'],
-                    'name' => $data['name'] ?? null,
-                ]);
-                }
-                //Create Client
-                $client = $this->clientRepository->create([
-                    'name'      => $data['client_name'],
-                    'address'   => $data['client_address'] ?? null,
-                    'phone'     => $data['client_phone'] ?? null,
-                    'email'     => $data['client_email'] ?? null,
-                ]);
-                $data['client_id'] = $client->id;
+          //1. Handle Client Creation (if requested)
+            if (isset($data['create_new_client']) && $data['create_new_client']) {
+                $data['client_id'] = $this->createNewClient($data);
             }
 
-            //Find or Create Object
-            if (!isset($data['object_id']) || $data['object_id'] == null) {
-                //Find or Create Object occupation
-                $objectOccupation = $this->objectOccupationRepository->find($data['object_occupation_id']);
-                if (!$objectOccupation) {
-                    $objectOccupation = $this->objectOccupationRepository->create([
-                        'name' => $data['object_occupation_id'],
-                    ]);
-                }
-                $data['object_occupation_id'] = $objectOccupation->id;
-
-                //Create Object
-                $object = $this->objectRepository->create([
-                    'object_occupation_id' => $data['object_occupation_id'],
-                    'name'           => $data['object_name'],
-                    'keterangan'     => $data['object_address'] ?? null,
-                ]);
-
-                //Find or Create Interests and Object Interests
-                if (isset($data['interest_id']) && is_array($data['interest_id'])) {
-                    foreach ($data['interest_id'] as $interestIndex => $interest_id) {
-                        $interestId = $data['interest_id'][$interestIndex];
-                        $interest = $this->interestRepository->find($interestId);
-                        if (!$interest) {
-                            $interest = $this->interestRepository->create([
-                                'name' => $data['interest_id'][$interestIndex],
-                            ]);
-                            $interestId = $interest->id;
-                        }
-
-                        //Create Object Interest
-                        $this->objectInterestRepository->create([
-                            'object_id' => $object->id,
-                            'interest_id'   => $interestId,
-                            'value'     => $data['value'][$interestIndex] ?? 0,
-                        ]);
-                    }
-                }
-                $data['object_id'] = $object->id;
+            // 2. Handle Object Creation (if requested)
+            if (isset($data['create_new_object']) && $data['create_new_object']) {
+                $data['object_id'] = $this->createNewObject($data);
             }
 
-            //Find or Create Policy
-            if (!isset($data['policy_id']) || $data['policy_id'] == null) {
-                $policy = $this->policyRepository->create([
-                    'policy_number'       => $data['policy_number'],
-                    'object_id'           => $data['object_id'],
-                    'coverage_id'         => $data['coverage_id'],
-                    'coverage_percentage' => $data['coverage_percentage'] / 100,
-                    'started_date'        => $data['started_date'],
-                    'ended_date'          => $data['ended_date'],
-                ]);
-
-                //Assign Coverage - no longer needed since we're using ID
-                // Coverage should already exist with the given ID
-
-                //Assign Insurances
-                if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
-                    foreach ($data['insurance_id'] as $index => $insuranceId) {
-                        $this->policyInsuranceRepository->create([
-                            'policy_id'    => $policy->id,
-                            'insurance_id' => $insuranceId,
-                            'percentage'  => $data['percentage'][$index] / 100,
-                            'is_main'     => isset($data['is_main']) && in_array($insuranceId, $data['is_main']),
-                        ]);
-                    }
-                }
-
-                $data['policy_id'] = $policy->id;
+            // 3. Handle Policy Creation (if requested)
+            if (isset($data['create_new_policy']) && $data['create_new_policy']) {
+                $data['policy_id'] = $this->createNewPolicy($data);
             }
 
-            //Create Card
+            // 4. Validate all required IDs are present
+            if (!isset($data['client_id']) || !isset($data['policy_id'])) {
+                throw new \Exception('Client ID and Policy ID are required');
+            }
+
+            // 5. Create Card
             $card = $this->mainRepository->create([
                 'client_id'             => $data['client_id'],
                 'policy_id'             => $data['policy_id'],
@@ -189,7 +122,7 @@ class CardServiceImplement extends Service implements CardService
                 'card_status_id'        => config('constants.card_status.active'),
                 'parent_card_id'        => $data['parent_card_id'] ?? null,
                 'payment_type_id'       => config('constants.payment_type.penuh'),
-                'created_by'            => $data['created_by'] ?? auth()->id(),
+                'created_by'            => auth()->id(),
                 'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
                 'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
                 'object_value'          => (float)($data['object_value']),
@@ -201,17 +134,16 @@ class CardServiceImplement extends Service implements CardService
                 'commision_bruto'       => (float)($data['commision_bruto'] ?? 0),
                 'commision_netto'       => (float)($data['commision_netto'] ?? 0),
                 'tax'                   => (float)($data['tax'] ?? 0),
-                'discount_agent'            => (float)($data['discount_agent'] ?? 0),
+                'discount_agent'        => (float)($data['discount_agent'] ?? 0),
                 'client_pay'            => (float)($data['client_pay'] ?? 0),
                 'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
-
             ]);
 
-            //Create Payment
-            $payment = $this->paymentRepository->create([
+            // 6. Create Payment
+            $this->paymentRepository->create([
                 'card_id'            => $card->id,
                 'sequence'           => 1,
-                'created_by'         => $data['created_by'] ?? auth()->id(),
+                'created_by'         => auth()->id(),
                 'amount'             => $data['client_pay'] ?? 0,
                 'payment_status_id'  => config('constants.payment_status.pending'),
                 'deadline_at'        => $data['deadline_at'] ?? null,
@@ -219,6 +151,109 @@ class CardServiceImplement extends Service implements CardService
 
             DB::commit();
             return $card;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Create new client with optional relation
+     */
+    private function createNewClient(array $data): int
+    {
+        // Create relation if needed
+        if (isset($data['create_new_relation']) && $data['create_new_relation']) {
+            $relation = $this->relationRepository->create([
+                'code' => $data['relation_code'],
+                'name' => $data['relation_name'] ?? null,
+            ]);
+            $data['relation_id'] = $relation->id;
+        }
+
+        $client = $this->clientRepository->create([
+            'relation_id' => $data['relation_id'] ?? null,
+            'name'        => $data['client_name'],
+            'address'     => $data['client_address'] ?? null,
+            'phone'       => $data['client_phone'] ?? null,
+            'email'       => $data['client_email'] ?? null,
+        ]);
+
+        return $client->id;
+    }
+
+    /**
+     * Create new object with occupation and interests
+     */
+    private function createNewObject(array $data): int
+    {
+        // Handle object occupation
+        if (isset($data['object_occupation_id'])) {
+            $objectOccupation = $this->objectOccupationRepository->find($data['object_occupation_id']);
+            if (!$objectOccupation) {
+                $objectOccupation = $this->objectOccupationRepository->create([
+                    'name' => $data['object_occupation_name'] ?? $data['object_occupation_id'],
+                ]);
+            }
+            $data['object_occupation_id'] = $objectOccupation->id;
+        }
+
+        // Create object
+        $object = $this->objectRepository->create([
+            'object_occupation_id' => $data['object_occupation_id'],
+            'name'                 => $data['object_name'],
+            'keterangan'           => $data['object_address'] ?? null,
+        ]);
+
+        // Create object interests
+        if (isset($data['interest_id']) && is_array($data['interest_id'])) {
+            foreach ($data['interest_id'] as $index => $interestId) {
+                $interest = $this->interestRepository->find($interestId);
+                if (!$interest) {
+                    $interest = $this->interestRepository->create([
+                        'name' => $data['interest_name'][$index] ?? $interestId,
+                    ]);
+                    $interestId = $interest->id;
+                }
+
+                $this->objectInterestRepository->create([
+                    'object_id'   => $object->id,
+                    'interest_id' => $interestId,
+                    'value'       => $data['value'][$index] ?? 0,
+                ]);
+            }
+        }
+
+        return $object->id;
+    }
+
+    /**
+     * Create new policy with insurances
+     */
+    private function createNewPolicy(array $data): int
+    {
+        $policy = $this->policyRepository->create([
+            'policy_number'       => $data['policy_number'],
+            'object_id'           => $data['object_id'],
+            'coverage_id'         => $data['coverage_id'],
+            'coverage_percentage' => $data['coverage_percentage'] / 100,
+            'started_date'        => $data['started_date'],
+            'ended_date'          => $data['ended_date'],
+        ]);
+
+        // Assign insurances
+        if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+            foreach ($data['insurance_id'] as $index => $insuranceId) {
+                $this->policyInsuranceRepository->create([
+                    'policy_id'    => $policy->id,
+                    'insurance_id' => $insuranceId,
+                    'percentage'   => $data['percentage'][$index] / 100,
+                    'is_main'      => isset($data['is_main']) && in_array($insuranceId, $data['is_main']),
+                ]);
+            }
+        }
+
+        return $policy->id;   return $card;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

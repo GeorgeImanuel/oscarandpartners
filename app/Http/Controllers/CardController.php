@@ -83,7 +83,7 @@ class CardController extends Controller
         $policies       = $this->policyService->allActivePolicies();
         $cardTypes      = $this->cardTypeService->all();
         $parentCards    = $this->cardService->getAllParent();
-        
+
         return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards'));
     }
 
@@ -107,9 +107,9 @@ class CardController extends Controller
      */
     public function show(Card $productionCard)
     {
-        
+
         $card = $this->cardService->findWithRelation($productionCard->id);
-// return $card->policy->policyInsurances;
+        // return $card->policy->policyInsurances;
         return view('cards.detail', compact('card'));
     }
 
@@ -134,7 +134,7 @@ class CardController extends Controller
         $policies       = $this->policyService->allActivePolicies();
         $cardTypes      = $this->cardTypeService->all();
         $parentCards    = $this->cardService->getAllParent();
-        
+
         return view('cards.form', compact('card', 'objects', 'clients', 'policies', 'cardTypes', 'parentCards'));
     }
 
