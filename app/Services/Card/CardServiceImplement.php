@@ -104,9 +104,55 @@ class CardServiceImplement extends Service implements CardService
                 $data['object_id'] = $this->createNewObject($data);
             }
 
+<<<<<<< HEAD
             // 3. Handle Policy Creation (if requested)
             if (isset($data['create_new_policy']) && $data['create_new_policy']) {
                 $data['policy_id'] = $this->createNewPolicy($data);
+=======
+            //Find or Create Policy
+            if (!isset($data['policy_id']) || $data['policy_id'] == null) {
+                $policy = $this->policyRepository->create([
+                    'policy_number'       => $data['policy_number'],
+                    'object_id'           => $data['object_id'],
+                    'coverage_id'         => $data['coverage_id'],
+                    'coverage_percentage' => $data['coverage_percentage'] / 100,
+                    'started_date'        => $data['started_date'],
+                    'ended_date'          => $data['ended_date'],
+                ]);
+
+                //Assign Coverage - no longer needed since we're using ID
+                // Coverage should already exist with the given ID
+
+                //Assign Insurances
+                if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                    foreach ($data['insurance_id'] as $index => $insuranceId) {
+                        $taxValue = 0;
+                        if (isset($data['insurance_tax'][$insuranceId])) {
+                            $taxValue = (float)$data['insurance_tax'][$insuranceId];
+                        }
+                        
+                        $this->policyInsuranceRepository->create([
+                            'policy_id'    => $policy->id,
+                            'insurance_id' => $insuranceId,
+                            'percentage'  => $data['percentage'][$index] / 100,
+                            'is_main'     => isset($data['is_main']) && in_array($insuranceId, $data['is_main']),
+                            'tax'         => $taxValue,
+                        ]);
+                    }
+                }
+
+                $data['policy_id'] = $policy->id;
+            } else {
+                // Update tax untuk existing policy insurances
+                if (isset($data['insurance_tax']) && is_array($data['insurance_tax'])) {
+                    foreach ($data['insurance_tax'] as $insuranceId => $taxValue) {
+                        DB::table('policy_insurances')
+                            ->where('policy_id', $data['policy_id'])
+                            ->where('insurance_id', $insuranceId)
+                            ->update(['tax' => (float)$taxValue]);
+                    }
+                }
+>>>>>>> 12495eb9619b30704a93b058a40b5111af850476
             }
 
             // 4. Validate all required IDs are present
@@ -121,8 +167,13 @@ class CardServiceImplement extends Service implements CardService
                 'card_type_id'          => $data['card_type_id'] ?? null,
                 'card_status_id'        => config('constants.card_status.active'),
                 'parent_card_id'        => $data['parent_card_id'] ?? null,
+<<<<<<< HEAD
                 'payment_type_id'       => config('constants.payment_type.penuh'),
                 'created_by'            => auth()->id(),
+=======
+                'payment_type_id'       => $data['payment_type_id'] ?? config('constants.payment_type.penuh'),
+                'created_by'            => $data['created_by'] ?? auth()->id(),
+>>>>>>> 12495eb9619b30704a93b058a40b5111af850476
                 'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
                 'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
                 'object_value'          => (float)($data['object_value']),
@@ -139,6 +190,7 @@ class CardServiceImplement extends Service implements CardService
                 'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
             ]);
 
+<<<<<<< HEAD
             // 6. Create Payment
             $this->paymentRepository->create([
                 'card_id'            => $card->id,
@@ -148,6 +200,33 @@ class CardServiceImplement extends Service implements CardService
                 'payment_status_id'  => config('constants.payment_status.pending'),
                 'deadline_at'        => $data['deadline_at'] ?? null,
             ]);
+=======
+            //Create Payment(s)
+            // Check if installments array exists (cicilan/installment)
+            if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
+                // Create multiple payments for installments
+                foreach ($data['installments'] as $installment) {
+                    $this->paymentRepository->create([
+                        'card_id'            => $card->id,
+                        'sequence'           => $installment['sequence'] ?? 1,
+                        'created_by'         => $data['created_by'] ?? auth()->id(),
+                        'amount'             => (float)($installment['amount'] ?? 0),
+                        'payment_status_id'  => config('constants.payment_status.pending'),
+                        'deadline_at'        => $installment['due_date'] ?? null,
+                    ]);
+                }
+            } else {
+                // Create single payment for full payment
+                $payment = $this->paymentRepository->create([
+                    'card_id'            => $card->id,
+                    'sequence'           => 1,
+                    'created_by'         => $data['created_by'] ?? auth()->id(),
+                    'amount'             => $data['client_pay'] ?? 0,
+                    'payment_status_id'  => config('constants.payment_status.pending'),
+                    'deadline_at'        => $data['deadline_at'] ?? null,
+                ]);
+            }
+>>>>>>> 12495eb9619b30704a93b058a40b5111af850476
 
             DB::commit();
             return $card;

@@ -83,8 +83,14 @@ class CardController extends Controller
         $policies       = $this->policyService->allActivePolicies();
         $cardTypes      = $this->cardTypeService->all();
         $parentCards    = $this->cardService->getAllParent();
+<<<<<<< HEAD
 
         return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards'));
+=======
+        $paymentTypes   = $this->paymentTypeService->all();
+        
+        return view('cards.form', compact('objects', 'clients', 'policies', 'cardTypes', 'parentCards', 'paymentTypes'));
+>>>>>>> 12495eb9619b30704a93b058a40b5111af850476
     }
 
     /**

@@ -67,7 +67,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
         // Ubah string 'policy.objects' menjadi array key => function
         $query = $this->model->with([
             'client.relation', 
-            'policy.objects' => function($q) {
+            'policy.objects' => function($query) {
                 // Ini kuncinya: Menjumlahkan kolom 'value' dari tabel 'object_interests'
                 // Hasilnya bisa diakses via $object->total_value
                 $query->withSum('objectInterests as total_value', 'value');
