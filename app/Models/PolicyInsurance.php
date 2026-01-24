@@ -16,6 +16,7 @@ class PolicyInsurance extends Model
         'insurance_id',
         'is_main',
         'percentage',
+        'tax',
     ];
 
     public function policy()
