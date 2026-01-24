@@ -253,11 +253,7 @@ class CardServiceImplement extends Service implements CardService
             }
         }
 
-        return $policy->id;   return $card;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return $policy->id;
     }
 
     /**
