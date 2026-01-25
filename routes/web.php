@@ -16,6 +16,7 @@ use App\Http\Controllers\InterestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Relation;
 use App\Models\Payment;
 
@@ -41,12 +42,7 @@ Route::post('login', [AuthController::class, 'auth'])->name('auth');
 
 Route::group(['middleware' => ['auth:web']], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('dashboard', function () {
-        if (!auth()->check()) {
-            return redirect()->route('login');
-        }
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('user-profile', [UserController::class, 'profile'])->name('user.profile');
     Route::put('user-profile', [UserController::class, 'profileUpdate'])->name('profile.update');  
     

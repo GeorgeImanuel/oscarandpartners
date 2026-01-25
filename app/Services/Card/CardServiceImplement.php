@@ -13,6 +13,8 @@ use App\Repositories\Coverage\CoverageRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
+use App\Repositories\Client\ClientRepository;
+use App\Repositories\Relation\RelationRepository;
 
 class CardServiceImplement extends Service implements CardService
 {
@@ -46,6 +48,7 @@ class CardServiceImplement extends Service implements CardService
     protected $paymentRepository;
 
     public function __construct(
+        CardRepository $mainRepository,
         ClientRepository $clientRepository,
         RelationRepository $relationRepository,
         ObjectOccupationRepository $objectOccupationRepository,
@@ -58,6 +61,8 @@ class CardServiceImplement extends Service implements CardService
         PaymentRepository $paymentRepository
     ) {
         $this->mainRepository = $mainRepository;
+        $this->clientRepository = $clientRepository;
+        $this->relationRepository = $relationRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository = $objectRepository;
         $this->interestRepository = $interestRepository;
@@ -104,11 +109,6 @@ class CardServiceImplement extends Service implements CardService
                 $data['object_id'] = $this->createNewObject($data);
             }
 
-<<<<<<< HEAD
-            // 3. Handle Policy Creation (if requested)
-            if (isset($data['create_new_policy']) && $data['create_new_policy']) {
-                $data['policy_id'] = $this->createNewPolicy($data);
-=======
             //Find or Create Policy
             if (!isset($data['policy_id']) || $data['policy_id'] == null) {
                 $policy = $this->policyRepository->create([
@@ -152,7 +152,6 @@ class CardServiceImplement extends Service implements CardService
                             ->update(['tax' => (float)$taxValue]);
                     }
                 }
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
             }
 
             // 4. Validate all required IDs are present
@@ -167,13 +166,8 @@ class CardServiceImplement extends Service implements CardService
                 'card_type_id'          => $data['card_type_id'] ?? null,
                 'card_status_id'        => config('constants.card_status.active'),
                 'parent_card_id'        => $data['parent_card_id'] ?? null,
-<<<<<<< HEAD
-                'payment_type_id'       => config('constants.payment_type.penuh'),
-                'created_by'            => auth()->id(),
-=======
                 'payment_type_id'       => $data['payment_type_id'] ?? config('constants.payment_type.penuh'),
                 'created_by'            => $data['created_by'] ?? auth()->id(),
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
                 'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
                 'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
                 'object_value'          => (float)($data['object_value']),
@@ -190,17 +184,6 @@ class CardServiceImplement extends Service implements CardService
                 'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
             ]);
 
-<<<<<<< HEAD
-            // 6. Create Payment
-            $this->paymentRepository->create([
-                'card_id'            => $card->id,
-                'sequence'           => 1,
-                'created_by'         => auth()->id(),
-                'amount'             => $data['client_pay'] ?? 0,
-                'payment_status_id'  => config('constants.payment_status.pending'),
-                'deadline_at'        => $data['deadline_at'] ?? null,
-            ]);
-=======
             //Create Payment(s)
             // Check if installments array exists (cicilan/installment)
             if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
@@ -226,7 +209,6 @@ class CardServiceImplement extends Service implements CardService
                     'deadline_at'        => $data['deadline_at'] ?? null,
                 ]);
             }
->>>>>>> 12495eb9619b30704a93b058a40b5111af850476
 
             DB::commit();
             return $card;
