@@ -15,6 +15,7 @@ use App\Services\Coverage\CoverageService;
 use App\Services\Currency\CurrencyService;
 use App\Services\PolicyInsurance\PolicyInsuranceService;
 use App\Services\Insurance\InsuranceService;
+use Carbon\Carbon;
 
 class PolicyController extends Controller
 {
@@ -111,5 +112,35 @@ class PolicyController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus policy: ' . $e->getMessage());
         }
     }
-    
+
+    public function thisMonth()
+    {
+        $startDate = Carbon::now()->startOfMonth()->toDateString();
+        $endDate = Carbon::now()->endOfMonth()->toDateString();
+        
+        $month = Carbon::now()->translatedFormat('F');
+        $year = Carbon::now()->year;
+
+        // Gunakan service supaya seragam dengan nextMonth
+        $policies = $this->policyService->getPoliciesExpiringIn($startDate, $endDate)
+            ->load(['productionCard.client', 'objects.objectInterests']);
+
+        return view('policies.monthly', compact('policies', 'month', 'year'));
+    }
+
+    public function nextMonth()
+    {
+        // Ambil tanggal awal dan akhir bulan depan
+        $startDate = Carbon::now()->addMonth()->startOfMonth()->toDateString();
+        $endDate = Carbon::now()->addMonth()->endOfMonth()->toDateString();
+        
+        $month = Carbon::now()->addMonth()->translatedFormat('F');
+        $year = Carbon::now()->addMonth()->year;
+
+        // Ambil data dan Load relasi agar bisa di-loop per object di Blade
+        $policies = $this->policyService->getPoliciesExpiringIn($startDate, $endDate)
+            ->load(['productionCard.client', 'objects.objectInterests']);
+
+        return view('policies.monthly', compact('policies', 'month', 'year'));
+    }    
 }

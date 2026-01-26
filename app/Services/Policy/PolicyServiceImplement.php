@@ -50,6 +50,11 @@ class PolicyServiceImplement extends Service implements PolicyService
         return $this->mainRepository->findPoliciesWithRelations($policyId);
     }
 
+    public function getPoliciesExpiringIn($startDate, $endDate)
+    {
+        return $this->mainRepository->getPoliciesExpiringIn($startDate, $endDate);
+    }
+
     public function createPolicy(array $data)
     {
         return DB::transaction(function () use ($data) {

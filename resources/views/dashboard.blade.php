@@ -92,9 +92,11 @@
             </div>
             
             <div class="card-body pb-4 pt-3 px-3">
-              <div id="chart-transaction-custom" style="min-height: 300px;"></div>
+                <div style="overflow-x: auto;"> 
+                    <div id="chart-transaction-custom" style="min-height: 300px;"></div>
+                </div>
             </div>
-          </div>
+        </div>
       </div>
     </div>
       
@@ -201,7 +203,6 @@
             chart: {
                 type: 'area', 
                 height: 300,
-                width: '100%',
                 fontFamily: 'Roboto, sans-serif',
                 toolbar: { show: false },
                 zoom: { enabled: false }

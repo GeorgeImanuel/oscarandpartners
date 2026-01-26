@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 class ObjectModel extends Model
@@ -26,9 +27,14 @@ class ObjectModel extends Model
         return $this->belongsTo(ObjectOccupation::class);
     }
 
-    public function policies(): HasMany
+    public function policies(): BelongsToMany
     {
-        return $this->hasMany(Policy::class, 'object_id');
+        return $this->belongsToMany(
+            Policy::class, 
+            'policy_objects', 
+            'object_id',      
+            'policy_id'       
+        )->withTimestamps();
     }
 
     public function objectInterests()

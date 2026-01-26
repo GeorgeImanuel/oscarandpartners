@@ -44,7 +44,7 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
                 'objectInterests.interest',
                 'policies.mainInsurance',
                 'policies.productionCard.client.relation',
-                'policies.coverage',
+                'policies.coverages',
                 'objectOccupation'
             ]);
         

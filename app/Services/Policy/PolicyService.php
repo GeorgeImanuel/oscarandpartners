@@ -11,4 +11,5 @@ interface PolicyService extends BaseService
     public function findPoliciesWithRelations($policyId);
     public function createPolicy(array $data);
     public function updatePolicy($id, array $data);
+    public function getPoliciesExpiringIn($startDate, $endDate);
 }
