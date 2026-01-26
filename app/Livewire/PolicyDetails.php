@@ -85,7 +85,7 @@ class PolicyDetails extends Component
                     ];
                 })->toArray();
 
-                // $this->dispatch('coveragesLoaded', coverages: $coverages);
+                $this->dispatch('coveragesLoaded', coverages: $coverages);
             }
         // } else {
         //     $this->policy = null;
