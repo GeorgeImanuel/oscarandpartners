@@ -125,7 +125,7 @@
             }
         });
 
-        $('select[name=object_id]').on('change', function() {
+        $(document).on('change', 'select[name=object_id]', function() {
             var objectId = $(this).val();
             console.log('Object ID changed:', objectId);
             // Find the Livewire component and update policyId

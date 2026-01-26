@@ -9,7 +9,10 @@
 //              data-existing-details-id="#existing-item-details">
 // JS: initCustomSelect2("#example-select");
 function initCustomSelect2(selector) {
-    $(selector).each(function () {
+    // Check if selector is a string or jQuery object
+    var $elements = typeof selector === 'string' ? $(selector) : selector;
+    
+    $elements.each(function () {
         var $element = $(this);
 
         // Read all config from data attributes for this specific element
