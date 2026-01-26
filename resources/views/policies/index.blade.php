@@ -44,18 +44,32 @@
                                             <td>{{ $policy->started_date }}</td>
                                             <td>{{ $policy->ended_date }}</td>
                                             <td>
-                                                <a  class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('policies.edit', $policy->id) }}"><i class="icon-pencil me-2"></i>Edit</a>
-                                                <form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
-                                                </form>
+                                                <div class="d-flex gap-1">
+                                                    {{-- Detail --}}
+                                                    <a href="{{ route('policies.show', $policy->id) }}" class="btn btn-info btn-xs">
+                                                        <i class="icon-eye"></i> Detail
+                                                    </a>
+                                                    
+                                                    {{-- Edit --}}
+                                                    <a href="{{ route('policies.edit', $policy->id) }}" class="btn btn-warning btn-xs">
+                                                        <i class="icon-pencil"></i> Edit
+                                                    </a>
+
+                                                    {{-- Delete --}}
+                                                    <form action="{{ route('policies.destroy', $policy->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)">
+                                                            <i class="icon-trash"></i> Del
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
 
                                     @empty
                                         <tr></tr>
-                                        <td colspan="3" class="text-center">No policies found.</td>
+                                        <td colspan="7" class="text-center">No policies found.</td>
                                         
                                     @endforelse
                                 </tbody>
