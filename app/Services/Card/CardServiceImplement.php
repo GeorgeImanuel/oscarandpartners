@@ -13,6 +13,8 @@ use App\Repositories\Coverage\CoverageRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
+use App\Repositories\Client\ClientRepository;
+use App\Repositories\Relation\RelationRepository;
 
 class CardServiceImplement extends Service implements CardService
 {
@@ -47,6 +49,8 @@ class CardServiceImplement extends Service implements CardService
 
     public function __construct(
         CardRepository $mainRepository,
+        ClientRepository $clientRepository,
+        RelationRepository $relationRepository,
         ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
         InterestRepository $interestRepository,
@@ -56,7 +60,9 @@ class CardServiceImplement extends Service implements CardService
         PolicyInsuranceRepository $policyInsuranceRepository,
         PaymentRepository $paymentRepository
     ) {
-        $this->mainRepository             = $mainRepository;
+        $this->mainRepository = $mainRepository;
+        $this->clientRepository = $clientRepository;
+        $this->relationRepository = $relationRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository           = $objectRepository;
         $this->interestRepository         = $interestRepository;

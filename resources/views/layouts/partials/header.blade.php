@@ -38,47 +38,64 @@
           </div>
         </li> --}}
         <li class="onhover-dropdown">
-          <div class="notification-box"><i data-feather="bell"></i><span class="dot-animated"></span></div>
+          <div class="notification-box">
+            <i data-feather="bell"></i>
+            {{-- Tampilkan dot merah dan jumlah kalau ada data --}}
+            @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
+                <span class="dot-animated"></span>
+                <span class="badge badge-pill badge-danger">{{ $overdueNotifications->count() }}</span>
+            @endif
+          </div>
+
           <ul class="notification-dropdown onhover-show-div">
             <li>
-              <p class="f-w-700 mb-0">You have 3 Notifications<span class="pull-right badge badge-primary badge-pill">4</span></p>
+              <p class="f-w-700 mb-0">
+                  You have {{ isset($overdueNotifications) ? $overdueNotifications->count() : 0 }} Overdue Payments
+              </p>
             </li>
-            <li class="noti-primary">
-              <div class="media">
-                <span class="notification-bg bg-light-primary"><i data-feather="activity"> </i></span>
-                <div class="media-body">
-                  <p>Delivery processing </p>
-                  <span>10 minutes ago</span>
-                </div>
-              </div>
-            </li>
-            <li class="noti-secondary">
-              <div class="media">
-                <span class="notification-bg bg-light-secondary"><i data-feather="check-circle"> </i></span>
-                <div class="media-body">
-                  <p>Order Complete</p>
-                  <span>1 hour ago</span>
-                </div>
-              </div>
-            </li>
-            <li class="noti-success">
-              <div class="media">
-                <span class="notification-bg bg-light-success"><i data-feather="file-text"> </i></span>
-                <div class="media-body">
-                  <p>Tickets Generated</p>
-                  <span>3 hour ago</span>
-                </div>
-              </div>
-            </li>
-            <li class="noti-danger">
-              <div class="media">
-                <span class="notification-bg bg-light-danger"><i data-feather="user-check"> </i></span>
-                <div class="media-body">
-                  <p>Delivery Complete</p>
-                  <span>6 hour ago</span>
-                </div>
-              </div>
-            </li>
+
+            @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
+                @foreach($overdueNotifications->take(10) as $payment)
+                    <li class="noti-danger">
+                        <a href="{{ route('payments.show', $payment->id) }}" style="display: block; text-decoration: none; color: inherit;">
+                            <div class="media">
+                                <span class="notification-bg bg-light-danger"><i data-feather="alert-circle"></i></span>
+                                <div class="media-body">
+                                    {{-- Baris 1: Nama Nasabah (Tertanggung) --}}
+                                    {{-- Mengambil nama client dari relasi card --}}
+                                    <h6 class="mt-0 mb-1 f-12 font-weight-bold">
+                                        {{ $payment->card->client->id_name}}
+                                    </h6>
+                                    
+                                    {{-- Baris 2: Nomor Polis & Info Tagihan --}}
+                                    <p class="mb-1 f-10 text-muted">
+                                        Polis: {{ $payment->card->policy->policy_number ?? '-' }} <br>
+                                        Tagihan #{{ $payment->id }}
+                                    </p>
+                                    
+                                    {{-- Baris 3: Status Telat --}}
+                                    <span class="f-12 text-danger font-weight-bold">
+                                        <i class="fa fa-clock-o me-1"></i>
+                                        Telat {{ intval(\Carbon\Carbon::parse($payment->deadline_at)->diffInDays(now())) }} Hari
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
+
+                <li class="text-center p-2"> 
+                    <a class="btn btn-link btn-sm f-w-700" href="{{ route('payments.overdue') }}">Lihat Semua Tunggakan</a>
+                </li>
+            @else
+                <li>
+                    <div class="media">
+                        <div class="media-body text-center p-3">
+                            <p class="mb-0">Tidak ada tunggakan!</p>
+                        </div>
+                    </div>
+                </li>
+            @endif
           </ul>
         </li>
         {{-- <li>

@@ -53,7 +53,7 @@ class PaymentRepositoryImplement extends Eloquent implements PaymentRepository{
             'paymentStatus'
         ])
         // 1. Filter: Tanggal Deadline sudah lewat dari hari ini
-        ->whereDate('deadline_at', '<=', now()->toDateString()) 
+        ->whereDate('deadline_at', '<=', date('Y-m-d')) 
         
         // 2. Filter: Status Pembayaran adalah Pending (ID: 1)
         ->where('payment_status_id', 1)  
