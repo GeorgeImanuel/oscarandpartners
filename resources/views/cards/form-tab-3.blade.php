@@ -484,16 +484,16 @@
             const clientPay = client_pay(premiValue, discount_agent);
             const insurancePay = insurance_pay(premiValue, commisionNetto);
 
-            console.log('Calculated values:', {
-                productionValue,
-                discount,
-                premiValue,
-                commisionBruto,
-                taxValue,
-                commisionNetto,
-                clientPay,
-                insurancePay
-            });
+            // console.log('Calculated values:', {
+            //     productionValue,
+            //     discount,
+            //     premiValue,
+            //     commisionBruto,
+            //     taxValue,
+            //     commisionNetto,
+            //     clientPay,
+            //     insurancePay
+            // });
 
             $('#production_value').val(productionValue.toFixed(2));
             $('#premi_value').val(premiValue.toFixed(2));
@@ -517,7 +517,7 @@
                 totalTax += value;
             });
             $('#tax').val(totalTax.toFixed(2));
-            console.log('Total Tax calculated:', totalTax);
+            // console.log('Total Tax calculated:', totalTax);
             return totalTax; // Return the value for use in update_payment
         }
 

@@ -25,8 +25,6 @@ function initCustomSelect2(selector) {
                 $element.data("create-tag-text") || "(Klik untuk tambah data)",
         };
 
-        console.log(config);
-
         $element
             .select2({
                 placeholder: config.placeholder,

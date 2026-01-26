@@ -2,7 +2,7 @@
     class="setup-content">
     <div class="row">
         <div class="col-md-12 mb-3">
-            <h5 class="text-primary">Detail Polis</h5>
+            <h5 class="text-primary">Polis</h5>
             <hr class="separator">
         </div>
         <div id="policy-details-container"
@@ -45,44 +45,58 @@
         </div>
 
         {{-- OBJECT INFO START --}}
-        <div class="col-md-12 mt-2 mb-3">
-            <h5 class="text-primary">Objek Pertanggungan</h5>
-            <hr class="separator">
-        </div>
-
         <div class="col-md-12 mb-3">
-            <label class="form-label"
-                for="object_id">Nama Objek <span class="text-danger">*</span></label>
-            <select id="object_id"
-                class="form-control create-select2 @error('object_id') is-invalid @enderror"
-                data-existing-id="#existing-object"
-                data-existing-name="object_id"
-                data-new-id="#new-object"
-                data-new-name="object_name"
-                data-placeholder="Pilih Objek"
-                name="object_id"
-                required>
-                <option value=""></option>
-                @foreach ($objects ?? [] as $object)
-                    <option value="{{ $object->id }}">
-                        {{ $object->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('object_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="row multiple-item-container">
+                <div class="col-md mt-2 mb-3">
+                    <h5 class="text-primary">Objek Pertanggungan</h5>
+                    <hr class="separator">
+                </div>
+                <div class="col-md-auto mt-2 mb-3">
+                    <span class="add-item-btn btn btn-primary float-end"
+                        data-target="item-object"><i class="ico icon-plus me-2"></i> Tambah Objek Pertanggungan</span>
+                </div>
 
-        {{-- Exist Policy Detail --}}
-        <div id="object-details-container"
-            class="col-md-12">
-            @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details'))
-        </div>
+                <div class="col-md-12 mb-3 item-list">
+                    <div class="row align-items-end item item-object border p-3 mb-3">
+                        <div class="col-md-10 mb-3">
+                            <label class="form-label"
+                                for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                            <select class="form-control create-select2 @error('object_id') is-invalid @enderror"
+                                data-existing-id="#existing-object"
+                                data-existing-name="object_id"
+                                data-new-id="#new-object"
+                                data-new-name="object_name"
+                                data-placeholder="Pilih Objek"
+                                name="object_id"
+                                required>
+                                <option value=""></option>
+                                @foreach ($objects ?? [] as $object)
+                                    <option value="{{ $object->id }}">
+                                        {{ $object->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('object_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <span class="remove-item-btn btn btn-danger btn-xs"
+                                style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
+                        </div>
 
-        {{-- New Policy Input --}}
-        <div class="col-md-12">
-            @livewire('object-form')
+                        {{-- Exist Policy Detail --}}
+                        <div class="col-md-12 object-details-container">
+                            @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details'))
+                        </div>
+
+                        {{-- New Policy Input --}}
+                        <div class="col-md-12">
+                            @livewire('object-form')
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -95,7 +109,7 @@
             $('#object_id').val('').trigger('change').prop('disabled', false);
             $('#new-object').hide();
             $('#existing-object').show();
-            console.log('Policy ID changed:', policyId);
+            // console.log('Policy ID changed:', policyId);
 
             var selectedOption = $(this).find('option:selected');
             var currencyCode = selectedOption.data('currency');
@@ -107,6 +121,19 @@
                 var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
                 if (livewireComponent) {
                     livewireComponent.set('policyId', policyId);
+                }
+            }
+        });
+
+        $('select[name=object_id]').on('change', function() {
+            var objectId = $(this).val();
+            console.log('Object ID changed:', objectId);
+            // Find the Livewire component and update policyId
+            var container = $(this).closest('.item-object').find('.object-details-container [wire\\:id]')[0];
+            if (container && typeof window.Livewire !== 'undefined') {
+                var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
+                if (livewireComponent) {
+                    livewireComponent.set('objectId', objectId);
                 }
             }
         });
@@ -227,7 +254,7 @@
 
             Livewire.on('coveragesLoaded', (event) => {
                 const coverages = event.coverages || event[0]?.coverages || [];
-                console.log('Coverages loaded:', coverages);
+                // console.log('Coverages loaded:', coverages);
 
                 const container = $('#coverage-list-container');
                 container.empty();
@@ -268,7 +295,7 @@
                     var tjh = object.tjh || 0;
                     $('#tjh_value').val(tjh).trigger('change');
                 }
-                console.log('Object received:', object.object_value);
+                // console.log('Object received:', object.object_value);
                 update_payment(); // Trigger calculation when policy is loaded
 
             });

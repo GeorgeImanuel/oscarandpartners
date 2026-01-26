@@ -10,21 +10,25 @@
  *   <button class="add-item-btn" data-target="item-2"></button>
  *   <div class="item-list">
  *     <div class="item item-1">
+ *        Title Item <span class="item-count">1</span>
  *       ...
  *       ...
  *       <button class="remove-item-btn"></button>
  *     </div>
  *     <div class="item item-1">
+ *       Title Item <span class="item-count">1</span
  *       ...
  *       ...
  *       <button class="remove-item-btn"></button>
  *     </div>
  *     <div class="item item-2">
+ *        Title Item 2 <span class="item-count">1</span>
  *       ...
  *       ...
  *       <button class="remove-item-btn"></button>
  *     </div>
  *     <div class="item item-2">
+ *       Title Item <span class="item-count">1</span
  *       ...
  *       ...
  *       <button class="remove-item-btn"></button>
@@ -41,16 +45,16 @@ $(document).on("click", ".add-item-btn", function () {
     if ($(this).data("target")) {
         itemClass = ".item." + $(this).data("target");
     }
-    const container = $(this).closest(".multiple-item-container").find(".item-list");
+    const container = $(this).closest(".multiple-item-container").find(".item-list:first");
     const firstItem = container.find(itemClass + ":first");
-    const hiddenItems = container.find(".item").filter(function () {
+    const hiddenItems = container.find(".item:first").filter(function () {
         return $(this).css("display") === "none";
     });
     const hiddenItemCount = hiddenItems.length;
 
     if (firstItem.length) {
         const newItem   = firstItem.clone();
-        const itemCount = container.find(".item").length - hiddenItemCount + 1;
+        const itemCount = container.find(".item." + $(this).data("target")).length - hiddenItemCount + 1;
         newItem.show();
         // Clear the input fields inside the cloned item
         newItem.find(".form-control, .form-select").val("");
@@ -58,7 +62,7 @@ $(document).on("click", ".add-item-btn", function () {
         // Update item text title
         newItem.find(".item-count").text(itemCount);
         newItem.attr("data-item_index", itemCount);
-        newItem.addClass("item-" + itemCount);
+        // newItem.addClass("item-" + itemCount);
         newItem.removeClass("no-print");
         
         // Remove select2 & Reinit the select2
@@ -135,32 +139,39 @@ $(document).on("click", ".remove-item-btn", function () {
         if (result.isConfirmed) {
             var $itemList = $(this).closest(".item-list");
             var $multipleItemContainer = $(this).closest(".multiple-item-container");
-            
+            var itemClass = $(this).closest(".item").attr('class');
+
             if ($itemList.find(".item").length === 1) {
+                console.log(21);
+
                 return;
-            } else {
-                
-                const container = $multipleItemContainer.find(".item-list");
+            } else {   
+                // const container = $multipleItemContainer.find(".item-list:first");
                 $(this).closest(".item").remove();
 
-                const hiddenItems = container.find(".item").filter(function () {
+                const hiddenItems = $itemList.find("."+itemClass).filter(function () {
+                    console.log(21);
                     return $(this).css("display") === "none";
                 });
+                console.log(22);
                 const hiddenItemCount = hiddenItems.length;
                 const items           = $itemList.find(".item");
+                console.log($itemList);
                 items.each(function (index) {
                     var itemCount = index - hiddenItemCount + 1;
+                    console.log(itemCount);
                     $(this).find(".item-count").text(itemCount);
                     $(this).attr("data-item_index", itemCount);
                     $(this)
                         .removeClass(function (i, cls) {
                             return (cls.match(/(^|\s)item-\d+/g) || []).join(" ");
                         })
-                        .addClass("item-" + itemCount);
+                        // .addClass("item-" + itemCount)
+                        ;
                 });
                 
                 // Show empty state if no visible items
-                const visibleItems = container.find(".item").filter(function () {
+                const visibleItems = $itemList.find(".item").filter(function () {
                     return $(this).css("display") !== "none";
                 });
                 if (visibleItems.length === 0) {

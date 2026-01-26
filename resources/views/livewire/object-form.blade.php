@@ -97,7 +97,7 @@
                         <button type="button"
                             class="btn btn-danger btn-xs remove-item-btn"
                             style="display:none">
-                            <i class="icon-trash me-2"></i>Hapus
+                            <i class="icon-trash me-2"></i> Hapus
                         </button>
                     </div>
                 </div>

@@ -73,19 +73,19 @@
                         </div>
                     </div>
                     {{-- START STEP 1: CARD INFO --}}
-                    @include('cards.form-tab-1');
+                    @include('cards.form-tab-1')
                     {{-- END STEP 1 --}}
 
                     {{-- START STEP 2: POLIS & OBJEK --}}
-                    @include('cards.form-tab-2');
+                    @include('cards.form-tab-2')
                     {{-- END STEP 2 --}}
 
                     {{-- START STEP 3: PARAMETER & PERHITUNGAN --}}
-                    @include('cards.form-tab-3');
+                    @include('cards.form-tab-3')
                     {{-- END STEP 3 --}}
 
                     {{-- START STEP 4: PAYMENT CONFIGURATION --}}
-                    @include('cards.form-tab-4');
+                    @include('cards.form-tab-4')
                     {{-- END STEP 4 --}}
 
                 </div>
