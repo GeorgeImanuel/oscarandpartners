@@ -218,7 +218,7 @@
                                 </div>
                             @empty
                                 <div class="alert alert-info">
-                                    Tidak ada data objek pertanggungan
+                                    Tidak ada data untuk ditampilkan
                                 </div>
                             @endforelse
                         @endif

@@ -48,8 +48,6 @@ Route::group(['middleware' => ['auth:web']], function () {
     
     Route::resource('relations', RelationController::class);
 
-    Route::get('/cards/this-month', [CardController::class, 'thisMonth'])->name('cards.thisMonth');
-    Route::get('/cards/next-month', [CardController::class, 'nextMonth'])->name('cards.nextMonth');
     Route::get('/cards/report-by-relation', [CardController::class, 'reportByRelation'])->name('cards.reportByRelation');
     Route::get('/cards/report-by-object', [CardController::class, 'reportByObject'])->name('cards.reportByObject');
     Route::resource('cards', CardController::class)->parameters(['cards' => 'productionCard']);
@@ -64,6 +62,8 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::put('payments/{payment}/client-pay', [PaymentController::class, 'updateClientPay'])->name('payments.update_client_pay');
     Route::put('payments/{payment}/insurance-pay', [PaymentController::class, 'updateInsurancePay'])->name('payments.update_insurance_pay');
 
+    Route::get('/policies/this-month', [PolicyController::class, 'thisMonth'])->name('policies.thisMonth');
+    Route::get('/policies/next-month', [PolicyController::class, 'nextMonth'])->name('policies.nextMonth');
 
     // Add missing resources referenced in sidebar
     Route::resource('insurances', InsuranceController::class);

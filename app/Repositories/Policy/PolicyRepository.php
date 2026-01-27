@@ -9,4 +9,5 @@ interface PolicyRepository extends Repository
     public function allFreePolicies();
     public function allActivePolicies();
     public function findPoliciesWithRelations($policyId);
+    public function getPoliciesExpiringIn($startDate, $endDate);
 }

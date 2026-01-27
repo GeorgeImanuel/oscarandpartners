@@ -41,4 +41,20 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
             'policyInsurances.insurance'
         ])->find($policyId);
     }
+
+    public function getPoliciesExpiringIn($startDate, $endDate)
+    {
+        return Policy::query()
+        // Load relasi yang diperlukan buat tampilan
+        // productionCard.client -> buat ambil nama Client
+        // currency -> buat mata uang (kalau ada relasinya)
+        ->with(['productionCard.client', 'currency']) 
+        
+        // Filter Tanggal Berakhir (Jatuh Tempo) ada di range bulan ini
+        ->whereBetween('ended_date', [$startDate, $endDate])
+        
+        // Urutkan dari tanggal berakhir paling dekat
+        ->orderBy('ended_date', 'asc')
+        ->get();
+    }
 }

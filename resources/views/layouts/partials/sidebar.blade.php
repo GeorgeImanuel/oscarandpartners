@@ -45,14 +45,16 @@
                             </li>
 
                             <li>
-                                <a href="{{ route('cards.thisMonth') }}"
-                                    class="{{ routeActive('cards.thisMonth') }}"><i data-feather="calendar"></i><span>Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
+                                <a href="{{ route('policies.thisMonth') }}"
+                                class="{{ routeActive('policies.thisMonth') }}">
+                                    <i data-feather="calendar"></i>
+                                    <span>Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('cards.nextMonth') }}"
-                                    class="{{ routeActive('cards.nextMonth') }}">
+                                <a href="{{ route('policies.nextMonth') }}"
+                                class="{{ routeActive('policies.nextMonth') }}">
                                     <i data-feather="calendar"></i>
                                     <span>Bulan Depan ( {{ $now->copy()->addMonth()->translatedFormat('F Y') }} )</span>
                                 </a>

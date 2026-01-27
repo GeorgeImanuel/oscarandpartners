@@ -1,6 +1,55 @@
 @extends('layouts.master')
 
 @section('content')
+
+<style>
+    @media print {
+        @page {
+            size: landscape;
+            margin: 10mm;
+        }
+
+        /* Paksa tabel fixed layout */
+        table {
+            table-layout: fixed !important;
+            width: 100% !important;
+            font-size: 10px !important; /* Font diperkecil biar muat */
+        }
+
+        /* 2. Sembunyikan elemen body asli, sisakan area print */
+        body * {
+            visibility: hidden;
+        }
+        
+        /* 3. Tampilkan konten print */
+        #printable-area, #printable-area * {
+            visibility: visible;
+        }
+
+        /* 4. Reset posisi ke pojok kertas */
+        #printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        /* 5. Paksa background warna header ke-print */
+        th, td {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            padding: 4px !important; /* Padetin padding biar hemat kertas */
+        }
+
+        /* Hilangkan border/shadow card */
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+
 <div class="container-fluid">
     <div class="card mt-3">
         <div class="card-header">
@@ -11,14 +60,6 @@
             {{-- FILTER TAHUN --}}
             <div class="row mb-4">
                 <div class="col-md-3">
-                    <label>Tahun Berjalan (Current)</label>
-                    <select id="year_current" class="form-control">
-                        @for($i = date('Y'); $i >= 2020; $i--)
-                            <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="col-md-3">
                     <label>Tahun Pembanding (Compare)</label>
                     <select id="year_compare" class="form-control">
                         @for($i = date('Y'); $i >= 2020; $i--)
@@ -26,15 +67,31 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button onclick="loadReport()" class="btn btn-primary w-100">
+                <div class="col-md-3">
+                    <label>Tahun Berjalan (Current)</label>
+                    <select id="year_current" class="form-control">
+                        @for($i = date('Y'); $i >= 2020; $i--)
+                            <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end gap-2">
+                    <button onclick="loadReport()" class="btn btn-primary me-2">
                         <i class="fas fa-search"></i> Tampilkan
+                    </button>
+                    {{-- TOMBOL PRINT BARU --}}
+                    <button onclick="printTable()" class="btn btn-success">
+                        <i class="fas fa-print"></i> Print Tabel
                     </button>
                 </div>
             </div>
 
             {{-- TABEL LAPORAN --}}
-            <div class="table-responsive">
+            <div id="printable-area" class="table-responsive">
+                <div class="d-none d-print-block text-center mb-3">
+                    <h3>Laporan Evaluasi Produksi</h3>
+                </div>
+
                 <table class="table table-bordered table-striped text-center table-sm" style="font-size: 12px;">
                     <thead class="bg-light font-weight-bold">
                         {{-- Header Baris 1 --}}
@@ -175,27 +232,52 @@
                 <td class="text-left">TOTAL</td>
                 
                 {{-- Total Premi Bulanan (Sebenarnya sama dengan Akumulasi akhir tahun) --}}
-                <td colspan="2" class="text-center bg-dark text-white">
+                <td colspan="2" class="text-center text-dark">
                     Current: Rp ${formatRupiah(data.footer.total_premi_current)}
                 </td>
                 
                 {{-- Total Komisi Bulanan --}}
-                <td colspan="2" class="text-center bg-dark text-white">
+                <td colspan="2" class="text-center text-dark">
                     Current: Rp ${formatRupiah(data.footer.total_komisi_current)}
                 </td>
-                
-                {{-- Total Akumulasi Premi --}}
-                <td>Rp ${formatRupiah(data.footer.total_premi_compare)}</td>
-                <td>Rp ${formatRupiah(data.footer.total_premi_current)}</td>
-                <td class="${colorTotalPremi}">${data.footer.total_growth_premi}</td>
-
-                 {{-- Total Akumulasi Komisi --}}
-                <td>Rp ${formatRupiah(data.footer.total_komisi_compare)}</td>
-                <td>Rp ${formatRupiah(data.footer.total_komisi_current)}</td>
-                <td class="${colorTotalKomisi}">${data.footer.total_growth_komisi}</td>
             </tr>
         `;
         document.getElementById('report-footer').innerHTML = footerHtml;
+    }
+
+    function printTable() {
+        // 1. Simpan nilai filter tahun saat ini (biar gak ilang/kereset abis print)
+        let valCurrent = document.getElementById('year_current').value;
+        let valCompare = document.getElementById('year_compare').value;
+
+        // 2. Clone (Duplikat) Area Tabel
+        // Kita modifikasi clone-nya, bukan tabel aslinya, biar tampilan web tetep aman.
+        let printElement = document.getElementById('printable-area').cloneNode(true);
+        let table = printElement.querySelector('table');
+
+        // 3. [JURUS RAHASIA] Suntikkan <colgroup> buat maksa kolom RATA
+        // Ada 11 kolom total. 100% / 11 = ~9.09% per kolom.
+        let colgroup = document.createElement('colgroup');
+        for(let i = 0; i < 11; i++) {
+            let col = document.createElement('col');
+            col.style.width = '9.09%'; 
+            colgroup.appendChild(col);
+        }
+        
+        // Masukkan colgroup ini ke posisi paling atas di tabel clone
+        table.insertBefore(colgroup, table.firstChild);
+
+        // 4. Tukar Tampilan Web dengan Tabel Clone
+        let originalContents = document.body.innerHTML;
+        document.body.innerHTML = printElement.outerHTML;
+
+        // 5. Print
+        window.print();
+
+        // 6. Kembalikan Tampilan Asli & Nilai Filter
+        document.body.innerHTML = originalContents;
+        document.getElementById('year_current').value = valCurrent;
+        document.getElementById('year_compare').value = valCompare;
     }
 </script>
 @endsection
