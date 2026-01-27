@@ -7,13 +7,20 @@
 @endpush
 
 @section('content')
-	@component('components.breadcrumb')
-		@slot('breadcrumb_title')
-			<h3>{{ isset($user) ? 'Edit User' : 'Add User' }}</h3>
-		@endslot
-		<li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
-		<li class="breadcrumb-item active">{{ isset($user) ? 'Edit' : 'Add' }}</li>
-	@endcomponent
+	<div class="d-flex justify-content-between align-items-center">
+		@component('components.breadcrumb')
+			@slot('breadcrumb_title')
+				<h3>{{ isset($user) ? 'Edit User' : 'Add User' }}</h3>
+			@endslot
+			<li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
+			<li class="breadcrumb-item active">{{ isset($user) ? 'Edit' : 'Add' }}</li>
+		@endcomponent
+		<div class="d-flex gap-2">
+			<a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">
+				Kembali
+			</a>
+		</div>
+	</div>
 	
 	<div class="container-fluid">
 		<div class="row">
@@ -154,14 +161,15 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="card-footer">
-							<button class="btn btn-primary" type="submit">
-								<i class="fa fa-save"></i> {{ isset($user) ? 'Update' : 'Save' }} User
-							</button>
-							<a href="{{ route('users.index') }}" class="btn btn-secondary">
-								<i class="fa fa-times"></i> Cancel
-							</a>
+						
+							<div class="text-end">
+								<a href="{{ route('users.index') }}" class="btn btn-secondary">
+									<i class="fa fa-times"></i> Cancel
+								</a>
+								<button class="btn btn-primary" type="submit">
+									<i class="fa fa-save"></i> {{ isset($user) ? 'Update' : 'Save' }} User
+								</button>
+							</div>
 						</div>
 					</form>
 				</div>

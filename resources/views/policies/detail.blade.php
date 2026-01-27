@@ -3,6 +3,14 @@
 @section('title', 'Detail Polis - ' . $policy->policy_number)
 
 @section('content')
+@component('components.breadcrumb')
+    @slot('breadcrumb_title')
+        <h3>Detail Polis</h3>
+    @endslot
+    <li class="breadcrumb-item active"><a href="{{ route('policies.index') }}">Polis</a></li>
+    <li class="breadcrumb-item">Detail</li>
+@endcomponent
+
 <div class="container-fluid">
     {{-- HEADER ACTION --}}
     <div>

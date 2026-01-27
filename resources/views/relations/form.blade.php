@@ -8,7 +8,19 @@
 @endpush
 
 @section('content')
-    @yield('breadcrumb-list')
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>{{ isset($relation) ? 'Ubah' : 'Tambah'  }} Relasi</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('relations.index') }}">Relasi</a></li>
+            <li class="breadcrumb-item active">{{ isset($relation) ? 'Ubah' : 'Tambah'  }} Relasi</li>
+        @endcomponent
+        <a href="{{ route('relations.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+    </div> 
+
     <!-- Container-fluid starts-->
     <div class="container-fluid dashboard-default-sec">
         <form class="needs-validation" novalidate="" method="POST" action="{{ isset($relation) ? route('relations.update', $relation->id) : route('relations.store') }}">
@@ -38,11 +50,10 @@
                             @enderror
                         </div>
                     </div>
-
-                </div>
-                <div class="card-footer">
-                    <a href="{{ route('relations.index') }}" class="btn btn-light">Kembali</a>
-                    <button class="btn btn-primary float-end" type="submit">Simpan</button>
+                    <div class="text-end">
+                        <a href="{{ route('relations.index') }}" class="btn btn-light">Kembali</a>
+                        <button class="btn btn-primary" type="submit">Simpan</button>
+                    </div>
                 </div>
             </div>
         </form>

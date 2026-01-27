@@ -136,7 +136,8 @@
             @slot('breadcrumb_title')
                 <h3>Preview Kartu Produksi</h3>
             @endslot
-            <li class="breadcrumb-item">Kartu Produksi</li>
+            <li class="breadcrumb-item"><a href="{{ route('cards.index') }}">Kartu Produksi</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('cards.show', $productionCard->id) }}">Detail</a></li>
             <li class="breadcrumb-item active">Preview</li>
         @endcomponent
         

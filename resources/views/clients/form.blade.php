@@ -7,13 +7,20 @@
 @endpush
 
 @section('content')
-	@component('components.breadcrumb')
-		@slot('breadcrumb_title')
-			<h3>{{ isset($client) ? 'Edit Client' : 'Add Client' }}</h3>
-		@endslot
-		<li class="breadcrumb-item">Clients</li>
-		<li class="breadcrumb-item active">{{ isset($client) ? 'Edit' : 'Create' }}</li>
-	@endcomponent
+	<div class="d-flex justify-content-between align-items-center">
+		@component('components.breadcrumb')
+			@slot('breadcrumb_title')
+				<h3>{{ isset($client) ? 'Edit Client' : 'Add Client' }}</h3>
+			@endslot
+			<li class="breadcrumb-item"><a href="{{ route('clients.index') }}">Clients</a></li>
+			<li class="breadcrumb-item active">{{ isset($client) ? 'Edit' : 'Create' }}</li>
+		@endcomponent
+		<div class="d-flex gap-2">
+			<a href="{{ route('clients.index') }}" class="btn btn-secondary btn-sm">
+				<i class="fa fa-arrow-left"></i> Kembali
+			</a>
+		</div>
+	</div>
 	
 	<div class="container-fluid">
 	    <div class="row">
@@ -29,42 +36,6 @@
 	                    @endif
 	                    
 	                    <div class="card-body">
-	                        <!-- Username -->
-	                        <div class="row mb-3">
-	                            <label class="col-sm-3 col-form-label">Username <span class="text-danger">*</span></label>
-	                            <div class="col-sm-9">
-	                                <input class="form-control @error('username') is-invalid @enderror" type="text" name="username" value="{{ old('username', $client->user->username ?? '') }}" required>
-	                                @error('username')
-	                                    <div class="invalid-feedback">{{ $message }}</div>
-	                                @enderror
-	                            </div>
-	                        </div>
-
-	                        <!-- Password -->
-	                        <div class="row mb-3">
-	                            <label class="col-sm-3 col-form-label">Password <span class="text-danger">{{ isset($client) ? '' : '*' }}</span></label>
-	                            <div class="col-sm-9">
-	                                <input class="form-control @error('password') is-invalid @enderror" type="password" name="password" {{ isset($client) ? '' : 'required' }}>
-	                                @if(isset($client))
-	                                    <small class="form-text text-muted">Leave blank to keep current password</small>
-	                                @endif
-	                                @error('password')
-	                                    <div class="invalid-feedback">{{ $message }}</div>
-	                                @enderror
-	                            </div>
-	                        </div>
-
-	                        <!-- Password Confirmation -->
-	                        <div class="row mb-3">
-	                            <label class="col-sm-3 col-form-label">Confirm Password</label>
-	                            <div class="col-sm-9">
-	                                <input class="form-control" type="password" name="password_confirmation">
-	                            </div>
-	                        </div>
-
-	                        <hr class="mt-4 mb-4">
-
-	                        <!-- Full Name -->
 	                        <div class="row mb-3">
 	                            <label class="col-sm-3 col-form-label">Full Name <span class="text-danger">*</span></label>
 	                            <div class="col-sm-9">
@@ -114,12 +85,12 @@
 	                                @enderror
 	                            </div>
 	                        </div>
-	                    </div>
 	                    
-	                    <div class="card-footer text-end">
-	                        <a href="{{ route('clients.index') }}" class="btn btn-secondary">Cancel</a>
-	                        <button class="btn btn-primary" type="submit">{{ isset($client) ? 'Update' : 'Create' }} Client</button>
-	                    </div>
+							<div class="text-end">
+								<a href="{{ route('clients.index') }}" class="btn btn-secondary">Cancel</a>
+								<button class="btn btn-primary" type="submit">{{ isset($client) ? 'Update' : 'Create' }} Client</button>
+							</div>
+						</div>
 	                </form>
 	            </div>
 	        </div>

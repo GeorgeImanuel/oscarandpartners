@@ -1,6 +1,12 @@
 @extends('layouts.master')
 
 @section('content')
+    @component('components.breadcrumb')
+        @slot('breadcrumb_title')
+            <h3>Laporan Evaluasi Produksi</h3>
+        @endslot
+        <li class="breadcrumb-item">Laporan Produksi</a></li>
+    @endcomponent
 
 <style>
     @media print {
@@ -89,7 +95,10 @@
             {{-- TABEL LAPORAN --}}
             <div id="printable-area" class="table-responsive">
                 <div class="d-none d-print-block text-center mb-3">
-                    <h3>Laporan Evaluasi Produksi</h3>
+                    <h3>
+                        Laporan Evaluasi Produksi 
+                        <span id="label_year_compare"></span> - <span id="label_year_current"></span>
+                    </h3>
                 </div>
 
                 <table class="table table-bordered table-striped text-center table-sm" style="font-size: 12px;">
@@ -253,6 +262,14 @@
         // 2. Clone (Duplikat) Area Tabel
         // Kita modifikasi clone-nya, bukan tabel aslinya, biar tampilan web tetep aman.
         let printElement = document.getElementById('printable-area').cloneNode(true);
+        
+        let spanCompare = printElement.querySelector('#label_year_compare');
+        let spanCurrent = printElement.querySelector('#label_year_current');
+
+        // Cek dulu elemennya ada gak (buat jaga-jaga error)
+        if (spanCompare) spanCompare.innerText = valCompare;
+        if (spanCurrent) spanCurrent.innerText = valCurrent;
+        
         let table = printElement.querySelector('table');
 
         // 3. [JURUS RAHASIA] Suntikkan <colgroup> buat maksa kolom RATA

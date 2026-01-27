@@ -11,8 +11,15 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
 @endpush
 @section('content')
-    @yield('breadcrumb-list')
-    <!-- Container-fluid starts-->
+    @component('components.breadcrumb')
+        @slot('breadcrumb_title')
+            <h3>Mata Uang</h3>
+        @endslot
+        <li class="breadcrumb-item">Mata Uang</li>
+        <li class="breadcrumb-item">Daftar</li>
+    @endcomponent
+    
+    
     <div class="container-fluid dashboard-default-sec">
         <div class="row">
             <div class="col-sm-12">

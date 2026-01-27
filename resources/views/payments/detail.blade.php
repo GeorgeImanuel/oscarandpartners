@@ -158,10 +158,10 @@
 @section('content')
     @component('components.breadcrumb')
     @slot('breadcrumb_title')
-    <h3><i class="icon-eye me-2"></i>Detail Pembayaran</h3>
+    <h3>Detail Pembayaran</h3>
     @endslot
     <li class="breadcrumb-item"><a href="{{ route('payments.index') }}">Pembayaran</a></li>
-    <li class="breadcrumb-item active"><i class="icon-eye me-2"></i>Detail</li>
+    <li class="breadcrumb-item active">Detail</li>
     @endcomponent
 
     <div class="container-fluid">

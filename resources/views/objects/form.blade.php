@@ -7,13 +7,22 @@
 @endpush
 
 @section('content')
-    @component('components.breadcrumb')
-    @slot('breadcrumb_title')
-    <h3>{{ isset($object) ? 'Edit' : 'Tambah'  }} Object</h3>
-    @endslot
-    <li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Object</a></li>
-    <li class="breadcrumb-item active">{{ isset($object) ? 'Edit' : 'Tambah'  }}</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+            <h3>{{ isset($object) ? 'Edit' : 'Tambah'  }} Object</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Object</a></li>
+            <li class="breadcrumb-item active">{{ isset($object) ? 'Edit' : 'Tambah'  }}</li>
+        @endcomponent
+        <div class="d-flex gap-2">
+            @isset($object)<a href="{{ route('objects.show', $object->id) }}" class="btn btn-info btn-sm">Detail</span></a>
+            @endisset
+            <a href="{{ route('objects.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
 
     <!-- Container-fluid starts-->
     <div class="container-fluid">

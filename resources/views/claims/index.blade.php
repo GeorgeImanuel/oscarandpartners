@@ -73,15 +73,13 @@
                                             <td class="text-center text-nowrap">
                                                 {{-- Tombol Detail --}}
                                                 <a href="{{ route('claims.show', $claim->id) }}" 
-                                                   class="btn btn-info btn-xs" 
-                                                   style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                                                   class="btn btn-info btn-sm">
                                                     <i class="icon-eye me-2"></i>Detail
                                                 </a>
 
                                                 {{-- Tombol Edit --}}
                                                 <a href="{{ route('claims.edit', $claim->id) }}" 
-                                                   class="btn btn-warning btn-xs" 
-                                                   style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">
+                                                   class="btn btn-warning btn-sm">
                                                     <i class="fa fa-edit"></i> Edit
                                                 </a>
 

@@ -10,13 +10,22 @@
 @endpush
 
 @section('content')
-    @component('components.breadcrumb')
-        @slot('breadcrumb_title')
-            <h3><i class="icon-pencil me-2"></i>Edit Claim</h3>
-        @endslot
-        <li class="breadcrumb-item"><a href="{{ route('claims.index') }}">Claim</a></li>
-        <li class="breadcrumb-item active"><i class="icon-pencil me-2"></i>Edit</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>Edit Claim</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('claims.index') }}">Claim</a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        @endcomponent
+        <div class="d-flex gap-2">
+            <a href="{{ route('claims.show', $claim->id) }}" class="btn btn-info">
+                <i class="fa fa-eye"></i>Detail</a>
+            <a href="{{ route('claims.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
 
     <div class="container-fluid">
         <div class="card">

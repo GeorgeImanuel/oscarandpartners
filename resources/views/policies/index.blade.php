@@ -10,7 +10,16 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/datatables.css') }}">
 @endpush
 @section('content')
-    @yield('breadcrumb-list')
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>Daftar Polis</h3>
+            @endslot
+            <li class="breadcrumb-item active">Polis</li>
+            <li class="breadcrumb-item">Daftar</li>
+        @endcomponent
+    </div>
+
     <!-- Container-fluid starts-->
     <div class="container-fluid dashboard-default-sec">
         <div class="row">
@@ -46,12 +55,12 @@
                                             <td>
                                                 <div class="d-flex gap-1">
                                                     {{-- Detail --}}
-                                                    <a href="{{ route('policies.show', $policy->id) }}" class="btn btn-info btn-xs">
+                                                    <a href="{{ route('policies.show', $policy->id) }}" class="btn btn-info btn-sm">
                                                         <i class="icon-eye"></i> Detail
                                                     </a>
                                                     
                                                     {{-- Edit --}}
-                                                    <a href="{{ route('policies.edit', $policy->id) }}" class="btn btn-warning btn-xs">
+                                                    <a href="{{ route('policies.edit', $policy->id) }}" class="btn btn-warning btn-sm">
                                                         <i class="icon-pencil"></i> Edit
                                                     </a>
 

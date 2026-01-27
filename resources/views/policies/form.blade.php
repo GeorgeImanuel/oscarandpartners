@@ -43,13 +43,21 @@
 @endpush
 
 @section('content')
-    @component('components.breadcrumb')
-    @slot('breadcrumb_title')
-    <h3>{{ isset($policy) ? 'Ubah' : 'Tambah' }} Polis</h3>
-    @endslot
-    <li class="breadcrumb-item"><a href="{{ route('policies.index') }}">Polis</a></li>
-    <li class="breadcrumb-item active">{{ isset($policy) ? 'Ubah' : 'Tambah' }}</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+            <h3>{{ isset($policy) ? 'Ubah' : 'Tambah' }} Polis</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('policies.index') }}">Polis</a></li>
+            <li class="breadcrumb-item active">{{ isset($policy) ? 'Ubah' : 'Tambah' }}</li>
+        @endcomponent
+        <div class="d-flex gap-2"> 
+            <a href="{{ route('policies.index') }}" class="btn btn-info btn-sm">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+            @isset($policy)<a href="{{ route('policies.show', $policy->id) }}" class="btn btn-secondary btn-sm">Detail</a>@endisset
+        </div>
+    </div>
 
     <!-- Container-fluid starts-->
     <div class="container-fluid">

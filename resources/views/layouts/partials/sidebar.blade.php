@@ -30,6 +30,11 @@
                             href="{{ route('dashboard') }}"><i data-feather="home"></i><span>Dashboard</span></a>
                     </li>
 
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Produksi</h6>
+                        </div>
+                    </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title {{ routeActive(['cards.index', 'cards.create', 'cards.thisMonth', 'cards.nextMonth', 'cards.edit']) }}"
                             href="javascript:void(0)">
@@ -38,26 +43,10 @@
                         </a>
 
                         <ul class="nav-submenu menu-content"
-                            style="display: {{ routeBlock(['cards.index', 'cards.create', 'cards.thisMonth', 'cards.nextMonth', 'cards.edit']) }}">
+                            style="display: {{ routeBlock(['cards.index', 'cards.reportByRelation', 'cards.reportByObject']) }}">
                             <li>
                                 <a href="{{ route('cards.index') }}"
                                     class="{{ routeActive(['cards.index', 'cards.create']) }}"><i data-feather="file-text"></i><span>Semua Kartu</span></a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('policies.thisMonth') }}"
-                                class="{{ routeActive('policies.thisMonth') }}">
-                                    <i data-feather="calendar"></i>
-                                    <span>Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('policies.nextMonth') }}"
-                                class="{{ routeActive('policies.nextMonth') }}">
-                                    <i data-feather="calendar"></i>
-                                    <span>Bulan Depan ( {{ $now->copy()->addMonth()->translatedFormat('F Y') }} )</span>
-                                </a>
                             </li>
 
                             <li>
@@ -81,7 +70,7 @@
                         </ul>
                     </li>
 
-                    @hasanyrole('owner|admin|finance')
+                    @hasanyrole('owner|finance')
                         <li class="dropdown">
                             <a class="nav-link menu-title"
                                 href="javascript:void(0)">
@@ -89,7 +78,8 @@
                                 <span>Payment</span>
                             </a>
 
-                            <ul class="nav-submenu menu-content">
+                            <ul class="nav-submenu menu-content"
+                                style="display: {{ routeBlock(['payments.index', 'payments.overdue']) }}">
                                 <li>
                                     <a href="{{ route('payments.index') }}"
                                         class="{{ routeActive(['payments.index', 'payments.create']) }}"><i data-feather="file-text"></i><span>Semua Payment</span></a>
@@ -104,6 +94,7 @@
                                 </li>
                             </ul>
                         </li>
+
                         <li class="dropdown">
                             <a class="nav-link menu-title {{ routeActive('reports.*') }}"
                                 href="javascript:void(0)">
@@ -121,6 +112,7 @@
                                 </li>
                             </ul>
                         </li>
+
                         <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('claims.index') }}"
                                 href="{{ route('claims.index') }}"><i data-feather="alert-circle"></i><span>Claim</span></a>
@@ -131,17 +123,63 @@
                                 <h6>Polis</h6>
                             </div>
                         </li>
+
+                        {{-- 1. GROUP DROPDOWN POLIS (Isinya: Index, Bulan Ini, Bulan Depan) --}}
                         <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('policies.index') }}"
-                                href="{{ route('policies.index') }}"><i data-feather="airplay"></i><span>Polis</span></a>
+                            <a class="nav-link menu-title {{ routeActive(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}"
+                                href="javascript:void(0)">
+                                <i data-feather="airplay"></i><span>Polis</span>
+                            </a>
+                            
+                            <ul class="nav-submenu menu-content" 
+                                style="display: {{ routeBlock(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}">
+                                
+                                {{-- Item 1: Semua Polis (Index) --}}
+                                <li>
+                                    <a href="{{ route('policies.index') }}" class="{{ routeActive('policies.index') }}">
+                                        <i data-feather="list"></i><span>Semua Polis</span>
+                                    </a>
+                                </li>
+
+                                {{-- Item 2: Bulan Ini --}}
+                                <li>
+                                    <a href="{{ route('policies.thisMonth') }}" class="{{ routeActive('policies.thisMonth') }}">
+                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
+                                    </a>
+                                </li>
+
+                                {{-- Item 3: Bulan Depan --}}
+                                <li>
+                                    <a href="{{ route('policies.nextMonth') }}" class="{{ routeActive('policies.nextMonth') }}">
+                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Depan ( {{ $now->copy()->addMonth()->translatedFormat('F Y') }} )</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        {{-- 2. ITEM SENDIRI-SENDIRI (Button Lepasan) --}}
+                        {{-- Mata Uang --}}
+                        <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('currencies.index') }}"
-                                href="{{ route('currencies.index') }}"><i data-feather="airplay"></i><span>Mata Uang</span></a>
+                                href="{{ route('currencies.index') }}">
+                                <i data-feather="dollar-sign"></i><span>Mata Uang</span>
+                            </a>
+                        </li>
+
+                        {{-- Asuransi --}}
+                        <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}"
-                                href="{{ route('insurances.index') }}"><i data-feather="airplay"></i><span>Asuransi</span></a>
+                                href="{{ route('insurances.index') }}">
+                                <i data-feather="shield"></i><span>Asuransi</span>
+                            </a>
+                        </li>
+
+                        {{-- Coverages --}}
+                        <li class="dropdown">
                             <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}"
-                                href="{{ route('coverages.index') }}"><i data-feather="airplay"></i><span>Coverages</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}"
-                                href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relations</span></a>
+                                href="{{ route('coverages.index') }}">
+                                <i data-feather="check-square"></i><span>Coverages</span>
+                            </a>
                         </li>
 
                         <li class="sidebar-main-title">
@@ -169,7 +207,7 @@
                             <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}"
                                 href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}"
-                                href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi Client</span></a>
+                                href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi (Grup) Client</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}"
                                 href="{{ route('users.index') }}"><i data-feather="user"></i><span>Staff</span></a>
                         </li>

@@ -8,7 +8,19 @@
 @endpush
 
 @section('content')
-    @yield('breadcrumb-list')
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>{{ isset($coverage) ? 'Edit' : 'Tambah'  }} Coverage</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('coverages.index') }}">Coverage</a></li>
+            <li class="breadcrumb-item active">{{ isset($coverage) ? 'Edit' : 'Tambah'  }} Coverage</li>
+        @endcomponent 
+        <a href="{{ route('coverages.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+    </div>   
+
     <!-- Container-fluid starts-->
     <div class="container-fluid dashboard-default-sec">
         <form class="needs-validation" novalidate="" method="POST" action="{{ isset($coverage) ? route('coverages.update', $coverage->code) : route('coverages.store') }}">

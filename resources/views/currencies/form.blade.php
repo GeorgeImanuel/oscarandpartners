@@ -7,14 +7,18 @@
 @endpush
 
 @section('content')
-    @component('components.breadcrumb')
-    @slot('breadcrumb_title')
-    <h3>{{ isset($currency) ? 'Ubah' : 'Tambah' }} Mata Uang</h3>
-    @endslot
-    <li class="breadcrumb-item"><a href="{{ route('policies.index') }}">Polis</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('currencies.index') }}">Mata Uang</a></li>
-    <li class="breadcrumb-item active">{{ isset($currency) ? 'Ubah' : 'Tambah' }}</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+            <h3>{{ isset($currency) ? 'Ubah' : 'Tambah' }} Mata Uang</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('currencies.index') }}">Mata Uang</a></li>
+            <li class="breadcrumb-item active">{{ isset($currency) ? 'Ubah' : 'Tambah' }}</li>
+        @endcomponent
+        <a href="{{ route('currencies.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 
     <!-- Container-fluid starts-->
     <div class="container-fluid">

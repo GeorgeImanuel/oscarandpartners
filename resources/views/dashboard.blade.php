@@ -16,7 +16,7 @@
   <div class="container-fluid dashboard-default-sec">
     
     {{-- BARIS 1: WELCOME & WIDGETS --}}
-    <div class="row">
+    <div class="row mb-4">
       
       {{-- 1. WELCOME MESSAGE (FIXED BACKGROUND & SIZE) --}}
       <div class="col-xl-6 col-lg-12 box-col-12">
@@ -51,7 +51,7 @@
                     </div>
                     <h5>{{ $activePolicies }}</h5>
                     <p class="text-muted">Polis Aktif</p>
-                    <a class="btn-arrow arrow-primary mt-2" href="{{ route('cards.index') }}">
+                    <a class="btn-arrow arrow-primary mt-2" href="{{ route('policies.index') }}">
                         View Details
                     </a>
                   </div>
@@ -77,28 +77,49 @@
       </div>
     </div>
 
-    {{-- BARIS 2: GRAFIK AREA --}}
-    <div class="row mt-4">
-      <div class="col-xl-12 box-col-12 dashboard-sec">
-        <div class="card trasaction-sec">
-            <div class="card-header pb-0">
-              <div class="header-top d-sm-flex align-items-center justify-content-between">
-                <h5>Trend Produksi (12 Bulan Terakhir)</h5>
-                <div class="center-content text-end">
-                  <p class="mb-0 text-muted">Total Produksi</p>
-                  <h4 class="font-primary">Rp {{ number_format($totalBalance ?? 0, 0, ',', '.') }}</h4>
-                </div>
+    {{-- BARIS 2: GRAFIK AREA --}}  
+    {{-- 1. GRAFIK PREMI --}}
+    <div class="col-xl box-col dashboard-sec">
+      <div class="card trasaction-sec h-100">
+          <div class="card-header pb-0">
+            <div class="header-top d-sm-flex align-items-center justify-content-between">
+              <h5>Trend Premi</h5>
+              <div class="center-content text-end">
+                <p class="mb-0 text-muted">Total Produksi</p>
+                {{-- Total Premi --}}
+                <h4 class="font-primary">Rp {{ number_format($totalBalance ?? 0, 0, ',', '.') }}</h4>
               </div>
             </div>
-            
-            <div class="card-body pb-4 pt-3 px-3">
-                <div style="overflow-x: auto;"> 
-                    <div id="chart-transaction-custom" style="min-height: 300px;"></div>
-                </div>
+          </div>
+          <div class="card-body pb-4 pt-3 px-3">
+            <div style="overflow-x: auto; width: 100%; padding-bottom: 15px;">
+              <div id="chart-premi" style="min-height: 300px; min-width: 1000px;"></div>
             </div>
-        </div>
+          </div>
       </div>
     </div>
+
+    {{-- 2. GRAFIK KOMISI --}}
+    <div class="col-xl box-col dashboard-sec">
+      <div class="card trasaction-sec h-100">
+          <div class="card-header pb-0">
+            <div class="header-top d-sm-flex align-items-center justify-content-between">
+              <h5>Trend Komisi</h5>
+              <div class="center-content text-end">
+                <p class="mb-0 text-muted">Total Komisi</p>
+                {{-- Kalau ada variabel total komisi dari controller, pasang disini. Kalo ga ada, hitung manual array sum --}}
+                <h4 style="color: #158df7;">Rp {{ number_format(array_sum($komisiData) ?? 0, 0, ',', '.') }}</h4>
+              </div>
+            </div>
+          </div>
+          <div class="card-body pb-4 pt-3 px-3">
+            <div style="overflow-x: auto; width: 100%; padding-bottom: 15px;">
+              <div id="chart-komisi" style="min-height: 300px; min-width: 1000px;"></div>
+            </div>
+          </div>
+      </div>
+    </div>
+
       
     <div class="row mt-4">
       <div class="col-xl-12 recent-order-sec">
@@ -190,16 +211,21 @@
     <script src="{{asset('assets/js/custom-card/custom-card.js')}}"></script>
 
     <script>
-        if(typeof chart !== 'undefined') { chart.destroy(); }
+        // Fungsi helper buat format Rupiah di Tooltip/Y-Axis
+        function formatRupiah(val) {
+             return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
 
-        var options = {
-            series: [{
-                name: 'Total Premi',
-                data: @json(array_values($incomeData))
-            }, {
-                name: 'Komisi Netto',
-                data: @json(array_values($komisiData))
-            }],
+        // Fungsi helper buat bikin singkatan angka (1Jt, 100K)
+        function formatYLabel(value) {
+            if (value >= 1000000000) return (value / 1000000000).toFixed(1) + "M";
+            if (value >= 1000000) return (value / 1000000).toFixed(1) + "Jt";
+            if (value >= 1000) return (value / 1000).toFixed(0) + "K";
+            return value;
+        }
+
+        // --- KONFIGURASI UMUM CHART ---
+        var commonChartOptions = {
             chart: {
                 type: 'area', 
                 height: 300,
@@ -208,29 +234,19 @@
                 zoom: { enabled: false }
             },
             dataLabels: { enabled: false },
-            stroke: {
-                curve: 'smooth', 
-                width: 2 
-            },
+            stroke: { curve: 'smooth', width: 2 },
             xaxis: {
                 categories: @json($labels),
                 axisBorder: { show: false },
                 axisTicks: { show: false },
-                labels: { 
-                    show: true,
-                    style: { colors: '#888', fontSize: '12px' }
-                },
+                labels: { show: true, style: { colors: '#888', fontSize: '12px' } },
                 tooltip: { enabled: false }
             },
             yaxis: {
                 show: true, 
                 labels: {
                     style: { colors: '#888' },
-                    formatter: function (value) {
-                        if (value >= 1000000) return (value / 1000000).toFixed(1) + "Jt";
-                        if (value >= 1000) return (value / 1000).toFixed(0) + "K";
-                        return value;
-                    }
+                    formatter: function (value) { return formatYLabel(value); }
                 }
             },
             grid: {
@@ -248,24 +264,44 @@
                     stops: [0, 100]
                 }
             },
-            colors: ['#24695c', '#ba895d'], 
-            legend: {
-                show: true,
-                position: 'top',
-                horizontalAlign: 'right'
-            },
+            legend: { show: false }, // Legend hide aja karena judul card udah jelas
             tooltip: {
-                theme: 'light', // Ubah jadi light biar lebih clean
-                y: {
-                    formatter: function (val) {
-                        return "Rp " + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                    }
-                }
+                theme: 'light',
+                y: { formatter: function (val) { return formatRupiah(val); } }
             }
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart-transaction-custom"), options);
-        chart.render();
+        // --- 1. RENDER CHART PREMI (HIJAU) ---
+        if(typeof chartPremi !== 'undefined') { chartPremi.destroy(); }
+        
+        var optionsPremi = {
+            ...commonChartOptions,
+            series: [{
+                name: 'Total Premi',
+                data: @json(array_values($incomeData))
+            }],
+            colors: ['#24695c'], // Warna Hijau (Primary Theme)
+        };
+
+        var chartPremi = new ApexCharts(document.querySelector("#chart-premi"), optionsPremi);
+        chartPremi.render();
+
+
+        // --- 2. RENDER CHART KOMISI (BIRU) ---
+        if(typeof chartKomisi !== 'undefined') { chartKomisi.destroy(); }
+
+        var optionsKomisi = {
+            ...commonChartOptions,
+            series: [{
+                name: 'Komisi Netto',
+                data: @json(array_values($komisiData))
+            }],
+            colors: ['#158df7'], // Warna Biru Cerah (Biar beda)
+        };
+
+        var chartKomisi = new ApexCharts(document.querySelector("#chart-komisi"), optionsKomisi);
+        chartKomisi.render();
+
     </script>
   @endpush
 @endsection

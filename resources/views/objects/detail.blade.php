@@ -7,13 +7,23 @@
 @endpush
 
 @section('content')
-	@component('components.breadcrumb')
-	@slot('breadcrumb_title')
-	<h3><i class="icon-eye me-2"></i>Detail Objek Asuransi</h3>
-	@endslot
-	<li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Objek</a></li>
-	<li class="breadcrumb-item active"><i class="icon-eye me-2"></i>Detail</li>
-	@endcomponent
+	<div class="d-flex justify-content-between align-items-center">
+		@component('components.breadcrumb')
+			@slot('breadcrumb_title')
+			<h3>Detail Objek Asuransi</h3>
+			@endslot
+			<li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Objek</a></li>
+			<li class="breadcrumb-item active">Detail</li>
+		@endcomponent
+		<div class="d-flex gap-2">
+			<a href="{{ route('objects.edit', $object->id) }}" class="btn btn-warning btn-sm">
+				<i class="fa fa-edit"></i> Edit
+			</a>
+			<a href="{{ route('objects.index') }}" class="btn btn-secondary btn-sm">
+				<i class="fa fa-arrow-left"></i> Kembali
+			</a>
+		</div>
+	</div>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -22,14 +32,6 @@
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
 							<h5>Informasi Objek</h5>
-							<div>
-								<a href="{{ route('objects.edit', $object->id) }}" class="btn btn-warning btn-sm">
-									<i class="fa fa-edit"></i> Edit
-								</a>
-								<a href="{{ route('objects.index') }}" class="btn btn-secondary btn-sm">
-									<i class="fa fa-arrow-left"></i> Kembali
-								</a>
-							</div>
 						</div>
 					</div>
 					<div class="card-body">

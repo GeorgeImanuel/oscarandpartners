@@ -3,13 +3,20 @@
 @section('title', 'Interest')
 
 @section('content')
-    @component('components.breadcrumb')
-    @slot('breadcrumb_title')
-    <h3>{{ isset($interest) ? 'Edit' : 'Tambah'  }} Interest</h3>
-    @endslot
-    <li class="breadcrumb-item"><a href="{{ route('interests.index') }}">Interest</a></li>
-    <li class="breadcrumb-item active">{{ isset($interest) ? 'Edit' : 'Tambah'  }}</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>{{ isset($interest) ? 'Edit' : 'Tambah'  }} Interest</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('interests.index') }}">Interest</a></li>
+            <li class="breadcrumb-item active">{{ isset($interest) ? 'Edit' : 'Tambah'  }}</li>
+        @endcomponent
+        <div class="d-flex gap-2">
+            <a href="{{ route('interests.index') }}" class="btn btn-secondary btn-sm">
+                <i class="fa fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
 
     <!-- Container-fluid starts-->
     <div class="container-fluid">
@@ -52,17 +59,15 @@
                             @enderror
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-footer text-end">
-                    <a href="{{ route('interests.index') }}" class="btn btn-secondary">
-                        <i class="fa fa-times"></i> Batal
-                    </a>
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fa fa-save"></i> Simpan
-                    </button>
+                
+                    <div class="text-end">
+                        <a href="{{ route('interests.index') }}" class="btn btn-secondary">
+                            <i class="fa fa-times"></i> Batal
+                        </a>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-save"></i> Simpan
+                        </button>
+                    </div>
                 </div>
             </div>
         </form>

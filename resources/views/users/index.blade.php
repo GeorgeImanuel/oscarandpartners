@@ -24,9 +24,8 @@
 	            <div class="card">
 	                <div class="card-header">
 	                    <h5>User Data Table</h5>
-	                    <span>List of all system users (Admin and Finance roles only).</span>
 	                    <div class="card-header-right">
-	                        <a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a>
+	                        <a href="{{ route('users.create') }}" class="btn btn-primary float-end">Add User</a>
 	                    </div>
 	                </div>
 	                <div class="card-body">
@@ -67,7 +66,7 @@
 	                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
 	                                            @csrf
 	                                            @method('DELETE')
-	                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')"><i class="icon-trash me-2"></i>Delete</button>
+	                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete this user?')"><i class="icon-trash me-2"></i>Delete</button>
 	                                        </form>
 	                                    </td>
 	                                </tr>

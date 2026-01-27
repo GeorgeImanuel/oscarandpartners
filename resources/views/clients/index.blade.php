@@ -15,9 +15,8 @@
         @slot('breadcrumb_title')
             <h3>Client List</h3>
         @endslot
-        <li class="breadcrumb-item">Tables</li>
-        <li class="breadcrumb-item">Data Tables</li>
         <li class="breadcrumb-item active">Clients</li>
+        <li class="breadcrumb-item active">Daftar</li>
     @endcomponent
 
     <div class="container-fluid">
@@ -69,7 +68,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="btn btn-sm btn-danger"
+                                                        class="btn btn-xs btn-danger"
                                                         onclick="return confirm('Are you sure you want to delete this client?')">Delete</button>
                                                 </form>
                                             </td>
