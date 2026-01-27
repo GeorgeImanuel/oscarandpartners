@@ -1,4 +1,4 @@
-<div id="existing-object">
+<div>
     {{-- Loading State --}}
     <div wire:loading class="alert alert-info" role="alert">
         <div class="d-flex align-items-center">
@@ -48,7 +48,7 @@
         </div>
     @else
         @if (!$notFound || $objectId == "")
-            <div wire:loading.remove class="alert alert-secondary" role="alert">
+            <div wire:loading.remove class="alert alert-light dark" role="alert">
                 Pilih objek untuk melihat detail!
             </div>
         @endif

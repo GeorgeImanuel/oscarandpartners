@@ -57,14 +57,14 @@
                 </div>
 
                 <div class="col-md-12 mb-3 item-list">
-                    <div class="row align-items-end item item-object border p-3 mb-3">
+                    <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3">
                         <div class="col-md-10 mb-3">
                             <label class="form-label"
                                 for="object_id">Nama Objek <span class="text-danger">*</span></label>
-                            <select class="form-control create-select2 @error('object_id') is-invalid @enderror"
-                                data-existing-id="#existing-object"
+                            <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
+                                data-existing-id=".object-details-container"
                                 data-existing-name="object_id"
-                                data-new-id="#new-object"
+                                data-new-id=".object-forms-container"
                                 data-new-name="object_name"
                                 data-placeholder="Pilih Objek"
                                 name="object_id"
@@ -85,17 +85,27 @@
                                 style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
                         </div>
 
-                        {{-- Exist Policy Detail --}}
+                        {{-- Exist Object Detail --}}
                         <div class="col-md-12 object-details-container">
-                            @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details'))
+                            @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
                         </div>
 
-                        {{-- New Policy Input --}}
-                        <div class="col-md-12">
-                            @livewire('object-form')
+                        {{-- New Object Input --}}
+                        <div class="col-md-12 object-forms-container"
+                            style="display:none;">
+                            @livewire('object-form', [], key('object-form-' . uniqid()))
                         </div>
                     </div>
                 </div>
+            </div>
+            <input type="hidden"
+                id="object_ready"
+                value="0"
+                disabled />
+            <div class="col-md-12"
+                id="object-details-container"
+                style="display:none;">
+                @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
             </div>
         </div>
     </div>
@@ -106,9 +116,9 @@
         // Listen to policy_id dropdown change and update Livewire component
         $('#policy_id').on('change', function() {
             var policyId = $(this).val();
-            $('#object_id').val('').trigger('change').prop('disabled', false);
-            $('#new-object').hide();
-            $('#existing-object').show();
+            // $('#object_id').val('').trigger('change').prop('disabled', false);
+            // $('#new-object').hide();
+            // $('#existing-object').show();
             // console.log('Policy ID changed:', policyId);
 
             var selectedOption = $(this).find('option:selected');
@@ -125,16 +135,39 @@
             }
         });
 
+        // Reset object details when object_id changes
+        $(document).on('change', 'select[name=object_name]', function() {
+            $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
+            $nextObjectContainer.html('<div wire:loading.remove="" class="alert alert-light dark" role="alert"> Pilih nomor polis untuk melihat detail!</div>');
+        });
+
+        // Listen to object_id dropdown change and update Livewire component
         $(document).on('change', 'select[name=object_id]', function() {
+            var attrName = $(this).attr('name');
+            var objectId = $(this).val();
+
             var objectId = $(this).val();
             console.log('Object ID changed:', objectId);
-            // Find the Livewire component and update policyId
-            var container = $(this).closest('.item-object').find('.object-details-container [wire\\:id]')[0];
+            // Find the Livewire component and update objectId
+            var container = $('#object-details-container [wire\\:id]')[0];
             if (container && typeof window.Livewire !== 'undefined') {
+                console.log('Found Livewire container:', container);
                 var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
                 if (livewireComponent) {
                     livewireComponent.set('objectId', objectId);
                 }
+                $('#object_ready').val(0);
+                var $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
+                $nextObjectContainer.html('<div class="alert alert-info" role="alert"> <div class="d-flex align-items-center"> <div class="spinner-border spinner-border-sm me-2" role="status"> <span class="visually-hidden">Loading...</span> </div> <span>Memuat detail objek...</span> </div> </div>');
+                var checkReady = setInterval(function() {
+                    if ($('#object_ready').val() == 1) {
+                        clearInterval(checkReady);
+                        var $sourceContainer = $('#object-details-container');
+                        if ($nextObjectContainer.length && $sourceContainer.length) {
+                            $nextObjectContainer.html($sourceContainer.html());
+                        }
+                    }
+                }, 100);
             }
         });
 
@@ -200,6 +233,22 @@
                 $('#premi_percentages').val(rate).trigger('change');
 
                 update_payment();
+            });
+
+
+            Livewire.on('objectLoaded', (event) => {
+                const object = event.object || event[0]?.object || 0;
+
+                if (object) {
+                    $('#object_value').val(object.object_value);
+
+                    var tjh = object.tjh || 0;
+                    $('#tjh_value').val(tjh).trigger('change');
+                }
+                $('#object_ready').val(1);
+                // console.log('Object received:', object.object_value);
+                update_payment(); // Trigger calculation when policy is loaded
+
             });
 
             Livewire.on('insurancesLoaded', (event) => {
@@ -284,20 +333,6 @@
                 } else {
                     container.html('<div class="text-center text-muted small" id="no-coverage-msg">Tidak ada data coverage terhubung.</div>');
                 }
-            });
-
-            Livewire.on('objectLoaded', (event) => {
-                const object = event.object || event[0]?.object || 0;
-
-                if (object) {
-                    $('#object_value').val(object.object_value);
-
-                    var tjh = object.tjh || 0;
-                    $('#tjh_value').val(tjh).trigger('change');
-                }
-                // console.log('Object received:', object.object_value);
-                update_payment(); // Trigger calculation when policy is loaded
-
             });
         });
     </script>

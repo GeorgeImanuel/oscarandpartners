@@ -1,6 +1,5 @@
 <div id="new-object"
-    class="row gt-3"
-    style="display:none;">
+    class="row gt-3">
     <div class="col-md-12 mb-3">
         <label class="form-label"
             for="object_occupation_id">Objek Occupation<span class="text-danger">*</span></label>
@@ -25,14 +24,17 @@
     <div class="col-md-12 mb-3">
         <label class="form-label"
             for="object_name">Nilai TJH (Rp)</label>
-        <input class="form-control required @error('tjh') is-invalid @enderror"
-            id="tjh"
-            name="tjh"
-            type="text"
-            value="{{ isset($object) ? $object->tjh : old('tjh', '') }}" />
-        @error('tjh')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+        <div class="input-group mb-3">
+            <span class="input-group-text">Rp</span>
+            <input class="form-control required @error('tjh') is-invalid @enderror"
+                id="tjh"
+                name="tjh"
+                type="text"
+                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}" />
+                @error('tjh')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+        </div>
     </div>
     <div class="col-md-12 mb-3">
         <label class="form-label"
@@ -95,8 +97,7 @@
                     </div>
                     <div class="col-md-1 pt-3">
                         <button type="button"
-                            class="btn btn-danger btn-xs remove-item-btn"
-                            style="display:none">
+                            class="btn btn-danger btn-xs remove-item-btn">
                             <i class="icon-trash me-2"></i> Hapus
                         </button>
                     </div>
@@ -104,7 +105,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12 mb-3">
+    <div class="col-md-12 mb-3 input-group-solid">
         <label class="form-label"
             for="object_value_input">Harga Pertanggungan <span class="text-danger">*</span></label>
         <div class="input-group mb-3">
@@ -115,10 +116,8 @@
                 type="number"
                 step="0.00001"
                 min="0"
-                value="{{ isset($object) ? $object->object_value : old('object_value_input', 0) }}" />
-            @error('object_value_input')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+                readonly
+                value="0" />
         </div>
     </div>
 </div>

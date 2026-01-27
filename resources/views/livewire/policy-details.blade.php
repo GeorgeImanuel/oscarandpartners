@@ -80,7 +80,7 @@
     @else
         @if (!$notFound || $policyId == '')
             <div wire:loading.remove
-                class="alert alert-secondary"
+                class="alert alert-light dark"
                 role="alert">
                 Pilih nomor polis untuk melihat detail!
             </div>

@@ -28,6 +28,40 @@ function initCustomSelect2(selector) {
                 $element.data("create-tag-text") || "(Klik untuk tambah data)",
         };
 
+        // Normalize newId and existingId to jQuery objects
+        var $newId = null;
+        var $existingId = null;
+        
+        if (config.newId) {
+            console.log('config.newId:', config.newId);
+            if (typeof config.newId === 'string') {
+                // If it's a class selector, find closest .item first
+                if (config.newId.startsWith('.')) {
+                    console.log('Finding closest .item for newId');
+                    var $closestItem = $element.closest('.item');
+                    $newId = $closestItem.length ? $closestItem.find(config.newId) : $(config.newId);
+                } else {
+                    $newId = $(config.newId);
+                }
+            } else {
+                $newId = config.newId;
+            }
+        }
+        
+        if (config.existingId) {
+            if (typeof config.existingId === 'string') {
+                // If it's a class selector, find closest .item first
+                if (config.existingId.startsWith('.')) {
+                    var $closestItem = $element.closest('.item');
+                    $existingId = $closestItem.length ? $closestItem.find(config.existingId) : $(config.existingId);
+                } else {
+                    $existingId = $(config.existingId);
+                }
+            } else {
+                $existingId = config.existingId;
+            }
+        }
+
         $element
             .select2({
                 placeholder: config.placeholder,
@@ -66,47 +100,47 @@ function initCustomSelect2(selector) {
 
                 if (data.newTag) {
                     // Show new form, hide existing details
-                    if (config.newId) {
-                        $(config.newId).show();
-                        $(config.newId).find(".required").attr("required", true);
+                    if ($newId && $newId.length) {
+                        $newId.show();
+                        $newId.find(".required").attr("required", true);
                     }
                     if (config.newName) {
                         $element.attr("name", config.newName);
                     }
-                    if (config.existingId) {
-                        $(config.existingId).hide();
-                        $(config.existingId)
+                    if ($existingId && $existingId.length) {
+                        $existingId.hide();
+                        $existingId
                             .find(".required")
                             .removeAttr("required");
                     }
                 } else {
                     // Show existing details, hide new form
-                    if (config.existingId) {
-                        $(config.existingId).show();
-                        $(config.existingId)
+                    if ($existingId && $existingId.length) {
+                        $existingId.show();
+                        $existingId
                             .find(".required")
                             .attr("required", true);
                     }
                     if (config.existingName) {
                         $element.attr("name", config.existingName);
                     }
-                    if (config.newId) {
-                        $(config.newId).hide();
-                        $(config.newId).find(".required").removeAttr("required");
+                    if ($newId && $newId.length) {
+                        $newId.hide();
+                        $newId.find(".required").removeAttr("required");
                     }
                 }
             })
             .on("select2:unselect", function (e) {
-                if (config.newId) {
-                    $(config.newId).hide();
-                    $(config.newId).find(".required").removeAttr("required");
+                if ($newId && $newId.length) {
+                    $newId.hide();
+                    $newId.find(".required").removeAttr("required");
                 }
                 if (config.existingName) {
                     $element.attr("name", config.existingName);
                 }
-                if (config.existingId) {
-                    $(config.existingId).show();
-                    $(config.existingId).find(".required").attr("required", true);
+                if ($existingId && $existingId.length) {
+                    $existingId.show();
+                    $existingId.find(".required").attr("required", true);
                 }
             });
     });

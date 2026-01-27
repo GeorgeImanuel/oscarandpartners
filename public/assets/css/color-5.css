@@ -443,7 +443,13 @@ a:hover {
   top: 0 !important; }
 
 .border {
-  border: 1px solid #e6edef !important; }
+  border: 1px solid #e6edef; }
+
+.border-primary {
+  border-color: #3a9aa8 !important;
+}
+
+  
 
 .irs-from, .irs-to, .irs-single {
   background: #3a9aa8; }
