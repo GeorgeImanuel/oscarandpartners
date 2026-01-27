@@ -102,6 +102,24 @@ class PolicyController extends Controller
         }
     }
 
+    public function show(string $id)
+    {
+        $policy = Policy::with([
+            'productionCard.client',
+            'productionCard.cardType',
+            'productionCard.cardStatus',
+            'objects.objectInterests.interest',
+            'objects.objectOccupation',
+            'policyCoverages.coverage', 
+            'policyInsurances.insurance',
+            'insurances',
+            'coverages',
+            'currency'
+        ])->findOrFail($id);
+
+        return view('policies.detail', compact('policy'));
+    }
+
     public function destroy(string $id)
     {
         try {
