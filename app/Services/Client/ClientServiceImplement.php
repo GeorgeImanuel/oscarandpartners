@@ -43,21 +43,9 @@ class ClientServiceImplement extends Service implements ClientService{
      */
     public function createClient(array $data)
     {
-        // Create user first
-        $user = \App\Models\User::create([
-            'username' => $data['username'],
-            'name' => $data['name'],
-            'email' => $data['email'] ?? $data['username'] . '@client.local',
-            'password' => \Hash::make($data['password']),
-            'is_active' => true,
-        ]);
-
-        // Assign client role
-        $user->assignRole('client');
 
         // Create client
         $client = $this->mainRepository->create([
-            'user_id' => $user->id,
             'relation_id' => $data['relation_id'] ?? null,
             'id_name' => $data['name'],
             'id_number' => $data['id_card_number'] ?? null,
@@ -77,18 +65,6 @@ class ClientServiceImplement extends Service implements ClientService{
         if (!$client) {
             return false;
         }
-
-        // Update user
-        $user = $client->user;
-        $user->username = $data['username'];
-        $user->name = $data['name'];
-        $user->email = $data['email'] ?? $data['username'] . '@client.local';
-        
-        if (!empty($data['password'])) {
-            $user->password = \Hash::make($data['password']);
-        }
-        
-        $user->save();
 
         // Update client
         $updated = $this->mainRepository->update($id, [

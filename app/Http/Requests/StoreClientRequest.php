@@ -22,8 +22,6 @@ class StoreClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
             'id_card_number' => 'nullable|string|max:255',
@@ -39,11 +37,6 @@ class StoreClientRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'Username harus diisi.',
-            'username.unique' => 'Username sudah digunakan.',
-            'password.required' => 'Password harus diisi.',
-            'password.min' => 'Password minimal 8 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'name.required' => 'Nama harus diisi.',
             'relation_id.exists' => 'Group/Family tidak valid.',
         ];

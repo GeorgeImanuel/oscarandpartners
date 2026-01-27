@@ -27,11 +27,7 @@ class UpdateClientRequest extends FormRequest
         $userId = $client ? $client->user_id : null;
 
         return [
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($userId)],
-            'password' => 'nullable|string|min:8|confirmed',
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'email' => 'nullable|email',
             'address' => 'nullable|string',
             'id_card_number' => 'nullable|string|max:255',
             'relation_id' => 'nullable|exists:relations,id',
@@ -46,12 +42,8 @@ class UpdateClientRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'Username harus diisi.',
-            'username.unique' => 'Username sudah digunakan.',
-            'password.min' => 'Password minimal 8 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'name.required' => 'Nama harus diisi.',
-            'phone.required' => 'Nomor telepon harus diisi.',
+            'relation_id.exists' => 'Group/Family tidak valid.',
             'email.email' => 'Format email tidak valid.',
             'relation_id.exists' => 'Group/Family tidak valid.',
         ];
