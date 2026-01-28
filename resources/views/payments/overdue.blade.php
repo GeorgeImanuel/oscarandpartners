@@ -21,24 +21,23 @@
 			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="text-danger"><i class="fa fa-warning"></i> Data Jatuh Tempo Hari Ini: {{ date('d-m-Y') }}</h5>
+                        <h5 class="text-danger"><i class="fa fa-warning"></i> Data Jatuh Tempo Hari Ini: {{ date('d M Y') }}</h5>
 						<button class="btn btn-primary" onclick="printTableOnly()"><i class="fa fa-print"></i> Print</button>
 					</div>
 					<div class="card-body">
-						<div class="table-responsive">
+						<div class="table-responsive" style="overflow-x: auto;">
 							<table class="display" id="basic-1">
 								<thead>
 									<tr>
-										<th>Deadline</th>
+										<th width="80">Deadline</th>
 	                                    <th>No</th>
 	                                    <th>No Polis</th>
 	                                    <th>Nama Tertanggung</th>
-	                                    <th>Letak Resiko</th>
+	                                    <th>Letak Resiko / Keterangan</th>
 										<th>TSI</th>
-										<th>Keterangan</th>
                                         <th>Jumlah Tagihan</th>
                                         <th>Tipe Pembayaran</th>
-										<th>Actions</th>
+										<th>Aksi</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -46,14 +45,13 @@
 										<tr>
                                             {{-- Memberikan warna merah jika sudah lewat deadline --}}
                                             <td class="text-danger fw-bold">
-                                                {{ $payment->deadline_at ? $payment->deadline_at->format('d-m-Y') : '-' }}
+                                                {{ $payment->deadline_at ? $payment->deadline_at->format('d M Y') : '-' }}
                                             </td>
 											<td>{{ $loop->iteration }}</td>
 											<td>{{ $payment->card?->policy?->policy_number ?? '-' }}</td>
 											<td>{{ $payment->insured_name }}</td>
 											<td>{{ $payment->card?->policy?->object?->keterangan ?? '-' }}</td>
 											<td>{{ number_format($payment->card?->object_value ?? 0, 2, ',', '.') }}</td>
-                                            <td>{{ $payment->note ?? '-' }}</td>
 											<td>{{ number_format($payment->amount ?? 0, 2, ',', '.') }}</td>
 											<td>{{ $payment->card?->paymentType?->name ?? '-' }}</td>
                                             <td>

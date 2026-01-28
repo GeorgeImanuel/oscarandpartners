@@ -128,8 +128,8 @@
                                                 <td class="fw-bold">Periode</td>
                                                 <td>:</td>
                                                 <td>
-                                                    {{ $card->policy->started_date ? $card->policy->started_date->format('d/m/Y') : '-' }} s/d
-                                                    {{ $card->policy->ended_date ? $card->policy->ended_date->format('d/m/Y') : '-' }}
+                                                    {{ $card->policy->started_date ? $card->policy->started_date->format('d M Y') : '-' }} -
+                                                    {{ $card->policy->ended_date ? $card->policy->ended_date->format('d M Y') : '-' }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -377,7 +377,7 @@
                                             @if($payment && $payment->payment_status_id == 2)
                                                 <span class="badge bg-success">
                                                     <i class="fa fa-check"></i> NASABAH LUNAS 
-                                                    ({{ $payment->paid_at ? $payment->paid_at->format('d/m/y') : '-' }})
+                                                    ({{ $payment->paid_at ? $payment->paid_at->format('d M y') : '-' }})
                                                 </span>
                                             @else
                                                 <span class="badge bg-danger">NASABAH BELUM BAYAR</span>
@@ -389,7 +389,7 @@
                                                 @if($payment->insurance_payment_status_id == 2)
                                                     <span class="badge bg-primary">
                                                         <i class="fa fa-check"></i> ASURANSI DISETOR 
-                                                        ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d/m/y') : '-' }})
+                                                        ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d M y') : '-' }})
                                                     </span>
                                                 @else
                                                     <span class="badge bg-warning text-dark">ASURANSI BELUM DISETOR</span>
@@ -498,7 +498,7 @@
                                                                 <td rowspan="{{ $insuranceCount }}" class="text-center bg-white" style="vertical-align: top; padding-top: 10px;">
                                                                     <strong>Ke-{{ $pmt->sequence }}</strong><br>
                                                                     <small class="text-muted">Jatuh Tempo:</small><br>
-                                                                    <span class="fw-bold">{{ $pmt->deadline_at ? $pmt->deadline_at->format('d/m/y') : '-' }}</span>
+                                                                    <span class="fw-bold">{{ $pmt->deadline_at ? $pmt->deadline_at->format('d M y') : '-' }}</span>
                                                                 </td>
                                                             @endif
 
@@ -530,7 +530,7 @@
                                                                         @else
                                                                             <div class="status-box status-client-lunas">
                                                                                 Lunas Nasabah
-                                                                                <span class="d-block small fw-normal">{{ $pmt->paid_at ? $pmt->paid_at->format('d/m/y') : '-' }}</span>
+                                                                                <span class="d-block small fw-normal">{{ $pmt->paid_at ? $pmt->paid_at->format('d M y') : '-' }}</span>
                                                                             </div>
                                                                         @endif
 
@@ -543,7 +543,7 @@
                                                                             @else
                                                                                 <div class="status-box status-ins-disetor mt-1">
                                                                                     Asuransi Disetor
-                                                                                    <span class="d-block small fw-normal">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d/m/y') : '-' }}</span>
+                                                                                    <span class="d-block small fw-normal">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d M y') : '-' }}</span>
                                                                                 </div>
                                                                             @endif
                                                                         @endif

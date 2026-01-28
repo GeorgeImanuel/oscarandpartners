@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title')Objek Occupation
+@section('title')Objek Okupasi
 @endsection
 
 @push('css')
@@ -10,9 +10,9 @@
 @section('content')
 	@component('components.breadcrumb')
 	@slot('breadcrumb_title')
-	<h3>Daftar Objek Occupation</h3>
+	<h3>Daftar Objek Okupasi</h3>
 	@endslot
-	<li class="breadcrumb-item">Objek Occupation</li>
+	<li class="breadcrumb-item">Objek Okupasi</li>
 	<li class="breadcrumb-item active">Daftar</li>
 	@endcomponent
 
@@ -22,9 +22,9 @@
 				<div class="card">
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
-							<h5>Objek Occupation</h5>
+							<h5>Daftar Objek Okupasi</h5>
 							<a href="{{ route('object-occupations.create') }}" class="btn btn-primary">
-								<i class="icon-plus me-2"></i>Tambah Objek Occupation
+								<i class="icon-plus me-2"></i>Tambah Objek Okupasi
 							</a>
 						</div>
 					</div>
@@ -48,8 +48,8 @@
 								<thead>
 									<tr>
 										<th>No</th>
-										<th>Nama Objek Occupation</th>
-										<th>Actions</th>
+										<th>Nama Objek Okupasi</th>
+										<th>Aksi</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -74,7 +74,7 @@
 										</tr>
 									@empty
 										<tr>
-											<td colspan="3" class="text-center">Tidak ada data objek occupation</td>
+											<td colspan="3" class="text-center">Tidak ada data Objek Okupasi</td>
 										</tr>
 									@endforelse
 								</tbody>
@@ -95,7 +95,7 @@
 		function confirmDelete(button) {
 			swal({
 				title: "Apakah Anda yakin?",
-				text: "Data objek occupation yang dihapus tidak dapat dikembalikan!",
+				text: "Data Objek Okupasi yang dihapus tidak dapat dikembalikan!",
 				icon: "warning",
 				buttons: {
 					cancel: {

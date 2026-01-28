@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="{{ route('insurances.index') }}">Asuransi</a></li>
             <li class="breadcrumb-item active">{{ isset($insurance) ? 'Edit' : 'Tambah'  }} Asuransi</li>
         @endcomponent
-        <a href="{{ route('insurances.index') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('insurances.index') }}" class="btn btn-info btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -44,9 +44,9 @@
                         </div>
                     </div><br>
                 </div>
-                <div class="card-footer">
-                    <a href="{{ route('insurances.index') }}" class="btn btn-light">Kembali</a>
-                    <button class="btn btn-primary float-end" type="submit">Simpan</button>
+                <div class="card-footer text-end gap-2">
+                    <a href="{{ route('insurances.index') }}" class="btn btn-secondary">Batal</a>
+                    <button class="btn btn-primary" type="submit">Simpan</button>
                 </div>
             </div>
         </form>

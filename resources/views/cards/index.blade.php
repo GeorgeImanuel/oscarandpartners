@@ -104,7 +104,7 @@
                                         <th>Premi Bruto</th>
                                         <th>Tipe</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

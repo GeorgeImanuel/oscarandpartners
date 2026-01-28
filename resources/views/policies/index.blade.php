@@ -50,8 +50,8 @@
                                             <td>{{ $policy->policy_number }}</td>
                                             <td>{{ $policy->currency_code ?? '-' }}</td>
                                             <td>{{ number_format($policy->coverage_percentages * 100, 7, '.', '') }}</td>
-                                            <td>{{ $policy->started_date }}</td>
-                                            <td>{{ $policy->ended_date }}</td>
+                                            <td>{{ $policy->started_date->format('d M Y') }}</td>
+                                            <td>{{ $policy->ended_date->format('d M Y') }}</td>
                                             <td>
                                                 <div class="d-flex gap-1">
                                                     {{-- Detail --}}

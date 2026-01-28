@@ -1,14 +1,14 @@
 @extends('layouts.master')
 
-@section('title', 'My Profile')
+@section('title', 'Profil Akun')
 
 @section('content')
     @component('components.breadcrumb')
         @slot('breadcrumb_title')
-            <h3>My Profile</h3>
+            <h3>Profil Akun</h3>
         @endslot
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">My Profile</li>
+        <li class="breadcrumb-item active">Profil Akun</li>
     @endcomponent
     
     <div class="container-fluid">
@@ -16,8 +16,8 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header pb-0">
-                        <h5>User Profile</h5>
-                        <span>Update user information in the form below.</span>
+                        <h5>Profil Akun</h5>
+                        <span>Perbarui informasi pengguna pada form di bawah.</span>
                     </div>
                     
                     {{-- Form untuk update profile user --}}
@@ -55,19 +55,19 @@
                                         type="text" 
                                         value="{{ $user->username }}" 
                                         disabled />
-                                    <small class="form-text text-muted">Username cannot be changed</small>
+                                    <small class="form-text text-muted">Username tidak dapat diubah</small>
                                 </div>
                             </div>
 
                             {{-- Full Name --}}
                             <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label" for="name">Full Name <span class="text-danger">*</span></label>
+                                <label class="col-sm-3 col-form-label" for="name">Nama Lengkap <span class="text-danger">*</span></label>
                                 <div class="col-sm-9">
                                     <input class="form-control @error('name') is-invalid @enderror" 
                                         id="name" 
                                         name="name" 
                                         type="text" 
-                                        placeholder="Enter your full name" 
+                                        placeholder="Masukkan nama lengkap" 
                                         value="{{ old('name', $user->name) }}" 
                                         required />
                                     @error('name')
@@ -78,13 +78,13 @@
 
                             {{-- Email --}}
                             <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label" for="email">Email Address <span class="text-danger">*</span></label>
+                                <label class="col-sm-3 col-form-label" for="email">Alamat Email <span class="text-danger">*</span></label>
                                 <div class="col-sm-9">
                                     <input class="form-control @error('email') is-invalid @enderror" 
                                         id="email" 
                                         name="email" 
                                         type="email" 
-                                        placeholder="Enter your email address" 
+                                        placeholder="Masukkan alamat email" 
                                         value="{{ old('email', $user->email) }}" 
                                         required />
                                     @error('email')
@@ -96,23 +96,23 @@
                             <hr class="my-4" />
 
                             {{-- Change Password Section --}}
-                            <h6 class="mb-3">Change Password (Optional)</h6>
+                            <h6 class="mb-3">Ubah Password (Opsional)</h6>
                             <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label" for="password">New Password</label>
+                                <label class="col-sm-3 col-form-label" for="password">Password Baru</label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <input class="form-control @error('password') is-invalid @enderror toggle-password" 
                                             id="password" 
                                             name="password" 
                                             type="password" 
-                                            placeholder="Enter new password" />
+                                            placeholder="Masukkan password baru" />
                                         
                                         <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('password', 'iconShow', 'iconHide')">
                                             <i data-feather="eye" id="iconShow"></i>
                                             <i data-feather="eye-off" id="iconHide" style="display: none;"></i>
                                         </span>
                                     </div>
-                                    <small class="form-text text-muted d-block mt-1">Leave blank to keep your current password</small>
+                                    <small class="form-text text-muted d-block mt-1">Kosongkan jika tidak ingin mengubah password</small>
                                     @error('password')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
@@ -121,14 +121,14 @@
 
                             {{-- Confirm Password --}}
                             <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label" for="password_confirmation">Confirm New Password</label>
+                                <label class="col-sm-3 col-form-label" for="password_confirmation">Konfirmasi Password Baru</label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <input class="form-control @error('password_confirmation') is-invalid @enderror toggle-password" 
                                             id="password_confirmation" 
                                             name="password_confirmation" 
                                             type="password" 
-                                            placeholder="Re-enter your new password" />
+                                            placeholder="Masukkan ulang password baru" />
                                         <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('password_confirmation', 'iconShowConfirm', 'iconHideConfirm')">
                                             <i data-feather="eye" id="iconShowConfirm"></i>
                                             <i data-feather="eye-off" id="iconHideConfirm" style="display: none;"></i>
@@ -143,10 +143,10 @@
 
                         <div class="card-footer text-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Back to Dashboard
+                                <i class="fa fa-arrow-left"></i> Cancel
                             </a>
                             <button class="btn btn-primary" type="submit">
-                                <i class="fa fa-save"></i> Save Changes
+                                <i class="fa fa-save"></i> Save
                             </button>
                         </div>
                     </form>

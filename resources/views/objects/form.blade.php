@@ -16,11 +16,11 @@
             <li class="breadcrumb-item active">{{ isset($object) ? 'Edit' : 'Tambah'  }}</li>
         @endcomponent
         <div class="d-flex gap-2">
-            @isset($object)<a href="{{ route('objects.show', $object->id) }}" class="btn btn-info btn-sm">Detail</span></a>
-            @endisset
-            <a href="{{ route('objects.index') }}" class="btn btn-secondary btn-sm">
+            <a href="{{ route('objects.index') }}" class="btn btn-info btn-sm">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
+            @isset($object)<a href="{{ route('objects.show', $object->id) }}" class="btn btn-secondary btn-sm">Detail</span></a>
+            @endisset
         </div>
     </div>
 
@@ -57,20 +57,20 @@
                 </div>
                 <div class="card-body row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="object_occupation_id">Objek Occupation<span class="text-danger">*</span></label>
+                        <label class="form-label" for="object_occupation_id">Objek Okupasi<span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
                             <div class="flex-grow-1">
                                 <select class="form-select add-select2 @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
-                                    <option value="">- Pilih Objek Occupation -</option>
+                                    <option value="">- Pilih Objek Okupasi -</option>
                                     @foreach ($objectOccupations as $occupation)
                                         <option value="{{ $occupation->id }}" {{ isset($object) && $object->object_occupation_id == $occupation->id ? 'selected' : (old('object_occupation_id') == $occupation->id ? 'selected' : '') }}>
                                             {{ $occupation->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <input type="text" class="form-control @error('object_occupation_id') is-invalid @enderror" name="object_occupation_name" id="object_occupation_name" placeholder="Ketik nama objek occupation baru..." style="display: none; width: 100%;" />
+                                <input type="text" class="form-control @error('object_occupation_id') is-invalid @enderror" name="object_occupation_name" id="object_occupation_name" placeholder="Ketik nama objek okupasi baru..." style="display: none; width: 100%;" />
                             </div>
-                            <button type="button" class="btn btn-primary" id="toggle-object-occupation" title="Tambah objek occupation baru">
+                            <button type="button" class="btn btn-primary" id="toggle-object-occupation" title="Tambah objek okupasi baru">
                                 <i class="fa fa-plus"></i> Baru
                             </button>
                         </div>
@@ -149,7 +149,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-2 mb-md-0">
-                                            <label class="form-label">Nilai (Rp)</label>
+                                            <label class="form-label">Nilai</label>
                                             <input type="number" class="form-control" name="interest_value[]" value="{{ $objectInterest->value }}" placeholder="0" min="0" step="0.00001">
                                         </div>
                                         <div class="col-md-1 pt-3">
@@ -222,7 +222,7 @@
                     $select.next('.select2-container').hide();
                     $select.prop('required', false).prop('disabled', true).val('');
                     $input.show().prop('required', true).prop('disabled', false).focus();
-                    $input.attr('placeholder', 'Ketik nama objek occupationbaru...');
+                    $input.attr('placeholder', 'Ketik nama objek okupasi baru...');
                     $button.removeClass('btn-primary').addClass('btn-secondary');
                     $button.html('<i class="fa fa-list"></i> Pilih');
                     $button.attr('title', 'Pilih dari daftar yang ada');
@@ -233,7 +233,7 @@
                     $select.next('.select2-container').show();
                     $button.removeClass('btn-secondary').addClass('btn-primary');
                     $button.html('<i class="fa fa-plus"></i> Baru');
-                    $button.attr('title', 'Tambah objek occupation baru');
+                    $button.attr('title', 'Tambah objek okupasi baru');
                 }
             });
 
@@ -370,7 +370,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-2 mb-md-0">
-                            <label class="form-label">Nilai (Rp)</label>
+                            <label class="form-label">Nilai</label>
                             <input type="number" class="form-control" name="interest_value[]" placeholder="0" min="0" step="0.00001">
                         </div>
                         <div class="col-md-1 pt-3">

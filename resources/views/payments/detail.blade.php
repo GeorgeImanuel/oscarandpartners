@@ -176,7 +176,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5>Perhitungan Pembayaran Premi</h5>
                             <div class="d-flex gap-2">
-                                <a href="{{ route('payments.index') }}" class="btn btn-secondary btn-sm">
+                                <a href="{{ route('payments.index') }}" class="btn btn-info btn-sm">
                                     <i class="fa fa-arrow-left"></i> Kembali
                                 </a>
                             </div>
@@ -342,7 +342,7 @@
                                         @if($payment->payment_status_id == 2)
                                             <span class="badge bg-success">
                                                 <i class="fa fa-check"></i> NASABAH LUNAS 
-                                                ({{ $payment->paid_at ? $payment->paid_at->format('d/m/y') : '-' }})
+                                                ({{ $payment->paid_at ? $payment->paid_at->format('d M Y') : '-' }})
                                             </span>
                                         @else
                                             <span class="badge bg-danger">NASABAH BELUM BAYAR</span>
@@ -354,7 +354,7 @@
                                             @if($payment->insurance_payment_status_id == 2)
                                                 <span class="badge bg-primary">
                                                     <i class="fa fa-check"></i> ASURANSI DISETOR 
-                                                    ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d/m/y') : '-' }})
+                                                    ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d M Y') : '-' }})
                                                 </span>
                                             @else
                                                 <span class="badge bg-warning text-dark">ASURANSI BELUM DISETOR</span>
@@ -470,7 +470,7 @@
                                 <div class="card-header border-bottom d-flex justify-content-between align-items-left">
                                     <h6 class="fw-bold mb-2">PERHITUNGAN INSTALLMENT</h6>
                                     <button onclick="printInstallment()" class="btn btn-info btn-sm text-white btn-print-custom no-print">
-                                        <i class="fa fa-calendar"></i> Print Jadwal
+                                        <i class="fa fa-calendar"></i> Print Tabel
                                     </button>
                                 </div>
                                 
@@ -553,7 +553,7 @@
                                                         @if($loop->first)
                                                             <td rowspan="{{ $rowSpanCount }}" class="text-center" style="vertical-align: top; padding-top: 10px;">
                                                                 <strong>ANGSURAN {{ $pmt->sequence }}</strong><br>
-                                                                <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d/m/Y') : '-' }}</small>
+                                                                <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d M Y') : '-' }}</small>
                                                             </td>
                                                         @endif
 
@@ -603,7 +603,7 @@
                                                                         {{-- KONDISI B: SUDAH LUNAS (ID: 2) --}}
                                                                         <div class="status-box status-client-lunas">
                                                                             Nasabah Lunas
-                                                                            <span class="date">{{ $pmt->paid_at ? $pmt->paid_at->format('d/m/y') : '-' }}</span>
+                                                                            <span class="date">{{ $pmt->paid_at ? $pmt->paid_at->format('d M Y') : '-' }}</span>
                                                                         </div>
 
                                                                     @endif
@@ -629,7 +629,7 @@
                                                                             {{-- KONDISI D: SUDAH DISETOR --}}
                                                                             <div class="status-box status-ins-disetor">
                                                                                 Asuransi Disetor
-                                                                                <span class="date">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d/m/y') : '-' }}</span>
+                                                                                <span class="date">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d M Y') : '-' }}</span>
                                                                             </div>
                                                                         @endif
 

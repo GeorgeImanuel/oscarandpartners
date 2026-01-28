@@ -19,10 +19,10 @@
             <li class="breadcrumb-item active">Edit</li>
         @endcomponent
         <div class="d-flex gap-2">
-            <a href="{{ route('claims.show', $claim->id) }}" class="btn btn-info">
-                <i class="fa fa-eye"></i>Detail</a>
-            <a href="{{ route('claims.index') }}" class="btn btn-secondary btn-sm">
+            <a href="{{ route('claims.index') }}" class="btn btn-info btn-sm">
                 <i class="fa fa-arrow-left"></i> Kembali
+            <a href="{{ route('claims.show', $claim->id) }}" class="btn btn-secondary btn-sm">
+                <i class="fa fa-eye"></i>Detail</a>
             </a>
         </div>
     </div>

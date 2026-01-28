@@ -15,7 +15,7 @@
             <li class="breadcrumb-item"><a href="{{ route('currencies.index') }}">Mata Uang</a></li>
             <li class="breadcrumb-item active">{{ isset($currency) ? 'Ubah' : 'Tambah' }}</li>
         @endcomponent
-        <a href="{{ route('currencies.index') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('currencies.index') }}" class="btn btn-info btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </div>

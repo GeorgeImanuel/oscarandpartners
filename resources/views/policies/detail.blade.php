@@ -58,7 +58,7 @@
                             </tr>
                             <tr>
                                 <th>Periode Asuransi</th>
-                                <td>{{ $policy->started_date->format('d/m/Y') }} - {{ $policy->ended_date->format('d/m/Y') }}</td>
+                                <td>{{ $policy->started_date->format('d M Y') }} - {{ $policy->ended_date->format('d M Y') }}</td>
                             </tr>
                             <tr>
                                 <th>Mata Uang</th>

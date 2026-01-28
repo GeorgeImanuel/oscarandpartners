@@ -24,7 +24,6 @@ class ClientFactory extends Factory
         return [
             'relation_id' => fake()->boolean(70) ? (Relation::inRandomOrder()->first()?->id ?? null) : null,
             'id_name' => fake()->name(),
-            'id_number' => fake()->numerify('################'),
             'id_address' => fake()->address(),
         ];
     }

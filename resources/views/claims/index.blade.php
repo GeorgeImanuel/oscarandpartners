@@ -45,7 +45,8 @@
                         @endif
 
                         <div class="table-responsive">
-                            <table class="display" id="basic-1">
+                            {{-- Tambahkan class 'nowrap' atau 'text-nowrap' pada tabel --}}
+                            <table class="display table text-nowrap" id="basic-1" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -56,7 +57,7 @@
                                         <th>Casco</th>
                                         <th>TJH</th>
                                         <th>Jumlah Claim</th>
-                                        <th class="text-center"width="10%">Aksi</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -65,37 +66,32 @@
                                             <td>{{ $claims->firstItem() + $index }}</td>
                                             <td>{{ $claim->policy->policy_number ?? '-' }}</td>
                                             <td>{{ $claim->policy->productionCard->client->id_name ?? '-' }}</td>
-                                            <td>{{ $claim->incident_date->format('d/m/Y') }}</td>
-                                            <td>{{ $claim->insurance_report_date->format('d/m/Y') }}</td>
+                                            <td>{{ $claim->incident_date->format('d M Y') }}</td>
+                                            <td>{{ $claim->insurance_report_date->format('d M Y') }}</td>
                                             <td>Rp {{ number_format($claim->casco, 0, ',', '.') }}</td>
                                             <td>Rp {{ number_format($claim->tjh, 0, ',', '.') }}</td>
                                             <td>Rp {{ number_format($claim->amount, 0, ',', '.') }}</td>
-                                            <td class="text-center text-nowrap">
-                                                {{-- Tombol Detail --}}
-                                                <a href="{{ route('claims.show', $claim->id) }}" 
-                                                   class="btn btn-info btn-sm">
-                                                    <i class="icon-eye me-2"></i>Detail
-                                                </a>
+                                            <td class="text-center">
+                                                <div class="btn-group gap-2">
+                                                    {{-- Tombol Detail --}}
+                                                    <a href="{{ route('claims.show', $claim->id) }}" class="btn btn-info btn-sm" title="Detail">
+                                                        Detail
+                                                    </a>
 
-                                                {{-- Tombol Edit --}}
-                                                <a href="{{ route('claims.edit', $claim->id) }}" 
-                                                   class="btn btn-warning btn-sm">
-                                                    <i class="fa fa-edit"></i> Edit
-                                                </a>
+                                                    {{-- Tombol Edit --}}
+                                                    <a href="{{ route('claims.edit', $claim->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                                        Edit
+                                                    </a>
 
-                                                {{-- Tombol Hapus --}}
-                                                <form action="{{ route('claims.destroy', $claim->id) }}" 
-                                                      method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('Yakin ingin menghapus claim ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" 
-                                                            class="btn btn-danger btn-xs" 
-                                                            style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">
-                                                        <i class="fa fa-trash"></i> Hapus
-                                                    </button>
-                                                </form>
+                                                    {{-- Tombol Hapus --}}
+                                                    <form action="{{ route('claims.destroy', $claim->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus claim ini?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-xs" title="Hapus">
+                                                            <i class="fa fa-trash"></i>Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty

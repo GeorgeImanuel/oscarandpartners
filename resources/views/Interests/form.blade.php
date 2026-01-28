@@ -12,7 +12,7 @@
             <li class="breadcrumb-item active">{{ isset($interest) ? 'Edit' : 'Tambah'  }}</li>
         @endcomponent
         <div class="d-flex gap-2">
-            <a href="{{ route('interests.index') }}" class="btn btn-secondary btn-sm">
+            <a href="{{ route('interests.index') }}" class="btn btn-info btn-sm">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
         </div>

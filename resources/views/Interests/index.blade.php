@@ -49,7 +49,7 @@
 									<tr>
 										<th>No</th>
 										<th>Nama Interest</th>
-										<th>Actions</th>
+										<th>Aksi</th>
 									</tr>
 								</thead>
 								<tbody>

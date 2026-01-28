@@ -46,62 +46,65 @@
             action="{{ isset($card) ? route('cards.update', $card->id) : route('cards.store') }}"
             method="POST"
             novalidate>
-            <div class="card">
-                @csrf
-                @if (isset($card))
-                    @method('PUT')
-                @endif
-                <div class="card-body">
-                    <div class="stepwizard mt-3">
+            @csrf
+            @if (isset($card))
+                @method('PUT')
+            @endif
+
+            {{-- === CARD 1: KHUSUS WIZARD (NAVIGASI ATAS) === --}}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body mt-4 pb-0">
+                    <div class="stepwizard">
                         <div class="stepwizard-row setup-panel">
-                            <div class="stepwizard-step"><a class="btn btn-primary"
-                                    href="#step-1">1</a>
+                            <div class="stepwizard-step">
+                                <a class="btn btn-primary" href="#step-1">1</a>
                                 <p>Detail Kartu Produksi</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light"
-                                    href="#step-2">2</a>
+                            <div class="stepwizard-step">
+                                <a class="btn btn-light" href="#step-2">2</a>
                                 <p>Detail Polis & Objek</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light"
-                                    href="#step-3">3</a>
+                            <div class="stepwizard-step">
+                                <a class="btn btn-light" href="#step-3">3</a>
                                 <p>Detail Premi & Komisi</p>
                             </div>
-                            <div class="stepwizard-step"><a class="btn btn-light"
-                                    href="#step-4">4</a>
+                            <div class="stepwizard-step">
+                                <a class="btn btn-light" href="#step-4">4</a>
                                 <p>Payment</p>
                             </div>
                         </div>
                     </div>
-                    {{-- START STEP 1: CARD INFO --}}
-                    @include('cards.form-tab-1')
-                    {{-- END STEP 1 --}}
-
-                    {{-- START STEP 2: POLIS & OBJEK --}}
-                    @include('cards.form-tab-2')
-                    {{-- END STEP 2 --}}
-
-                    {{-- START STEP 3: PARAMETER & PERHITUNGAN --}}
-                    @include('cards.form-tab-3')
-                    {{-- END STEP 3 --}}
-
-                    {{-- START STEP 4: PAYMENT CONFIGURATION --}}
-                    @include('cards.form-tab-4')
-                    {{-- END STEP 4 --}}
-
                 </div>
-                <div class="card-footer	">
-                    <div class="row no-gutters">
-                        <div class="col-md">
-                            <a class="btn btn-light"
-                                href="{{ route('cards.index') }}">Kembali</a>
-                        </div>
-                        <div class="col-md-auto">
-                            <span class="btn btn-outline-primary ms-3 mb-2 stepwizard-prev">Sebelumnya</span>
-                            <span class="btn btn-primary ms-3 mb-2 stepwizard-next">Selanjutnya</span>
-                            <button class="btn btn-primary ms-3 mb-2 stepwizard-submit"
-                                type="submit"
-                                style="display: none;">Simpan</button>
-                        </div>
+            </div>
+
+            {{-- START STEP 1: CARD INFO --}}
+            @include('cards.form-tab-1')
+            {{-- END STEP 1 --}}
+
+            {{-- START STEP 2: POLIS & OBJEK --}}
+            @include('cards.form-tab-2')
+            {{-- END STEP 2 --}}
+
+            {{-- START STEP 3: PARAMETER & PERHITUNGAN --}}
+            @include('cards.form-tab-3')
+            {{-- END STEP 3 --}}
+
+            {{-- START STEP 4: PAYMENT CONFIGURATION --}}
+            @include('cards.form-tab-4')
+            {{-- END STEP 4 --}}
+
+            <div class="card mb-4 p-3 shadow-sm">
+                <div class="row no-gutters mt-2">
+                    <div class="col-md">
+                        <a class="btn btn-light"
+                            href="{{ route('cards.index') }}">Kembali</a>
+                    </div>
+                    <div class="col-md-auto">
+                        <span class="btn btn-outline-primary ms-3 mb-2 stepwizard-prev">Sebelumnya</span>
+                        <span class="btn btn-primary ms-3 mb-2 stepwizard-next">Selanjutnya</span>
+                        <button class="btn btn-primary ms-3 mb-2 stepwizard-submit"
+                            type="submit"
+                            style="display: none;">Simpan</button>
                     </div>
                 </div>
             </div>

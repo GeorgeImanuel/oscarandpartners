@@ -170,8 +170,8 @@
                                                             @if($policiesCount > 0)
                                                                 @foreach($object->policies as $policyIndex => $policy)
                                                                     <div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
-                                                                        <div>{{ $policy->started_date ? $policy->started_date->format('d/m/Y') : '-' }}</div>
-                                                                        <div>{{ $policy->ended_date ? $policy->ended_date->format('d/m/Y') : '-' }}</div>
+                                                                        <div>{{ $policy->started_date ? $policy->started_date->format('d M Y') : '-' }}</div>
+                                                                        <div>{{ $policy->ended_date ? $policy->ended_date->format('d M Y') : '-' }}</div>
                                                                     </div>
                                                                 @endforeach
                                                             @else

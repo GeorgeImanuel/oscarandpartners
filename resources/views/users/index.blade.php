@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title')User List
+@section('title')Daftar Staff
 @endsection
 
 @push('css')
@@ -10,11 +10,10 @@
 @section('content')
 	@component('components.breadcrumb')
 		@slot('breadcrumb_title')
-			<h3>User List</h3>
+			<h3>Daftar Staff</h3>
 		@endslot
-		<li class="breadcrumb-item">Tables</li>
-		<li class="breadcrumb-item">Data Tables</li>
-		<li class="breadcrumb-item active">Users</li>
+		<li class="breadcrumb-item active">Staff</li>
+		<li class="breadcrumb-item active">Daftar</li>
 	@endcomponent
 	
 	<div class="container-fluid">
@@ -23,9 +22,9 @@
 	        <div class="col-sm-12">
 	            <div class="card">
 	                <div class="card-header">
-	                    <h5>User Data Table</h5>
+	                    <h5>Daftar Staff</h5>
 	                    <div class="card-header-right">
-	                        <a href="{{ route('users.create') }}" class="btn btn-primary float-end">Add User</a>
+	                        <a href="{{ route('users.create') }}" class="btn btn-primary float-end">Tambah Staff</a>
 	                    </div>
 	                </div>
 	                <div class="card-body">
@@ -34,11 +33,11 @@
 	                            <thead>
 	                                <tr>
 	                                    <th>Username</th>
-	                                    <th>Full Name</th>
+	                                    <th>Nama Lengkap</th>
 	                                    <th>Email</th>
-	                                    <th>Role</th>
+	                                    <th>Peran</th>
 	                                    <th>Status</th>
-	                                    <th>Actions</th>
+	                                    <th>Aksi</th>
 	                                </tr>
 	                            </thead>
 	                            <tbody>

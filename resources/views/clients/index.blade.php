@@ -24,9 +24,10 @@
             <!-- Client List Table Starts-->
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header text-end">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Daftar Client</h5>
                         <a href="{{ route('clients.create') }}"
-                            class="btn btn-primary"><i class="icon-plus me-2"></i>Add Client</a>
+                            class="btn btn-primary"><i class="icon-plus me-2"></i>Tambah Client</a>
                     </div>
                     <div class="card-body">
                         @if (session('success'))
@@ -45,18 +46,16 @@
                                 id="basic-1">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>ID Number</th>
-                                        <th>Address</th>
-                                        <th>Group/Family</th>
-                                        <th>Actions</th>
+                                        <th>Nama</th>
+                                        <th>Alamat</th>
+                                        <th>Relasi/Grup</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($clients as $client)
                                         <tr>
                                             <td>{{ $client->id_name ?? '-' }}</td>
-                                            <td>{{ $client->id_number ?? '-' }}</td>
                                             <td>{{ $client->id_address ?? '-' }}</td>
                                             <td>{{ $client->relation ? $client->relation->name : '-' }}</td>
                                             <td style="white-space: nowrap;">

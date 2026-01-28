@@ -24,7 +24,6 @@ class StoreClientRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
-            'id_card_number' => 'nullable|string|max:255',
             'relation_id' => 'nullable|exists:relations,id',
         ];
     }

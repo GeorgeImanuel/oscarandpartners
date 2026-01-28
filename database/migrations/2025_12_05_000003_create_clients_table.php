@@ -9,7 +9,6 @@ return new class extends Migration {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('relation_id')->nullable()->comment('Grup/Keluarga')->constrained('relations');
-            $table->string('id_number')->unique()->comment('NIK/NPWP');
             $table->string('id_name')->comment('Nama Tertanggung');
             $table->text('id_address')->nullable()->comment('Alamat Tertanggung');
             $table->timestamps();

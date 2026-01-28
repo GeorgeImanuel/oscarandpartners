@@ -16,11 +16,11 @@
 			<li class="breadcrumb-item active">Detail</li>
 		@endcomponent
 		<div class="d-flex gap-2">
+			<a href="{{ route('objects.index') }}" class="btn btn-info btn-sm">
+				<i class="fa fa-arrow-left"></i> Kembali
+			</a>
 			<a href="{{ route('objects.edit', $object->id) }}" class="btn btn-warning btn-sm">
 				<i class="fa fa-edit"></i> Edit
-			</a>
-			<a href="{{ route('objects.index') }}" class="btn btn-secondary btn-sm">
-				<i class="fa fa-arrow-left"></i> Kembali
 			</a>
 		</div>
 	</div>
@@ -40,7 +40,7 @@
 								<table class="table table-borderless">
 									<tbody>
 										<tr>
-											<th>Objek Occupation</th>
+											<th>Objek Okupasi</th>
 											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 										</tr>
 										<tr>
@@ -75,7 +75,7 @@
 									<tr>
 										<th width="50">No</th>
 										<th>Nama Interest</th>
-										<th width="200">Nilai (Rp)</th>
+										<th width="200">Nilai</th>
 									</tr>
 								</thead>
 								<tbody>

@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="{{ route('relations.index') }}">Relasi</a></li>
             <li class="breadcrumb-item active">{{ isset($relation) ? 'Ubah' : 'Tambah'  }} Relasi</li>
         @endcomponent
-        <a href="{{ route('relations.index') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('relations.index') }}" class="btn btn-info btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </div> 
@@ -26,7 +26,7 @@
         <form class="needs-validation" novalidate="" method="POST" action="{{ isset($relation) ? route('relations.update', $relation->id) : route('relations.store') }}">
             <div class="card">
                 <div class="card-header">
-                    <h5 style="display: inline">Tambah Relasi</h5>
+                    <h5 style="display: inline">{{ isset($relation) ? 'Ubah' : 'Tambah'  }} Relasi</h5>
                 </div>
                 <div class="card-body">
                     @csrf
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div class="text-end">
-                        <a href="{{ route('relations.index') }}" class="btn btn-light">Kembali</a>
+                        <a href="{{ route('relations.index') }}" class="btn btn-secondary">Cancel</a>
                         <button class="btn btn-primary" type="submit">Simpan</button>
                     </div>
                 </div>

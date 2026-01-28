@@ -143,7 +143,7 @@
                     <th class="text-secondary fw-normal border-bottom-0 py-3">Jatuh Tempo</th>
                     <th class="text-secondary fw-normal border-bottom-0 py-3">Nominal</th>
                     <th class="text-secondary fw-normal border-bottom-0 py-3">Status</th>
-                    <th class="text-secondary fw-normal border-bottom-0 py-3 text-center">Action</th>
+                    <th class="text-secondary fw-normal border-bottom-0 py-3 text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>

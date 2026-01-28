@@ -22,7 +22,7 @@
 				<div class="card">
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
-							<h5>Objek Asuransi</h5>
+							<h5> Daftar Objek Asuransi</h5>
 							<a href="{{ route('objects.create') }}" class="btn btn-primary">
 								<i class="icon-plus me-2"></i>Tambah Objek
 							</a>
@@ -48,11 +48,11 @@
 								<thead>
 									<tr>
 										<th>No</th>
-										<th>Objek Occupation</th>
+										<th>Objek Okupasi</th>
 										<th>Nama</th>
 										<th>TJH</th>
 										<th>Keterangan</th>
-										<th>Actions</th>
+										<th>Aksi</th>
 									</tr>
 								</thead>
 								<tbody>

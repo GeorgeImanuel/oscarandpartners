@@ -58,16 +58,15 @@
                                     <tr>
                                         <th style="width: 5%;">No</th>
                                         <th style="min-width: 120px;">Nomor Polis</th> 
-                                        <th style="min-width: 150px;">Nama Objek</th>  
-                                        {{-- Berikan min-width besar pada Alamat agar lebar --}}
-                                        <th style="min-width: 300px;">Alamat</th>      
+                                        <th style="min-width: 150px;">Nama Tertanggung</th>  
+                                        <th style="min-width: 300px;">Keterangan</th>      
                                         <th style="min-width: 120px;">Client</th>
                                         <th>Status</th>
                                         <th style="min-width: 100px;">Tanggal Awal</th>
                                         <th style="min-width: 100px;">Tanggal Akhir</th>
                                         <th style="min-width: 100px;">Premi Bruto</th>
                                         <th>Status Pembayaran</th>
-                                        <th style="min-width: 150px;">Actions</th>
+                                        <th style="min-width: 150px;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,7 +83,7 @@
                                             <td>{{ $card->policy->object->name ?? '-' }}</td>
 
                                             {{-- Data Alamat --}}
-                                            <td>{{ $card->policy->object->address ?? '-' }}</td>
+                                            <td>{{ $card->policy->object->keterangan ?? '-' }}</td>
 
                                             <td>{{ $card->client->user->name ?? $card->client->id_name ?? '-' }}</td>
                                             <td>
@@ -92,8 +91,8 @@
                                                     {{ $card->cardStatus->name ?? '-' }}
                                                 </span>
                                             </td>
-                                            <td>{{ $card->start_date ? $card->start_date->format('d/m/Y') : '-' }}</td>
-                                            <td>{{ $card->end_date ? $card->end_date->format('d/m/Y') : '-' }}</td>
+                                            <td>{{ $card->policy->started_date ? $card->policy->started_date->format('d M Y') : '-' }}</td>
+                                            <td>{{ $card->policy->ended_date ? $card->policy->ended_date->format('d M Y') : '-' }}</td>
                                             
                                             <td class="text-end">
                                                 @php
@@ -103,21 +102,19 @@
                                             </td>
                                             
                                             <td>
-                                                @if($card->insurancePaymentStatus)
-                                                    <span class="badge" style="background-color: {{ $card->insurancePaymentStatus->color }}">
-                                                        {{ $card->insurancePaymentStatus->name }}
-                                                    </span>
-                                                @else
-                                                    -
-                                                @endif
+                                                @php
+                                                    $latestPayment = $card->payments->sortByDesc('created_at')->first();
+                                                    $status = $latestPayment ? $latestPayment->paymentStatus : null;
+                                                @endphp
+
+                                                <span class="badge" style="background-color: {{ $status->color ?? '#cccccc' }}">
+                                                    {{ $status->name ?? 'Belum Bayar' }}
+                                                </span>
                                             </td>
                                             <td>
                                                 <div style="white-space: nowrap;">
                                                     <a href="{{ route('cards.show', $card->id) }}" class="btn btn-info btn-sm me-1" title="Detail">
                                                         <i class="icon-eye me-2"></i>Detail
-                                                    </a>
-                                                    <a href="{{ route('cards.edit', $card->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
-                                                        <i class="fa fa-edit"></i> Edit
                                                     </a>
                                                     <form action="{{ route('cards.destroy', $card->id) }}" method="POST" style="display: inline">
                                                         @csrf

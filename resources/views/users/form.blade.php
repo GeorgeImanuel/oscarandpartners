@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title'){{ isset($user) ? 'Edit User' : 'Add User' }}
+@section('title'){{ isset($user) ? 'Edit Staff' : 'Tambah Staff' }}
 @endsection
 
 @push('css')
@@ -10,13 +10,13 @@
 	<div class="d-flex justify-content-between align-items-center">
 		@component('components.breadcrumb')
 			@slot('breadcrumb_title')
-				<h3>{{ isset($user) ? 'Edit User' : 'Add User' }}</h3>
+				<h3>{{ isset($user) ? 'Edit Staff' : 'Tambah Staff' }}</h3>
 			@endslot
-			<li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
-			<li class="breadcrumb-item active">{{ isset($user) ? 'Edit' : 'Add' }}</li>
+			<li class="breadcrumb-item"><a href="{{ route('users.index') }}">Staff</a></li>
+			<li class="breadcrumb-item active">{{ isset($user) ? 'Edit' : 'Tambah' }}</li>
 		@endcomponent
 		<div class="d-flex gap-2">
-			<a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm">
+			<a href="{{ route('users.index') }}" class="btn btn-info btn-sm">
 				Kembali
 			</a>
 		</div>
@@ -27,8 +27,8 @@
 			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header pb-0">
-						<h5>User Information</h5>
-						<span>{{ isset($user) ? 'Update user information in the form below.' : 'Fill in the form below to add a new user to the system.' }}</span>
+						<h5>Data Staff</h5>
+						<span>{{ isset($user) ? 'Update data staff pada form di bawah.' : 'Isi form di bawah untuk menambahkan staff baru ke sistem.' }}</span>
 					</div>
 					<form class="theme-form" action="{{ isset($user) ? route('users.update', $user->id) : route('users.store') }}" method="POST">
 						@csrf
@@ -43,7 +43,7 @@
 										id="username" 
 										name="username" 
 										type="text" 
-										placeholder="Enter username" 
+										placeholder="Masukkan username" 
 										value="{{ old('username', $user->username ?? '') }}" 
 										required />
 									@error('username')
@@ -52,13 +52,13 @@
 								</div>
 							</div>
 							<div class="mb-3 row">
-								<label class="col-sm-3 col-form-label" for="name">Full Name <span class="text-danger">*</span></label>
+								<label class="col-sm-3 col-form-label" for="name">Nama Lengkap <span class="text-danger">*</span></label>
 								<div class="col-sm-9">
 									<input class="form-control @error('name') is-invalid @enderror" 
 										id="name" 
 										name="name" 
 										type="text" 
-										placeholder="Enter full name" 
+										placeholder="Masukkan nama lengkap" 
 										value="{{ old('name', $user->name ?? '') }}" 
 										required />
 									@error('name')
@@ -73,7 +73,7 @@
 										id="email" 
 										name="email" 
 										type="email" 
-										placeholder="Enter email address" 
+										placeholder="Masukkan alamat email" 
 										value="{{ old('email', $user->email ?? '') }}" 
 										required />
 									@error('email')
@@ -88,30 +88,30 @@
 										id="password" 
 										name="password" 
 										type="password" 
-										placeholder="{{ isset($user) ? 'Leave blank to keep current password' : 'Enter password' }}" 
+										placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukkan password' }}" 
 										{{ !isset($user) ? 'required' : '' }} />
 									@error('password')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 									@if(isset($user))
-										<small class="form-text text-muted">Leave blank if you don't want to change the password</small>
+										<small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password</small>
 									@endif
 								</div>
 							</div>
 							<div class="mb-3 row">
-								<label class="col-sm-3 col-form-label" for="password_confirmation">Confirm Password @if(!isset($user))<span class="text-danger">*</span>@endif</label>
+								<label class="col-sm-3 col-form-label" for="password_confirmation">Konfirmasi Password @if(!isset($user))<span class="text-danger">*</span>@endif</label>
 								<div class="col-sm-9">
 									<input class="form-control" 
 										id="password_confirmation" 
 										name="password_confirmation" 
 										type="password" 
-										placeholder="{{ isset($user) ? 'Confirm new password' : 'Re-enter password' }}" 
+										placeholder="{{ isset($user) ? 'Konfirmasi password baru' : 'Masukkan ulang password' }}" 
 										{{ !isset($user) ? 'required' : '' }} />
 								</div>
 							</div>
 							<fieldset class="mb-3">
 								<div class="row">
-									<label class="col-form-label col-sm-3 pt-0">Role <span class="text-danger">*</span></label>
+									<label class="col-form-label col-sm-3 pt-0">Peran <span class="text-danger">*</span></label>
 									<div class="col-sm-9">
 										<div class="form-check radio radio-primary">
 											<input class="form-check-input @error('role') is-invalid @enderror" 
@@ -123,7 +123,7 @@
 												required />
 											<label class="form-check-label" for="role_admin">
 												<span class="badge badge-primary">Admin</span>
-												<small class="text-muted d-block">Full access to all features</small>
+												<small class="text-muted d-block">Akses ke semua administrasi</small>
 											</label>
 										</div>
 										<div class="form-check radio radio-info">
@@ -135,7 +135,7 @@
 												{{ old('role', isset($user) && $user->hasRole('finance') ? 'finance' : '') == 'finance' ? 'checked' : '' }} />
 											<label class="form-check-label" for="role_finance">
 												<span class="badge badge-info">Finance</span>
-												<small class="text-muted d-block">Access to financial features</small>
+												<small class="text-muted d-block">Akses ke fitur keuangan</small>
 											</label>
 										</div>
 										@error('role')
@@ -156,7 +156,7 @@
 											{{ old('is_active', $user->is_active ?? true) ? 'checked' : '' }} />
 										<label class="form-check-label" for="is_active">
 											Active
-											<small class="text-muted d-block">User can login to the system</small>
+											<small class="text-muted d-block">Staff dapat login</small>
 										</label>
 									</div>
 								</div>

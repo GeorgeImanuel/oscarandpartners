@@ -1,72 +1,10 @@
 <div id="step-4"
     class="setup-content">
-    <div class="row">
+
+    <div class="card mb-4 p-3 shadow-sm">
         <div class="col-md-12 mb-3">
             <h5 class="text-primary">Payment</h5>
-            <hr class="separator">
         </div>
-
-        {{-- A. TABEL PERHITUNGAN PREMI (Seperti di detail) --}}
-        <div class="col-md-12 mb-4">
-            <h6 class="fw-bold mb-3">
-                <i class="fa fa-calculator"></i> Preview Perhitungan Premi
-            </h6>
-            <div class="table-responsive">
-                <table class="table-manual"
-                    style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                    <thead>
-                        <tr>
-                            {{-- Kolom Share Asuransi --}}
-                            <th colspan="3"
-                                style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold;">Share Asuransi</th>
-
-                            {{-- Kolom Financials --}}
-                            <th rowspan="2"
-                                style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Biaya<br>Polis</th>
-                            <th rowspan="2"
-                                style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Komisi</th>
-                            <th rowspan="2"
-                                style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Pajak</th>
-                            <th rowspan="2"
-                                style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Premi<br>Netto</th>
-                        </tr>
-                        <tr>
-                            <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:20%; font-weight:bold;">Nama Asuransi</th>
-                            <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:8%; text-align:center; font-weight:bold;">Share</th>
-                            <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:15%; text-align:right; font-weight:bold;">Nominal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="preview-table-body">
-                        {{-- Diisi otomatis via JavaScript (renderStep5Table) --}}
-                    </tbody>
-                    <tfoot style="background-color: #e9ecef; font-weight:bold;">
-                        <tr>
-                            <td colspan="2"
-                                class="text-center"
-                                style="border:1px solid #dee2e6; padding:8px;">TOTAL</td>
-                            <td class="text-end"
-                                id="prev-total-premi"
-                                style="border:1px solid #dee2e6; padding:8px;">0</td>
-                            <td class="text-end"
-                                id="prev-total-biaya"
-                                style="border:1px solid #dee2e6; padding:8px;">0</td>
-                            <td class="text-end"
-                                id="prev-total-komisi"
-                                style="border:1px solid #dee2e6; padding:8px;">0</td>
-                            <td class="text-end"
-                                id="prev-total-pajak"
-                                style="border:1px solid #dee2e6; padding:8px;">0</td>
-                            <td class="text-end"
-                                id="prev-total-netto"
-                                style="border:1px solid #dee2e6; padding:8px; color:#0d6efd;">0</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        <hr>
-
         {{-- B. PENGATURAN METODE PEMBAYARAN --}}
         <div class="col-md-12 mb-4">
             <h6 class="fw-bold mb-3">
@@ -154,6 +92,72 @@
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4 p-3 shadow-sm"
+         id="preview-premi-card" 
+         style="display: {{ isset($card) && $card->payment_type_id ? 'block' : 'none' }};">
+         
+        <div class="row">
+        {{-- A. TABEL PERHITUNGAN PREMI (Seperti di detail) --}}
+            <div class="col-md-12 mb-4">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa fa-calculator"></i> Preview Perhitungan Premi
+                </h6>
+                <div class="table-responsive">
+                    <table class="table-manual"
+                        style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr>
+                                {{-- Kolom Share Asuransi --}}
+                                <th colspan="3"
+                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold;">Share Asuransi</th>
+
+                                {{-- Kolom Financials --}}
+                                <th rowspan="2"
+                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Biaya<br>Polis</th>
+                                <th rowspan="2"
+                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Komisi</th>
+                                <th rowspan="2"
+                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Pajak</th>
+                                <th rowspan="2"
+                                    style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; text-align:center; font-weight:bold; vertical-align:middle;">Premi<br>Netto</th>
+                            </tr>
+                            <tr>
+                                <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:20%; font-weight:bold;">Nama Asuransi</th>
+                                <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:8%; text-align:center; font-weight:bold;">Share</th>
+                                <th style="border:1px solid #dee2e6; padding:8px; background:#f8f9fa; width:15%; text-align:right; font-weight:bold;">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="preview-table-body">
+                            {{-- Diisi otomatis via JavaScript (renderStep5Table) --}}
+                        </tbody>
+                        <tfoot style="background-color: #e9ecef; font-weight:bold;">
+                            <tr>
+                                <td colspan="2"
+                                    class="text-center"
+                                    style="border:1px solid #dee2e6; padding:8px;">TOTAL</td>
+                                <td class="text-end"
+                                    id="prev-total-premi"
+                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                <td class="text-end"
+                                    id="prev-total-biaya"
+                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                <td class="text-end"
+                                    id="prev-total-komisi"
+                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                <td class="text-end"
+                                    id="prev-total-pajak"
+                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                                <td class="text-end"
+                                    id="prev-total-netto"
+                                    style="border:1px solid #dee2e6; padding:8px;">0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -267,7 +271,7 @@
             });
 
             // Listen to step navigation untuk render Step 5 Table
-            $('div.setup-panel div a[href="#step-5"]').on('click', function() {
+            $('div.setup-panel div a[href="#step-4"]').on('click', function() {
                 // Tunggu animasi selesai baru render
                 setTimeout(function() {
                     var totalPremi = parseFloat($('#premi_value').val()) || 0;
@@ -306,7 +310,19 @@
 
             // Payment Type Change Handler - Auto show/hide installment area
             $('#payment_type_id').on('change', function() {
+                var paymentId = $(this).val();
                 var name = $(this).find(':selected').data('name') || '';
+
+                if (paymentId) {
+                    // Kalau user pilih apapun (tidak kosong), munculkan tabel
+                    $('#preview-premi-card').slideDown(); 
+                    
+                    // Opsional: Render ulang tabelnya biar angkanya fresh
+                    // renderStep5Table(...); 
+                } else {
+                    // Kalau user pilih "Pilih Metode" (kosong), sembunyikan tabel
+                    $('#preview-premi-card').slideUp(); 
+                }
 
                 // Cek keywords installment/cicilan
                 if (name.includes('installment') || name.includes('cicilan') || name.includes('termin')) {

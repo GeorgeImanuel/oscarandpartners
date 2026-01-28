@@ -224,6 +224,8 @@ class CardController extends Controller
         $cards = $this->cardService->getAllWithFilter($filters);
         $objects = $this->objectService->allWithRelations();
 
-        return view('cards.report-by-object', compact('cards', 'objects'));
+        $paymentStatuses = $this->paymentStatusService->all();
+
+        return view('cards.report-by-object', compact('cards', 'objects', 'paymentStatuses'));
     }
 }

@@ -145,10 +145,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ route('cards.show', $productionCard->id) }}" class="btn btn-secondary btn-sm">
+                        <a href="{{ route('cards.show', $productionCard->id) }}" class="btn btn-info btn-sm">
                             <i class="fa fa-arrow-left"></i> Kembali ke Detail
                         </a>
-                        <button onclick="printCard()" class="btn btn-info btn-sm">
+                        <button onclick="printCard()" class="btn btn-primary btn-sm">
                             <i class="fa fa-print"></i> Print (A4)
                         </button>
                     </div>
@@ -206,8 +206,8 @@
                 <span class="info-label">Periode Pertanggungan</span>
                 <span class="info-separator">:</span>
                 <span class="info-value">
-                    {{ $productionCard->policy->started_date ? $productionCard->policy->started_date->format('d/m/Y') : '-' }} -  
-                    {{ $productionCard->policy->ended_date ? $productionCard->policy->ended_date->format('d/m/Y') : '-' }}
+                    {{ $productionCard->policy->started_date ? $productionCard->policy->started_date->format('d M Y') : '-' }} -  
+                    {{ $productionCard->policy->ended_date ? $productionCard->policy->ended_date->format('d M Y') : '-' }}
                 </span>
             </div>
 
@@ -348,7 +348,7 @@
         <div class="signature-boxes">
             <div class="signature-box" style="flex: 2;">
                 <div>
-                    <p>Semarang, {{ now()->format('d/m/Y') }}</p>
+                    <p>Semarang, {{ now()->format('d M Y') }}</p>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 40px; padding: 0 10px;">
                     <p>( Bag. Ad )</p>
@@ -360,7 +360,7 @@
             <div class="signature-box">
                 <div>
                     <p style="font-weight: bold;">Pelunasan Tagihan</p>
-                    <p>Tgl : {{ $productionCard->insurance_paid_at ? $productionCard->insurance_paid_at->format('d/m/Y') : '' }}</p>
+                    <p>Tgl : {{ $productionCard->insurance_paid_at ? $productionCard->insurance_paid_at->format('d M Y') : '' }}</p>
                     <p>No.bukti : {{ $productionCard->insurance_evident_number ?? '' }}</p>
                 </div>
             </div>

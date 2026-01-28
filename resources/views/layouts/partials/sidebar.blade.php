@@ -191,7 +191,7 @@
                             <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}"
                                 href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}"
-                                href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Occupation</span></a>
+                                href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Okupasi</span></a>
                             <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}"
                                 href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
                         </li>

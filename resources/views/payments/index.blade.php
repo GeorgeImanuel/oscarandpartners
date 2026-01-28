@@ -31,7 +31,8 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header text-end">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 style="display: inline">Daftar Pembayaran</h5>
                         {{-- Tombol Print --}}
                         <button class="btn btn-primary" onclick="printTableOnly()"><i class="fa fa-print"></i> Print</button>
                     </div>
@@ -61,7 +62,7 @@
                                 <tbody>
                                     @forelse($payments as $payment)
                                         <tr>
-                                            <td>{{ $payment->deadline_at ? $payment->deadline_at->format('d/m/Y') : '-' }}</td>
+                                            <td>{{ $payment->deadline_at ? $payment->deadline_at->format('d M Y') : '-' }}</td>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $payment->card?->policy?->policy_number ?? '-' }}</td>
                                             <td>{{ $payment->insured_name }}</td>

@@ -21,7 +21,6 @@ class ClientSeeder extends Seeder
             Client::create([
                 'relation_id' => Relation::inRandomOrder()->first()?->id ?? Relation::factory()->create()->id,
                 'id_name' => $user->name,
-                'id_number' => fake()->numerify('################'),
                 'id_address' => fake()->address(),
             ]);
         }
