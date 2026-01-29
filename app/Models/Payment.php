@@ -12,7 +12,6 @@ class Payment extends Model
         'sequence',
         'created_by',
         'amount',
-        'note',
         // CLIENT PAYMENT
         'payment_status_id',
         'deadline_at',

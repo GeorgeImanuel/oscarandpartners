@@ -156,33 +156,24 @@
 @endpush
 
 @section('content')
-    @component('components.breadcrumb')
-    @slot('breadcrumb_title')
-    <h3>Detail Pembayaran</h3>
-    @endslot
-    <li class="breadcrumb-item"><a href="{{ route('payments.index') }}">Pembayaran</a></li>
-    <li class="breadcrumb-item active">Detail</li>
-    @endcomponent
+    <div class="d-flex justify-content-between align-items-center">
+        @component('components.breadcrumb')
+            @slot('breadcrumb_title')
+                <h3>Detail Pembayaran</h3>
+            @endslot
+            <li class="breadcrumb-item"><a href="{{ route('payments.index') }}">Pembayaran</a></li>
+            <li class="breadcrumb-item active">Detail</li>
+        @endcomponent
+        <a href="{{ route('payments.index') }}" class="btn btn-info btn-sm">
+            <i class="fa fa-arrow-left"></i> Kembali
+        </a>
+    </div>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header pb-0 no-print">
-                        @php
-                            $card = $payment->card;
-                            $isFullPayment = ($card->payment_type_id == 1);
-                        @endphp
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5>Perhitungan Pembayaran Premi</h5>
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('payments.index') }}" class="btn btn-info btn-sm">
-                                    <i class="fa fa-arrow-left"></i> Kembali
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body mt-2 border-bottom">
                         @php
                             $card = $payment->card;
                             $policy = $card->policy;
@@ -191,7 +182,7 @@
                         @endphp
 
                         {{-- Info Header Laporan --}}
-                        <div class="mb-4">
+                        <div class="mb-2">
                             <h6 class="fw-bold mb-2 text-center">PERHITUNGAN PEMBAYARAN PREMI {{ strtoupper($policy->object->name ?? '') }}</h6>
                             <div style="font-size: 11px; text-align: center;">
                                 <strong>NO POLIS :</strong> {{ $policy->policy_number ?? '-' }} / 
@@ -199,466 +190,469 @@
                                 {{ $policy->ended_date ? $policy->ended_date->format('Y') : '-' }}
                             </div>
                         </div>
+                    </div>
+                
 
-                        {{--DETAIL POLIS --}}
-                        <div class="row mb-3 no-print">
-                            <div class="col-12">
-                                <div class="card border mb-3">
-                                    <div class="card-header bg-white border-bottom">
-                                        <h6 class="card-title mb-0"><i class="fa fa-file-text-o"></i> Detail Polis</h6>
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <table class="table table-sm table-borderless mb-0">
-                                                    <tr>
-                                                        <td width="30%" class="text-muted">Client</td>
-                                                        <td class="fw-bold">: {{ $client->user->name ?? $client->id_name ?? '-' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted">Object</td>
-                                                        <td class="fw-bold">: {{ $policy->object->name ?? '-' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted">Total Premi</td>
-                                                        <td class="fw-bold text-primary">: {{ $policy->currency_code }} {{ number_format($card->premi_value ?? 0, 2, ',', '.') }}</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <table class="table table-sm table-borderless mb-0">
-                                                    <tr>
-                                                        <td width="30%" class="text-muted">Biaya Polis</td>
-                                                        <td class="fw-bold">: {{ $policy->currency_code }} {{ number_format($card->policy_fee ?? 0, 2, ',', '.') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-muted">Komisi</td>
-                                                        <td class="fw-bold">: {{ number_format(($card->commision_percentages ?? 0) * 100, 2) }}%</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                    {{--DETAIL POLIS --}}
+                    <div class="row mb-3 no-print">
+                        <div class="col-12">
+                            <div>
+                                <div class="card-header bg-white">
+                                    <h6 class="card-title mb-0"><i class="fa fa-file-text-o"></i> Detail Polis</h6>
                                 </div>
-                            </div>
-                        </div>
-
-                        {{-- TABEL PERHITUNGAN PREMI (MASTER) --}}
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <div class="card shadow-sm border h-100">
-                                    <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-                                        <h6 class="card-title mb-0"><i class="fa fa-calculator"></i> Perhitungan Premi (Master)</h6>
-                                        
-                                        {{-- TOMBOL PRINT PREMI DISINI --}}
-                                        <button onclick="printPremi()" class="btn btn-primary btn-sm btn-print-custom no-print">
-                                            <i class="fa fa-print"></i> Print Premi
-                                        </button>
-                                    </div>
-                                    <div class="card-body p-0">
-                                        <div class="table-responsive" id="master-table-section">
-                                            {{-- Tabel Master --}}
-                                            <table class="table-manual table-striped mb-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="3" class="no-border-bottom">Ko. Asuransi</th>
-                                                        <th rowspan="2" style="width: 10%;">Biaya<br>Polis</th>
-                                                        <th rowspan="2" style="width: 10%;">Komisi</th>
-                                                        <th rowspan="2" style="width: 10%;">Pajak</th>
-                                                        <th rowspan="2" style="width: 12%;">Premi<br>Netto</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="width: 15%;">Nama</th>
-                                                        <th style="width: 5%;">%</th>
-                                                        <th style="width: 15%;">Premi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @php
-                                                        // Data Master
-                                                        $basePremi = $card->production_value;
-                                                        $rowCount = $policy->policyInsurances->count();
-                                                        $g_premi = 0; $g_komisi = 0; $g_pajak = 0; $g_netto = 0;
-                                                    @endphp
-
-                                                    @foreach($policy->policyInsurances as $loopIndex => $pi)
-                                                        @php
-                                                            $share = $pi->percentage;
-                                                            $rowPremi = $basePremi * $share;
-                                                            $rowBiaya = ($loop->first) ? $card->policy_fee : 0;
-                                                            $rowKomisi = $card->commision_bruto * $share;
-                                                            $rowPajak = ($basePremi > 0) ? ($pi->tax) : 0; 
-                                                            $rowNetto = $rowPremi - $rowKomisi + $rowPajak + $rowBiaya;
-
-                                                            $g_premi += $rowPremi;
-                                                            $g_komisi += $rowKomisi;
-                                                            $g_pajak += $rowPajak;
-                                                            $g_netto += $rowNetto;
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{ $pi->insurance->name }}</td>
-                                                            <td class="text-center">{{ number_format($share * 100, 2) }}%</td>
-                                                            <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowPremi, 2, ',', '.') }}</td>
-                                                            
-                                                            @if($loop->first)
-                                                                <td rowspan="{{ $rowCount }}" class="text-end bg-white" style="vertical-align: top;">
-                                                                    {{ $policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}
-                                                                </td>
-                                                            @endif
-
-                                                            <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowKomisi, 2, ',', '.') }}</td>
-                                                            <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowPajak, 2, ',', '.') }}</td>
-                                                            <td class="text-end fw-bold">{{ $policy->currency_code }} {{ number_format($rowNetto, 2, ',', '.') }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr class="bg-total">
-                                                        <td colspan="2" class="text-center">TOTAL</td>
-                                                        <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_premi + $card->policy_fee, 2, ',', '.') }}</td>
-                                                        <td class="text-end">{{ $policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}</td>
-                                                        <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_komisi, 2, ',', '.') }}</td>
-                                                        <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_pajak, 2, ',', '.') }}</td>
-                                                        <td class="text-end text-primary">{{ $policy->currency_code }} {{ number_format($g_netto, 2, ',', '.') }}</td>
-                                                    </tr>
-                                                </tfoot>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-sm table-borderless mb-0">
+                                                <tr>
+                                                    <td width="30%" class="text-muted">Client</td>
+                                                    <td class="fw-bold">: {{ $client->user->name ?? $client->id_name ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Object</td>
+                                                    <td class="fw-bold">: {{ $policy->object->name ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Total Premi</td>
+                                                    <td class="fw-bold text-primary">: {{ $policy->currency_code }} {{ number_format($card->premi_value ?? 0, 2, ',', '.') }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-sm table-borderless mb-0">
+                                                <tr>
+                                                    <td width="30%" class="text-muted">Biaya Polis</td>
+                                                    <td class="fw-bold">: {{ $policy->currency_code }} {{ number_format($card->policy_fee ?? 0, 2, ',', '.') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Komisi</td>
+                                                    <td class="fw-bold">: {{ number_format(($card->commision_percentages ?? 0) * 100, 2) }}%</td>
+                                                </tr>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        {{-- STATUS BAR (Husus Full Payment) --}}
-                        @if($isFullPayment)
-                            <div class="mb-4 mt-3 p-3 border rounded bg-light no-print">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    
-                                    {{-- BAGIAN KIRI: LABEL STATUS --}}
-                                    <div>
-                                        <strong class="text-muted small">Status Pembayaran (Full Payment):</strong><br>
-                                        
-                                        {{-- 1. Status Nasabah --}}
-                                        @if($payment->payment_status_id == 2)
-                                            <span class="badge bg-success">
-                                                <i class="fa fa-check"></i> NASABAH LUNAS 
-                                                ({{ $payment->paid_at ? $payment->paid_at->format('d M Y') : '-' }})
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">NASABAH BELUM BAYAR</span>
-                                        @endif
-
-                                        {{-- 2. Status Asuransi (Cuma tampil kalo nasabah udah lunas) --}}
-                                        @if($payment->payment_status_id == 2)
-                                            <i class="fa fa-arrow-right mx-2 text-muted"></i>
-                                            @if($payment->insurance_payment_status_id == 2)
-                                                <span class="badge bg-primary">
-                                                    <i class="fa fa-check"></i> ASURANSI DISETOR 
-                                                    ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d M Y') : '-' }})
-                                                </span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">ASURANSI BELUM DISETOR</span>
-                                            @endif
-                                        @endif
-                                    </div>
-
-                                    {{-- BAGIAN KANAN: TOMBOL AKSI --}}
-                                    <div>
-                                        {{-- Skenario 1: Bayar Nasabah --}}
-                                        @if($payment->payment_status_id != 2)
-                                            <button type="button" class="btn btn-success btn-trigger-client" 
-                                                data-id="{{ $payment->id }}" data-amount="{{ $payment->amount }}">
-                                                <i class="fa fa-money"></i> Terima Pembayaran
-                                            </button>
-                                        
-                                        {{-- Skenario 2: Setor Asuransi (Muncul jika Nasabah Lunas & Asuransi Belum) --}}
-                                        @elseif($payment->insurance_payment_status_id != 2)
-                                            <button type="button" class="btn btn-info text-white btn-trigger-insurance" 
-                                                data-id="{{ $payment->id }}" 
-                                                data-amount="{{ $payment->insurance_paid_amount ?? $payment->amount }}">
-                                                <i class="fa fa-bank"></i> Setor ke Asuransi
-                                            </button>
-                                        
-                                        {{-- Skenario 3: Semua Lunas --}}
-                                        @else
-                                            <button class="btn btn-outline-secondary btn-sm" disabled>
-                                                <i class="fa fa-lock"></i> Transaksi Selesai
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- HANYA TAMPIL JIKA TIPE = 1 (CASH) DAN STATUS BELUM LUNAS (!= 2) --}}
-                        @if($card->payment_type_id == 1 && $payment->payment_status_id != 2)
-                            <div class="row mb-3 no-print">
-                                <div class="col-12">
-                                    <div class="card border shadow-sm mb-3 border">
-                                        <div class="card-header bg-white border-bottom">
-                                            <h6 class="card-title mb-0"><i class="fa fa-cogs"></i> Pengaturan Pembayaran</h6>
-                                        </div>
-                                        <div class="card-body p-3">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-6 border-end">
-                                                    <div class="mb-3 mb-md-0">
-                                                        <label class="form-label text-muted small text-uppercase fw-bold">Tipe Pembayaran</label>
-                                                        <select id="payment-type-select" class="form-select form-select-lg">
-                                                            @foreach($paymentTypes as $type)
-                                                                <option value="{{ $type->id }}" data-name="{{ strtolower($type->name) }}"
-                                                                    {{ $card->paymentType && $card->paymentType->id == $type->id ? 'selected' : '' }}>
-                                                                    {{ $type->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    {{-- Installment Count Input --}}
-                                                    <div id="installment-section" style="display: none;">
-                                                        <label class="form-label text-muted small text-uppercase fw-bold">Jumlah Cicilan</label>
-                                                        <div class="input-group">
-                                                            <input type="number" id="installment-count" class="form-control form-control-lg" 
-                                                                min="1" max="12" value="{{ count($allPayments) > 0 ? count($allPayments) : 1 }}">
-                                                            <span class="input-group-text">Kali</span>
-                                                        </div>
-                                                        <small class="text-muted">Ubah angka untuk generate otomatis, atau gunakan tombol Tambah/Hapus di bawah.</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Dynamic Installment Form --}}
-                        
-                            <div id="installment-items-section" class="mb-4 no-print" style="display: none;">
-                                <div class="card border">
-                                    <div class="card-header bg-light border-bottom">
-                                        <h6 class="mb-0 text-dark"><i class="fa fa-list-ol"></i> Rincian Cicilan</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div id="installments-container"></div>
-                                        
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <div class="alert alert-light border mb-0 py-2">
-                                                    <i class="fa fa-info-circle"></i> Total Cicilan: <strong id="total-installments-display">0</strong>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 text-end">
-                                                <div class="alert alert-light mb-0 py-2 text-end">
-                                                    Total Nilai: <strong id="total-amount-display">{{ $policy->currency_code }} {{ number_format(0, 2, ',', '.') }}</strong>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="mt-3 text-center border-top pt-3">
-                                            <button type="button" id="apply-installments-btn" class="btn btn-success px-5">
-                                                <i class="fa fa-save"></i> SIMPAN PERUBAHAN
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        @if(!$isFullPayment)
-                            {{-- Tabel View Laporan --}}
-                            <div class="card shadow-sm border">
-                                <div class="card-header border-bottom d-flex justify-content-between align-items-left">
-                                    <h6 class="fw-bold mb-2">PERHITUNGAN INSTALLMENT</h6>
-                                    <button onclick="printInstallment()" class="btn btn-info btn-sm text-white btn-print-custom no-print">
-                                        <i class="fa fa-calendar"></i> Print Tabel
-                                    </button>
-                                </div>
+                {{-- TABEL PERHITUNGAN PREMI (MASTER) --}}
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card shadow-sm p-2 border h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="card-title mb-0"><i class="fa fa-calculator"></i> Perhitungan Premi (Master)</h6>
                                 
-                                <div class="table-responsive-custom" id="installment-table-section">
-                                    {{-- ... (Isi tabel paymentTable BIARKAN SAMA SEPERTI SEBELUMNYA) ... --}}
-                                    {{-- Copy paste tabel dari kode sebelumnya di sini --}}
-                                    <table class="table-manual" id="paymentTable">
+                                {{-- TOMBOL PRINT PREMI DISINI --}}
+                                <button onclick="printPremi()" class="btn btn-primary btn-sm btn-print-custom no-print">
+                                    <i class="fa fa-print"></i> Print Premi
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" id="master-table-section">
+                                    {{-- Tabel Master --}}
+                                    <table class="table-manual table-striped mb-0">
                                         <thead>
                                             <tr>
-                                                {{-- Kolom 1: Keterangan Angsuran --}}
-                                                <th rowspan="2" style="width: 10%;">Keterangan</th>
-                                                
-                                                {{-- Kolom 2-4: Asuransi --}}
-                                                <th colspan="3" style="border-bottom: none;">Ko. Asuransi</th>
-                                                
-                                                {{-- Kolom 5-8: Financials --}}
+                                                <th colspan="3" class="no-border-bottom">Ko. Asuransi</th>
                                                 <th rowspan="2" style="width: 10%;">Biaya<br>Polis</th>
                                                 <th rowspan="2" style="width: 10%;">Komisi</th>
                                                 <th rowspan="2" style="width: 10%;">Pajak</th>
                                                 <th rowspan="2" style="width: 12%;">Premi<br>Netto</th>
-                                                
-                                                {{-- KOLOM BARU (Hanya Tampil di Web, Hide saat Print) --}}
-                                                <th rowspan="2" style="width: 15%;" class="no-print">Status & Aksi</th>
                                             </tr>
                                             <tr>
-                                                <th colspan="2" style="width: 25%;">Share</th>
+                                                <th style="width: 15%;">Nama</th>
+                                                <th style="width: 5%;">%</th>
                                                 <th style="width: 15%;">Premi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @php
-                                                $grandTotalPremi = 0; $grandTotalBiaya = 0; $grandTotalKomisi = 0;
-                                                $grandTotalPajak = 0; $grandTotalNetto = 0;
-                                                $activeDetailId = $payment->id ?? null;
+                                                // Data Master
+                                                $basePremi = $card->production_value;
+                                                $rowCount = $policy->policyInsurances->count();
+                                                $g_premi = 0; $g_komisi = 0; $g_pajak = 0; $g_netto = 0;
                                             @endphp
 
-                                            @foreach($allPayments as $index => $pmt)
+                                            @foreach($policy->policyInsurances as $loopIndex => $pi)
                                                 @php
-                                                    $policyInsurances = $pmt->card->policy->policyInsurances;
-                                                    $insuranceCount = $policyInsurances->count();
-                                                    $rowSpanCount = $insuranceCount;
-                                                    
-                                                    $subtotalPremi = 0; $subtotalBiaya = 0; $subtotalKomisi = 0;
-                                                    $subtotalPajak = 0; $subtotalNetto = 0;
-                                                    
-                                                    // Jumlah total installment
-                                                    $totalInstallments = $allPayments->count();
+                                                    $share = $pi->percentage;
+                                                    $rowPremi = $basePremi * $share;
+                                                    $rowBiaya = ($loop->first) ? $card->policy_fee : 0;
+                                                    $rowKomisi = $card->commision_bruto * $share;
+                                                    $rowPajak = ($basePremi > 0) ? ($pi->tax) : 0; 
+                                                    $rowNetto = $rowPremi - $rowKomisi + $rowPajak + $rowBiaya;
+
+                                                    $g_premi += $rowPremi;
+                                                    $g_komisi += $rowKomisi;
+                                                    $g_pajak += $rowPajak;
+                                                    $g_netto += $rowNetto;
                                                 @endphp
-
-                                                @foreach($policyInsurances as $loopIndex => $pi)
-                                                    @php
-                                                        $share = $pi->percentage;
-                                                        $premi = $pmt->amount * ($share);
-
-                                                        $biayaPolis = 0;
-                                                        if ($index == 0 && $loop->first) {
-                                                            $biayaPolis = $card->policy_fee ?? 0; 
-                                                        }
-
-                                                        // Komisi per asuransi per installment
-                                                        // Total komisi * share / jumlah installment
-                                                        $komisiPerAsuransi = $card->commision_bruto * $share;
-                                                        $komisi = $komisiPerAsuransi / $totalInstallments;
-                                                        
-                                                        // Tax per asuransi per installment (dari database)
-                                                        // Tax sudah disimpan per asuransi, tinggal dibagi jumlah installment
-                                                        $pajak = ($pi->tax ?? 0) / $totalInstallments;
-                                                        
-                                                        $netto = $premi - $komisi - $pajak + $biayaPolis;
-
-                                                        $subtotalPremi += $premi;
-                                                        $subtotalBiaya += $biayaPolis;
-                                                        $subtotalKomisi += $komisi;
-                                                        $subtotalPajak += $pajak;
-                                                        $subtotalNetto += $netto;
-                                                    @endphp
+                                                <tr>
+                                                    <td>{{ $pi->insurance->name }}</td>
+                                                    <td class="text-center">{{ number_format($share * 100, 2) }}%</td>
+                                                    <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowPremi, 2, ',', '.') }}</td>
                                                     
-                                                    <tr>
-                                                        {{-- KOLOM KETERANGAN (Cuma muncul di baris pertama loop asuransi) --}}
-                                                        @if($loop->first)
-                                                            <td rowspan="{{ $rowSpanCount }}" class="text-center" style="vertical-align: top; padding-top: 10px;">
-                                                                <strong>ANGSURAN {{ $pmt->sequence }}</strong><br>
-                                                                <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d M Y') : '-' }}</small>
-                                                            </td>
-                                                        @endif
+                                                    @if($loop->first)
+                                                        <td rowspan="{{ $rowCount }}" class="text-end bg-white" style="vertical-align: top;">
+                                                            {{ $policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}
+                                                        </td>
+                                                    @endif
 
-                                                        <td>{{ $pi->insurance->name }}</td>
-                                                        <td class="text-center">{{ number_format(($share * 100), 2) }}%</td>
-                                                        <td class="text-end">{{ numberFormat($premi) }}</td>
-                                                        
-                                                        {{-- KOLOM BIAYA POLIS --}}
-                                                        @if($loop->first)
-                                                            <td rowspan="{{ $rowSpanCount }}" class="text-end" style="vertical-align: top; padding-top: 8px;">
-                                                                {{ numberFormat($biayaPolis) }}
-                                                            </td>
-                                                        @endif
-                                                        
-                                                        <td class="text-end">{{ numberFormat($komisi) }}</td>
-                                                        <td class="text-end">{{ numberFormat($pajak) }}</td>
-                                                        <td class="text-end">{{ numberFormat($netto) }}</td>
-
-                                                        {{-- KOLOM STATUS & AKSI --}}
-                                                        @if($loop->first)
-                                                            <td rowspan="{{ $rowSpanCount }}" class="text-center no-print" style="vertical-align: middle; padding: 12px;">
-                                                                
-                                                                {{-- Wrapper Flex: Agar elemen menumpuk rapi ke bawah --}}
-                                                                <div class="d-flex flex-column align-items-center w-100 gap-2">
-
-                                                                    {{-- ========================================== --}}
-                                                                    {{-- 1. URUSAN NASABAH --}}
-                                                                    {{-- ========================================== --}}
-                                                                    @if($pmt->payment_status_id != 2)
-                                                                        
-                                                                        {{-- KONDISI A: BELUM BAYAR (ID: 1, 3, 4) --}}
-                                                                        <div class="w-100">
-                                                                            <div class="label-belum-bayar">Belum Bayar</div>
-
-                                                                            @if($pmt->id == $activeDetailId)
-                                                                                <button type="button" 
-                                                                                    class="btn-dark-green btn-trigger-client"
-                                                                                    data-id="{{ $pmt->id }}"
-                                                                                    data-amount="{{ $pmt->amount }}">
-                                                                                    Bayar Nasabah
-                                                                                </button>
-                                                                            @endif
-                                                                        </div>
-
-                                                                    @else
-                                                                        
-                                                                        {{-- KONDISI B: SUDAH LUNAS (ID: 2) --}}
-                                                                        <div class="status-box status-client-lunas">
-                                                                            Nasabah Lunas
-                                                                            <span class="date">{{ $pmt->paid_at ? $pmt->paid_at->format('d M Y') : '-' }}</span>
-                                                                        </div>
-
-                                                                    @endif
-
-
-                                                                    {{-- ========================================== --}}
-                                                                    {{-- 2. URUSAN ASURANSI --}}
-                                                                    {{-- (Hanya muncul jika Nasabah SUDAH Lunas) --}}
-                                                                    {{-- ========================================== --}}
-                                                                    @if($pmt->payment_status_id == 2)
-                                                                        
-                                                                        @if($pmt->insurance_payment_status_id != 2)
-                                                                            {{-- KONDISI C: MENUNGGU SETOR KE ASURANSI --}}
-                                                                            @if($pmt->id == $activeDetailId)
-                                                                                <button type="button" 
-                                                                                    class="btn-dark-green btn-trigger-insurance"
-                                                                                    data-id="{{ $pmt->id }}"
-                                                                                    data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
-                                                                                    Bayar Asuransi
-                                                                                </button>
-                                                                            @endif
-                                                                        @else
-                                                                            {{-- KONDISI D: SUDAH DISETOR --}}
-                                                                            <div class="status-box status-ins-disetor">
-                                                                                Asuransi Disetor
-                                                                                <span class="date">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d M Y') : '-' }}</span>
-                                                                            </div>
-                                                                        @endif
-
-                                                                    @endif
-
-                                                                </div>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-
-                                                {{-- Row Total per Installment --}}
-                                                <tr class="bg-total" style="border-top: 2px solid #000;">
-                                                    <td colspan="3"></td> 
-                                                    <td class="text-end">{{ numberFormat($subtotalPremi) }}</td>
-                                                    <td class="text-end">{{ numberFormat($subtotalBiaya) }}</td>
-                                                    <td class="text-end">{{ numberFormat($subtotalKomisi) }}</td>
-                                                    <td class="text-end">{{ numberFormat($subtotalPajak) }}</td>
-                                                    <td class="text-end">{{ numberFormat($subtotalNetto) }}</td>
-                                                    <td class="no-print"></td> {{-- Sel Kosong untuk kolom aksi di row total --}}
+                                                    <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowKomisi, 2, ',', '.') }}</td>
+                                                    <td class="text-end">{{ $policy->currency_code }} {{ number_format($rowPajak, 2, ',', '.') }}</td>
+                                                    <td class="text-end fw-bold">{{ $policy->currency_code }} {{ number_format($rowNetto, 2, ',', '.') }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr class="bg-total">
+                                                <td colspan="2" class="text-center">TOTAL</td>
+                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_premi + $card->policy_fee, 2, ',', '.') }}</td>
+                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}</td>
+                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_komisi, 2, ',', '.') }}</td>
+                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_pajak, 2, ',', '.') }}</td>
+                                                <td class="text-end text-primary">{{ $policy->currency_code }} {{ number_format($g_netto, 2, ',', '.') }}</td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
+
+                {{-- STATUS BAR (Husus Full Payment) --}}
+                @if($isFullPayment)
+                    <div class="mb-4 mt-3 p-3 border rounded bg-light no-print">
+                        <div class="d-flex justify-content-between align-items-center">
+                            
+                            {{-- BAGIAN KIRI: LABEL STATUS --}}
+                            <div>
+                                <strong class="text-muted small">Status Pembayaran (Full Payment):</strong><br>
+                                
+                                {{-- 1. Status Nasabah --}}
+                                @if($payment->payment_status_id == 2)
+                                    <span class="badge bg-success">
+                                        <i class="fa fa-check"></i> NASABAH LUNAS 
+                                        ({{ $payment->paid_at ? $payment->paid_at->format('d M Y') : '-' }})
+                                    </span>
+                                @else
+                                    <span class="badge bg-danger">NASABAH BELUM BAYAR</span>
+                                @endif
+
+                                {{-- 2. Status Asuransi (Cuma tampil kalo nasabah udah lunas) --}}
+                                @if($payment->payment_status_id == 2)
+                                    <i class="fa fa-arrow-right mx-2 text-muted"></i>
+                                    @if($payment->insurance_payment_status_id == 2)
+                                        <span class="badge bg-primary">
+                                            <i class="fa fa-check"></i> ASURANSI DISETOR 
+                                            ({{ $payment->insurance_paid_at ? $payment->insurance_paid_at->format('d M Y') : '-' }})
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">ASURANSI BELUM DISETOR</span>
+                                    @endif
+                                @endif
+                            </div>
+
+                            {{-- BAGIAN KANAN: TOMBOL AKSI --}}
+                            <div>
+                                {{-- Skenario 1: Bayar Nasabah --}}
+                                @if($payment->payment_status_id != 2)
+                                    <button type="button" class="btn btn-success btn-trigger-client" 
+                                        data-id="{{ $payment->id }}" data-amount="{{ $payment->amount }}">
+                                        <i class="fa fa-money"></i> Terima Pembayaran
+                                    </button>
+                                
+                                {{-- Skenario 2: Setor Asuransi (Muncul jika Nasabah Lunas & Asuransi Belum) --}}
+                                @elseif($payment->insurance_payment_status_id != 2)
+                                    <button type="button" class="btn btn-info text-white btn-trigger-insurance" 
+                                        data-id="{{ $payment->id }}" 
+                                        data-amount="{{ $payment->insurance_paid_amount ?? $payment->amount }}">
+                                        <i class="fa fa-bank"></i> Setor ke Asuransi
+                                    </button>
+                                
+                                {{-- Skenario 3: Semua Lunas --}}
+                                @else
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>
+                                        <i class="fa fa-lock"></i> Transaksi Selesai
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- HANYA TAMPIL JIKA TIPE = 1 (CASH) DAN STATUS BELUM LUNAS (!= 2) --}}
+                @if($card->payment_type_id == 1 && $payment->payment_status_id != 2)
+                    <div class="row mb-3 no-print">
+                        <div class="col-12">
+                            <div class="card border shadow-sm mb-3 border">
+                                <div class="card-header bg-white">
+                                    <h6 class="card-title mb-0"><i class="fa fa-cogs"></i> Pengaturan Pembayaran</h6>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 border-end">
+                                            <div class="mb-3 mb-md-0">
+                                                <label class="form-label text-muted small text-uppercase fw-bold">Tipe Pembayaran</label>
+                                                <select id="payment-type-select" class="form-select form-select-lg">
+                                                    @foreach($paymentTypes as $type)
+                                                        <option value="{{ $type->id }}" data-name="{{ strtolower($type->name) }}"
+                                                            {{ $card->paymentType && $card->paymentType->id == $type->id ? 'selected' : '' }}>
+                                                            {{ $type->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{-- Installment Count Input --}}
+                                            <div id="installment-section" style="display: none;">
+                                                <label class="form-label text-muted small text-uppercase fw-bold">Jumlah Cicilan</label>
+                                                <div class="input-group">
+                                                    <input type="number" id="installment-count" class="form-control form-control-lg" 
+                                                        min="1" max="12" value="{{ count($allPayments) > 0 ? count($allPayments) : 1 }}">
+                                                    <span class="input-group-text">Kali</span>
+                                                </div>
+                                                <small class="text-muted">Ubah angka untuk generate otomatis, atau gunakan tombol Tambah/Hapus di bawah.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Dynamic Installment Form --}}
+                
+                    <div id="installment-items-section" class="mb-4 no-print" style="display: none;">
+                        <div class="card border">
+                            <div class="card-header bg-white">
+                                <h6 class="mb-0 text-dark"><i class="fa fa-list-ol"></i> Rincian Cicilan</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="installments-container"></div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="alert alert-light border mb-0 py-2">
+                                            <i class="fa fa-info-circle"></i> Total Cicilan: <strong id="total-installments-display">0</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <div class="alert alert-light mb-0 py-2 text-end">
+                                            Total Nilai: <strong id="total-amount-display">{{ $policy->currency_code }} {{ number_format(0, 2, ',', '.') }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 text-center border-top pt-3">
+                                    <button type="button" id="apply-installments-btn" class="btn btn-success px-5">
+                                        <i class="fa fa-save"></i> SIMPAN PERUBAHAN
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                @if(!$isFullPayment)
+                    {{-- Tabel View Laporan --}}
+                    <div class="card shadow-sm border p-2">
+                        <div class="card-header d-flex justify-content-between align-items-left">
+                            <h6 class="fw-bold mb-2">PERHITUNGAN INSTALLMENT</h6>
+                            <button onclick="printInstallment()" class="btn btn-info btn-sm text-white btn-print-custom no-print">
+                                <i class="fa fa-calendar"></i> Print Tabel
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="table-responsive-custom" id="installment-table-section">
+                                {{-- ... (Isi tabel paymentTable BIARKAN SAMA SEPERTI SEBELUMNYA) ... --}}
+                                {{-- Copy paste tabel dari kode sebelumnya di sini --}}
+                                <table class="table-manual" id="paymentTable">
+                                    <thead>
+                                        <tr>
+                                            {{-- Kolom 1: Keterangan Angsuran --}}
+                                            <th rowspan="2" style="width: 10%;">Keterangan</th>
+                                            
+                                            {{-- Kolom 2-4: Asuransi --}}
+                                            <th colspan="3" style="border-bottom: none;">Ko. Asuransi</th>
+                                            
+                                            {{-- Kolom 5-8: Financials --}}
+                                            <th rowspan="2" style="width: 10%;">Biaya<br>Polis</th>
+                                            <th rowspan="2" style="width: 10%;">Komisi</th>
+                                            <th rowspan="2" style="width: 10%;">Pajak</th>
+                                            <th rowspan="2" style="width: 12%;">Premi<br>Netto</th>
+                                            
+                                            {{-- KOLOM BARU (Hanya Tampil di Web, Hide saat Print) --}}
+                                            <th rowspan="2" style="width: 15%;" class="no-print">Status & Aksi</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2" style="width: 25%;">Share</th>
+                                            <th style="width: 15%;">Premi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $grandTotalPremi = 0; $grandTotalBiaya = 0; $grandTotalKomisi = 0;
+                                            $grandTotalPajak = 0; $grandTotalNetto = 0;
+                                            $activeDetailId = $payment->id ?? null;
+                                        @endphp
+
+                                        @foreach($allPayments as $index => $pmt)
+                                            @php
+                                                $policyInsurances = $pmt->card->policy->policyInsurances;
+                                                $insuranceCount = $policyInsurances->count();
+                                                $rowSpanCount = $insuranceCount;
+                                                
+                                                $subtotalPremi = 0; $subtotalBiaya = 0; $subtotalKomisi = 0;
+                                                $subtotalPajak = 0; $subtotalNetto = 0;
+                                                
+                                                // Jumlah total installment
+                                                $totalInstallments = $allPayments->count();
+                                            @endphp
+
+                                            @foreach($policyInsurances as $loopIndex => $pi)
+                                                @php
+                                                    $share = $pi->percentage;
+                                                    $premi = $pmt->amount * ($share);
+
+                                                    $biayaPolis = 0;
+                                                    if ($index == 0 && $loop->first) {
+                                                        $biayaPolis = $card->policy_fee ?? 0; 
+                                                    }
+
+                                                    // Komisi per asuransi per installment
+                                                    // Total komisi * share / jumlah installment
+                                                    $komisiPerAsuransi = $card->commision_bruto * $share;
+                                                    $komisi = $komisiPerAsuransi / $totalInstallments;
+                                                    
+                                                    // Tax per asuransi per installment (dari database)
+                                                    // Tax sudah disimpan per asuransi, tinggal dibagi jumlah installment
+                                                    $pajak = ($pi->tax ?? 0) / $totalInstallments;
+                                                    
+                                                    $netto = $premi - $komisi - $pajak + $biayaPolis;
+
+                                                    $subtotalPremi += $premi;
+                                                    $subtotalBiaya += $biayaPolis;
+                                                    $subtotalKomisi += $komisi;
+                                                    $subtotalPajak += $pajak;
+                                                    $subtotalNetto += $netto;
+                                                @endphp
+                                                
+                                                <tr>
+                                                    {{-- KOLOM KETERANGAN (Cuma muncul di baris pertama loop asuransi) --}}
+                                                    @if($loop->first)
+                                                        <td rowspan="{{ $rowSpanCount }}" class="text-center" style="vertical-align: top; padding-top: 10px;">
+                                                            <strong>ANGSURAN {{ $pmt->sequence }}</strong><br>
+                                                            <small>{{ $pmt->deadline_at ? $pmt->deadline_at->format('d M Y') : '-' }}</small>
+                                                        </td>
+                                                    @endif
+
+                                                    <td>{{ $pi->insurance->name }}</td>
+                                                    <td class="text-center">{{ number_format(($share * 100), 2) }}%</td>
+                                                    <td class="text-end">{{ numberFormat($premi) }}</td>
+                                                    
+                                                    {{-- KOLOM BIAYA POLIS --}}
+                                                    @if($loop->first)
+                                                        <td rowspan="{{ $rowSpanCount }}" class="text-end" style="vertical-align: top; padding-top: 8px;">
+                                                            {{ numberFormat($biayaPolis) }}
+                                                        </td>
+                                                    @endif
+                                                    
+                                                    <td class="text-end">{{ numberFormat($komisi) }}</td>
+                                                    <td class="text-end">{{ numberFormat($pajak) }}</td>
+                                                    <td class="text-end">{{ numberFormat($netto) }}</td>
+
+                                                    {{-- KOLOM STATUS & AKSI --}}
+                                                    @if($loop->first)
+                                                        <td rowspan="{{ $rowSpanCount }}" class="text-center no-print" style="vertical-align: middle; padding: 12px;">
+                                                            
+                                                            {{-- Wrapper Flex: Agar elemen menumpuk rapi ke bawah --}}
+                                                            <div class="d-flex flex-column align-items-center w-100 gap-2">
+
+                                                                {{-- ========================================== --}}
+                                                                {{-- 1. URUSAN NASABAH --}}
+                                                                {{-- ========================================== --}}
+                                                                @if($pmt->payment_status_id != 2)
+                                                                    
+                                                                    {{-- KONDISI A: BELUM BAYAR (ID: 1, 3, 4) --}}
+                                                                    <div class="w-100">
+                                                                        <div class="label-belum-bayar">Belum Bayar</div>
+
+                                                                        @if($pmt->id == $activeDetailId)
+                                                                            <button type="button" 
+                                                                                class="btn-dark-green btn-trigger-client"
+                                                                                data-id="{{ $pmt->id }}"
+                                                                                data-amount="{{ $pmt->amount }}">
+                                                                                Bayar Nasabah
+                                                                            </button>
+                                                                        @endif
+                                                                    </div>
+
+                                                                @else
+                                                                    
+                                                                    {{-- KONDISI B: SUDAH LUNAS (ID: 2) --}}
+                                                                    <div class="status-box status-client-lunas">
+                                                                        Nasabah Lunas
+                                                                        <span class="date">{{ $pmt->paid_at ? $pmt->paid_at->format('d M Y') : '-' }}</span>
+                                                                    </div>
+
+                                                                @endif
+
+
+                                                                {{-- ========================================== --}}
+                                                                {{-- 2. URUSAN ASURANSI --}}
+                                                                {{-- (Hanya muncul jika Nasabah SUDAH Lunas) --}}
+                                                                {{-- ========================================== --}}
+                                                                @if($pmt->payment_status_id == 2)
+                                                                    
+                                                                    @if($pmt->insurance_payment_status_id != 2)
+                                                                        {{-- KONDISI C: MENUNGGU SETOR KE ASURANSI --}}
+                                                                        @if($pmt->id == $activeDetailId)
+                                                                            <button type="button" 
+                                                                                class="btn-dark-green btn-trigger-insurance"
+                                                                                data-id="{{ $pmt->id }}"
+                                                                                data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
+                                                                                Bayar Asuransi
+                                                                            </button>
+                                                                        @endif
+                                                                    @else
+                                                                        {{-- KONDISI D: SUDAH DISETOR --}}
+                                                                        <div class="status-box status-ins-disetor">
+                                                                            Asuransi Disetor
+                                                                            <span class="date">{{ $pmt->insurance_paid_at ? $pmt->insurance_paid_at->format('d M Y') : '-' }}</span>
+                                                                        </div>
+                                                                    @endif
+
+                                                                @endif
+
+                                                            </div>
+                                                        </td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+
+                                            {{-- Row Total per Installment --}}
+                                            <tr class="bg-total" style="border-top: 2px solid #000;">
+                                                <td colspan="3"></td> 
+                                                <td class="text-end">{{ numberFormat($subtotalPremi) }}</td>
+                                                <td class="text-end">{{ numberFormat($subtotalBiaya) }}</td>
+                                                <td class="text-end">{{ numberFormat($subtotalKomisi) }}</td>
+                                                <td class="text-end">{{ numberFormat($subtotalPajak) }}</td>
+                                                <td class="text-end">{{ numberFormat($subtotalNetto) }}</td>
+                                                <td class="no-print"></td> {{-- Sel Kosong untuk kolom aksi di row total --}}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                @endif                
             </div>
         </div>
     </div>

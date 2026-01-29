@@ -164,7 +164,7 @@
 						
 							<div class="text-end">
 								<a href="{{ route('users.index') }}" class="btn btn-secondary">
-									<i class="fa fa-times"></i> Cancel
+									<i class="fa fa-times"></i>Batal
 								</a>
 								<button class="btn btn-primary" type="submit">
 									<i class="fa fa-save"></i> {{ isset($user) ? 'Update' : 'Save' }} User

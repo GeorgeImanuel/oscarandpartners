@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div class="text-end">
-                        <a href="{{ route('relations.index') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('relations.index') }}" class="btn btn-secondary">Batal</a>
                         <button class="btn btn-primary" type="submit">Simpan</button>
                     </div>
                 </div>

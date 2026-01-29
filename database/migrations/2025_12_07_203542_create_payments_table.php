@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->integer('sequence')->comment('Urutan Pembayaran');
             $table->foreignId('created_by')->constrained('users')->comment('Finance yg buat Request');
             $table->decimal('amount', 20, 2);
-            $table->text('note')->nullable();
             
             // CLIENT PAYMENT
             $table->foreignId('payment_status_id')->constrained('payment_statuses');

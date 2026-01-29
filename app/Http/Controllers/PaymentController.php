@@ -122,7 +122,6 @@ class PaymentController extends Controller
                     'created_by' => $templateData['created_by'],
                     // 3. Pakai status dari data lama
                     'payment_status_id' => $templateData['payment_status_id'], 
-                    'note' => 'Cicilan #' . ($index + 1), // Tambahkan note biar rapi
                 ]);
             }
 

@@ -49,7 +49,6 @@
                                         <th>Nama Tertanggung</th>
                                         <th>Letak Resiko</th>
                                         <th>TSI (Nilai Pertanggungan)</th>
-                                        <th>Keterangan</th>
                                         <th>Jumlah Tagihan</th>
                                         
                                         <th class="text-center">Sts. Client</th>
@@ -70,7 +69,6 @@
                                             {{-- DATA KOLOM YANG DIBUKA KEMBALI --}}
                                             <td>{{ $payment->card?->policy?->object?->name ?? '-' }}</td>
                                             <td class="text-end">{{ number_format($payment->card?->object_value ?? 0, 0, ',', '.') }}</td>
-                                            <td class="col-keterangan">{{ $payment->note ?? '-' }}</td>
                                             {{-- END DATA KOLOM --}}
                                             
                                             <td class="text-end fw-bold">{{ number_format($payment->amount ?? 0, 0, ',', '.') }}</td>

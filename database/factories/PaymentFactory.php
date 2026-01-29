@@ -27,7 +27,6 @@ class PaymentFactory extends Factory
             'sequence' => 1,
             'created_by' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'amount' => fake()->randomFloat(2, 1000000, 50000000),
-            'note' => fake()->optional()->sentence(),
             
             // CLIENT PAYMENT
             'payment_status_id' => PaymentStatus::inRandomOrder()->first()?->id,

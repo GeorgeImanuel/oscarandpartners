@@ -76,7 +76,7 @@
 	                        </div>
 	                    
 							<div class="text-end">
-								<a href="{{ route('clients.index') }}" class="btn btn-secondary">Cancel</a>
+								<a href="{{ route('clients.index') }}" class="btn btn-secondary">Batal</a>
 								<button class="btn btn-primary" type="submit">{{ isset($client) ? 'Update' : 'Tambah' }} Client</button>
 							</div>
 						</div>

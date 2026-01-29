@@ -143,7 +143,7 @@
 
                         <div class="card-footer text-end">
                             <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Cancel
+                                <i class="fa fa-arrow-left"></i>Batal
                             </a>
                             <button class="btn btn-primary" type="submit">
                                 <i class="fa fa-save"></i> Save

@@ -31,7 +31,6 @@ class PaymentSeeder extends Seeder
                     'sequence'                 => $i,
                     'created_by'               => User::inRandomOrder()->first()->id,
                     'amount'                   => round($amountPerPayment, 2),
-                    'note'                     => fake()->optional()->sentence(),
                     
                     // CLIENT PAYMENT
                     'payment_status_id'        => PaymentStatus::inRandomOrder()->first()->id,
