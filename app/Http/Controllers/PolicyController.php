@@ -71,7 +71,7 @@ class PolicyController extends Controller
 
     public function edit(string $id)
     {
-        $policy = $this->policyService->findPoliciesWithRelations($id);
+        $policy = $this->policyService->findWithRelations($id);
 
         if (!$policy) {
             return redirect()->route('policies.index')->with('error', 'Data tidak ditemukan.');
@@ -140,7 +140,7 @@ class PolicyController extends Controller
         $year = Carbon::now()->year;
 
         // Gunakan service supaya seragam dengan nextMonth
-        $policies = $this->policyService->getPoliciesExpiringIn($startDate, $endDate)
+        $policies = $this->policyService->allByActiveDate($startDate, $endDate)
             ->load(['productionCard.client', 'objects.objectInterests']);
 
         return view('policies.monthly', compact('policies', 'month', 'year'));
@@ -155,7 +155,7 @@ class PolicyController extends Controller
         $month = Carbon::now()->addMonthNoOverflow()->translatedFormat('F');
         $year = Carbon::now()->addMonthNoOverflow()->year;
         // Ambil data dan Load relasi agar bisa di-loop per object di Blade
-        $policies = $this->policyService->getPoliciesExpiringIn($startDate, $endDate)
+        $policies = $this->policyService->allByActiveDate($startDate, $endDate)
             ->load(['productionCard.client', 'objects.objectInterests']);
 
         return view('policies.monthly', compact('policies', 'month', 'year'));

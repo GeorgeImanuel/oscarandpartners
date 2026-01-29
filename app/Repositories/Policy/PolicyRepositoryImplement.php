@@ -20,17 +20,17 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
         $this->model = $model;
     }
 
-    public function allFreePolicies()
+    public function allFree()
     {
         return $this->model->whereDoesntHave('productionCard')->get();
     }
 
-    public function allActivePolicies()
+    public function allActive()
     {
         return $this->model->where('ended_date', '>', now())->get();
     }
 
-    public function findPoliciesWithRelations($policyId)
+    public function findWithRelations($policyId)
     {
         return $this->model->with([
             'objects' => function ($q) {
@@ -42,7 +42,7 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
         ])->find($policyId);
     }
 
-    public function getPoliciesExpiringIn($startDate, $endDate)
+    public function allByActiveDate($startDate, $endDate)
     {
         return Policy::query()
         // Load relasi yang diperlukan buat tampilan

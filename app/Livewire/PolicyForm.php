@@ -18,6 +18,12 @@ class PolicyForm extends Component
     protected $currencyService;
     protected $insuranceService;
     protected $policyInsuranceService;
+    protected $policyService;
+
+    public $policyId;
+    public $policy;
+
+    protected $listeners = ['refreshPolicyForm' => 'loadPolicy'];
 
     public function boot(
         ObjectService $objectService,
@@ -25,12 +31,33 @@ class PolicyForm extends Component
         CurrencyService $currencyService,
         InsuranceService $insuranceService,
         PolicyInsuranceService $policyInsuranceService,
+        PolicyService $policyService
     ) {
         $this->objectService          = $objectService;
         $this->coverageService        = $coverageService;
         $this->currencyService        = $currencyService;
         $this->insuranceService       = $insuranceService;
         $this->policyInsuranceService = $policyInsuranceService;
+        $this->policyService          = $policyService;
+    }
+
+    public function mount($policyId = null)
+    {
+        $this->policyId = $policyId;
+        $this->loadPolicy($policyId);
+    }
+
+    public function loadPolicy($policyId = null)
+    {
+        if ($policyId) {
+            $this->policyId = $policyId;
+            $this->policy = $this->policyService->findWithRelations($policyId);
+            // Dispatch event to update currency select
+            $this->dispatch('setCurrencyCode', currencyCode: $this->policy->currency_code ?? '');
+        } else {
+            $this->policy = null;
+            $this->dispatch('setCurrencyCode', currencyCode: '');
+        }
     }
 
     public function render()

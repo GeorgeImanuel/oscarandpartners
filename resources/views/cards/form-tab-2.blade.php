@@ -1,49 +1,46 @@
 <div id="step-2"
     class="setup-content">
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <h5 class="text-primary">Polis</h5>
-            <hr class="separator">
-        </div>
-        <div id="policy-details-container"
-            class="col-md-12 mb-3">
-            <label class="form-label"
-                for="policy_id">Nomor Polis</label>
-            <select id="policy_id"
-                class="form-control create-select2 @error('policy_id') is-invalid @enderror"
-                data-existing-id="#existing-policy"
-                data-existing-name="policy_id"
-                data-new-id="#new-policy"
-                data-new-name="policy_number"
-                data-placeholder="Pilih Polis"
-                name="policy_id"
-                required>
-                <option value=""></option>
-                @foreach ($policies as $policy)
-                    <option value="{{ $policy->id }}"
-                        data-currency="{{ $policy->currency_code }}"
-                        data-started-date="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}"
-                        {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
-                        {{ $policy->policy_number }} - {{ $policy->object->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('policy_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h5 class="text-primary">Polis</h5>
+                <hr class="separator">
+            </div>
+            <div id="policy-details-container"
+                class="col-md-12 mb-3">
+                <label class="form-label"
+                    for="policy_id">Nomor Polis</label>
+                <select id="policy_id"
+                    class="form-control create-select2 @error('policy_id') is-invalid @enderror"
+                    data-existing-name="policy_id"
+                    data-new-name="policy_number"
+                    data-placeholder="Pilih Polis"
+                    name="policy_id"
+                    wire:ignore
+                    required>
+                    <option value=""></option>
+                    @foreach ($policies as $policy)
+                        <option value="{{ $policy->id }}"
+                            data-currency="{{ $policy->currency_code }}"
+                            data-started-date="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}"
+                            {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
+                            {{ $policy->policy_number }} - {{ $policy->object->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('policy_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
 
-        {{-- Exist Policy Detail --}}
-        <div id="policy-details-container"
-            class="col-md-12">
-            @livewire('policy-details', ['policyId' => isset($card) ? $card->policy_id : old('policy_id')])
+            {{-- New Policy Input --}}
+            <div id="new-policy-container" class="col-md-12 mb-3" style="display:none;">
+                @livewire('policy-form')
+            </div>
         </div>
-
-        {{-- New Policy Input --}}
-        <div class="col-md-12 mb-3">
-            @livewire('policy-form')
-        </div>
-
+    </div>
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row">
         {{-- OBJECT INFO START --}}
         <div class="col-md-12 mb-3">
             <div class="row multiple-item-container">
@@ -108,18 +105,32 @@
                 @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
             </div>
         </div>
+        </div>
     </div>
 </div>
 
 @push('scripts')
     <script>
+        // Initialize new-policy-container visibility on page load
+        $(document).ready(function() {
+            var policyId = $('#policy_id').val();
+            if (policyId) {
+                $('#new-policy-container').show();
+            } else {
+                $('#new-policy-container').hide();
+            }
+        });
+
         // Listen to policy_id dropdown change and update Livewire component
         $('#policy_id').on('change', function() {
             var policyId = $(this).val();
-            // $('#object_id').val('').trigger('change').prop('disabled', false);
-            // $('#new-object').hide();
-            // $('#existing-object').show();
-            // console.log('Policy ID changed:', policyId);
+
+            // Toggle new-policy-container visibility
+            if (policyId) {
+                $('#new-policy-container').show();
+            } else {
+                $('#new-policy-container').hide();
+            }
 
             var selectedOption = $(this).find('option:selected');
             var currencyCode = selectedOption.data('currency');
@@ -182,6 +193,16 @@
 
             // Hitung total semua objek
             calculateTotalObjectValue();
+        });
+
+        // Listen to policy_id dropdown change and refresh Livewire policy-form component
+        $(document).on('change', '#policy_id', function() {
+            var policyId = $(this).val();
+            if (policyId) {
+                Livewire.dispatch('refreshPolicyForm', { policyId: policyId });
+            } else {
+                Livewire.dispatch('refreshPolicyForm', { policyId: null });
+            }
         });
 
         function calculateTotalObjectValue() {
@@ -259,7 +280,7 @@
                 if (insurances.length > 0) {
                     insurances.forEach((insurance, index) => {
                         const html = `
-                                <div class="row g-2 align-items-center mb-2 insurance-item">
+                                <div class="row g-2 align-items-center mb-3 insurance-item">
                                     <div class="col-md-5">
                                         <label class="small text-muted mb-0">Asuransi</label>
                                         <input type="text" class="form-control form-control-sm bg-white" 
@@ -311,7 +332,7 @@
                 if (coverages.length > 0) {
                     coverages.forEach((coverage, index) => {
                         const html = `
-                                <div class="row g-2 align-items-center mb-2 coverage-item">
+                                <div class="row g-2 align-items-center mb-3 coverage-item">
                                     <div class="col-md-8">
                                         <label class="small text-muted mb-0">Coverage</label>
                                         <input type="text" class="form-control form-control-sm bg-white" 

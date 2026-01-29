@@ -35,7 +35,7 @@ class PolicyDetails extends Component
     public function loadPolicy()
     {
         // if ($this->policyId) {
-            $this->policy = $this->policyService->findPoliciesWithRelations($this->policyId);
+            $this->policy = $this->policyService->findWithRelations($this->policyId);
 
             if (!$this->policy) {
                 $this->notFound = true;

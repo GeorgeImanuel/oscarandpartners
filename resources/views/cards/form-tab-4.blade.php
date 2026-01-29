@@ -1,12 +1,12 @@
 <div id="step-4"
     class="setup-content">
 
-    <div class="card mb-4 p-3 shadow-sm">
+    <div class="card mb-3 p-3 shadow-sm">
         <div class="col-md-12 mb-3">
             <h5 class="text-primary">Payment</h5>
         </div>
         {{-- B. PENGATURAN METODE PEMBAYARAN --}}
-        <div class="col-md-12 mb-4">
+        <div class="col-md-12 mb-3">
             <h6 class="fw-bold mb-3">
                 <i class="fa fa-cogs"></i> Konfigurasi Pembayaran
             </h6>
@@ -96,13 +96,13 @@
         </div>
     </div>
     
-    <div class="card mb-4 p-3 shadow-sm"
+    <div class="card mb-3 p-3 shadow-sm"
          id="preview-premi-card" 
          style="display: {{ isset($card) && $card->payment_type_id ? 'block' : 'none' }};">
          
         <div class="row">
         {{-- A. TABEL PERHITUNGAN PREMI (Seperti di detail) --}}
-            <div class="col-md-12 mb-4">
+            <div class="col-md-12 mb-3">
                 <h6 class="fw-bold mb-3">
                     <i class="fa fa-calculator"></i> Preview Perhitungan Premi
                 </h6>

@@ -6,8 +6,8 @@ use LaravelEasyRepository\Repository;
 
 interface PolicyRepository extends Repository
 {
-    public function allFreePolicies();
-    public function allActivePolicies();
-    public function findPoliciesWithRelations($policyId);
-    public function getPoliciesExpiringIn($startDate, $endDate);
+    public function allFree();
+    public function allActive();
+    public function findWithRelations($policyId);
+    public function allByActiveDate($startDate, $endDate);
 }

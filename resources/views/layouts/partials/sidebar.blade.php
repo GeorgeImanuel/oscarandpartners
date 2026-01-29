@@ -220,7 +220,7 @@
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('user.profile') }}"
-                            href="{{ route('user.profile') }}"><i data-feather="user"></i><span><i class="icon-pencil me-2"></i>Edit Profile</span></a>
+                            href="{{ route('user.profile') }}"><i data-feather="user"></i><span>Edit Profile</span></a>
                     </li>
 
                 </ul>

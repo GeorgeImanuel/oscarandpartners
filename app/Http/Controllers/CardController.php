@@ -80,7 +80,7 @@ class CardController extends Controller
     {
         $objects        = $this->objectService->all();
         $clients        = $this->clientService->all();
-        $policies       = $this->policyService->allActivePolicies();
+        $policies       = $this->policyService->allActive();
         $cardTypes      = $this->cardTypeService->all();
         $parentCards    = $this->cardService->getAllParent();
         $paymentTypes   = $this->paymentTypeService->all();
@@ -132,7 +132,7 @@ class CardController extends Controller
         $card           = $this->cardService->findWithRelation($productionCard->id);
         $objects        = $this->objectService->all();
         $clients        = $this->clientService->all();
-        $policies       = $this->policyService->allActivePolicies();
+        $policies       = $this->policyService->allActive();
         $cardTypes      = $this->cardTypeService->all();
         $parentCards    = $this->cardService->getAllParent();
 

@@ -52,7 +52,7 @@
             @endif
 
             {{-- === CARD 1: KHUSUS WIZARD (NAVIGASI ATAS) === --}}
-            <div class="card mb-4 shadow-sm">
+            <div class="card mb-2 shadow-sm">
                 <div class="card-body mt-4 pb-0">
                     <div class="stepwizard">
                         <div class="stepwizard-row setup-panel">
@@ -93,7 +93,7 @@
             @include('cards.form-tab-4')
             {{-- END STEP 4 --}}
 
-            <div class="card mb-4 p-3 shadow-sm">
+            <div class="card mb-3 p-3 shadow-sm">
                 <div class="row no-gutters mt-2">
                     <div class="col-md">
                         <a class="btn btn-light"

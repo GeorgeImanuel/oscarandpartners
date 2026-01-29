@@ -35,24 +35,24 @@ class PolicyServiceImplement extends Service implements PolicyService
         $this->mainRepository = $mainRepository;
     }
 
-    public function allFreePolicies()
+    public function allFree()
     {
-        return $this->mainRepository->allFreePolicies();
+        return $this->mainRepository->allFree();
     }
 
-    public function allActivePolicies()
+    public function allActive()
     {
-        return $this->mainRepository->allActivePolicies();
+        return $this->mainRepository->allActive();
     }
 
-    public function findPoliciesWithRelations($policyId)
+    public function findWithRelations($policyId)
     {
-        return $this->mainRepository->findPoliciesWithRelations($policyId);
+        return $this->mainRepository->findWithRelations($policyId);
     }
 
-    public function getPoliciesExpiringIn($startDate, $endDate)
+    public function allByActiveDate($startDate, $endDate)
     {
-        return $this->mainRepository->getPoliciesExpiringIn($startDate, $endDate);
+        return $this->mainRepository->allByActiveDate($startDate, $endDate);
     }
 
     public function createPolicy(array $data)

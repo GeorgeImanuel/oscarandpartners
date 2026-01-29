@@ -1,8 +1,8 @@
 <div id="step-3"
     class="setup-content">
     {{-- SECTION 1: TOP (Pertanggungan & Parameter Tarif) --}}
-    <div class="card mb-4 p-3 shadow-sm">
-        <div class="row mb-4">
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row">
             <div class="col-md-12 mb-3">
                 <h5 class="text-primary mb-3">1. Parameter Dasar</h5>
             </div>
@@ -102,8 +102,8 @@
 
 
     {{-- SECTION 2: PREMI (Produksi -> Biaya Polis -> Total) --}}
-    <div class="card mb-4 p-3 shadow-sm">
-        <div class="row mb-4">
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row mb-3">
             <div class="col-md-12 mb-3">
                 <h5 class="text-primary mb-3">2. Perhitungan Premi</h5>
             </div>
@@ -148,7 +148,7 @@
                 </div>
             </div>
 
-            <div class="row mb-4">
+            <div class="row mb-3">
 
                 <div class="col-md-12 mb-3">
                     <div class="card mb-0"
@@ -162,7 +162,7 @@
                                 {{-- Server-side rendered (for edit mode) --}}
                                 @if (isset($card->policy) && $card->policy->policyCoverages && $card->policy->policyCoverages->count() > 0)
                                     @foreach ($card->policy->policyCoverages as $index => $polCov)
-                                        <div class="row g-2 align-items-center mb-2 coverage-item">
+                                        <div class="row g-2 align-items-center mb-3 coverage-item">
                                             <div class="col-md-8">
                                                 <label class="small text-muted mb-0">Coverage</label>
                                                 <input type="text"
@@ -200,10 +200,10 @@
     </div>
 
     {{-- SECTION 3: KOMISI --}}
-    <div class="card mb-4 p-3 shadow-sm">
-        <div class="row mb-4">
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row mb-3">
             <div class="col-md-12 mb-3">
-                <h5 class="text-primary mb-2">3. Perhitungan Komisi</h5>
+                <h5 class="text-primary mb-3">3. Perhitungan Komisi</h5>
             </div>
 
             {{-- BAGIAN ATAS: Persentase Total & Total Komisi --}}
@@ -255,7 +255,7 @@
                             {{-- Server-side rendered (for edit mode) --}}
                             @if (isset($card->policy) && $card->policy->policyInsurances->count() > 0)
                                 @foreach ($card->policy->policyInsurances as $index => $polIns)
-                                    <div class="row g-2 align-items-center mb-2 insurance-item">
+                                    <div class="row g-2 align-items-center mb-3 insurance-item">
                                         {{-- Kolom 1: Nama Asuransi --}}
                                         <div class="col-md-5">
                                             <label class="small text-muted mb-0">Asuransi</label>
@@ -347,7 +347,7 @@
     </div>
 
     <!-- Pembayaran Section -->
-    <div class="card mb-4 p-3 shadow-sm">
+    <div class="card mb-3 p-3 shadow-sm">
         <h6 class="mb-3 mt-4">Informasi Pembayaran</h6>
         <div class="row">
             {{-- KARTU KIRI: TAGIHAN NASABAH --}}
