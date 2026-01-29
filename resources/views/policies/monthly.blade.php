@@ -261,7 +261,7 @@
                                                 $totalTsiPerObject = $object->objectInterests->sum('value');
                                             @endphp
                                             <tr>
-                                                <td class="text-center">{{ $policy->ended_date->format('d M Y') }}</td>
+                                                <td data-order="{{ $policy->ended_date ? $policy->ended_date->format('Y-m-d') : '' }}" class="text-center">{{ $policy->ended_date->format('d M Y') }}</td>
                                                 <td class="text-center">{{ $no++ }}</td>
                                                 <td>{{ $policy->policy_number }}</td>
                                                 

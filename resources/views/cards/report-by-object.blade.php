@@ -91,8 +91,8 @@
                                                     {{ $card->cardStatus->name ?? '-' }}
                                                 </span>
                                             </td>
-                                            <td>{{ $card->policy->started_date ? $card->policy->started_date->format('d M Y') : '-' }}</td>
-                                            <td>{{ $card->policy->ended_date ? $card->policy->ended_date->format('d M Y') : '-' }}</td>
+                                            <td data-order="{{ $card->policy->started_date ? $card->policy->started_date->format('Y-m-d') : '' }}">{{ $card->policy->started_date ? $card->policy->started_date->format('d M Y') : '-' }}</td>
+                                            <td data-order="{{ $card->policy->ended_date ? $card->policy->ended_date->format('Y-m-d') : '' }}">{{ $card->policy->ended_date ? $card->policy->ended_date->format('d M Y') : '-' }}</td>
                                             
                                             <td class="text-end">
                                                 @php

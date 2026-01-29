@@ -66,7 +66,7 @@
                                             <td>{{ $claims->firstItem() + $index }}</td>
                                             <td>{{ $claim->policy->policy_number ?? '-' }}</td>
                                             <td>{{ $claim->policy->productionCard->client->id_name ?? '-' }}</td>
-                                            <td>{{ $claim->incident_date->format('d M Y') }}</td>
+                                            <td data-order="{{ $claim->incident_date ? $claim->incident_date->format('Y-m-d') : '' }}">{{ $claim->incident_date->format('d M Y') }}</td>
                                             <td>{{ $claim->insurance_report_date->format('d M Y') }}</td>
                                             <td>Rp {{ number_format($claim->casco, 0, ',', '.') }}</td>
                                             <td>Rp {{ number_format($claim->tjh, 0, ',', '.') }}</td>

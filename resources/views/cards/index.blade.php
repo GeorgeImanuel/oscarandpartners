@@ -113,7 +113,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $card->client->id_name ?? $card->client->user->name }}</td>
                                             <td>{{ $card->policy->policy_number ?? '-' }}</td>
-                                            <td>{{ $card->policy->started_date && $card->policy->started_date ? $card->policy->started_date->format('d M Y') . ' - ' . $card->policy->ended_date->format('d M Y') : '-' }}</td>
+                                            <td data-order="{{ $card->policy->started_date ? $card->policy->started_date->format('Y-m-d') : '' }}">{{ $card->policy->started_date && $card->policy->started_date ? $card->policy->started_date->format('d M Y') . ' - ' . $card->policy->ended_date->format('d M Y') : '-' }}</td>
                                             <td class="text-end">
                                                 @php
                                                     $curr = $card->policy->currency_code ?? 'Rp';

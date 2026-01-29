@@ -166,7 +166,7 @@
                                                                 <div>-</div>
                                                             @endif
                                                         </td>
-                                                        <td style="vertical-align: top;">
+                                                        <td data-order="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}" style="vertical-align: top;">
                                                             @if($policiesCount > 0)
                                                                 @foreach($object->policies as $policyIndex => $policy)
                                                                     <div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
