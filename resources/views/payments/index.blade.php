@@ -61,7 +61,7 @@
                                 <tbody>
                                     @forelse($payments as $payment)
                                         <tr>
-                                            <td>{{ $payment->deadline_at ? $payment->deadline_at->format('d M Y') : '-' }}</td>
+                                            <td data-order="{{ $payment->deadline_at ? $payment->deadline_at->format('Y-m-d') : '' }}">{{ $payment->deadline_at ? $payment->deadline_at->format('d M Y') : '-' }}</td>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $payment->card?->policy?->policy_number ?? '-' }}</td>
                                             <td>{{ $payment->insured_name }}</td>

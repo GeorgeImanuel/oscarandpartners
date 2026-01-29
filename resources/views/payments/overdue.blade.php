@@ -44,7 +44,7 @@
 									@forelse($payments as $payment)
 										<tr>
                                             {{-- Memberikan warna merah jika sudah lewat deadline --}}
-                                            <td class="text-danger fw-bold">
+                                            <td class="text-danger fw-bold" data-order="{{ $payment->deadline_at ? $payment->deadline_at->format('Y-m-d') : '' }}">
                                                 {{ $payment->deadline_at ? $payment->deadline_at->format('d M Y') : '-' }}
                                             </td>
 											<td>{{ $loop->iteration }}</td>

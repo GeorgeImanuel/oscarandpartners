@@ -149,12 +149,11 @@ class PolicyController extends Controller
     public function nextMonth()
     {
         // Ambil tanggal awal dan akhir bulan depan
-        $startDate = Carbon::now()->addMonth()->startOfMonth()->toDateString();
-        $endDate = Carbon::now()->addMonth()->endOfMonth()->toDateString();
+        $startDate = Carbon::now()->addMonthNoOverflow()->startOfMonth()->toDateString();
+        $endDate = Carbon::now()->addMonthNoOverflow()->endOfMonth()->toDateString();
         
-        $month = Carbon::now()->addMonth()->translatedFormat('F');
-        $year = Carbon::now()->addMonth()->year;
-
+        $month = Carbon::now()->addMonthNoOverflow()->translatedFormat('F');
+        $year = Carbon::now()->addMonthNoOverflow()->year;
         // Ambil data dan Load relasi agar bisa di-loop per object di Blade
         $policies = $this->policyService->getPoliciesExpiringIn($startDate, $endDate)
             ->load(['productionCard.client', 'objects.objectInterests']);

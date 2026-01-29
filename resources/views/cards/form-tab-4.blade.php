@@ -64,7 +64,7 @@
                             <th width="5%"
                                 class="text-center">#</th>
                             <th width="15%">Jatuh Tempo</th>
-                            <th width="20%">Nominal Tagihan (Rp)</th>
+                            <th width="20%">Nominal Tagihan</th>
                             <th width="20%">Komisi</th>
                             <th width="20%">Pajak</th>
                             <th width="20%">Netto</th>

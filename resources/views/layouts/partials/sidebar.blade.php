@@ -151,7 +151,7 @@
                                 {{-- Item 3: Bulan Depan --}}
                                 <li>
                                     <a href="{{ route('policies.nextMonth') }}" class="{{ routeActive('policies.nextMonth') }}">
-                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Depan ( {{ $now->copy()->addMonth()->translatedFormat('F Y') }} )</span>
+                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Depan ( {{ $now->copy()->addMonthNoOverflow()->translatedFormat('F Y') }} )</span>
                                     </a>
                                 </li>
                             </ul>
