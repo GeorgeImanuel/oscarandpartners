@@ -3,7 +3,7 @@
 @section('title', 'Polis')
 
 @push('css')
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
+{{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}"> --}}
 <style>
     .percentage-error {
         color: #dc3545;

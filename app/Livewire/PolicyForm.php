@@ -58,6 +58,7 @@ class PolicyForm extends Component
             $this->policy = null;
             $this->dispatch('setCurrencyCode', currencyCode: '');
         }
+        
     }
 
     public function render()

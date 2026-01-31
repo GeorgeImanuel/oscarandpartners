@@ -9,6 +9,7 @@ use App\Models\ObjectOccupation;
 use App\Models\ObjectModel;
 use App\Models\PolicyCoverage;
 use App\Models\PolicyInsurance;
+use App\Models\PolicyObject;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -19,33 +20,30 @@ class PolicySeeder extends Seeder
      */
     public function run(): void
     {
-        $objects = ObjectModel::all();
+        for ($j = 1; $j <= 20; $j++) {
 
-        foreach ($objects as $object) {
             $policy = Policy::factory()->create();
-            $policy->objects()->attach($object->id);
 
-            
-            $randomInsurances = Insurance::all()->random(rand(1, 3));
-
-            // Calculate percentage splits in decimal format
-            $insuranceCount = $randomInsurances->count();
-            $percentages = [];
-
-            if ($insuranceCount == 1) {
-                $percentages = [1.00]; 
-            } elseif ($insuranceCount == 2) {
-                $percentages = [0.60, 0.40]; 
-            } else { // 3
-                $percentages = [0.60, 0.30, 0.10]; 
-            }
-
+            // Coverage
             for ($i = 1; $i <= 3; $i++) {
                 PolicyCoverage::create([
                     'policy_id'   => $policy->id,
-                    'coverage_id' => $i, 
+                    'coverage_id' => $i,
                     'percentage'  => random_int(1, 10) / 100,
                 ]);
+            }
+
+            // Insurance
+            $randomInsurances = Insurance::all()->random(rand(1, 3));
+            $insuranceCount = $randomInsurances->count();
+
+            // Calculate percentage splits in decimal format
+            if ($insuranceCount == 1) {
+                $percentages = [1.00];
+            } elseif ($insuranceCount == 2) {
+                $percentages = [0.60, 0.40];
+            } else { // 3
+                $percentages = [0.60, 0.30, 0.10];
             }
 
             foreach ($randomInsurances as $index => $insurance) {
@@ -54,6 +52,15 @@ class PolicySeeder extends Seeder
                     'insurance_id' => $insurance->id,
                     'is_main'      => $index === 0,
                     'percentage'   => $percentages[$index],
+                ]);
+            }
+
+            // Object
+            $objects = ObjectModel::all()->random(rand(1, 3));
+            foreach ($objects as $object) {
+                PolicyObject::create([
+                    'policy_id' => $policy->id,
+                    'object_id' => $object->id,
                 ]);
             }
         }

@@ -33,6 +33,11 @@ class Policy extends Model
         return $this->hasOne(Card::class);
     }
 
+    public function policyObjects(): HasMany
+    {
+        return $this->hasMany(PolicyObject::class);
+    }
+
     public function objects(): BelongsToMany
     {
         return $this->belongsToMany(

@@ -75,14 +75,27 @@ $(document).on("click", ".add-item-btn", function () {
             $(this).removeClass("select2-hidden-accessible");
             $(this).next("span.select2").remove();
 
-            // Check if it's an insurance select
-            if ($(this).hasClass("add-select2") || $(this).hasClass("create-select2")) {
+            // Check if it has add-select2 or create-select2 class
+            if ($(this).hasClass("add-select2")) {
+                // Get placeholder from data attribute or label
+                var placeholder = $(this).data("placeholder");
+                if (!placeholder) {
+                    var label = $(this).siblings("label");
+                    placeholder = label.length
+                        ? "Pilih " + label.text().replace('*', '').trim()
+                        : "Pilih Data";
+                }
+                $(this).select2({
+                    placeholder: placeholder,
+                    allowClear: true,
+                });
+            } else if ($(this).hasClass("create-select2")) {
                 initCustomSelect2($(this));
             } else {
                 // Default select2 initialization
                 var label = $(this).siblings("label");
                 var labelText = label.length
-                    ? "Pilih " + label.text()
+                    ? "Pilih " + label.text().replace('*', '').trim()
                     : "Pilih Data";
                 $(this).select2({
                     placeholder: labelText,

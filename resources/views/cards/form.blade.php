@@ -188,6 +188,7 @@
                 window.currentCurrency = currency;
             }
 
+            // Initialize create-select2 (complex selects with "create new" functionality)
             initCustomSelect2(".create-select2");
             initCustomSelect2(".add-select2");
 

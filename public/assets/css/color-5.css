@@ -11783,11 +11783,11 @@ input:read-only {
     opacity: 1;
 }
 
-select:read-only {
+/* select:read-only {
     background-color: #e6edef;
     cursor: not-allowed;
     opacity: 1;
-}
+} */
 
 .form-control:read-only {
     background-color: #e6edef;

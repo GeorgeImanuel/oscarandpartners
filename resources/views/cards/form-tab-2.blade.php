@@ -1,13 +1,12 @@
 <div id="step-2"
     class="setup-content">
-    <div class="card mb-3 p-3 shadow-sm">
+    <div class="card  mb-3 p-3 shadow-sm">
         <div class="row">
             <div class="col-md-12 mb-3">
                 <h5 class="text-primary">Polis</h5>
                 <hr class="separator">
             </div>
-            <div id="policy-details-container"
-                class="col-md-12 mb-3">
+            <div class="col-md-12 mb-3">
                 <label class="form-label"
                     for="policy_id">Nomor Polis</label>
                 <select id="policy_id"
@@ -32,80 +31,13 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-
-            {{-- New Policy Input --}}
-            <div id="new-policy-container" class="col-md-12 mb-3" style="display:none;">
-                @livewire('policy-form')
-            </div>
         </div>
     </div>
-    <div class="card mb-3 p-3 shadow-sm">
-        <div class="row">
-        {{-- OBJECT INFO START --}}
-        <div class="col-md-12 mb-3">
-            <div class="row multiple-item-container">
-                <div class="col-md mt-2 mb-3">
-                    <h5 class="text-primary">Objek Pertanggungan</h5>
-                    <hr class="separator">
-                </div>
-                <div class="col-md-auto mt-2 mb-3">
-                    <span class="add-item-btn btn btn-primary float-end"
-                        data-target="item-object"><i class="ico icon-plus me-2"></i> Tambah Objek Pertanggungan</span>
-                </div>
 
-                <div class="col-md-12 mb-3 item-list">
-                    <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3">
-                        <div class="col-md-10 mb-3">
-                            <label class="form-label"
-                                for="object_id">Nama Objek <span class="text-danger">*</span></label>
-                            <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
-                                data-existing-id=".object-details-container"
-                                data-existing-name="object_id"
-                                data-new-id=".object-forms-container"
-                                data-new-name="object_name"
-                                data-placeholder="Pilih Objek"
-                                name="object_id"
-                                required>
-                                <option value=""></option>
-                                @foreach ($objects ?? [] as $object)
-                                    <option value="{{ $object->id }}">
-                                        {{ $object->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('object_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <span class="remove-item-btn btn btn-danger btn-xs"
-                                style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
-                        </div>
-
-                        {{-- Exist Object Detail --}}
-                        <div class="col-md-12 object-details-container">
-                            @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
-                        </div>
-
-                        {{-- New Object Input --}}
-                        <div class="col-md-12 object-forms-container"
-                            style="display:none;">
-                            @livewire('object-form', [], key('object-form-' . uniqid()))
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <input type="hidden"
-                id="object_ready"
-                value="0"
-                disabled />
-            <div class="col-md-12"
-                id="object-details-container"
-                style="display:none;">
-                @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
-            </div>
-        </div>
-        </div>
+    {{-- New Policy Input --}}
+    <div id="new-policy-container"
+        style="display:none;">
+        @livewire('policy-form')
     </div>
 </div>
 
@@ -115,9 +47,9 @@
         $(document).ready(function() {
             var policyId = $('#policy_id').val();
             if (policyId) {
-                $('#new-policy-container').show();
+                $('#new-policy-container').slideDown();
             } else {
-                $('#new-policy-container').hide();
+                $('#new-policy-container').slideUp();
             }
         });
 
@@ -127,9 +59,9 @@
 
             // Toggle new-policy-container visibility
             if (policyId) {
-                $('#new-policy-container').show();
+                $('#new-policy-container').slideDown();
             } else {
-                $('#new-policy-container').hide();
+                $('#new-policy-container').slideUp();
             }
 
             var selectedOption = $(this).find('option:selected');
@@ -199,9 +131,13 @@
         $(document).on('change', '#policy_id', function() {
             var policyId = $(this).val();
             if (policyId) {
-                Livewire.dispatch('refreshPolicyForm', { policyId: policyId });
+                Livewire.dispatch('refreshPolicyForm', {
+                    policyId: policyId
+                });
             } else {
-                Livewire.dispatch('refreshPolicyForm', { policyId: null });
+                Livewire.dispatch('refreshPolicyForm', {
+                    policyId: null
+                });
             }
         });
 
