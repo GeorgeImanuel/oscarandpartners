@@ -152,14 +152,28 @@
                                                             @endif
                                                         </td>
                                                         <td style="vertical-align: top;">
-                                                            {{ $object->name ?? '-' }} / {{ $object->address ?? '-' }}
+                                                            {{ $object->name ?? '-' }} / {{ $object->keterangan ?? '-' }}
                                                         </td>
                                                         <td style="vertical-align: top;">{{ $object->objectOccupation?->name ?? '-' }}</td>
                                                         <td style="vertical-align: top;">
                                                             @if($policiesCount > 0)
                                                                 @foreach($object->policies as $policyIndex => $policy)
                                                                     <div @if($policyIndex < $policiesCount - 1) class="mb-3 pb-3" style="border-bottom: 1px dashed #ddd;" @endif>
-                                                                        {{ $policy->coverage?->code ?? '-' }}
+                                                                        
+                                                                        {{-- CEK APAKAH ADA POLICY COVERAGES --}}
+                                                                        @if($policy->policyCoverages && $policy->policyCoverages->isNotEmpty())
+                                                                            
+                                                                            @foreach($policy->policyCoverages as $pc)
+                                                                                {{-- Gunakan div agar otomatis turun ke bawah (stacking) --}}
+                                                                                <div>
+                                                                                    {{ $pc->coverage->code ?? $pc->coverage->name ?? '-' }}
+                                                                                </div>
+                                                                            @endforeach
+
+                                                                        @else
+                                                                            -
+                                                                        @endif
+
                                                                     </div>
                                                                 @endforeach
                                                             @else
