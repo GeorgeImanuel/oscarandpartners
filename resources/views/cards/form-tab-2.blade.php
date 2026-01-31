@@ -292,5 +292,34 @@
                 }
             });
         });
+
+        // Function to sum all object_value_input and update object_value
+        function sumObjectValues() {
+            var total = 0;
+            $('input[name="object_value_input"]').each(function() {
+                var value = parseFloat($(this).val()) || 0;
+                total += value;
+            });
+            
+            // Update the object_value field in form-tab-3
+            $('#object_value').val(total.toFixed(0));
+            
+            // Call update_payment if it exists
+            if (typeof update_payment === 'function') {
+                update_payment();
+            }
+        }
+
+        // Listen for changes on object_value_input
+        $(document).on('input change keyup', 'input[name="object_value_input"]', function() {
+            sumObjectValues();
+        });
+
+        // Also call on page load to initialize
+        $(document).ready(function() {
+            setTimeout(function() {
+                sumObjectValues();
+            }, 500);
+        });
     </script>
 @endpush

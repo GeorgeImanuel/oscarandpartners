@@ -33,10 +33,7 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
     public function findWithRelations($policyId)
     {
         return $this->model->with([
-            'policyObjects.object' => function ($q) {
-                $q->with(['objectOccupation', 'objectInterests.interest']);
-                $q->withSum('objectInterests as object_value', 'value');
-            },
+            'policyObjects',
             'policyCoverages.coverage',
             'policyInsurances.insurance'
         ])->find($policyId);

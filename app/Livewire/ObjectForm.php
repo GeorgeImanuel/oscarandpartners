@@ -10,6 +10,9 @@ use App\Services\Interest\InterestService;
 
 class ObjectForm extends Component
 {
+    public $objectId;
+    public $object = null;
+    
     protected $objectService;
     protected $objectOccupationService;
     protected $interestService;
@@ -22,6 +25,28 @@ class ObjectForm extends Component
         $this->objectService = $objectService;
         $this->objectOccupationService = $objectOccupationService;
         $this->interestService = $interestService;
+    }
+
+    public function mount($objectId = null)
+    {
+        if ($objectId) {
+            $this->objectId = $objectId;
+            $this->loadObject();
+        }
+    }
+
+    public function updatedObjectId($value)
+    {
+        $this->loadObject();
+    }
+
+    public function loadObject()
+    {
+        if ($this->objectId) {
+            $this->object = $this->objectService->find($this->objectId);
+        } else {
+            $this->object = null;
+        }
     }
 
     public function render()

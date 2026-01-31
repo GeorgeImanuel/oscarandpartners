@@ -314,7 +314,7 @@
                                         required>
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
-                                            <option value="{{ $object->id }}" {{ $object->id == $policyObject->object_id }}>
+                                            <option value="{{ $object->id }}" {{ $object->id == $policyObject->object_id ? 'selected' : '' }}>
                                                 {{ $object->name }}
                                             </option>
                                         @endforeach
@@ -324,19 +324,12 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-2 mb-3">
-                                    <span class="remove-item-btn btn btn-danger btn-xs"
-                                        style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
+                                    <span class="remove-item-btn btn btn-danger btn-xs" ><i class="ico icon-trash"></i> Hapus Objek</span>
                                 </div>
 
-                                {{-- Exist Object Detail --}}
-                                <div class="col-md-12 object-details-container">
-                                    @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
-                                </div>
-
-                                {{-- New Object Input --}}
-                                <div class="col-md-12 object-forms-container"
-                                    style="display:none;">
-                                    @livewire('object-form', [], key('object-form-' . uniqid()))
+                                {{-- Object Form --}}
+                                <div class="col-md-12 object-forms-container">
+                                    @livewire('object-form', ['objectId' => $policyObject->object_id ?? null], key('object-form-' . $policyObject->id ?? uniqid()))
                                 </div>
                             </div>
                         @empty
@@ -368,15 +361,10 @@
                                         style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
                                 </div>
 
-                                {{-- Exist Object Detail --}}
-                                <div class="col-md-12 object-details-container">
-                                    @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
-                                </div>
-
-                                {{-- New Object Input --}}
+                                {{-- Object Form --}}
                                 <div class="col-md-12 object-forms-container"
                                     style="display:none;">
-                                    @livewire('object-form', [], key('object-form-' . uniqid()))
+                                    @livewire('object-form', ['objectId' => null], key('object-form-' . uniqid()))
                                 </div>
                             </div>
                         @endforelse
@@ -387,11 +375,6 @@
                     id="object_ready"
                     value="0"
                     disabled />
-                <div class="col-md-12"
-                    id="object-details-container"
-                    style="display:none;">
-                    @livewire('object-details', ['objectId' => isset($card) ? $card->object_id : old('object_id')], key('object-details-' . uniqid()))
-                </div>
             </div>
         </div>
     </div>
@@ -453,6 +436,32 @@
                 }, 150);
             });
         });
+
+        // Handle object select change
+        $(document).on('change', '.object-select', function() {
+            var selectedValue = $(this).val();
+            var $itemContainer = $(this).closest('.item-object');
+            var $formContainer = $itemContainer.find('.object-forms-container');
+            
+            if (selectedValue) {
+                // Show form container
+                $formContainer.show();
+                
+                // Load object data into form
+                var formComponent = $formContainer.find('[wire\\:id]').first();
+                if (formComponent.length) {
+                    var componentId = formComponent.attr('wire:id');
+                    var component = Livewire.find(componentId);
+                    if (component) {
+                        component.set('objectId', selectedValue);
+                    }
+                }
+            } else {
+                // Hide form when no selection
+                $formContainer.hide();
+            }
+        });
+        
 
         // Initialize on component load
         document.addEventListener('DOMContentLoaded', function() {

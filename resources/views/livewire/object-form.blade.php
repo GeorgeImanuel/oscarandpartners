@@ -38,25 +38,12 @@
     </div>
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
+            for="object_keterangan">Alamat <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
             name="object_keterangan"
             rows="3">{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
         @error('object_keterangan')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="object_city">Kota <span class="text-danger">*</span></label>
-        <input class="form-control required @error('object_city') is-invalid @enderror"
-            id="object_city"
-            name="object_city"
-            type="text"
-            value="{{ isset($object) ? $object->city : old('object_city', '') }}" />
-        @error('object_city')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
@@ -69,40 +56,82 @@
             <i class="icon-plus me-2"></i>Tambah Interest
         </button>
         <div class="item-list pt-2">
-            <div class="mt-2 px-3 py-3 border rounded item object-interest-item">
-                <div class="row align-items-end">
-                    <div class="col-md-6">
-                        <label class="form-label">Interest <span class="item-count">1</span></label>
-                        <select class="form-select add-select2 required"
-                            name="interest_id[]"
-                            data-placeholder="Pilih Interest"
-                            style="width: 100%;">
-                            <option value=""></option>
-                            @foreach ($interests as $interest)
-                                <option value="{{ $interest->id }}">
-                                    {{ $interest->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Nilai Interest <span class="item-count">1</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text">Rp</span>
-                            <input type="number"
-                                class="form-control"
-                                name="interest_value[]"
-                                onkeyup="updateObjectValue()">
+            @if(isset($object) && $object && $object->objectInterests && $object->objectInterests->count() > 0)
+                @foreach($object->objectInterests as $index => $objectInterest)
+                    <div class="mt-2 px-3 py-3 border rounded item object-interest-item">
+                        <div class="row align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label">Interest <span class="item-count">{{ $index + 1 }}</span></label>
+                                <select class="form-select add-select2 required"
+                                    name="interest_id[]"
+                                    data-placeholder="Pilih Interest"
+                                    style="width: 100%;">
+                                    <option value=""></option>
+                                    @foreach ($interests as $interest)
+                                        <option value="{{ $interest->id }}" {{ $objectInterest->interest_id == $interest->id ? 'selected' : '' }}>
+                                            {{ $interest->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Nilai Interest <span class="item-count">{{ $index + 1 }}</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number"
+                                        class="form-control"
+                                        name="interest_value[]"
+                                        value="{{ $objectInterest->value ?? 0 }}"
+                                        onkeyup="updateObjectValue()">
+                                </div>
+                            </div>
+                            <div class="col-md-1 pt-3">
+                                <button type="button"
+                                    class="btn btn-danger btn-xs remove-item-btn"
+                                    style="{{ $index == 0 ? 'display:none;' : '' }}">
+                                    <i class="icon-trash me-2"></i> Hapus
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-1 pt-3">
-                        <button type="button"
-                            class="btn btn-danger btn-xs remove-item-btn">
-                            <i class="icon-trash me-2"></i> Hapus
-                        </button>
+                @endforeach
+            @else
+                <div class="mt-2 px-3 py-3 border rounded item object-interest-item">
+                    <div class="row align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label">Interest <span class="item-count">1</span></label>
+                            <select class="form-select add-select2 required"
+                                name="interest_id[]"
+                                data-placeholder="Pilih Interest"
+                                style="width: 100%;">
+                                <option value=""></option>
+                                @foreach ($interests as $interest)
+                                    <option value="{{ $interest->id }}">
+                                        {{ $interest->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Nilai Interest <span class="item-count">1</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number"
+                                    class="form-control"
+                                    name="interest_value[]"
+                                    onkeyup="updateObjectValue()">
+                            </div>
+                        </div>
+                        <div class="col-md-1 pt-3">
+                            <button type="button"
+                                class="btn btn-danger btn-xs remove-item-btn"
+                                style="display:none;">
+                                <i class="icon-trash me-2"></i> Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
     <div class="col-md-12 mb-3 input-group-solid">
@@ -117,7 +146,7 @@
                 step="0.00001"
                 min="0"
                 readonly
-                value="0" />
+                value="{{ isset($object) && $object ? ($object->object_value ?? 0) : 0 }}" />
         </div>
     </div>
 </div>

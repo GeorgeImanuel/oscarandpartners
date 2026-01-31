@@ -19,7 +19,7 @@ class ObjectModelFactory extends Factory
     {
         return [
             'object_occupation_id' => ObjectOccupation::inRandomOrder()->first()?->id ?? ObjectOccupation::factory(),
-            'name' => fake()->words(3, true),
+            'name' => 'Object '. fake()->numberBetween(1, 1000),
             'keterangan' => fake()->sentence(),
         ];
     }
