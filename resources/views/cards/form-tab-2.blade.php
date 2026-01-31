@@ -60,6 +60,13 @@
             // Toggle new-policy-container visibility
             if (policyId) {
                 $('#new-policy-container').slideDown();
+                
+                // Reinitialize select2 after container is shown
+                setTimeout(function() {
+                    if (typeof initCustomSelect2 === 'function') {
+                        initCustomSelect2(".add-select2");
+                    }
+                }, 300);
             } else {
                 $('#new-policy-container').slideUp();
             }
@@ -190,6 +197,13 @@
                 $('#premi_percentages').val(rate).trigger('change');
 
                 update_payment();
+                
+                // Reinitialize select2 after policy objects are loaded
+                setTimeout(function() {
+                    if (typeof initCustomSelect2 === 'function') {
+                        initCustomSelect2(".add-select2");
+                    }
+                }, 300);
             });
 
 
@@ -296,14 +310,19 @@
         // Function to sum all object_value_input and update object_value
         function sumObjectValues() {
             var total = 0;
+            var count = 0;
+            
             $('input[name="object_value_input"]').each(function() {
                 var value = parseFloat($(this).val()) || 0;
                 total += value;
+                count++;
+                console.log('Object value input found:', value);
             });
+            
+            console.log('Total object values:', total, 'Count:', count);
             
             // Update the object_value field in form-tab-3
             $('#object_value').val(total.toFixed(0));
-            
             // Call update_payment if it exists
             if (typeof update_payment === 'function') {
                 update_payment();
@@ -311,7 +330,8 @@
         }
 
         // Listen for changes on object_value_input
-        $(document).on('input change keyup', 'input[name="object_value_input"]', function() {
+        $(document).on('input change keyup blur', 'input[name="object_value_input"]', function() {
+            console.log('Object value input changed:', $(this).val());
             sumObjectValues();
         });
 
@@ -319,7 +339,18 @@
         $(document).ready(function() {
             setTimeout(function() {
                 sumObjectValues();
-            }, 500);
+            }, 1000);
+            
+            // Also listen for Livewire updates
+            if (typeof Livewire !== 'undefined') {
+                Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+                    succeed(({ snapshot, effect }) => {
+                        setTimeout(function() {
+                            sumObjectValues();
+                        }, 200);
+                    });
+                });
+            }
         });
     </script>
 @endpush

@@ -283,7 +283,6 @@
             </div>
         </div>
     </div>
-    {{  json_encode($policy) }}
     <div class="card mb-3 p-3 shadow-sm">
         <div class="row">
             {{-- OBJECT INFO START --}}
@@ -337,7 +336,7 @@
                                 <div class="col-md-10 mb-3">
                                     <label class="form-label"
                                         for="object_id">Nama Objek <span class="text-danger">*</span></label>
-                                    <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
+                                    <select class="form-control add-select2 object-select @error('object_id') is-invalid @enderror"
                                         {{-- data-existing-id=".object-details-container" --}}
                                         data-existing-name="object_id"
                                         {{-- data-new-id=".object-forms-container" --}}
