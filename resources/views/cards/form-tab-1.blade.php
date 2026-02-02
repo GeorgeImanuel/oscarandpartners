@@ -31,7 +31,7 @@
                 class="col-md-12 mb-3"
                 style="display:none;">
                 <label class="form-label"
-                    for="parent_card_id">Kartu Produksi Sebelumnya</label>
+                    for="parent_card_id">Polis Sebelumnya</label>
                 <select id="parent_card_id"
                     class="form-control select2-basic-single @error('parent_card_id') is-invalid @enderror"
                     name="parent_card_id">
@@ -100,18 +100,17 @@
             var parentContainer = $('#parent_card_container');
             var parentSelect = $('#parent_card_id');
 
-            if (cardTypeId == '{{ config('constants.card_type.renewal') }}') {
-                parentContainer.show();
-                parentSelect.attr('required', true);
-
-                parentContainer.find('.required').attr('required', true);
-
-            } else {
+            if (cardTypeId == '{{ config('constants.card_type.new') }}') {
                 parentContainer.hide();
                 parentSelect.removeAttr('required');
                 parentSelect.val('').trigger('change'); // Clear selection
 
                 parentContainer.find('.required').removeAttr('required');
+            } else {
+                parentContainer.show();
+                parentSelect.attr('required', true);
+
+                parentContainer.find('.required').attr('required', true);   
             }
         });
 
