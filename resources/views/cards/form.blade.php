@@ -57,19 +57,23 @@
                     <div class="stepwizard">
                         <div class="stepwizard-row setup-panel">
                             <div class="stepwizard-step">
-                                <a class="btn btn-primary" href="#step-1">1</a>
+                                <a class="btn btn-primary"
+                                    href="#step-1">1</a>
                                 <p>Detail Kartu Produksi</p>
                             </div>
                             <div class="stepwizard-step">
-                                <a class="btn btn-light" href="#step-2">2</a>
+                                <a class="btn btn-light"
+                                    href="#step-2">2</a>
                                 <p>Detail Polis & Objek</p>
                             </div>
                             <div class="stepwizard-step">
-                                <a class="btn btn-light" href="#step-3">3</a>
+                                <a class="btn btn-light"
+                                    href="#step-3">3</a>
                                 <p>Detail Premi & Komisi</p>
                             </div>
                             <div class="stepwizard-step">
-                                <a class="btn btn-light" href="#step-4">4</a>
+                                <a class="btn btn-light"
+                                    href="#step-4">4</a>
                                 <p>Payment</p>
                             </div>
                         </div>
@@ -130,21 +134,23 @@
                 customValidator: function(form, fields) {
                     var errors = [];
                     // Example: Check if every location has at least 1 BoQ entry
-                    var insurance_percentages = $(form).find('.insurance-percentage');
-                    var totalPercentage = 0;
-                    insurance_percentages.each(function() {
-                        if ($(this).closest('.item').is(':visible')) {
-                            var value = parseFloat($(this).val()) || 0;
-                            totalPercentage += value;
-                        }
-                    });
+                    var insurance_percentages = $(form).find('input[name="insurance_percentage[]"]').val();
+                    var coverage_percentages = $(form).find('input[name="coverage_percentage[]"]').val();
 
-                    if (totalPercentage < 0 || totalPercentage > 100) {
+                    if (insurance_percentages < 0 || insurance_percentages > 100) {
                         alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
                         errors.push({
                             field: '.insurance-percentage',
                             message: 'Total persentase asuransi harus antara 0-100%'
                         });
+                    };
+
+                    if (insurance_percentages < 0 || insurance_percentages > 100) {
+                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
+                    };
+
+                    if (coverage_percentages < 0 || coverage_percentages > 100) {
+                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
                     };
 
                     // Check if at least one is-main-checkbox is checked
@@ -202,8 +208,6 @@
                 }
                 return currency + ' ' + formattedNumber;
             }
-
-            
         </script>
     @endpush
 @endsection

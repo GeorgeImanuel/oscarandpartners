@@ -87,20 +87,6 @@
             <div class="col-md-12">
                 @livewire('client-form')
             </div>
-
-            <div class="col-md-12 mb-3">
-                <label class="form-label"
-                    for="deadline_at">Tanggal Deadline</label>
-                <input id="deadline_at"
-                    class="form-control @error('deadline_at') is-invalid @enderror"
-                    name="deadline_at"
-                    type="date"
-                    value="{{ isset($card) ? $card->deadline_at : old('deadline_at') }}"
-                    required />
-                @error('deadline_at')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
         </div>
     </div>
 </div>
@@ -132,13 +118,15 @@
         $('#parent_card_id').on('change', function() {
             var selectedOption = $(this).find('option:selected');
             var clientId = selectedOption.data('client-id') || '';
-            // var policyId = selectedOption.data('policy-id') || '';
+            var policyId = selectedOption.data('policy-id') || '';
 
             // Set the client_id select2 value
             $('#client_id').val(clientId).trigger('change');
 
-            // Set the policy_id select2 value
-            // $('#policy_id').val(policyId).trigger('change');
+            // Set the policy_id select2 value (with delay to ensure element is ready)
+            setTimeout(function() {
+                $('#policy_id').val(policyId).trigger('change.select2').trigger('change');
+            }, 300);
         });
     </script>
 @endpush

@@ -46,6 +46,20 @@
                     </div>
                     <small class="text-muted">Masukkan jumlah installment.</small>
                 </div>
+                
+                <div class="col-md-12 mb-3">
+                    <label class="form-label"
+                        for="deadline_at">Tanggal Deadline</label>
+                    <input id="deadline_at"
+                        class="form-control @error('deadline_at') is-invalid @enderror"
+                        name="deadline_at"
+                        type="date"
+                        value="{{ isset($card) ? $card->deadline_at : old('deadline_at') }}"
+                        required />
+                    @error('deadline_at')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
         </div>
 
@@ -95,13 +109,13 @@
             </div>
         </div>
     </div>
-    
+
     <div class="card mb-3 p-3 shadow-sm"
-         id="preview-premi-card" 
-         style="display: {{ isset($card) && $card->payment_type_id ? 'block' : 'none' }};">
-         
+        id="preview-premi-card"
+        style="display: {{ isset($card) && $card->payment_type_id ? 'block' : 'none' }};">
+
         <div class="row">
-        {{-- A. TABEL PERHITUNGAN PREMI (Seperti di detail) --}}
+            {{-- A. TABEL PERHITUNGAN PREMI (Seperti di detail) --}}
             <div class="col-md-12 mb-3">
                 <h6 class="fw-bold mb-3">
                     <i class="fa fa-calculator"></i> Preview Perhitungan Premi
@@ -315,13 +329,13 @@
 
                 if (paymentId) {
                     // Kalau user pilih apapun (tidak kosong), munculkan tabel
-                    $('#preview-premi-card').slideDown(); 
-                    
+                    $('#preview-premi-card').slideDown();
+
                     // Opsional: Render ulang tabelnya biar angkanya fresh
                     // renderStep5Table(...); 
                 } else {
                     // Kalau user pilih "Pilih Metode" (kosong), sembunyikan tabel
-                    $('#preview-premi-card').slideUp(); 
+                    $('#preview-premi-card').slideUp();
                 }
 
                 // Cek keywords installment/cicilan

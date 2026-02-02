@@ -460,26 +460,27 @@
         }
 
         function update_payment() {
+            console.log('Updating payment calculations...');
             var rawValue = $('#object_value').val();
             if (typeof rawValue === 'string') {
                 rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.'); // Sesuaikan dengan format locale
             }
 
-            var object_value = parseFloat(rawValue) || 0;
-            var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
-            var policy_fee = parseInt($('#policy_fee').val()) || 0;
+            var object_value          = parseFloat(rawValue) || 0;
+            var premi_percentages     = parseFloat($('#premi_percentages').val()) || 0;
+            var policy_fee            = parseInt($('#policy_fee').val()) || 0;
             var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
-            var discount = parseInt($('#discount_value').val()) || 0;
-            var tjh_value = parseInt($('#tjh_value').val()) || 0;
-            var discount_agent = parseInt($('#discount_agent').val()) || 0;
+            var discount              = parseInt($('#discount_value').val()) || 0;
+            var tjh_value             = parseInt($('#tjh_value').val()) || 0;
+            var discount_agent        = parseInt($('#discount_agent').val()) || 0;
 
             const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
-            const premiValue = premi_value(productionValue, policy_fee);
-            const commisionBruto = commision_bruto(productionValue, commision_percentages / 100, discount);
-            const taxValue = parseFloat($('#tax').val()) || 0; // Get current tax value from field
-            const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
-            const clientPay = client_pay(premiValue, discount_agent);
-            const insurancePay = insurance_pay(premiValue, commisionNetto);
+            const premiValue      = premi_value(productionValue, policy_fee);
+            const commisionBruto  = commision_bruto(productionValue, commision_percentages / 100, discount);
+            const taxValue        = parseFloat($('#tax').val()) || 0;                                              // Get current tax value from field
+            const commisionNetto  = commision_netto(commisionBruto, taxValue, discount_agent);
+            const clientPay       = client_pay(premiValue, discount_agent);
+            const insurancePay    = insurance_pay(premiValue, commisionNetto);
 
             // console.log('Calculated values:', {
             //     productionValue,

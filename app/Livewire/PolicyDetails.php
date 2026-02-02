@@ -87,11 +87,11 @@ class PolicyDetails extends Component
 
                 $this->dispatch('coveragesLoaded', coverages: $coverages);
             }
-        // } else {
-        //     $this->policy = null;
-        //     $this->dispatch('insurancesLoaded', insurances: []);
-        //     $this->dispatch('coveragesLoaded', coverages: []);
-        // }
+        } else {
+            $this->policy = null;
+            $this->dispatch('insurancesLoaded', insurances: []);
+            $this->dispatch('coveragesLoaded', coverages: []);
+        }
     }
 
     public function render()

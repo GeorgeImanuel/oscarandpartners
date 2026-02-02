@@ -33,11 +33,9 @@ function initCustomSelect2(selector) {
         var $existingId = null;
         
         if (config.newId) {
-            console.log('config.newId:', config.newId);
             if (typeof config.newId === 'string') {
                 // If it's a class selector, find closest .item first
                 if (config.newId.startsWith('.')) {
-                    console.log('Finding closest .item for newId');
                     var $closestItem = $element.closest('.item');
                     $newId = $closestItem.length ? $closestItem.find(config.newId) : $(config.newId);
                 } else {
