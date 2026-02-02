@@ -81,8 +81,7 @@
                                     <input type="number"
                                         class="form-control"
                                         name="interest_value[]"
-                                        value="{{ $objectInterest->value ?? 0 }}"
-                                        onkeyup="updateObjectValue()">
+                                        value="{{ $objectInterest->value ?? 0 }}">
                                 </div>
                             </div>
                             <div class="col-md-1 pt-3">
@@ -118,8 +117,7 @@
                                 <span class="input-group-text">Rp</span>
                                 <input type="number"
                                     class="form-control"
-                                    name="interest_value[]"
-                                    onkeyup="updateObjectValue()">
+                                    name="interest_value[]">
                             </div>
                         </div>
                         <div class="col-md-1 pt-3">

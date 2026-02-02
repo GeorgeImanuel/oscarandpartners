@@ -64,7 +64,7 @@
                 // Reinitialize select2 after container is shown
                 setTimeout(function() {
                     if (typeof initCustomSelect2 === 'function') {
-                        initCustomSelect2(".add-select2");
+                        initCustomSelect2(".create-select2");
                     }
                 }, 300);
             } else {
@@ -148,6 +148,8 @@
             }
         });
 
+
+
         function calculateTotalObjectValue() {
             var totalValue = 0;
 
@@ -183,15 +185,15 @@
                 // Update field Harga Pertanggungan
                 $('#object_value').val(totalObjectValue);
 
-                // Update display (format Rupiah)
-                $('#total-object-value').text(formatRupiah(totalObjectValue));
+                // // Update display (format Rupiah)
+                // $('#total-object-value').text(formatRupiah(totalObjectValue));
 
-                // Show/hide info based on value
-                if (totalObjectValue > 0) {
-                    $('#object-value-info').show();
-                } else {
-                    $('#object-value-info').hide();
-                }
+                // // Show/hide info based on value
+                // if (totalObjectValue > 0) {
+                //     $('#object-value-info').show();
+                // } else {
+                //     $('#object-value-info').hide();
+                // }
 
                 var rate = parseFloat(coveragePercentage) * 100;
                 $('#premi_percentages').val(rate).trigger('change');
@@ -201,14 +203,14 @@
                 // Reinitialize select2 after policy objects are loaded
                 setTimeout(function() {
                     if (typeof initCustomSelect2 === 'function') {
-                        initCustomSelect2(".add-select2");
+                        initCustomSelect2(".create-select2");
                     }
 
                     // Trigger change on all coverage_percentage[] inputs
                     $('input[name="coverage_percentage[]"]').each(function() {
                         $(this).trigger('change');
                     });
-                    
+
                     // Trigger change on all insurance_percentage[] inputs
                     $('input[name="insurance_percentage[]"]').each(function() {
                         $(this).trigger('change');
@@ -229,6 +231,8 @@
                 }
                 $('#object_ready').val(1);
                 // console.log('Object received:', object.object_value);
+                sumInputValues('input[name="object_value_input"]', '#object_value');
+
                 update_payment(); // Trigger calculation when policy is loaded
 
             });
@@ -319,56 +323,57 @@
         });
 
         // Function to sum all object_value_input and update object_value
-        function sumObjectValues() {
-            var total = 0;
-            var count = 0;
+        // function sumObjectValues() {
+        //     var total = 0;
+        //     var count = 0;
 
-            $('input[name="object_value_input"]').each(function() {
-                var value = parseFloat($(this).val()) || 0;
-                total += value;
-                count++;
-            });
+        //     $('input[name="object_value_input"]').each(function() {
+        //         var value = parseFloat($(this).val()) || 0;
+        //         total += value;
+        //         count++;
+        //     });
 
-            console.log('Total object values:', total, 'Count:', count);
+        //     console.log('Total object values:', total, 'Count:', count);
 
-            // Update the object_value field in form-tab-3
-            $('#object_value').val(total.toFixed(0));
-            // Call update_payment if it exists
-            update_payment();
-        }
+        //     // Update the object_value field in form-tab-3
+        //     $('#object_value').val(total.toFixed(0));
+        //     // Call update_payment if it exists
+        //     update_payment();
+        // }
 
-        // Listen for changes on object_value_input
+        // Listen for changes and sum input values
+        $(document).on('input change keyup blur', 'input[name="coverage_percentage[]"]', function() {
+            sumInputValues('input[name="coverage_percentage[]"]', '.coverage_percentage_total');    
+        });
+        $(document).on('input change keyup blur', 'input[name="insurance_percentage[]"]', function() {
+            sumInputValues('input[name="insurance_percentage[]"]', '.insurance_percentage_total');
+        });
         $(document).on('input change keyup blur', 'input[name="object_value_input"]', function() {
-            console.log('Object value input changed:', $(this).val());
-            sumObjectValues();
+            sumInputValues('input[name="object_value_input"]', '#object_value');
         });
 
-        // Also call on page load to initialize
-        $(document).ready(function() {
-            setTimeout(function() {
-                sumObjectValues();
-            }, 1000);
-
-            // Also listen for Livewire updates
-            if (typeof Livewire !== 'undefined') {
-                Livewire.hook('commit', ({
-                    component,
-                    commit,
-                    respond,
-                    succeed,
-                    fail
-                }) => {
-                    succeed(({
-                        snapshot,
-                        effect
-                    }) => {
-                        setTimeout(function() {
-                            sumObjectValues();
-                        }, 200);
-                    });
-                });
-            }
-        });
+        // // Also call on page load to initialize
+        // $(document).ready(function() {
+        //     // Also listen for Livewire updates
+        //     if (typeof Livewire !== 'undefined') {
+        //         Livewire.hook('commit', ({
+        //             component,
+        //             commit,
+        //             respond,
+        //             succeed,
+        //             fail
+        //         }) => {
+        //             succeed(({
+        //                 snapshot,
+        //                 effect
+        //             }) => {
+        //                 setTimeout(function() {
+        //                     sumInputValues('input[name="object_value_input"]', '#object_value');
+        //                 }, 200);
+        //             });
+        //         });
+        //     }
+        // });
 
         function validatePercentage(target) {
             console.log('Validating percentages for target:', target);

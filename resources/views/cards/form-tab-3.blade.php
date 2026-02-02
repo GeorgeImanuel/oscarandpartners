@@ -31,9 +31,9 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label mb-1">Tarif Premi</label>
                         <div class="input-group">
-                            {{-- Tambahkan class 'validate-percent' dan min/max --}}
+                            {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                             <input id="premi_percentages"
-                                class="form-control validate-percent"
+                                class="form-control validate-percentage"
                                 name="premi_percentages"
                                 type="number"
                                 step="0.00001"
@@ -66,9 +66,9 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="input-group mb-3">
-                                    {{-- Tambahkan class 'validate-percent' dan min/max --}}
+                                    {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                                     <input id="discount_percentage"
-                                        class="form-control validate-percent"
+                                        class="form-control validate-percentage"
                                         type="number"
                                         min="0"
                                         max="100"
@@ -99,7 +99,6 @@
             </div>
         </div>
     </div>
-
 
     {{-- SECTION 2: PREMI (Produksi -> Biaya Polis -> Total) --}}
     <div class="card mb-3 p-3 shadow-sm">
@@ -210,9 +209,9 @@
             <div class="col-md-12 mb-3">
                 <label class="form-label">Persentase Total Komisi</label>
                 <div class="input-group">
-                    {{-- Tambahkan class 'validate-percent' dan min/max --}}
+                    {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                     <input id="commision_percentages"
-                        class="form-control validate-percent"
+                        class="form-control validate-percentage"
                         name="commision_percentages"
                         type="number"
                         step="0.01"
@@ -466,21 +465,21 @@
                 rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.'); // Sesuaikan dengan format locale
             }
 
-            var object_value          = parseFloat(rawValue) || 0;
-            var premi_percentages     = parseFloat($('#premi_percentages').val()) || 0;
-            var policy_fee            = parseInt($('#policy_fee').val()) || 0;
+            var object_value = parseFloat(rawValue) || 0;
+            var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
+            var policy_fee = parseInt($('#policy_fee').val()) || 0;
             var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
-            var discount              = parseInt($('#discount_value').val()) || 0;
-            var tjh_value             = parseInt($('#tjh_value').val()) || 0;
-            var discount_agent        = parseInt($('#discount_agent').val()) || 0;
+            var discount = parseInt($('#discount_value').val()) || 0;
+            var tjh_value = parseInt($('#tjh_value').val()) || 0;
+            var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
             const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
-            const premiValue      = premi_value(productionValue, policy_fee);
-            const commisionBruto  = commision_bruto(productionValue, commision_percentages / 100, discount);
-            const taxValue        = parseFloat($('#tax').val()) || 0;                                              // Get current tax value from field
-            const commisionNetto  = commision_netto(commisionBruto, taxValue, discount_agent);
-            const clientPay       = client_pay(premiValue, discount_agent);
-            const insurancePay    = insurance_pay(premiValue, commisionNetto);
+            const premiValue = premi_value(productionValue, policy_fee);
+            const commisionBruto = commision_bruto(productionValue, commision_percentages / 100, discount);
+            const taxValue = parseFloat($('#tax').val()) || 0; // Get current tax value from field
+            const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
+            const clientPay = client_pay(premiValue, discount_agent);
+            const insurancePay = insurance_pay(premiValue, commisionNetto);
 
             // console.log('Calculated values:', {
             //     productionValue,
@@ -522,36 +521,6 @@
         // --- FUNGSI BARU: VALIDASI PERSEN LANGSUNG ---
         $(document).ready(function() {
             // Validasi persentase langsung saat input dan blur
-            $('.validate-percent').on('input keyup change blur', function(e) {
-                var value = parseFloat($(this).val());
-                // Insert error message after the input element
-                var input = $(this).closest('.input-group').length > 0 ?
-                    $(this).closest('.input-group') : $(this);
-                var errorMsg = input.next('.error-message');
-                if (errorMsg.length === 0) {
-                    input.after('<div class="error-message" style="color: red;">Nilai harus diantara 0-100</div>');
-                } else {
-                    errorMsg.remove();
-                }
-                // var alertBox = $(this).closest('div[class^="col-"]').find('.percent-alert');
-
-                // // Reset styling
-                // $(this).removeClass('is-invalid border-danger');
-                // alertBox.hide();
-
-                // Validasi
-                if (value < 0) {
-                    $(this).val(0);
-                } else if (value > 100) {
-                    // Jika blur, paksa ke 100. Jika input, tampilkan error
-                    if (e.type === 'blur') {
-                        $(this).val(100).trigger('change');
-                    } else {
-                        $(this).addClass('is-invalid border-danger');
-                        alertBox.slideDown('fast');
-                    }
-                }
-            });
         });
     </script>
 @endpush

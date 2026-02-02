@@ -15,4 +15,5 @@
 <!-- Theme js-->
 <script src="{{asset('assets/js/script.js')}}"></script>
 <script src="{{ asset('assets/js/alert.js') }}"></script>
+
 <!-- Plugin used-->

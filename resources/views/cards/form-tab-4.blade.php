@@ -46,7 +46,7 @@
                     </div>
                     <small class="text-muted">Masukkan jumlah installment.</small>
                 </div>
-                
+
                 <div class="col-md-12 mb-3">
                     <label class="form-label"
                         for="deadline_at">Tanggal Deadline</label>

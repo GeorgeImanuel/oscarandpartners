@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Currency;
 use Livewire\Component;
 use App\Models\ObjectModel;
 use App\Services\Object\ObjectService;
@@ -49,16 +50,20 @@ class PolicyForm extends Component
 
     public function loadPolicy($policyId = null)
     {
+        $currency = 'Rp';
         if ($policyId) {
             $this->policyId = $policyId;
             $this->policy = $this->policyService->findWithRelations($policyId);
-            // Dispatch event to update currency select
-            $this->dispatch('setCurrencyCode', currencyCode: $this->policy->currency_code ?? '');
+            $currency = $this->policy->currency_code ?? 'Rp';
         } else {
             $this->policy = null;
-            $this->dispatch('setCurrencyCode', currencyCode: '');
         }
-        
+
+        $this->dispatch(
+            'policyLoaded',
+            'setCurrencyCode',
+            currencyCode: $currency
+        );
     }
 
     public function render()

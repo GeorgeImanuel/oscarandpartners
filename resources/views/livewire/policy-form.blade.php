@@ -65,7 +65,7 @@
                             <div class="col-md mb-2">
                                 <label class="form-label">Persentase Coverage</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage" type="number" name="coverage_percentage[]" value="{{ $policyCoverage->percentage * 100 }}" placeholder="0" min="0" max="100" step="0.01">
+                                    <input class="form-control insurance-percentage validate-percentage" type="number" name="coverage_percentage[]" value="{{ $policyCoverage->percentage * 100 }}" placeholder="0" min="0" max="100" step="0.01">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                             <div class="col-md">
                                 <label class="form-label">Persentase Coverage</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage" type="number" name="percentage[]" value placeholder="0" min="0" max="100" step="0.01">
+                                    <input class="form-control insurance-percentage validate-percentage" type="number" name="coverage_percentage[]" value placeholder="0" min="0" max="100" step="0.01">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -142,7 +142,7 @@
                             <div class="col-md mb-2">
                                 <label class="form-label">Persentase Asuransi</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage" type="number" name="insurance_percentage[]" value="{{ isset($policyInsurance) ? $policyInsurance->percentage * 100 : '' }}" placeholder="0" min="0" max="100" step="0.01">
+                                    <input class="form-control insurance-percentage validate-percentage" type="number" name="insurance_percentage[]" value="{{ isset($policyInsurance) ? $policyInsurance->percentage * 100 : '' }}" placeholder="0" min="0" max="100" step="0.01">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
                                 <div class="col-md mb-2">
                                     <label class="form-label">Persentase Asuransi</label>
                                     <div class="input-group mb-3">
-                                        <input class="form-control insurance-percentage" type="number" name="percentage[]" value placeholder="0" min="0" max="100" step="0.01">
+                                        <input class="form-control insurance-percentage validate-percentage" type="number" name="insurance_percentage[]" value placeholder="0" min="0" max="100" step="0.01">
                                         <span class="input-group-text">%</span>
                                     </div>
                                 </div>
@@ -302,7 +302,6 @@
                     placeholder: 'Pilih Mata Uang',
                     allowClear: true
                 });
-                initCustomSelect2(".add-select2");
                 initCustomSelect2(".create-select2");
             }, 100);
         });

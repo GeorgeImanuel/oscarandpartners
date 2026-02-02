@@ -125,20 +125,36 @@
         <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
         <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
         <script src="{{ asset('assets/js/form-validation.js') }}"></script>
+        <script src="{{ asset('assets/js/format.js') }}"></script>
         <script src="{{ asset('assets/js/formula.js') }}"></script>
         <script src="{{ asset('assets/js/multiple-item.js') }}"></script>
         <script src="{{ asset('assets/js/form-wizard/form-wizard-two.js') }}"></script>
 
         <script>
+            // Initialize create-select2 (complex selects with "create new" functionality)
+            initCustomSelect2(".create-select2");
+
             initializeFormValidation({
                 customValidator: function(form, fields) {
                     var errors = [];
-                    // Example: Check if every location has at least 1 BoQ entry
-                    var insurance_percentages = $(form).find('input[name="insurance_percentage[]"]').val();
-                    var coverage_percentages = $(form).find('input[name="coverage_percentage[]"]').val();
 
-                    if (insurance_percentages < 0 || insurance_percentages > 100) {
-                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
+                    // Calculate total insurance percentage
+                    var totalInsurancePercentage = 0;
+                    $(form).find('input[name="insurance_percentage[]"]').each(function() {
+                        var val = parseFloat($(this).val()) || 0;
+                        totalInsurancePercentage += val;
+                    });
+
+                    // Calculate total coverage percentage
+                    var totalCoveragePercentage = 0;
+                    $(form).find('input[name="coverage_percentage[]"]').each(function() {
+                        var val = parseFloat($(this).val()) || 0;
+                        totalCoveragePercentage += val;
+                    });
+
+                    // Validate insurance percentage total
+                    if (totalInsurancePercentage < 0 || totalInsurancePercentage > 100) {
+                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
                         errors.push({
                             field: '.insurance-percentage',
                             message: 'Total persentase asuransi harus antara 0-100%'
@@ -182,32 +198,34 @@
                 },
             });
 
-            function updateCurrencyLabel(currencyCode) {
-                // Default ke IDR jika kosong
-                var currency = currencyCode || 'Rp';
 
-                // Update semua label input group
-                $('.currency-label').text(currency);
 
-                // Update format rupiah di ringkasan pembayaran (bawah form)
-                // Kita simpan currency code di variabel global agar fungsi formatRupiah bisa akses
-                window.currentCurrency = currency;
-            }
+            // Validate percentage inputs to be between 0-100
+            $(document).on('input keyup change blur focusout', '.validate-percentage', function(e) {
+                var value = parseFloat($(this).val());
+                var $inputGroup = $(this).closest('.input-group').length > 0 ?
+                    $(this).closest('.input-group') : $(this);
+                var $errorMsg = $inputGroup.next('.error-message');
 
-            // Initialize create-select2 (complex selects with "create new" functionality)
-            initCustomSelect2(".create-select2");
-            initCustomSelect2(".add-select2");
-
-            // Format number to Rupiah
-            function formatRupiah(value) {
-                var number = parseFloat(value) || 0;
-                var currency = window.currentCurrency || 'Rp';
-                var formattedNumber = number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                if (currency !== 'Rp') {
-                    formattedNumber = number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                // Validasi
+                if (value < 0) {
+                    $(this).val(0).trigger('change');
+                    if ($errorMsg.length === 0) {
+                        $inputGroup.after('<div class="error-message" style="color: red;">Nilai harus diantara 0-100!!</div>');
+                    }
+                } else if (value > 100) {
+                    $(this).val(100).trigger('change');
+                    $(this).addClass('is-invalid border-danger');
+                    if ($errorMsg.length === 0) {
+                        $inputGroup.after('<div class="error-message" style="color: red;">Nilai harus diantara 0-100!!</div>');
+                    }
                 }
-                return currency + ' ' + formattedNumber;
-            }
+
+                if (e.type === 'blur' || e.type === 'focusout') {
+                    $(this).removeClass('is-invalid border-danger');
+                    $errorMsg.remove();
+                }
+            });
         </script>
     @endpush
 @endsection

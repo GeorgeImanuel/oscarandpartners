@@ -58,7 +58,7 @@
                 <label class="form-label"
                     for="client_id">Nama Client</label>
                 <select id="client_id"
-                    class="form-control add-select2 @error('client_id') is-invalid @enderror"
+                    class="form-control create-select2 @error('client_id') is-invalid @enderror"
                     data-existing-id="#existing-client"
                     data-existing-name="client_id"
                     data-new-id="#new-client"
@@ -95,37 +95,37 @@
 @push('scripts')
     <script>
         // Toggle parent_card_id based on card_status_id
-        $('#card_type_id').on('change', function() {
-            var cardTypeId = $('#card_type_id').val();
-            var parentContainer = $('#parent_card_container');
-            var parentSelect = $('#parent_card_id');
+        // $('#card_type_id').on('change', function() {
+        //     var cardTypeId = $('#card_type_id').val();
+        //     var parentContainer = $('#parent_card_container');
+        //     var parentSelect = $('#parent_card_id');
 
-            if (cardTypeId == '{{ config('constants.card_type.new') }}') {
-                parentContainer.hide();
-                parentSelect.removeAttr('required');
-                parentSelect.val('').trigger('change'); // Clear selection
+        //     if (cardTypeId == '{{ config('constants.card_type.new') }}') {
+        //         parentContainer.hide();
+        //         parentSelect.removeAttr('required');
+        //         parentSelect.val('').trigger('change'); // Clear selection
 
-                parentContainer.find('.required').removeAttr('required');
-            } else {
-                parentContainer.show();
-                parentSelect.attr('required', true);
+        //         parentContainer.find('.required').removeAttr('required');
+        //     } else {
+        //         parentContainer.show();
+        //         parentSelect.attr('required', true);
 
-                parentContainer.find('.required').attr('required', true);   
-            }
-        });
+        //         parentContainer.find('.required').attr('required', true);   
+        //     }
+        // });
 
-        $('#parent_card_id').on('change', function() {
-            var selectedOption = $(this).find('option:selected');
-            var clientId = selectedOption.data('client-id') || '';
-            var policyId = selectedOption.data('policy-id') || '';
+        // $('#parent_card_id').on('change', function() {
+        //     var selectedOption = $(this).find('option:selected');
+        //     var clientId = selectedOption.data('client-id') || '';
+        //     var policyId = selectedOption.data('policy-id') || '';
 
-            // Set the client_id select2 value
-            $('#client_id').val(clientId).trigger('change');
+        //     // Set the client_id select2 value
+        //     $('#client_id').val(clientId).trigger('change');
 
-            // Set the policy_id select2 value (with delay to ensure element is ready)
-            setTimeout(function() {
-                $('#policy_id').val(policyId).trigger('change.select2').trigger('change');
-            }, 300);
-        });
+        //     // Set the policy_id select2 value (with delay to ensure element is ready)
+        //     setTimeout(function() {
+        //         $('#policy_id').val(policyId).trigger('change.select2').trigger('change');
+        //     }, 300);
+        // });
     </script>
 @endpush
