@@ -11,8 +11,8 @@
                     for="policy_id">Nomor Polis</label>
                 <select id="policy_id"
                     class="form-control create-select2 @error('policy_id') is-invalid @enderror"
-                    data-existing-name="policy_id"
-                    data-new-name="policy_number"
+                    {{-- data-existing-name="policy_id"
+                    data-new-name="policy_number" --}}
                     data-placeholder="Pilih Polis"
                     name="policy_id"
                     wire:ignore
@@ -54,7 +54,7 @@
         });
 
         // Listen to policy_id dropdown change and update Livewire component
-        $('#policy_id').on('change', function() {
+        $(document).on('change', '#policy_id', function() {
             var policyId = $(this).val();
 
             // Toggle new-policy-container visibility
@@ -75,6 +75,7 @@
             var currencyCode = selectedOption.data('currency');
             updateCurrencyLabel(currencyCode);
             update_payment();
+
             // Find the Livewire component and update policyId
             var container = document.querySelector('#policy-details-container [wire\\:id]');
             if (container && typeof window.Livewire !== 'undefined') {
@@ -83,12 +84,6 @@
                     livewireComponent.set('policyId', policyId);
                 }
             }
-        });
-
-        // Reset object details when object_id changes
-        $(document).on('change', 'select[name=object_name]', function() {
-            $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
-            $nextObjectContainer.html('<div wire:loading.remove="" class="alert alert-light dark" role="alert"> Pilih nomor polis untuk melihat detail!</div>');
         });
 
         // Listen to object_id dropdown change and update Livewire component
@@ -122,17 +117,17 @@
         });
 
         // Listen to object_id dropdown change and update Livewire component
-        $(document).on('change', '.object-select', function() {
-            var row = $(this).closest('.object-row');
-            var selectedOption = $(this).find(':selected');
-            var value = parseFloat(selectedOption.data('value')) || 0;
+        // $(document).on('change', '.object-select', function() {
+        //     var row = $(this).closest('.object-row');
+        //     var selectedOption = $(this).find(':selected');
+        //     var value = parseFloat(selectedOption.data('value')) || 0;
 
-            // Update tampilan nilai per baris
-            row.find('.object-value-display').val(formatRupiah(value));
+        //     // Update tampilan nilai per baris
+        //     row.find('.object-value-display').val(formatRupiah(value));
 
-            // Hitung total semua objek
-            calculateTotalObjectValue();
-        });
+        //     // Hitung total semua objek
+        //     calculateTotalObjectValue();
+        // });
 
         // Listen to policy_id dropdown change and refresh Livewire policy-form component
         $(document).on('change', '#policy_id', function() {
@@ -150,40 +145,39 @@
 
 
 
-        function calculateTotalObjectValue() {
-            var totalValue = 0;
+        // function calculateTotalObjectValue() {
+        //     var totalValue = 0;
 
-            // Loop semua dropdown objek yang dipilih
-            $('.object-select').each(function() {
-                var selectedOption = $(this).find(':selected');
-                var value = parseFloat(selectedOption.data('value')) || 0;
-                totalValue += value;
-            });
+        //     // Loop semua dropdown objek yang dipilih
+        //     $('.object-select').each(function() {
+        //         var selectedOption = $(this).find(':selected');
+        //         var value = parseFloat(selectedOption.data('value')) || 0;
+        //         totalValue += value;
+        //     });
 
-            // Update Tampilan Total (Text)
-            $('#total-object-value').text(formatRupiah(totalValue));
+        //     // Update Tampilan Total (Text)
+        //     $('#total-object-value').text(formatRupiah(totalValue));
 
-            // Update Input Hidden/Readonly yang dipakai update_payment()
-            // Pastikan di HTML ada input dengan id="object_value"
-            $('#object_value').val(totalValue);
+        //     // Update Input Hidden/Readonly yang dipakai update_payment()
+        //     // Pastikan di HTML ada input dengan id="object_value"
+        //     $('#object_value').val(totalValue);
 
-            // Trigger hitung ulang payment
-            update_payment();
+        //     // Trigger hitung ulang payment
+        //     update_payment();
 
-            if (totalValue > 0) $('#object-value-info').show();
-            else $('#object-value-info').hide();
-        }
+        //     if (totalValue > 0) $('#object-value-info').show();
+        //     else $('#object-value-info').hide();
+        // }
 
         // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
         document.addEventListener('livewire:init', () => {
             Livewire.on('policyLoaded', (event) => {
-                const objectId = event.objectId || event[0]?.objectId || null;
+                const objectId           = event.objectId || event[0]?.objectId || null;
                 const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
-                const totalObjectValue = event.totalObjectValue || event[0]?.totalObjectValue || 0;
-                const objectsCount = event.objectsCount || event[0]?.objectsCount || 0;
 
+                console.log('Policy loaded:', event);
                 // Update field Harga Pertanggungan
-                $('#object_value').val(totalObjectValue);
+                // $('#object_value').val(totalObjectValue);
 
                 // // Update display (format Rupiah)
                 // $('#total-object-value').text(formatRupiah(totalObjectValue));
@@ -203,6 +197,7 @@
                 // Reinitialize select2 after policy objects are loaded
                 setTimeout(function() {
                     if (typeof initCustomSelect2 === 'function') {
+                        console.log('Reinitializing select2 for .create-select2');
                         initCustomSelect2(".create-select2");
                     }
 
@@ -341,58 +336,22 @@
         //     update_payment();
         // }
 
-        // Listen for changes and sum input values
+        // Listen for changes and sum/validate to be between 0-100
         $(document).on('input change keyup blur', 'input[name="coverage_percentage[]"]', function() {
-            sumInputValues('input[name="coverage_percentage[]"]', '.coverage_percentage_total');    
+            validateValues('input[name="coverage_percentage[]"]', '#coverage_percentage_total', 0, 100);
         });
         $(document).on('input change keyup blur', 'input[name="insurance_percentage[]"]', function() {
-            sumInputValues('input[name="insurance_percentage[]"]', '.insurance_percentage_total');
+            validateValues('input[name="insurance_percentage[]"]', '#insurance_percentage_total', 0, 100);
         });
-        $(document).on('input change keyup blur', 'input[name="object_value_input"]', function() {
+        $(document).on('input change keyup blur', 'input[name="interest_value[]"]', function() {
+            var $itemObject = $(this).closest('.item-object');
+            var $objectValueInput = $itemObject.find('input[name="object_value_input"]');
+            
+            // Sum all interest values in this item
+            sumInputValues($itemObject.find('input[name="interest_value[]"]'), $objectValueInput);
+            
+            // After updating object_value_input, sum all object_value_inputs
             sumInputValues('input[name="object_value_input"]', '#object_value');
-        });
-
-        // // Also call on page load to initialize
-        // $(document).ready(function() {
-        //     // Also listen for Livewire updates
-        //     if (typeof Livewire !== 'undefined') {
-        //         Livewire.hook('commit', ({
-        //             component,
-        //             commit,
-        //             respond,
-        //             succeed,
-        //             fail
-        //         }) => {
-        //             succeed(({
-        //                 snapshot,
-        //                 effect
-        //             }) => {
-        //                 setTimeout(function() {
-        //                     sumInputValues('input[name="object_value_input"]', '#object_value');
-        //                 }, 200);
-        //             });
-        //         });
-        //     }
-        // });
-
-        function validatePercentage(target) {
-            console.log('Validating percentages for target:', target);
-            var name = $(this).attr('name');
-            var inputs = $('input[name="' + name + '"]');
-            var total = 0;
-            inputs.each(function() {
-                var value = parseFloat($(this).val()) || 0;
-                total += value;
-            });
-            $('#' + target + '_total').text(total.toFixed(2) + '%');
-            $('#' + target + '_value').val(total.toFixed(2));
-        }
-
-        $(document).on('input change', 'input[name="insurance_percentage[]"]', function() {
-            validatePercentage.call(this, 'insurance_percentage');
-        });
-        $(document).on('input change', 'input[name="coverage_percentage[]"]', function() {
-            validatePercentage.call(this, 'coverage_percentage');
         });
     </script>
 @endpush

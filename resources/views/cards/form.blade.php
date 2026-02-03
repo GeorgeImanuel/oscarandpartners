@@ -133,7 +133,8 @@
         <script>
             // Initialize create-select2 (complex selects with "create new" functionality)
             initCustomSelect2(".create-select2");
-
+            
+            // Initialize form validation with custom validator
             initializeFormValidation({
                 customValidator: function(form, fields) {
                     var errors = [];
@@ -198,33 +199,9 @@
                 },
             });
 
-
-
             // Validate percentage inputs to be between 0-100
             $(document).on('input keyup change blur focusout', '.validate-percentage', function(e) {
-                var value = parseFloat($(this).val());
-                var $inputGroup = $(this).closest('.input-group').length > 0 ?
-                    $(this).closest('.input-group') : $(this);
-                var $errorMsg = $inputGroup.next('.error-message');
-
-                // Validasi
-                if (value < 0) {
-                    $(this).val(0).trigger('change');
-                    if ($errorMsg.length === 0) {
-                        $inputGroup.after('<div class="error-message" style="color: red;">Nilai harus diantara 0-100!!</div>');
-                    }
-                } else if (value > 100) {
-                    $(this).val(100).trigger('change');
-                    $(this).addClass('is-invalid border-danger');
-                    if ($errorMsg.length === 0) {
-                        $inputGroup.after('<div class="error-message" style="color: red;">Nilai harus diantara 0-100!!</div>');
-                    }
-                }
-
-                if (e.type === 'blur' || e.type === 'focusout') {
-                    $(this).removeClass('is-invalid border-danger');
-                    $errorMsg.remove();
-                }
+                validateValues('.validate-percentage', null, 0, 100);
             });
         </script>
     @endpush

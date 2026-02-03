@@ -41,5 +41,110 @@ function sumInputValues(selector, target) {
     } else {
         $target.text(sum);
     }
-    console.log("Sum updated:", sum);
+    console.info("Sum updated:", sum);
 }
+
+/**
+ *
+ * @param {*} selector
+ * @param {*} target
+ * @param {*} min
+ * @param {*} max
+ * @returns
+ */
+function validateValues(selector, target, min, max) {
+    // Handle selector - can be id, class, or jQuery object
+    var $inputs = selector instanceof jQuery ? selector : $(selector);
+    var total = 0;
+
+    $inputs.each(function () {
+        var value = parseFloat($(this).val()) || 0;
+        var $input = $(this);
+        var $inputGroup =
+            $input.closest(".input-group").length > 0
+                ? $input.closest(".input-group")
+                : $input;
+        var $errorMsg = $inputGroup.next(".error-message");
+
+        // Validate individual input against min/max if provided
+        if (typeof min !== "undefined" && value < min) {
+            $input.val(min);
+            value = min;
+            $input.addClass("is-invalid border-danger");
+            if ($errorMsg.length === 0) {
+                $inputGroup.after(
+                    '<div class="error-message" style="color: red;">Nilai harus diantara ' +
+                        min +
+                        "-" +
+                        max +
+                        "!!</div>",
+                );
+            }
+        } else if (typeof max !== "undefined" && value > max) {
+            $input.val(max);
+            value = max;
+            $input.addClass("is-invalid border-danger");
+            if ($errorMsg.length === 0) {
+                $inputGroup.after(
+                    '<div class="error-message" style="color: red;">Nilai harus diantara ' +
+                        min +
+                        "-" +
+                        max +
+                        "!!</div>",
+                );
+            }
+        }
+
+        total += value;
+    });
+
+    // Validate total against min/max if provided
+    var isValid = true;
+    if (typeof min !== "undefined" && total < min) {
+        isValid = false;
+        console.warn("Total value", total, "is below minimum:", min);
+    }
+    if (typeof max !== "undefined" && total > max) {
+        isValid = false;
+        console.warn("Total value", total, "exceeds maximum:", max);
+    }
+
+    // Handle target - can be id, class, or jQuery object
+    var $target = target instanceof jQuery ? target : $(target);
+
+    // Update class based on validation result
+    if (isValid) {
+        $target
+            .closest(".alert")
+            .removeClass("alert-danger")
+            .addClass("alert-success");
+    } else {
+        $target
+            .closest(".alert")
+            .removeClass("alert-success")
+            .addClass("alert-danger");
+    }
+    console.info("Validation result for total", total, "isValid:", isValid);
+
+    if ($target.is("input")) {
+        $target.val(total.toFixed(2)).trigger("change");
+    } else {
+        $target.text(total.toFixed(2));
+    }
+
+    return isValid;
+}
+
+// Validate individual percentage input on blur/focusout
+$(document).on("blur focusout", ".validate-percentage", function () {
+    var $input = $(this);
+    var $inputGroup =
+        $input.closest(".input-group").length > 0
+            ? $input.closest(".input-group")
+            : $input;
+    var $errorMsg = $inputGroup.next(".error-message");
+
+    // Remove validation styling and error message on blur
+    $input.removeClass("is-invalid border-danger");
+    $errorMsg.remove();
+});

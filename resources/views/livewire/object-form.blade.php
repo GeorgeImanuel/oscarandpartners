@@ -138,7 +138,6 @@
         <div class="input-group mb-3">
             <span class="input-group-text">Rp</span>
             <input class="form-control required @error('object_value_input') is-invalid @enderror"
-                id="object_value_input"
                 name="object_value_input"
                 type="number"
                 step="0.00001"
