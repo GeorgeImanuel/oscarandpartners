@@ -296,8 +296,7 @@
 
                     <div class="col-md-12 mb-3 item-list">
                         {{-- Start Item Object Template --}}
-                        <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3"
-                            style="display:none">
+                        <div class="row align-items-end item item-object item-template border border-primary py-3 mx-0 mb-3" style="display:none">
                             <div class="col-md-10 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
@@ -320,10 +319,8 @@
                                 <span class="remove-item-btn btn btn-danger btn-xs"
                                     style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
                             </div>
-                            <div id="object-form-livewire"
-                                class="col-md-12 object-forms-container"
-                                style="display:none;">
-                                @livewire('object-form', ['objectId' => null], key('object-form-' . uniqid()))
+                            <div id="object-form-livewire" class="col-md-12 object-forms-container">
+                                @livewire('object-form', ['objectId' => null], key('object-form-template-' . uniqid()))
                             </div>
                         </div>
                         {{-- End Item Object Template --}}
@@ -356,7 +353,7 @@
 
                                 {{-- Object Form --}}
                                 <div class="col-md-12 object-forms-container">
-                                    @livewire('object-form', ['objectId' => $policyObject->object_id ?? null], key('object-form-' . $policyObject->id ?? uniqid()))
+                                    @livewire('object-form', ['objectId' => $policyObject->object_id ?? null], key('object-form-existing-' . $index . '-' . ($policyObject->id ?? uniqid())))
                                 </div>
                             </div>
                         @empty
@@ -387,7 +384,7 @@
                                 {{-- Object Form --}}
                                 <div class="col-md-12 object-forms-container"
                                     style="display:none;">
-                                    @livewire('object-form', ['objectId' => null], key('object-form-' . uniqid()))
+                                    @livewire('object-form', ['objectId' => null], key('object-form-empty-' . uniqid()))
                                 </div>
                             </div>
                         @endforelse
@@ -467,7 +464,7 @@
             if (selectedValue) {
                 $formContainer.show();
 
-                // Load object data into form
+                // Find the livewire component inside this container
                 var formComponent = $formContainer.find('[wire\\:id]').first();
                 if (formComponent.length) {
                     var componentId = formComponent.attr('wire:id');
@@ -476,6 +473,13 @@
                         component.set('objectId', selectedValue);
                     }
                 }
+                
+                if($itemContainer.hasClass('item-template')) {
+                    $templateLivewire = $('#object-form-livewire').clone();
+                    $itemContainer.find('.object-forms-container').replaceWith($templateLivewire).slideDown();
+                    $itemContainer.find('input').prop('disabled', false);
+                }
+
             } else {
                 $formContainer.hide();
             }
@@ -522,18 +526,3 @@
         });
     </script>
 @endscript
-
-{{-- <div class="col-md-12 mb-3">
-        <label class="form-label" for="object_id">Objek <span class="text-danger">*</span></label>
-        <select id="object_id" class="add-single-select2 required  @error('object_id') is-invalid @enderror" name="object_id" style="width: 100%;">
-            <option value="">- Pilih Objek -</option>
-            @foreach ($objects ?? [] as $object)
-                <option value="{{ $object->id }}" {{ isset($policy) && $policy->object_id == $object->id ? 'selected' : (old('object_id') == $object->id ? 'selected' : '') }}>
-                    {{ $object->name }}
-                </option>
-            @endforeach
-        </select>
-        @error('object_id')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div> --}}

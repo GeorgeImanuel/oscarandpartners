@@ -78,11 +78,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            {{-- Exist client Detail --}}
-            <div id="client-details-container"
-                class="col-md-12">
-            </div>
-
+ 
             {{-- New client Input --}}
             <div class="col-md-12">
                 @livewire('client-form')
@@ -90,42 +86,3 @@
         </div>
     </div>
 </div>
-{{-- CARD INFO END --}}
-
-@push('scripts')
-    <script>
-        // Toggle parent_card_id based on card_status_id
-        // $('#card_type_id').on('change', function() {
-        //     var cardTypeId = $('#card_type_id').val();
-        //     var parentContainer = $('#parent_card_container');
-        //     var parentSelect = $('#parent_card_id');
-
-        //     if (cardTypeId == '{{ config('constants.card_type.new') }}') {
-        //         parentContainer.hide();
-        //         parentSelect.removeAttr('required');
-        //         parentSelect.val('').trigger('change'); // Clear selection
-
-        //         parentContainer.find('.required').removeAttr('required');
-        //     } else {
-        //         parentContainer.show();
-        //         parentSelect.attr('required', true);
-
-        //         parentContainer.find('.required').attr('required', true);   
-        //     }
-        // });
-
-        // $('#parent_card_id').on('change', function() {
-        //     var selectedOption = $(this).find('option:selected');
-        //     var clientId = selectedOption.data('client-id') || '';
-        //     var policyId = selectedOption.data('policy-id') || '';
-
-        //     // Set the client_id select2 value
-        //     $('#client_id').val(clientId).trigger('change');
-
-        //     // Set the policy_id select2 value (with delay to ensure element is ready)
-        //     setTimeout(function() {
-        //         $('#policy_id').val(policyId).trigger('change.select2').trigger('change');
-        //     }, 300);
-        // });
-    </script>
-@endpush
