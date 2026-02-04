@@ -12,6 +12,7 @@ class ObjectForm extends Component
 {
     public $objectId;
     public $object = null;
+    public $isDisabled = false;
     
     protected $objectService;
     protected $objectOccupationService;
@@ -46,7 +47,10 @@ class ObjectForm extends Component
             $this->object = $this->objectService->find($this->objectId);
         } else {
             $this->object = null;
-        }
+        }       
+        $this->dispatch(
+            'objectLoaded',
+        );
     }
 
     public function render()

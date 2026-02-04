@@ -284,7 +284,8 @@
         <div class="row">
             {{-- OBJECT INFO START --}}
             <div class="col-md-12 mb-3">
-                <div class="row multiple-item-container">
+                <div id="object-item-container"
+                    class="row multiple-item-container">
                     <div class="col-md mt-2 mb-3">
                         <h5 class="text-primary">Objek Pertanggungan</h5>
                         <hr class="separator">
@@ -296,7 +297,8 @@
 
                     <div class="col-md-12 mb-3 item-list">
                         {{-- Start Item Object Template --}}
-                        <div class="row align-items-end item item-object item-template border border-primary py-3 mx-0 mb-3" style="display:none">
+                        <div class="row align-items-end item item-object item-template border border-primary py-3 mx-0 mb-3"
+                            style="display: none">
                             <div class="col-md-10 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
@@ -319,8 +321,13 @@
                                 <span class="remove-item-btn btn btn-danger btn-xs"
                                     style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
                             </div>
-                            <div id="object-form-livewire" class="col-md-12 object-forms-container">
-                                @livewire('object-form', ['objectId' => null], key('object-form-template-' . uniqid()))
+                            <div id="object-form-livewire"
+                                class="col-md-12 object-forms-container"
+                                style="display:none;">
+                                <input type="hidden"
+                                    value=""name="class"
+                                    disabled>
+                                @livewire('object-form', ['objectId' => null, 'isDisabled' => true], key('object-form-template-' . uniqid()))
                             </div>
                         </div>
                         {{-- End Item Object Template --}}
@@ -402,6 +409,36 @@
 
 @script
     <script>
+        // Listen for objectLoaded event
+        Livewire.on('objectLoaded', (event) => {
+            var $template = $('#object-form-livewire');
+            var className = $template.find('input[name="class"]').val();
+
+            if (className) {
+                var $cloneContent = $template.clone();
+
+                // Split the class string and find elements that have all these classes
+                var classArray = className.split(' ').filter(c => c.trim() !== '');
+                var selector = '.' + classArray.join('.');
+                var $targetContainer = $('#object-item-container').find(selector).first();
+
+                if ($targetContainer.length) {
+                    console.log('Target container found:', $targetContainer);
+                    $targetContainer.find('.object-forms-container').html($cloneContent.html());
+                    $targetContainer.find('.object-forms-container input, .object-forms-container textarea, .object-forms-container select, .object-forms-container button').prop('disabled', false);
+                    initCustomSelect2($targetContainer.find('.add-select2'));
+                } else {
+                    console.log('Target container not found for selector:', selector);
+                }
+
+                // Clear the class value
+                $template.find('input[name="class"]').val('');
+            } else {
+                console.log('No className found in input[name="class"]');
+            }
+            update_payment(); // Trigger calculation when policy is loaded
+        });
+
         // Listen for currency code update event
         $wire.on('setCurrencyCode', (event) => {
             var currencyCode = event.currencyCode || (event[0] && event[0].currencyCode) || '';
@@ -458,6 +495,7 @@
 
         // Shared function to handle object selection
         function handleObjectSelection($select, selectedValue) {
+            console.log('Handling object selection for value:', selectedValue);
             var $itemContainer = $select.closest('.item-object');
             var $formContainer = $itemContainer.find('.object-forms-container');
 
@@ -473,11 +511,11 @@
                         component.set('objectId', selectedValue);
                     }
                 }
-                
-                if($itemContainer.hasClass('item-template')) {
-                    $templateLivewire = $('#object-form-livewire').clone();
-                    $itemContainer.find('.object-forms-container').replaceWith($templateLivewire).slideDown();
-                    $itemContainer.find('input').prop('disabled', false);
+
+                if ($itemContainer.hasClass('item-template')) {
+                    $class = $itemContainer.attr('class');
+                    console.log('Setting class value:', $class);
+                    $('#object-form-livewire').find('input[name="class"]').val($class);
                 }
 
             } else {

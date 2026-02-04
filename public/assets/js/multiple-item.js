@@ -66,7 +66,7 @@ $(document).on("click", ".add-item-btn", function () {
         // Update item text title
         newItem.find(".item-count").text(itemCount);
         newItem.attr("data-item_index", itemCount);
-        // newItem.addClass("item-" + itemCount);
+        newItem.addClass("item-" + itemCount);
         newItem.removeClass("no-print");
 
         // Remove select2 & Reinit the select2

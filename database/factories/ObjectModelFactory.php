@@ -17,10 +17,11 @@ class ObjectModelFactory extends Factory
      */
     public function definition(): array
     {
+        $name = 'Object ' . fake()->numberBetween(1, 1000);
         return [
             'object_occupation_id' => ObjectOccupation::inRandomOrder()->first()?->id ?? ObjectOccupation::factory(),
-            'name' => 'Object '. fake()->numberBetween(1, 1000),
-            'keterangan' => fake()->sentence(),
+            'name' => $name,
+            'keterangan' => 'Address ' . $name,
         ];
     }
 }

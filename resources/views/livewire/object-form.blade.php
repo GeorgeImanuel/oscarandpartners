@@ -7,7 +7,8 @@
             name="object_occupation_id"
             id="object_occupation_id"
             data-placeholder="Pilih Objek Occupation"
-            style="width: 100%;">
+            style="width: 100%;"
+            {{ $isDisabled ? 'disabled' : '' }}>
             <option value="">- Pilih Objek Occupation -</option>
             @foreach ($objectOccupations ?? [] as $objectOccupation)
                 <option value="{{ $objectOccupation->id }}"
@@ -30,7 +31,8 @@
                 id="tjh"
                 name="tjh"
                 type="text"
-                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}" />
+                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}"
+                {{ $isDisabled ? 'disabled' : '' }} />
                 @error('tjh')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -42,7 +44,8 @@
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
             name="object_keterangan"
-            rows="3">{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
+            rows="3"
+            {{ $isDisabled ? 'disabled' : '' }}>{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
         @error('object_keterangan')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -52,7 +55,8 @@
         <label>Komponen Objek (Interests)</label>
         <button type="button"
             class="btn btn-primary btn-sm float-end add-item-btn"
-            data-target="object-interest-item">
+            data-target="object-interest-item"
+            {{ $isDisabled ? 'disabled' : '' }}>
             <i class="icon-plus me-2"></i>Tambah Interest
         </button>
         <div class="item-list pt-2">
@@ -65,7 +69,8 @@
                                 <select class="form-select add-select2 required"
                                     name="interest_id[]"
                                     data-placeholder="Pilih Interest"
-                                    style="width: 100%;">
+                                    style="width: 100%;"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
                                     <option value=""></option>
                                     @foreach ($interests as $interest)
                                         <option value="{{ $interest->id }}" {{ $objectInterest->interest_id == $interest->id ? 'selected' : '' }}>
@@ -81,13 +86,15 @@
                                     <input type="number"
                                         class="form-control"
                                         name="interest_value[]"
-                                        value="{{ $objectInterest->value ?? 0 }}">
+                                        value="{{ $objectInterest->value ?? 0 }}"
+                                        {{ $isDisabled ? 'disabled' : '' }}>
                                 </div>
                             </div>
                             <div class="col-md-1 pt-3">
                                 <button type="button"
                                     class="btn btn-danger btn-xs remove-item-btn"
-                                    style="{{ $index == 0 ? 'display:none;' : '' }}">
+                                    style="{{ $index == 0 ? 'display:none;' : '' }}"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
                                     <i class="icon-trash me-2"></i> Hapus
                                 </button>
                             </div>
@@ -102,7 +109,8 @@
                             <select class="form-select add-select2 required"
                                 name="interest_id[]"
                                 data-placeholder="Pilih Interest"
-                                style="width: 100%;">
+                                style="width: 100%;"
+                                {{ $isDisabled ? 'disabled' : '' }}>
                                 <option value=""></option>
                                 @foreach ($interests as $interest)
                                     <option value="{{ $interest->id }}">
@@ -117,13 +125,15 @@
                                 <span class="input-group-text">Rp</span>
                                 <input type="number"
                                     class="form-control"
-                                    name="interest_value[]">
+                                    name="interest_value[]"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
                             </div>
                         </div>
                         <div class="col-md-1 pt-3">
                             <button type="button"
                                 class="btn btn-danger btn-xs remove-item-btn"
-                                style="display:none;">
+                                style="display:none;"
+                                {{ $isDisabled ? 'disabled' : '' }}>
                                 <i class="icon-trash me-2"></i> Hapus
                             </button>
                         </div>

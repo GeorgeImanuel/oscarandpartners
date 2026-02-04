@@ -62,8 +62,9 @@
                     data-existing-id="#existing-client"
                     data-existing-name="client_id"
                     data-new-id="#new-client"
-                    data-new-name="client_number"
+                    data-new-name="client_name"
                     data-placeholder="Pilih Nama Client"
+                    {{-- --}}
                     name="client_id"
                     required>
                     <option value=""></option>
@@ -78,11 +79,28 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
- 
             {{-- New client Input --}}
-            <div class="col-md-12">
+            <div id="client-form-container"
+                class="col-md-12">
                 @livewire('client-form')
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        $(document).on('change', '#client_id', function() {
+            var clientId = $(this).val();
+            // Find the Livewire component and update clientId
+            var container = document.querySelector('#policy-details-container [wire\\:id]');
+            if (container && typeof window.Livewire !== 'undefined') {
+                var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
+                if (livewireComponent) {
+                    livewireComponent.set('clientId', clientId);
+                }
+            }
+        });
+        
+    </script>
+@endpush

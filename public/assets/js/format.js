@@ -30,8 +30,10 @@ function sumInputValues(selector, target) {
     var $selectors = selector instanceof jQuery ? selector : $(selector);
 
     $selectors.each(function () {
-        var val = parseFloat($(this).val()) || 0;
-        sum += val;
+        if (!$(this).is(':disabled')) {
+            var val = parseFloat($(this).val()) || 0;
+            sum += val;
+        }
     });
 
     // Handle target - can be id, class, or jQuery object
