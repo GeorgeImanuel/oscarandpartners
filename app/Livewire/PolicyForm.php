@@ -73,7 +73,7 @@ class PolicyForm extends Component
         $currencies       = $this->currencyService->all();
         $insurances       = $this->insuranceService->all();
         $policyInsurances = $this->policyInsuranceService->all();
-
+        
         return view('livewire.policy-form', compact(
             'objects',
             'coverages',

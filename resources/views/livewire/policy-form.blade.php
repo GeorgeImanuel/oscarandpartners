@@ -32,8 +32,9 @@
                 wire:ignore>
                 <label class="form-label"
                     for="currency_code">Mata Uang <span class="text-danger">*</span></label>
+
                 <select id="currency_code"
-                    class="form-select create-select2 required @error('currency_code') is-invalid @enderror"
+                    class="form-select required @error('currency_code') is-invalid @enderror"
                     data-placeholder="Pilih Mata Uang"
                     data-selected-value="{{ $policy->currency_code ?? '' }}"
                     name="currency_code">
@@ -41,7 +42,7 @@
                     @foreach ($currencies as $currency)
                         <option value="{{ $currency->code }}"
                             {{ isset($policy) && $policy->currency_code == $currency->code ? 'selected' : (old('currency_code') == $currency->code ? 'selected' : '') }}>
-                            {{ $currency->name }}
+                            {{ $currency->code }} - {{ $currency->name }}
                         </option>
                     @endforeach
                 </select>
@@ -294,6 +295,40 @@
                     </div>
 
                     <div class="col-md-12 mb-3 item-list">
+                        {{-- Start Item Object Template --}}
+                        <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3"
+                            style="display:none">
+                            <div class="col-md-10 mb-3">
+                                <label class="form-label"
+                                    for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                                <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
+                                    name="object_id"
+                                    data-placeholder="Pilih Objek"
+                                    required>
+                                    <option value=""></option>
+                                    @foreach ($objects ?? [] as $object)
+                                        <option value="{{ $object->id }}">
+                                            {{ $object->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('object_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <span class="remove-item-btn btn btn-danger btn-xs"
+                                    style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
+                            </div>
+                            <div id="object-form-livewire"
+                                class="col-md-12 object-forms-container"
+                                style="display:none;">
+                                @livewire('object-form', ['objectId' => null], key('object-form-' . uniqid()))
+                            </div>
+                        </div>
+                        {{-- End Item Object Template --}}
+
+                        {{-- Existing Objects --}}
                         @forelse ((isset($policy) && $policy ? ($policy->policyObjects ?? []) : []) as $index => $policyObject)
                             <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3">
                                 <div class="col-md-10 mb-3">
@@ -301,11 +336,7 @@
                                         for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id"
-                                        {{-- data-existing-name="object_id" --}}
-                                        {{-- data-new-name="object_name" --}}
                                         data-placeholder="Pilih Objek"
-                                        {{-- --}}
-                                        name="object_id"
                                         required>
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
@@ -335,11 +366,7 @@
                                         for="object_id">Nama Objek <span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id"
-                                        {{-- data-new-id=".object-forms-container" --}}
-                                        {{-- data-new-name="object_name" --}}
                                         data-placeholder="Pilih Objek"
-                                        {{-- --}}
-                                        name="object_id"
                                         required>
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)

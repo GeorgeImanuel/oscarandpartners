@@ -84,6 +84,17 @@
                     livewireComponent.set('policyId', policyId);
                 }
             }
+
+            var policyId = $(this).val();
+            if (policyId) {
+                Livewire.dispatch('refreshPolicyForm', {
+                    policyId: policyId
+                });
+            } else {
+                Livewire.dispatch('refreshPolicyForm', {
+                    policyId: null
+                });
+            }
         });
 
         // Listen to object_id dropdown change and update Livewire component
@@ -91,29 +102,28 @@
             var attrName = $(this).attr('name');
             var objectId = $(this).val();
 
-            var objectId = $(this).val();
             console.log('Object ID changed:', objectId);
             // Find the Livewire component and update objectId
-            var container = $('#object-details-container [wire\\:id]')[0];
-            if (container && typeof window.Livewire !== 'undefined') {
-                console.log('Found Livewire container:', container);
-                var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
-                if (livewireComponent) {
-                    livewireComponent.set('objectId', objectId);
-                }
-                $('#object_ready').val(0);
-                var $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
-                $nextObjectContainer.html('<div class="alert alert-info" role="alert"> <div class="d-flex align-items-center"> <div class="spinner-border spinner-border-sm me-2" role="status"> <span class="visually-hidden">Loading...</span> </div> <span>Memuat detail objek...</span> </div> </div>');
-                var checkReady = setInterval(function() {
-                    if ($('#object_ready').val() == 1) {
-                        clearInterval(checkReady);
-                        var $sourceContainer = $('#object-details-container');
-                        if ($nextObjectContainer.length && $sourceContainer.length) {
-                            $nextObjectContainer.html($sourceContainer.html());
-                        }
-                    }
-                }, 100);
-            }
+            // var container = $('#object-details-container [wire\\:id]')[0];
+            // if (container && typeof window.Livewire !== 'undefined') {
+            //     console.log('Found Livewire container:', container);
+            //     var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
+            //     if (livewireComponent) {
+            //         livewireComponent.set('objectId', objectId);
+            //     }
+            //     $('#object_ready').val(0);
+            //     var $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
+            //     $nextObjectContainer.html('<div class="alert alert-info" role="alert"> <div class="d-flex align-items-center"> <div class="spinner-border spinner-border-sm me-2" role="status"> <span class="visually-hidden">Loading...</span> </div> <span>Memuat detail objek...</span> </div> </div>');
+            //     var checkReady = setInterval(function() {
+            //         if ($('#object_ready').val() == 1) {
+            //             clearInterval(checkReady);
+            //             var $sourceContainer = $('#object-details-container');
+            //             if ($nextObjectContainer.length && $sourceContainer.length) {
+            //                 $nextObjectContainer.html($sourceContainer.html());
+            //             }
+            //         }
+            //     }, 100);
+            // }
         });
 
         // Listen to object_id dropdown change and update Livewire component
@@ -128,21 +138,6 @@
         //     // Hitung total semua objek
         //     calculateTotalObjectValue();
         // });
-
-        // Listen to policy_id dropdown change and refresh Livewire policy-form component
-        $(document).on('change', '#policy_id', function() {
-            var policyId = $(this).val();
-            if (policyId) {
-                Livewire.dispatch('refreshPolicyForm', {
-                    policyId: policyId
-                });
-            } else {
-                Livewire.dispatch('refreshPolicyForm', {
-                    policyId: null
-                });
-            }
-        });
-
 
 
         // function calculateTotalObjectValue() {
@@ -172,7 +167,7 @@
         // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
         document.addEventListener('livewire:init', () => {
             Livewire.on('policyLoaded', (event) => {
-                const objectId           = event.objectId || event[0]?.objectId || null;
+                const objectId = event.objectId || event[0]?.objectId || null;
                 const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
 
                 console.log('Policy loaded:', event);
@@ -346,10 +341,10 @@
         $(document).on('input change keyup blur', 'input[name="interest_value[]"]', function() {
             var $itemObject = $(this).closest('.item-object');
             var $objectValueInput = $itemObject.find('input[name="object_value_input"]');
-            
+
             // Sum all interest values in this item
             sumInputValues($itemObject.find('input[name="interest_value[]"]'), $objectValueInput);
-            
+
             // After updating object_value_input, sum all object_value_inputs
             sumInputValues('input[name="object_value_input"]', '#object_value');
         });
