@@ -18,7 +18,8 @@
         <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
             data-existing-name="relation_id"
             data-new-name="relation_name"
-            data-placeholder="Pilih Relasi"            name="relation_id">
+            data-placeholder="Pilih Relasi"
+            name="relation_id">
             <option value="">- Pilih Relasi -</option>
             @foreach ($relations ?? [] as $relation)
                 <option value="{{ $relation->id }}"
@@ -32,7 +33,7 @@
         @enderror
     </div>
 
-        <div class="col-md-12 mb-3">
+    <div class="col-md-12 mb-3">
         <label class="form-label"
             for="ended_date">Alamat<span class="text-danger">*</span></label>
         <textarea class="form-control required @error('ended_date') is-invalid @enderror"

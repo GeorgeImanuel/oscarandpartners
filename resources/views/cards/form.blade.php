@@ -162,11 +162,11 @@
                         });
                     };
 
-                    if (insurance_percentages < 0 || insurance_percentages > 100) {
+                    if (totalInsurancePercentage < 0 || totalInsurancePercentage > 100) {
                         alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
                     };
 
-                    if (coverage_percentages < 0 || coverage_percentages > 100) {
+                    if (totalCoveragePercentage < 0 || totalCoveragePercentage > 100) {
                         alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
                     };
 

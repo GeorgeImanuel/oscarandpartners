@@ -30,7 +30,7 @@ function sumInputValues(selector, target) {
     var $selectors = selector instanceof jQuery ? selector : $(selector);
 
     $selectors.each(function () {
-        if (!$(this).is(':disabled')) {
+        if (!$(this).is(":disabled")) {
             var val = parseFloat($(this).val()) || 0;
             sum += val;
         }
@@ -111,28 +111,36 @@ function validateValues(selector, target, min, max) {
         console.warn("Total value", total, "exceeds maximum:", max);
     }
 
+    console.info(
+        "Validation result for ",
+        selector,
+        total,
+        "isValid:",
+        isValid,
+    );
+
     // Handle target - can be id, class, or jQuery object
-    var $target = target instanceof jQuery ? target : $(target);
+    var $targets = target instanceof jQuery ? target : $(target);
 
-    // Update class based on validation result
-    if (isValid) {
-        $target
-            .closest(".alert")
-            .removeClass("alert-danger")
-            .addClass("alert-success");
-    } else {
-        $target
-            .closest(".alert")
-            .removeClass("alert-success")
-            .addClass("alert-danger");
-    }
-    console.info("Validation result for total", total, "isValid:", isValid);
-
-    if ($target.is("input")) {
-        $target.val(total.toFixed(2)).trigger("change");
-    } else {
-        $target.text(total.toFixed(2));
-    }
+    $targets.each(function () {
+        var $target = $(this);
+        if (isValid) {
+            $target
+                .closest(".alert")
+                .removeClass("alert-danger")
+                .addClass("alert-success");
+        } else {
+            $target
+                .closest(".alert")
+                .removeClass("alert-success")
+                .addClass("alert-danger");
+        }
+        if ($target.is("input")) {
+            $target.val(total.toFixed(2)).trigger("change");
+        } else {
+            $target.text(total.toFixed(2));
+        }
+    });
 
     return isValid;
 }

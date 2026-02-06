@@ -101,7 +101,7 @@
                 const objectId = event.objectId || event[0]?.objectId || null;
                 const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
 
-                console.log('Policy loaded:', event);
+                // console.log('Policy loaded:', event);
 
                 var rate = parseFloat(coveragePercentage) * 100;
                 $('#premi_percentages').val(rate).trigger('change');

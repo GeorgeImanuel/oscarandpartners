@@ -88,7 +88,7 @@
                             <div class="col-md mb-2">
                                 <label class="form-label">Persentase Coverage</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage validate-percentage"
+                                    <input class="form-control"
                                         type="number"
                                         name="coverage_percentage[]"
                                         value="{{ $policyCoverage->percentage * 100 }}"
@@ -125,7 +125,7 @@
                             <div class="col-md">
                                 <label class="form-label">Persentase Coverage</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage validate-percentage"
+                                    <input class="form-control"
                                         type="number"
                                         name="coverage_percentage[]"
                                         value
@@ -192,7 +192,7 @@
                             <div class="col-md mb-2">
                                 <label class="form-label">Persentase Asuransi</label>
                                 <div class="input-group">
-                                    <input class="form-control insurance-percentage validate-percentage"
+                                    <input class="form-control"
                                         type="number"
                                         name="insurance_percentage[]"
                                         value="{{ isset($policyInsurance) ? $policyInsurance->percentage * 100 : '' }}"
@@ -208,7 +208,7 @@
                                     <input class="form-check-input is-main-checkbox"
                                         type="checkbox"
                                         name="is_main[]"
-                                        value="1">
+                                        value="1" {{ isset($policyInsurance) && $policyInsurance->is_main ? 'checked' : '' }}>
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
                                 <div class="col-md mb-2">
                                     <label class="form-label">Persentase Asuransi</label>
                                     <div class="input-group mb-3">
-                                        <input class="form-control insurance-percentage validate-percentage"
+                                        <input class="form-control"
                                             type="number"
                                             name="insurance_percentage[]"
                                             value
@@ -302,11 +302,10 @@
                             <div class="col-md-10 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek <span class="text-danger">*</span></label>
-                                <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
+                                <select class="form-control create-select2 object-select required @error('object_id') is-invalid @enderror"
                                     name="object_id"
-                                    data-placeholder="Pilih Objek"
-                                    required>
-                                    <option value=""></option>
+                                    data-placeholder="Pilih Objek">
+                                    <option></option>
                                     @foreach ($objects ?? [] as $object)
                                         <option value="{{ $object->id }}">
                                             {{ $object->name }}
@@ -423,18 +422,18 @@
                 var $targetContainer = $('#object-item-container').find(selector).first();
 
                 if ($targetContainer.length) {
-                    console.log('Target container found:', $targetContainer);
+                    // console.log('Target container found:', $targetContainer);
                     $targetContainer.find('.object-forms-container').html($cloneContent.html());
                     $targetContainer.find('.object-forms-container input, .object-forms-container textarea, .object-forms-container select, .object-forms-container button').prop('disabled', false);
                     initCustomSelect2($targetContainer.find('.add-select2'));
                 } else {
-                    console.log('Target container not found for selector:', selector);
+                    // console.log('Target container not found for selector:', selector);
                 }
 
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
             } else {
-                console.log('No className found in input[name="class"]');
+                // console.log('No className found in input[name="class"]');
             }
             sumInputValues('input[name="object_value_input"]', '#object_value');
             update_payment(); // Trigger calculation when policy is loaded
@@ -496,7 +495,7 @@
 
         // Shared function to handle object selection
         function handleObjectSelection($select, selectedValue) {
-            console.log('Handling object selection for value:', selectedValue);
+            // console.log('Handling object selection for value:', selectedValue);
             var $itemContainer = $select.closest('.item-object');
             var $formContainer = $itemContainer.find('.object-forms-container');
 
@@ -515,7 +514,7 @@
 
                 if ($itemContainer.hasClass('item-template')) {
                     $class = $itemContainer.attr('class');
-                    console.log('Setting class value:', $class);
+                    // console.log('Setting class value:', $class);
                     $('#object-form-livewire').find('input[name="class"]').val($class);
                 }
 

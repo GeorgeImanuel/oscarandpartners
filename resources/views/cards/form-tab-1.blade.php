@@ -81,7 +81,7 @@
             </div>
             {{-- New client Input --}}
             <div id="client-form-container"
-                class="col-md-12">
+                class="col-md-12" style="display: none">
                 @livewire('client-form')
             </div>
         </div>
@@ -92,14 +92,15 @@
     <script>
         $(document).on('change', '#client_id', function() {
             var clientId = $(this).val();
+
             // Find the Livewire component and update clientId
-            var container = document.querySelector('#policy-details-container [wire\\:id]');
-            if (container && typeof window.Livewire !== 'undefined') {
-                var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
-                if (livewireComponent) {
-                    livewireComponent.set('clientId', clientId);
-                }
-            }
+            // var container = document.querySelector('#policy-details-container [wire\\:id]');
+            // if (container && typeof window.Livewire !== 'undefined') {
+            //     var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
+            //     if (livewireComponent) {
+            //         livewireComponent.set('clientId', clientId);
+            //     }
+            // }
         });
     </script>
 @endpush

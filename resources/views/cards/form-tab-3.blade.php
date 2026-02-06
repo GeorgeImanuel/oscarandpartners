@@ -40,7 +40,8 @@
                                 min="0"
                                 max="100"
                                 value="{{ old('premi_percentages', isset($card) ? $card->premi_percentages * 100 : ($policy->coverage_percentage ?? 0) * 100) }}"
-                                required readonly>
+                                required
+                                readonly>
                             <span class="input-group-text">%</span>
                         </div>
                         <div class="text-danger small percent-alert mt-1"
@@ -58,7 +59,7 @@
                                 name="tjh_value"
                                 type="number"
                                 value="{{ old('tjh_value', isset($card) ? $card->tjh_value : $card->object->tjh_value ?? 0) }}"
-                                required>
+                                required readonly>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -518,9 +519,214 @@
             return totalTax; // Return the value for use in update_payment
         }
 
-        // --- FUNGSI BARU: VALIDASI PERSEN LANGSUNG ---
+
+
         $(document).ready(function() {
-            // Validasi persentase langsung saat input dan blur
+
+            window.copyCoverageToTab3 = function() {
+                // console.log('📋 copyCoverageToTab3 called');
+                var $target = $('#coverage-list-container');
+                var $sources = $('#policy-form-container .item-coverage');
+
+                // console.log('Target:', $target.length, 'Sources:', $sources.length);
+                $target.empty();
+
+                if ($sources.length === 0) {
+                    $target.html('<div class="text-center text-muted small">Tidak ada data coverage.</div>');
+                    // console.log('❌ No sources found');
+                    return;
+                }
+
+                var totalPercentage = 0;
+                var clonedCount = 0;
+
+                $sources.each(function(index) {
+                    // console.log('Processing source', index, 'visible:', $(this).is(':visible'));
+
+                    // GET TEXT DARI ORIGINAL SEBELUM CLONE
+                    var originalCoverageName = $(this).find('select[name="coverage_id[]"]').find('option:selected').text().trim();
+                    // console.log('Coverage Name:', originalCoverageName);
+
+                    // CLONE & BERSIHKAN
+                    var $cloned = $(this).clone();
+                    $cloned.find('.remove-item-btn').closest('.col-md-auto').remove();
+
+                    // TRANSFORM INPUT
+                    $cloned.find('input, select').each(function() {
+                        var $el = $(this);
+
+                        if ($el.attr('name') === 'coverage_percentage[]') {
+                            var val = parseFloat($el.val()) || 0;
+                            totalPercentage += val;
+                            // console.log('Coverage %:', val);
+                        }
+
+                        if ($el.is('select') && $el.attr('name') === 'coverage_id[]') {
+                            // Gunakan text yang sudah diambil dari original
+                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + originalCoverageName + '" readonly>');
+                        } else if ($el.is('select')) {
+                            var text = $el.find('option:selected').text().trim();
+                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + text + '" readonly>');
+                        } else {
+                            $el.attr('readonly', true)
+                                .addClass('bg-white')
+                                .removeAttr('name')
+                                .removeAttr('id');
+                        }
+                    });
+                    $cloned.find('.select2-container').remove();
+
+                    // APPEND
+                    $target.append($cloned);
+                    clonedCount++;
+
+                    if (index < $sources.length - 1) {
+                        $target.append('<hr class="my-2 text-muted">');
+                    }
+                });
+
+                if (totalPercentage > 0) $('#premi_percentages').val(totalPercentage.toFixed(5));
+                console.log('✅ Coverage cloned:', clonedCount, 'items, total:', totalPercentage);
+                // console.log('Container HTML after:', $target.html().substring(0, 200));
+            };
+
+            window.copyInsuranceToTab3 = function() {
+                // console.log('📋 copyInsuranceToTab3 called');
+                var $target = $('#insurance-list-container');
+                var $sources = $('#policy-form-container .item-1');
+
+                // console.log('Target:', $target.length, 'Sources:', $sources.length);
+                $target.empty();
+
+                if ($sources.length === 0) {
+                    $target.html('<div class="text-center text-muted small">Tidak ada data asuransi.</div>');
+                    // console.log('❌ No sources found');
+                    return;
+                }
+
+                var clonedCount = 0;
+
+                $sources.each(function(index) {
+                    // console.log('Processing insurance', index, 'visible:', $(this).is(':visible'));
+
+                    // GET TEXT DARI ORIGINAL SEBELUM CLONE
+                    var originalInsuranceName = $(this).find('select[name="insurance_id[]"]').find('option:selected').text().trim();
+                    var originalInsuranceId = $(this).find('select[name="insurance_id[]"]').val();
+                    // console.log('Insurance ID:', originalInsuranceId, 'Name:', originalInsuranceName);
+
+                    // CLONE
+                    var $cloned = $(this).clone();
+
+                    // BERSIHKAN
+                    $cloned.find('.remove-item-btn').closest('div[class^="col-"]').remove();
+                    $cloned.find('.is-main-checkbox').closest('div[class^="col-"]').remove();
+
+                    var $colName = $cloned.find('select[name="insurance_id[]"]').closest('div[class^="col-"]');
+                    $colName.removeClass().addClass('col-md-5');
+
+                    // B. Kolom Share -> Ubah jadi col-md-3
+                    var $colShare = $cloned.find('input[name="insurance_percentage[]"]').closest('div[class^="col-"]');
+                    $colShare.removeClass().addClass('col-md-3');
+
+                    // 4. TRANSFORM INPUT (Ubah Select jadi Text Readonly)
+                    $cloned.find('input, select').each(function() {
+                        var $el = $(this);
+                        if ($el.is('select') && $el.attr('name') === 'insurance_id[]') {
+                            // Gunakan text yang sudah diambil dari original
+                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + originalInsuranceName + '" readonly>');
+                        } else if ($el.is('select')) {
+                            var text = $el.find('option:selected').text().trim();
+                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + text + '" readonly>');
+                        } else {
+                            $el.attr('readonly', true)
+                                .addClass('bg-white')
+                                .removeAttr('name')
+                                .removeAttr('id');
+                        }
+                    });
+                    $cloned.find('.select2-container').remove();
+
+                    // INJECT TAX INPUT (KHUSUS TAB 3)
+                    var oldTaxVal = $(`input[name="insurance_tax[${originalInsuranceId}]"]`).val() || 0;
+                    var taxHtml = `
+                        <div class="col-md-4 mb-2">
+                            <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text currency-label">Rp</span>
+                                <input type="number" 
+                                    name="insurance_tax[${originalInsuranceId}]" 
+                                    class="form-control insurance-tax-per-item" 
+                                    value="${oldTaxVal}" 
+                                    placeholder="0">
+                            </div>
+                        </div>`;
+
+                    // Append ke row yang tepat (handle nested row structure)
+                    if ($cloned.children('.row').length > 0) {
+                        // Struktur nested row (empty state)
+                        $cloned.children('.row').first().append(taxHtml);
+                    } else {
+                        // Struktur row langsung
+                        $cloned.append(taxHtml);
+                    }
+
+                    $target.append($cloned);
+
+                    if (index < $sources.length - 1) $target.append('<hr class="my-2 text-muted">');
+                    clonedCount++;
+                });
+
+                if (typeof window.attachTaxInputListeners === 'function') window.attachTaxInputListeners();
+                if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                console.log('✅ Insurance cloned:', clonedCount, 'items');
+                // console.log('Container HTML after:', $target.html().substring(0, 200));
+            };
+
+            window.attachTaxInputListeners = function() {
+                $('.insurance-tax-per-item').off('input blur keyup').on('input blur keyup', function() {
+                    if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                    if (typeof update_payment === 'function') update_payment();
+                });
+            };
+
+            // Trigger saat Tab 3 diklik
+            $(document).on('click', 'a[href="#step-3"]', function() {
+                // console.log('🔄 Cloning visual from Tab 2...');
+                setTimeout(function() {
+                    // 1. Sync values dulu dari Tab 2 (Object Value & TJH)
+                    if (typeof sumAllObjectValues === 'function') sumAllObjectValues();
+                    if (typeof sumAllTJH === 'function') sumAllTJH();
+
+                    // 2. Jalankan Kloning Tampilan
+                    if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
+                    if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
+
+                    // 3. Hitung Duit
+                    if (typeof update_payment === 'function') update_payment();
+                }, 150);
+            });
+
+            $('#premi_percentages, #policy_fee, #commision_percentages, #tjh_value, #discount_agent').on('input change blur', function() {
+                if (typeof update_payment === 'function') update_payment();
+            });
+
+            $('#discount_percentage').on('input change blur', function() {
+                if (typeof sync_discount === 'function') sync_discount('percentage');
+                if (typeof update_payment === 'function') update_payment();
+            });
+            $('#discount_value').on('input change blur', function() {
+                if (typeof sync_discount === 'function') sync_discount('value');
+                if (typeof update_payment === 'function') update_payment();
+            });
+
+            // Initial Load Check (Edit Mode)
+            setTimeout(function() {
+                if ($('#step-3').is(':visible')) {
+                    if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
+                    if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
+                    if (typeof update_payment === 'function') update_payment();
+                }
+            }, 800);
         });
     </script>
 @endpush
