@@ -43,7 +43,7 @@ function sumInputValues(selector, target) {
     } else {
         $target.text(sum);
     }
-    console.info("Sum updated:", sum);
+    console.info("Sum updated:", selector, sum);
 }
 
 /**

@@ -33,14 +33,14 @@
                         <div class="input-group">
                             {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                             <input id="premi_percentages"
-                                class="form-control validate-percentage"
+                                class="form-control validate-percentage coverage_percentage_total"
                                 name="premi_percentages"
                                 type="number"
                                 step="0.00001"
                                 min="0"
                                 max="100"
                                 value="{{ old('premi_percentages', isset($card) ? $card->premi_percentages * 100 : ($policy->coverage_percentage ?? 0) * 100) }}"
-                                required>
+                                required readonly>
                             <span class="input-group-text">%</span>
                         </div>
                         <div class="text-danger small percent-alert mt-1"

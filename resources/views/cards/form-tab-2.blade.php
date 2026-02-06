@@ -95,73 +95,6 @@
             }
         });
 
-        // Listen to object_id dropdown change and update Livewire component
-        // $(document).on('change', 'select[name=object_id]', function() {
-            // var attrName = $(this).attr('name');
-            // var objectId = $(this).val();
-
-            // console.log('Object ID changed:', objectId);
-            // Find the Livewire component and update objectId
-            // var container = $('#object-details-container [wire\\:id]')[0];
-            // if (container && typeof window.Livewire !== 'undefined') {
-            //     console.log('Found Livewire container:', container);
-            //     var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
-            //     if (livewireComponent) {
-            //         livewireComponent.set('objectId', objectId);
-            //     }
-            //     $('#object_ready').val(0);
-            //     var $nextObjectContainer = $(this).closest('.item').find('.object-details-container');
-            //     $nextObjectContainer.html('<div class="alert alert-info" role="alert"> <div class="d-flex align-items-center"> <div class="spinner-border spinner-border-sm me-2" role="status"> <span class="visually-hidden">Loading...</span> </div> <span>Memuat detail objek...</span> </div> </div>');
-            //     var checkReady = setInterval(function() {
-            //         if ($('#object_ready').val() == 1) {
-            //             clearInterval(checkReady);
-            //             var $sourceContainer = $('#object-details-container');
-            //             if ($nextObjectContainer.length && $sourceContainer.length) {
-            //                 $nextObjectContainer.html($sourceContainer.html());
-            //             }
-            //         }
-            //     }, 100);
-            // }
-        // });
-
-        // Listen to object_id dropdown change and update Livewire component
-        // $(document).on('change', '.object-select', function() {
-        //     var row = $(this).closest('.object-row');
-        //     var selectedOption = $(this).find(':selected');
-        //     var value = parseFloat(selectedOption.data('value')) || 0;
-
-        //     // Update tampilan nilai per baris
-        //     row.find('.object-value-display').val(formatRupiah(value));
-
-        //     // Hitung total semua objek
-        //     calculateTotalObjectValue();
-        // });
-
-
-        // function calculateTotalObjectValue() {
-        //     var totalValue = 0;
-
-        //     // Loop semua dropdown objek yang dipilih
-        //     $('.object-select').each(function() {
-        //         var selectedOption = $(this).find(':selected');
-        //         var value = parseFloat(selectedOption.data('value')) || 0;
-        //         totalValue += value;
-        //     });
-
-        //     // Update Tampilan Total (Text)
-        //     $('#total-object-value').text(formatRupiah(totalValue));
-
-        //     // Update Input Hidden/Readonly yang dipakai update_payment()
-        //     // Pastikan di HTML ada input dengan id="object_value"
-        //     $('#object_value').val(totalValue);
-
-        //     // Trigger hitung ulang payment
-        //     update_payment();
-
-        //     if (totalValue > 0) $('#object-value-info').show();
-        //     else $('#object-value-info').hide();
-        // }
-
         // Listen for policyLoaded and objectLoaded events from Livewire (outside jQuery scope)
         document.addEventListener('livewire:init', () => {
             Livewire.on('policyLoaded', (event) => {
@@ -169,18 +102,6 @@
                 const coveragePercentage = event.coverage_percentage || event[0]?.coverage_percentage || 0;
 
                 console.log('Policy loaded:', event);
-                // Update field Harga Pertanggungan
-                // $('#object_value').val(totalObjectValue);
-
-                // // Update display (format Rupiah)
-                // $('#total-object-value').text(formatRupiah(totalObjectValue));
-
-                // // Show/hide info based on value
-                // if (totalObjectValue > 0) {
-                //     $('#object-value-info').show();
-                // } else {
-                //     $('#object-value-info').hide();
-                // }
 
                 var rate = parseFloat(coveragePercentage) * 100;
                 $('#premi_percentages').val(rate).trigger('change');
@@ -190,7 +111,6 @@
                 // Reinitialize select2 after policy objects are loaded
                 setTimeout(function() {
                     if (typeof initCustomSelect2 === 'function') {
-                        console.log('Reinitializing select2 for .create-select2');
                         initCustomSelect2(".create-select2");
                     }
 
@@ -207,26 +127,6 @@
 
             });
 
-
-            // Livewire.on('objectLoaded', (event) => {
-                
-            //     console.log('Object loaded event received:', event);
-                // const object = event.object || event[0]?.object || 0;
-
-                // if (object) {
-                //     $('#object_value').val(object.object_value);
-
-                //     var tjh = object.tjh || 0;
-                //     $('#tjh_value').val(tjh).trigger('change');
-                // }
-                // $('#object_ready').val(1);
-                // console.log('Object received:', object.object_value);
-                // sumInputValues('input[name="object_value_input"]', '#object_value');
-
-                // update_payment(); // Trigger calculation when policy is loaded
-
-            // });
-
             // Livewire.on('insurancesLoaded', (event) => {
             //     const insurances = event.insurances || event[0]?.insurances || [];
             //     const container = $('#insurance-list-container');
@@ -235,35 +135,35 @@
             //     if (insurances.length > 0) {
             //         insurances.forEach((insurance, index) => {
             //             const html = `
-            //                     <div class="row g-2 align-items-center mb-3 insurance-item">
-            //                         <div class="col-md-5">
-            //                             <label class="small text-muted mb-0">Asuransi</label>
-            //                             <input type="text" class="form-control form-control-sm bg-white" 
-            //                                 value="${insurance.insurance_name}" readonly>
-            //                         </div>
-            //                         <div class="col-md-3">
-            //                             <label class="small text-muted mb-0">Share</label>
-            //                             <div class="input-group input-group-sm">
-            //                                 <input type="text" class="form-control text-center bg-white" 
-            //                                     value="${(insurance.percentage * 100).toFixed(2)}" readonly>
-            //                                 <span class="input-group-text">%</span>
-            //                             </div>
-            //                         </div>
-            //                         <div class="col-md-4">
-            //                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
-            //                             <div class="input-group input-group-sm">
-            //                                 <span class="input-group-text currency-label">Rp</span>
-            //                                 <input type="number" 
-            //                                     name="insurance_tax[${insurance.insurance_id}]"
-            //                                     class="form-control form-control-sm insurance-tax-per-item" 
-            //                                     data-insurance-id="${insurance.insurance_id}" 
-            //                                     placeholder="0"
-            //                                     value="${insurance.tax || 0}">
-            //                             </div>
-            //                         </div>
-            //                     </div>
-            //                     ${index < insurances.length - 1 ? '<hr class="my-2 text-muted">' : ''}
-            //                 `;
+        //                     <div class="row g-2 align-items-center mb-3 insurance-item">
+        //                         <div class="col-md-5">
+        //                             <label class="small text-muted mb-0">Asuransi</label>
+        //                             <input type="text" class="form-control form-control-sm bg-white" 
+        //                                 value="${insurance.insurance_name}" readonly>
+        //                         </div>
+        //                         <div class="col-md-3">
+        //                             <label class="small text-muted mb-0">Share</label>
+        //                             <div class="input-group input-group-sm">
+        //                                 <input type="text" class="form-control text-center bg-white" 
+        //                                     value="${(insurance.percentage * 100).toFixed(2)}" readonly>
+        //                                 <span class="input-group-text">%</span>
+        //                             </div>
+        //                         </div>
+        //                         <div class="col-md-4">
+        //                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+        //                             <div class="input-group input-group-sm">
+        //                                 <span class="input-group-text currency-label">Rp</span>
+        //                                 <input type="number" 
+        //                                     name="insurance_tax[${insurance.insurance_id}]"
+        //                                     class="form-control form-control-sm insurance-tax-per-item" 
+        //                                     data-insurance-id="${insurance.insurance_id}" 
+        //                                     placeholder="0"
+        //                                     value="${insurance.tax || 0}">
+        //                             </div>
+        //                         </div>
+        //                     </div>
+        //                     ${index < insurances.length - 1 ? '<hr class="my-2 text-muted">' : ''}
+        //                 `;
             //             container.append(html);
             //         });
             //     } else {
@@ -287,23 +187,23 @@
             //     if (coverages.length > 0) {
             //         coverages.forEach((coverage, index) => {
             //             const html = `
-            //                     <div class="row g-2 align-items-center mb-3 coverage-item">
-            //                         <div class="col-md-8">
-            //                             <label class="small text-muted mb-0">Coverage</label>
-            //                             <input type="text" class="form-control form-control-sm bg-white" 
-            //                                 value="${coverage.coverage_name}" readonly>
-            //                         </div>
-            //                         <div class="col-md-4">
-            //                             <label class="small text-muted mb-0">Persentase</label>
-            //                             <div class="input-group input-group-sm">
-            //                                 <input type="text" class="form-control text-center bg-white" 
-            //                                     value="${(coverage.percentage * 100).toFixed(5)}" readonly>
-            //                                 <span class="input-group-text">%</span>
-            //                             </div>
-            //                         </div>
-            //                     </div>
-            //                     ${index < coverages.length - 1 ? '<hr class="my-2 text-muted">' : ''}
-            //                 `;
+        //                     <div class="row g-2 align-items-center mb-3 coverage-item">
+        //                         <div class="col-md-8">
+        //                             <label class="small text-muted mb-0">Coverage</label>
+        //                             <input type="text" class="form-control form-control-sm bg-white" 
+        //                                 value="${coverage.coverage_name}" readonly>
+        //                         </div>
+        //                         <div class="col-md-4">
+        //                             <label class="small text-muted mb-0">Persentase</label>
+        //                             <div class="input-group input-group-sm">
+        //                                 <input type="text" class="form-control text-center bg-white" 
+        //                                     value="${(coverage.percentage * 100).toFixed(5)}" readonly>
+        //                                 <span class="input-group-text">%</span>
+        //                             </div>
+        //                         </div>
+        //                     </div>
+        //                     ${index < coverages.length - 1 ? '<hr class="my-2 text-muted">' : ''}
+        //                 `;
             //             container.append(html);
             //         });
             //     } else {
@@ -333,20 +233,28 @@
 
         // Listen for changes and sum/validate to be between 0-100
         $(document).on('input change keyup blur', 'input[name="coverage_percentage[]"]', function() {
-            validateValues('input[name="coverage_percentage[]"]', '#coverage_percentage_total', 0, 100);
+            validateValues('input[name="coverage_percentage[]"]', '.coverage_percentage_total', 0, 100);
         });
         $(document).on('input change keyup blur', 'input[name="insurance_percentage[]"]', function() {
             validateValues('input[name="insurance_percentage[]"]', '#insurance_percentage_total', 0, 100);
         });
-        $(document).on('input change keyup blur', 'input[name="interest_value[]"]', function() {
+        $(document).on('input change keyup blur', 'input[name="tjh[]"]', function() {
+            sumInputValues('input[name="tjh[]"]', '#tjh_value', 0, 100);
+        });
+        $(document).on('input change keyup blur', 'input[name="interest_value[][]"]', function() {
             var $itemObject = $(this).closest('.item-object');
             var $objectValueInput = $itemObject.find('input[name="object_value_input"]');
 
             // Sum all interest values in this item
-            sumInputValues($itemObject.find('input[name="interest_value[]"]'), $objectValueInput);
+            sumInputValues($itemObject.find('input[name="interest_value[][]"]'), $objectValueInput);
 
             // After updating object_value_input, sum all object_value_inputs
             sumInputValues('input[name="object_value_input"]', '#object_value');
+            
+            // Trigger update_payment if it exists
+            if (typeof update_payment === 'function') {
+                update_payment();
+            }
         });
     </script>
 @endpush

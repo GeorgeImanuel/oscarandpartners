@@ -56,7 +56,7 @@
                 <div class="row align-items-end">
                     <div class="col-md">
                         <div class="alert alert-danger py-2">
-                            <strong>Total Persentase Coverage: <span id="coverage_percentage_total">0.00</span>%</strong><br>
+                            <strong>Total Persentase Coverage: <span class="coverage_percentage_total">0.00</span>%</strong><br>
                         </div>
                     </div>
                     <div class="col-md-auto mb-3">
@@ -436,6 +436,7 @@
             } else {
                 console.log('No className found in input[name="class"]');
             }
+            sumInputValues('input[name="object_value_input"]', '#object_value');
             update_payment(); // Trigger calculation when policy is loaded
         });
 

@@ -1,3 +1,4 @@
 # DEV BACKLOG
-1. Update custom select 2 so the value get from data attribute not from js
-2. Update multiple item so the empty state work properly
+tjh belum sum update ✅
+object_value not update again
+perhitungan belum update 
