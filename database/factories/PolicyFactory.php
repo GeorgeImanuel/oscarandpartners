@@ -27,7 +27,6 @@ class PolicyFactory extends Factory
         return [
             'policy_number' => 'POL-' . fake()->unique()->numerify('######'),
             'currency_code' => Currency::inRandomOrder()->first()?->code ?? Currency::factory(),
-            'coverage_percentages' => 0,
             'started_date'  => $startDate,
             'ended_date'    => fake()->dateTimeBetween($startDate, '+2 years'),
         ];

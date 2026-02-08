@@ -16,8 +16,6 @@
         <label class="form-label"
             for="coverage_id">Relasi <span class="text-danger">*</span></label>
         <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
-            data-existing-name="relation_id"
-            data-new-name="relation_name"
             data-placeholder="Pilih Relasi"
             name="relation_id">
             <option value="">- Pilih Relasi -</option>
@@ -38,8 +36,7 @@
             for="ended_date">Alamat<span class="text-danger">*</span></label>
         <textarea class="form-control required @error('ended_date') is-invalid @enderror"
             name="id_address"
-            type="text">
-            {{ isset($client) ? $client->id_address : old('id_address', '') }}
+            type="text">{{ isset($client) ? $client->id_address : old('id_address', '') }}
         </textarea>
         @error('id_address')
             <div class="invalid-feedback">{{ $message }}</div>

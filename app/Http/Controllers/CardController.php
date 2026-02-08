@@ -95,7 +95,7 @@ class CardController extends Controller
     {
         // return $request->all();
         $card = $this->cardService->create($request->all());
-        // return $card;
+        return $card;
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }

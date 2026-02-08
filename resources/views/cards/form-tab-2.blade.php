@@ -232,21 +232,21 @@
         // }
 
         // Listen for changes and sum/validate to be between 0-100
-        $(document).on('input change keyup blur', 'input[name="coverage_percentage[]"]', function() {
-            validateValues('input[name="coverage_percentage[]"]', '.coverage_percentage_total', 0, 100);
+        $(document).on('input change keyup blur', 'input[name^="coverage_percentage"]', function() {
+            validateValues('input[name^="coverage_percentage"]', '.coverage_percentage_total', 0, 100);
         });
-        $(document).on('input change keyup blur', 'input[name="insurance_percentage[]"]', function() {
-            validateValues('input[name="insurance_percentage[]"]', '#insurance_percentage_total', 0, 100);
+        $(document).on('input change keyup blur', 'input[name^="insurance_percentage"]', function() {
+            validateValues('input[name^="insurance_percentage"]', '#insurance_percentage_total', 0, 100);
         });
-        $(document).on('input change keyup blur', 'input[name="tjh[]"]', function() {
-            sumInputValues('input[name="tjh[]"]', '#tjh_value', 0, 100);
+        $(document).on('input change keyup blur', 'input[name^="tjh"]', function() {
+            sumInputValues('input[name^="tjh"]', '#tjh_value', 0, 100);
         });
-        $(document).on('input change keyup blur', 'input[name="interest_value[][]"]', function() {
+        $(document).on('input change keyup blur', 'input[name^="interest_value"]', function() {
             var $itemObject = $(this).closest('.item-object');
             var $objectValueInput = $itemObject.find('input[name="object_value_input"]');
 
             // Sum all interest values in this item
-            sumInputValues($itemObject.find('input[name="interest_value[][]"]'), $objectValueInput);
+            sumInputValues($itemObject.find('input[name^="interest_value"]'), $objectValueInput);
 
             // After updating object_value_input, sum all object_value_inputs
             sumInputValues('input[name="object_value_input"]', '#object_value');

@@ -154,20 +154,20 @@
                     });
 
                     // Validate insurance percentage total
-                    if (totalInsurancePercentage < 0 || totalInsurancePercentage > 100) {
-                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
+                    if (totalInsurancePercentage !== 100) {
+                        alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
                         errors.push({
                             field: '.insurance-percentage',
-                            message: 'Total persentase asuransi harus antara 0-100%'
+                            message: 'Total persentase asuransi harus 100%'
                         });
-                    };
-
-                    if (totalInsurancePercentage < 0 || totalInsurancePercentage > 100) {
-                        alertWarning('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
                     };
 
                     if (totalCoveragePercentage < 0 || totalCoveragePercentage > 100) {
                         alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
+                        errors.push({
+                            field: '.coverage-percentage',
+                            message: 'Total persentase coverage harus 100%'
+                        });
                     };
 
                     // Check if at least one is-main-checkbox is checked

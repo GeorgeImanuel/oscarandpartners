@@ -11,7 +11,6 @@ return new class extends Migration {
             $table->string('policy_number');
             $table->string('currency_code')->nullable();
             $table->foreign('currency_code')->references('code')->on('currencies')->onDelete('set null');
-            $table->decimal('coverage_percentages', 8, 7);
             $table->date('started_date');
             $table->date('ended_date');
             $table->timestamps();
