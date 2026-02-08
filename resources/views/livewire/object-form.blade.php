@@ -1,11 +1,9 @@
 <div id="new-object"
     class="row gt-3">
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="object_occupation_id">Objek Occupation<span class="text-danger">*</span></label>
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Objek Occupation<span class="text-danger">*</span></label>
         <select class="form-select required add-select2 @error('object_occupation_id') is-invalid @enderror"
-            name="object_occupation_id"
-            id="object_occupation_id"
+            name="object_occupation_id[{{ isset($object) ? $object->id : '' }}]"
             data-placeholder="Pilih Objek Occupation"
             style="width: 100%;"
             {{ $isDisabled ? 'disabled' : '' }}>
@@ -22,32 +20,35 @@
         @enderror
     </div>
 
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="object_name">Nilai TJH (Rp)</label>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Rp</span>
-            <input class="form-control required @error('tjh') is-invalid @enderror"
-                name="tjh[]"
-                type="text"
-                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}"
-                {{ $isDisabled ? 'disabled' : '' }} />
-                @error('tjh')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-        </div>
-    </div>
-    <div class="col-md-12 mb-3">
+    
+    <div class="col-md-6 mb-3">
         <label class="form-label"
             for="object_keterangan">Alamat <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
-            name="object_keterangan[]"
+            name="object_keterangan[{{ isset($object) ? $object->id : '' }}]"
             rows="3"
             {{ $isDisabled ? 'disabled' : '' }}>{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
         @error('object_keterangan')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
+    </div>
+    
+    <div class="col-md-6 mb-3 tjh-input-group"
+        style="{{ isset($object) && $object->object_occupation_id != 7 ? 'display:none;' : '' }}">
+        <label class="form-label"
+            for="object_name">Nilai TJH (Rp)</label>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Rp</span>
+            <input class="form-control required @error('tjh') is-invalid @enderror"
+                name="tjh[{{ isset($object) ? $object->id : '' }}]"
+                type="text"
+                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}"
+                {{ $isDisabled ? 'disabled' : '' }} />
+            @error('tjh')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
@@ -59,8 +60,8 @@
             <i class="icon-plus me-2"></i>Tambah Interest
         </button>
         <div class="item-list pt-2">
-            @if(isset($object) && $object && $object->objectInterests && $object->objectInterests->count() > 0)
-                @foreach($object->objectInterests as $index => $objectInterest)
+            @if (isset($object) && $object && $object->objectInterests && $object->objectInterests->count() > 0)
+                @foreach ($object->objectInterests as $index => $objectInterest)
                     <div class="mt-2 px-3 py-3 border rounded item object-interest-item">
                         <div class="row align-items-end">
                             <div class="col-md-6">
@@ -72,7 +73,8 @@
                                     {{ $isDisabled ? 'disabled' : '' }}>
                                     <option value=""></option>
                                     @foreach ($interests as $interest)
-                                        <option value="{{ $interest->id }}" {{ $objectInterest->interest_id == $interest->id ? 'selected' : '' }}>
+                                        <option value="{{ $interest->id }}"
+                                            {{ $objectInterest->interest_id == $interest->id ? 'selected' : '' }}>
                                             {{ $interest->name }}
                                         </option>
                                     @endforeach
@@ -152,7 +154,21 @@
                 step="0.00001"
                 min="0"
                 readonly
-                value="{{ isset($object) && $object ? ($object->object_value ?? 0) : 0 }}" />
+                value="{{ isset($object) && $object ? $object->object_value ?? 0 : 0 }}" />
         </div>
     </div>
 </div>
+
+@script
+    <script>
+        $(document).on('change', 'select[name^="object_occupation_id"]', function() {
+            const $item = $(this).closest('.item');
+            console.log($(this).val());
+            if ($(this).val() == 7)
+                $item.find('.tjh-input-group').show();
+            else {
+                $item.find('.tjh-input-group').hide();
+            }
+        });
+    </script>
+@endscript

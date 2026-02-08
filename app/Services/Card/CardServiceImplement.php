@@ -103,11 +103,11 @@ class CardServiceImplement extends Service implements CardService
             if (isset($data['create_new_client']) && $data['create_new_client']) {
                 $data['client_id'] = $this->createNewClient($data);
             }
-
             // 2. Handle Object Creation (if requested)
             if (isset($data['create_new_object']) && $data['create_new_object']) {
                 $data['object_id'] = $this->createNewObject($data);
             }
+            dd($data);
 
             // 3. Handle Policy Creation (if requested)
             if (isset($data['create_new_policy']) && $data['create_new_policy']) {
@@ -179,26 +179,37 @@ class CardServiceImplement extends Service implements CardService
         }
     }
 
+    private function createNewRelation(array $data): int
+    {
+        $relation = $this->relationRepository->find($data['relation_id']);
+        if ($relation) {
+            return $relation->id;
+        }
+        $relation = $this->relationRepository->create([
+            'code' => $data['relation_id'],
+            'name' => $data['relation_id'] ?? null,
+        ]);
+
+        return $relation->id;
+    }
+
     /**
      * Create new client with optional relation
      */
     private function createNewClient(array $data): int
     {
-        // Create relation if needed
-        if (isset($data['create_new_relation']) && $data['create_new_relation']) {
-            $relation = $this->relationRepository->create([
-                'code' => $data['relation_code'],
-                'name' => $data['relation_name'] ?? null,
-            ]);
-            $data['relation_id'] = $relation->id;
+        if (!$data['client_id'] == '' || !$data['client_id'] == null) {
+            $client = $this->clientRepository->find($data['client_id']);
         }
+        if ($client) {
+            return $client->id;
+        }
+        $relation_id = $this->createNewRelation($data);
 
         $client = $this->clientRepository->create([
-            'relation_id' => $data['relation_id'] ?? null,
-            'name'        => $data['client_name'],
-            'address'     => $data['client_address'] ?? null,
-            'phone'       => $data['client_phone'] ?? null,
-            'email'       => $data['client_email'] ?? null,
+            'relation_id' => $relation_id,
+            'name'        => $data['client_id'],
+            'address'     => $data['id_address'] ?? null,
         ]);
 
         return $client->id;

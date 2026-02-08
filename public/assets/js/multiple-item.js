@@ -65,7 +65,7 @@ $(document).on("click", ".add-item-btn", function () {
         newItem.find(".form-control").prop("required", true);
         // Update item text title
         newItem.find(".item-count").text(itemCount);
-        newItem.attr("data-item_index", itemCount);
+        newItem.attr("data-item-index", itemCount);
         newItem.addClass("item-" + itemCount);
         newItem.removeClass("no-print");
 
@@ -82,7 +82,7 @@ $(document).on("click", ".add-item-btn", function () {
                 if (!placeholder) {
                     var label = $(this).siblings("label");
                     placeholder = label.length
-                        ? "Pilih " + label.text().replace('*', '').trim()
+                        ? "Pilih " + label.text().replace("*", "").trim()
                         : "Pilih Data";
                 }
                 $(this).select2({
@@ -95,7 +95,7 @@ $(document).on("click", ".add-item-btn", function () {
                 // Default select2 initialization
                 var label = $(this).siblings("label");
                 var labelText = label.length
-                    ? "Pilih " + label.text().replace('*', '').trim()
+                    ? "Pilih " + label.text().replace("*", "").trim()
                     : "Pilih Data";
                 $(this).select2({
                     placeholder: labelText,
@@ -156,7 +156,7 @@ $(document).on("click", ".remove-item-btn", function () {
                     var itemCount = index - hiddenItemCount + 1;
                     console.log(itemCount);
                     $(this).find(".item-count").text(itemCount);
-                    $(this).attr("data-item_index", itemCount);
+                    $(this).attr("data-item-index", itemCount);
                     $(this).removeClass(function (i, cls) {
                         return (cls.match(/(^|\s)item-\d+/g) || []).join(" ");
                     });
@@ -176,3 +176,28 @@ $(document).on("click", ".remove-item-btn", function () {
         }
     });
 });
+
+window.renameInputNameByIndex = function ($items) {
+    $items.each(function () {
+        var itemIndex = $(this).data("item-index");
+        $(this)
+            .find("input, select, textarea")
+            .each(function () {
+                var originalName = $(this).attr("name");
+                if (originalName) {
+                    // Check if first [] already has an index like [0], [1], etc.
+                    var hasIndex = /\[\d+\]/.test(originalName);
+                    
+                    if (hasIndex) {
+                        // Replace existing [number] with new index
+                        var newName = originalName.replace(/\[\d+\]/, "[" + itemIndex + "]");
+                        $(this).attr("name", newName);
+                    } else {
+                        // Replace first [] with [index]
+                        var newName = originalName.replace(/\[\]/, "[" + itemIndex + "]");
+                        $(this).attr("name", newName);
+                    }
+                }
+            });
+    });
+};

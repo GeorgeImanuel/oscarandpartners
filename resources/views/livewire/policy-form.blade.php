@@ -208,7 +208,8 @@
                                     <input class="form-check-input is-main-checkbox"
                                         type="checkbox"
                                         name="is_main[]"
-                                        value="1" {{ isset($policyInsurance) && $policyInsurance->is_main ? 'checked' : '' }}>
+                                        value="1"
+                                        {{ isset($policyInsurance) && $policyInsurance->is_main ? 'checked' : '' }}>
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -299,11 +300,11 @@
                         {{-- Start Item Object Template --}}
                         <div class="row align-items-end item item-object item-template border border-primary py-3 mx-0 mb-3"
                             style="display: none">
-                            <div class="col-md-10 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label"
-                                    for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                                    for="object_id">Nama Objek <span class="item-count"></span><span class="text-danger">*</span></label>
                                 <select class="form-control create-select2 object-select required @error('object_id') is-invalid @enderror"
-                                    name="object_id"
+                                    name="object_id[]"
                                     data-placeholder="Pilih Objek">
                                     <option></option>
                                     @foreach ($objects ?? [] as $object)
@@ -312,11 +313,11 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('object_id')
+                                @error('object_id[]')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-6 mb-3 text-end">
                                 <span class="remove-item-btn btn btn-danger btn-xs"
                                     style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
                             </div>
@@ -333,12 +334,13 @@
 
                         {{-- Existing Objects --}}
                         @forelse ((isset($policy) && $policy ? ($policy->policyObjects ?? []) : []) as $index => $policyObject)
-                            <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3">
-                                <div class="col-md-10 mb-3">
+                            <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3"
+                                data-item-index="{{ $index + 1 }}">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                                        for="object_id">Nama Objek <span class="item-count">{{ $index + 1 }}</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
-                                        name="object_id"
+                                        name="object_id[]"
                                         data-placeholder="Pilih Objek"
                                         required>
                                         <option value=""></option>
@@ -349,12 +351,14 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('object_id')
+                                    @error('object_id[]')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-2 mb-3">
-                                    <span class="remove-item-btn btn btn-danger btn-xs"><i class="ico icon-trash"></i> Hapus Objek</span>
+                                <div class="col-md-6 mb-3 text-end order-xs-last">
+                                    <span class="remove-item-btn btn btn-danger btn-xs">
+                                        <i class="ico icon-trash"></i> Hapus Objek
+                                    </span>
                                 </div>
 
                                 {{-- Object Form --}}
@@ -363,12 +367,13 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3">
-                                <div class="col-md-10 mb-3">
+                            <div class="row align-items-end item item-object border border-primary py-3 mx-0 mb-3"
+                                data-item-index="1">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek <span class="text-danger">*</span></label>
+                                        for="object_id">Nama Objek <span class="item-count">1</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
-                                        name="object_id"
+                                        name="object_id[]"
                                         data-placeholder="Pilih Objek"
                                         required>
                                         <option value=""></option>
@@ -378,13 +383,14 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('object_id')
+                                    @error('object_id[]')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-6 mb-3 text-end">
                                     <span class="remove-item-btn btn btn-danger btn-xs"
-                                        style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
+                                        style="display:none"><i class="ico icon-trash"></i> Hapus Objek
+                                    </span>
                                 </div>
 
                                 {{-- Object Form --}}
@@ -413,6 +419,7 @@
             var $template = $('#object-form-livewire');
             var className = $template.find('input[name="class"]').val();
 
+            console.log('objectLoaded event received:', event);
             if (className) {
                 var $cloneContent = $template.clone();
 
@@ -430,11 +437,16 @@
                     // console.log('Target container not found for selector:', selector);
                 }
 
+
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
             } else {
                 // console.log('No className found in input[name="class"]');
             }
+
+            // Replace all input select and textarea name base on item-index
+            var $itemObjects = $('#object-item-container').find('.item-object');
+            renameInputNameByIndex($itemObjects);
             sumInputValues('input[name="object_value_input"]', '#object_value');
             update_payment(); // Trigger calculation when policy is loaded
         });

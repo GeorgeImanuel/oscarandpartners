@@ -60,9 +60,9 @@
                 <select id="client_id"
                     class="form-control create-select2 @error('client_id') is-invalid @enderror"
                     data-existing-id="#existing-client"
-                    data-existing-name="client_id"
-                    data-new-id="#new-client"
-                    data-new-name="client_name"
+                    {{-- data-existing-name="client_id" --}}
+                    data-new-id="#client-form-container"
+                    {{-- data-new-name="client_name" --}}
                     data-placeholder="Pilih Nama Client"
                     {{-- --}}
                     name="client_id"
@@ -92,7 +92,13 @@
     <script>
         $(document).on('change', '#client_id', function() {
             var clientId = $(this).val();
-
+            if(clientId) {
+                // Show existing client form
+                $('#client-form-container').slideUp();
+            } else {
+                // Show new client form
+                $('#client-form-container').slideDown();
+            }
             // Find the Livewire component and update clientId
             // var container = document.querySelector('#policy-details-container [wire\\:id]');
             // if (container && typeof window.Livewire !== 'undefined') {

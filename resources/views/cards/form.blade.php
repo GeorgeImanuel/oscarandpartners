@@ -200,7 +200,7 @@
             });
 
             // Validate percentage inputs to be between 0-100
-            $(document).on('input keyup change blur focusout', '.validate-percentage', function(e) {
+            $(document).on('input keyup change blur', '.validate-percentage', function(e) {
                 validateValues('.validate-percentage', null, 0, 100);
             });
         </script>

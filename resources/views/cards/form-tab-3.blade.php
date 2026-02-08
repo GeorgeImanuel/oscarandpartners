@@ -59,7 +59,8 @@
                                 name="tjh_value"
                                 type="number"
                                 value="{{ old('tjh_value', isset($card) ? $card->tjh_value : $card->object->tjh_value ?? 0) }}"
-                                required readonly>
+                                required
+                                readonly>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -147,52 +148,48 @@
                         readonly>
                 </div>
             </div>
+            <div class="col-md-12 mb-3">
+                <div class="card mb-0"
+                    style="border: 2px solid #ddd; background-color: #fcfcfc;">
+                    <div class="card-body p-3">
+                        <h6 class="card-title mb-3 text-center"
+                            style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Coverage</h6>
 
-            <div class="row mb-3">
+                        {{-- Dynamic Coverage List Container --}}
+                        <div id="coverage-list-container">
+                            {{-- Server-side rendered (for edit mode) --}}
+                            @if (isset($card->policy) && $card->policy->policyCoverages && $card->policy->policyCoverages->count() > 0)
+                                @foreach ($card->policy->policyCoverages as $index => $polCov)
+                                    <div class="row g-2 align-items-center mb-3 coverage-item">
+                                        <div class="col-md-8">
+                                            <label class="small text-muted mb-0">Coverage</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm bg-white"
+                                                value="{{ $polCov->coverage->name ?? '-' }}"
+                                                readonly>
+                                        </div>
 
-                <div class="col-md-12 mb-3">
-                    <div class="card mb-0"
-                        style="border: 2px solid #ddd; background-color: #fcfcfc;">
-                        <div class="card-body p-3">
-                            <h6 class="card-title mb-3 text-center"
-                                style="border-bottom: 1px dashed #ccc; padding-bottom: 10px;">Rincian Coverage</h6>
-
-                            {{-- Dynamic Coverage List Container --}}
-                            <div id="coverage-list-container">
-                                {{-- Server-side rendered (for edit mode) --}}
-                                @if (isset($card->policy) && $card->policy->policyCoverages && $card->policy->policyCoverages->count() > 0)
-                                    @foreach ($card->policy->policyCoverages as $index => $polCov)
-                                        <div class="row g-2 align-items-center mb-3 coverage-item">
-                                            <div class="col-md-8">
-                                                <label class="small text-muted mb-0">Coverage</label>
+                                        <div class="col-md-4">
+                                            <label class="small text-muted mb-0">Persentase</label>
+                                            <div class="input-group input-group-sm">
                                                 <input type="text"
-                                                    class="form-control form-control-sm bg-white"
-                                                    value="{{ $polCov->coverage->name ?? '-' }}"
+                                                    class="form-control text-center bg-white"
+                                                    value="{{ ($polCov->percentage ?? 0) * 100 }}"
                                                     readonly>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="small text-muted mb-0">Persentase</label>
-                                                <div class="input-group input-group-sm">
-                                                    <input type="text"
-                                                        class="form-control text-center bg-white"
-                                                        value="{{ ($polCov->percentage ?? 0) * 100 }}"
-                                                        readonly>
-                                                    <span class="input-group-text">%</span>
-                                                </div>
+                                                <span class="input-group-text">%</span>
                                             </div>
                                         </div>
-                                        @if (!$loop->last)
-                                            <hr class="my-2 text-muted">
-                                        @endif
-                                    @endforeach
-                                @else
-                                    <div class="text-center text-muted small"
-                                        id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
-                                @endif
-                            </div>
-
+                                    </div>
+                                    @if (!$loop->last)
+                                        <hr class="my-2 text-muted">
+                                    @endif
+                                @endforeach
+                            @else
+                                <div class="text-center text-muted small"
+                                    id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
+                            @endif
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -616,6 +613,9 @@
 
                     // CLONE
                     var $cloned = $(this).clone();
+
+                    // Add insurance-item class for consistent selector usage
+                    $cloned.addClass('insurance-item');
 
                     // BERSIHKAN
                     $cloned.find('.remove-item-btn').closest('div[class^="col-"]').remove();

@@ -13,7 +13,7 @@
 
             <div class="row">
                 {{-- Dropdown Metode Pembayaran --}}
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label fw-bold">Tipe Pembayaran <span class="text-danger">*</span></label>
                     <select name="payment_type_id"
                         id="payment_type_id"
@@ -31,7 +31,7 @@
                 </div>
 
                 {{-- Konfigurasi Cicilan (Hidden by default) --}}
-                <div class="col-md-6 mb-3"
+                <div class="col-md-4 mb-3"
                     id="installment-config-area"
                     style="display: none;">
                     <label class="form-label fw-bold">Jumlah Termin</label>
@@ -47,7 +47,7 @@
                     <small class="text-muted">Masukkan jumlah installment.</small>
                 </div>
 
-                <div class="col-md-12 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label"
                         for="deadline_at">Tanggal Deadline</label>
                     <input id="deadline_at"
@@ -180,12 +180,20 @@
 @push('scripts')
     <script>
         function renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto) {
+            console.log('Rendering Step 5 Table with:', {
+                totalPremi,
+                policyFee,
+                totalKomisi,
+                totalPajak,
+                totalNetto
+            });
             var tbody = $('#preview-table-body');
             tbody.empty();
 
-            // Ambil data asuransi dari DOM di Step 4 (karena user bisa edit pajak per item disana)
+            // Ambil data asuransi dari DOM di Step 3 (karena user bisa edit pajak per item disana)
             var insuranceItems = $('#insurance-list-container .insurance-item');
             var rowCount = insuranceItems.length;
+            console.log('Found insurance items:', rowCount, insuranceItems);
 
             if (rowCount === 0) {
                 tbody.html('<tr><td colspan="7" class="text-center">Belum ada data asuransi</td></tr>');
@@ -273,6 +281,14 @@
             $('#prev-total-komisi').text(formatRupiah(sumKomisi));
             $('#prev-total-pajak').text(formatRupiah(sumPajak));
             $('#prev-total-netto').text(formatRupiah(sumNetto));
+
+            console.log('Step 5 Table rendered. Totals:', {
+                premi: sumPremi + policyFee,
+                biaya: policyFee,
+                komisi: sumKomisi,
+                pajak: sumPajak,
+                netto: sumNetto
+            });
         }
 
         // Add event listeners to trigger calculation when parameters change

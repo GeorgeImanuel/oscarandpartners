@@ -43,7 +43,7 @@ function sumInputValues(selector, target) {
     } else {
         $target.text(sum);
     }
-    console.info("Sum updated:", selector, sum);
+    // console.info("Sum updated:", selector, sum);
 }
 
 /**
@@ -60,6 +60,7 @@ function validateValues(selector, target, min, max) {
     var total = 0;
 
     $inputs.each(function () {
+        console.info("Validating input:", $(this).attr("name"), $(this).val());
         var value = parseFloat($(this).val()) || 0;
         var $input = $(this);
         var $inputGroup =
@@ -69,9 +70,12 @@ function validateValues(selector, target, min, max) {
         var $errorMsg = $inputGroup.next(".error-message");
 
         // Validate individual input against min/max if provided
-        if (typeof min !== "undefined" && value < min) {
-            $input.val(min);
-            value = min;
+        if (
+            (typeof min !== "undefined" && value < min) ||
+            (typeof max !== "undefined" && value > max)
+        ) {
+            $input.val(value < min ? min : max);
+            value = value < min ? min : max;
             $input.addClass("is-invalid border-danger");
             if ($errorMsg.length === 0) {
                 $inputGroup.after(
@@ -82,21 +86,10 @@ function validateValues(selector, target, min, max) {
                         "!!</div>",
                 );
             }
-        } else if (typeof max !== "undefined" && value > max) {
-            $input.val(max);
-            value = max;
-            $input.addClass("is-invalid border-danger");
-            if ($errorMsg.length === 0) {
-                $inputGroup.after(
-                    '<div class="error-message" style="color: red;">Nilai harus diantara ' +
-                        min +
-                        "-" +
-                        max +
-                        "!!</div>",
-                );
-            }
+        } else {
+            $input.removeClass("is-invalid border-danger");
+            $errorMsg.remove();
         }
-
         total += value;
     });
 
@@ -104,11 +97,11 @@ function validateValues(selector, target, min, max) {
     var isValid = true;
     if (typeof min !== "undefined" && total < min) {
         isValid = false;
-        console.warn("Total value", total, "is below minimum:", min);
+        // console.warn("Total value", total, "is below minimum:", min);
     }
     if (typeof max !== "undefined" && total > max) {
         isValid = false;
-        console.warn("Total value", total, "exceeds maximum:", max);
+        // console.warn("Total value", total, "exceeds maximum:", max);
     }
 
     console.info(
