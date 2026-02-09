@@ -62,6 +62,10 @@
                         errorMessage.style.color = 'red';
                         errorMessage.textContent = field.validationMessage;
                         field.insertAdjacentElement('afterend', errorMessage);
+                        
+                        if (debug) {
+                            console.warn('Field not valid:', field.name, 'Message:', field.validationMessage);
+                        }
                     }
 
                     // Remove error message on input change
@@ -70,9 +74,6 @@
                             field.nextElementSibling.remove();
                         }
                     });
-                    if (debug) {
-                        console.log('Field validated:', field.name, 'Valid:', field.checkValidity());
-                    }
                 });
 
                 // Run custom validation if provided

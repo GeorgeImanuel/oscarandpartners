@@ -60,7 +60,7 @@ function validateValues(selector, target, min, max) {
     var total = 0;
 
     $inputs.each(function () {
-        console.info("Validating input:", $(this).attr("name"), $(this).val());
+        // console.info("Validating input:", $(this).attr("name"), $(this).val());
         var value = parseFloat($(this).val()) || 0;
         var $input = $(this);
         var $inputGroup =
@@ -104,14 +104,6 @@ function validateValues(selector, target, min, max) {
         // console.warn("Total value", total, "exceeds maximum:", max);
     }
 
-    console.info(
-        "Validation result for ",
-        selector,
-        total,
-        "isValid:",
-        isValid,
-    );
-
     // Handle target - can be id, class, or jQuery object
     var $targets = target instanceof jQuery ? target : $(target);
 
@@ -127,6 +119,7 @@ function validateValues(selector, target, min, max) {
                 .closest(".alert")
                 .removeClass("alert-success")
                 .addClass("alert-danger");
+            console.warn("Not valid sum for ", selector, ', total: ', total);
         }
         if ($target.is("input")) {
             $target.val(total.toFixed(2)).trigger("change");

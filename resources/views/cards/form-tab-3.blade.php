@@ -583,7 +583,7 @@
                 });
 
                 if (totalPercentage > 0) $('#premi_percentages').val(totalPercentage.toFixed(5));
-                console.log('✅ Coverage cloned:', clonedCount, 'items, total:', totalPercentage);
+                // console.log('✅ Coverage cloned:', clonedCount, 'items, total:', totalPercentage);
                 // console.log('Container HTML after:', $target.html().substring(0, 200));
             };
 

@@ -163,7 +163,7 @@
                     };
 
                     if (totalCoveragePercentage < 0 || totalCoveragePercentage > 100) {
-                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%', '');
+                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(2) + '%', '');
                         errors.push({
                             field: '.coverage-percentage',
                             message: 'Total persentase coverage harus 100%'
@@ -197,6 +197,7 @@
                         errors: errors
                     };
                 },
+                debug: true
             });
 
             // Validate percentage inputs to be between 0-100

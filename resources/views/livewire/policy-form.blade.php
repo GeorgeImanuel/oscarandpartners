@@ -419,7 +419,6 @@
             var $template = $('#object-form-livewire');
             var className = $template.find('input[name="class"]').val();
 
-            console.log('objectLoaded event received:', event);
             if (className) {
                 var $cloneContent = $template.clone();
 
