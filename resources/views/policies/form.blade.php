@@ -143,7 +143,7 @@
                                                     <option value="{{ $item->id }}" 
                                                         data-value="{{ $item->objectInterests->sum('value') }}" 
                                                         {{ $obj->id == $item->id ? 'selected' : '' }}>
-                                                        {{ $item->name }}
+                                                        {{ $item->name }} - {{ $item->keterangan }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -323,6 +323,7 @@
             return [
                 'id' => $obj->id,
                 'name' => $obj->name,
+                'keterangan' => $obj->keterangan,
                 'total_value' => $obj->objectInterests->sum('value') // Hitung sum disini
             ];
         })) !!};
@@ -342,7 +343,7 @@
                             <select class="form-select object-select" name="object_id[]" style="width: 100%;" required>
                                 <option value="">- Pilih Objek -</option>
                                 // PERBAIKAN 4: Gunakan property 'total_value' yang sudah kita siapkan diatas
-                                ${objectsData.map(obj => `<option value="${obj.id}" data-value="${obj.total_value}">${obj.name}</option>`).join('')}
+                                ${objectsData.map(obj => `<option value="${obj.id}" data-value="${obj.total_value}">${obj.name} - ${obj.keterangan}</option>`).join('')}
                             </select>
                         </div>
                         <div class="col-md-4 mb-2 mb-md-0">
@@ -360,11 +361,6 @@
             
             document.getElementById('objects-container').insertAdjacentHTML('beforeend', row);
             document.getElementById('object-empty-state').style.display = 'none';
-            
-            $('.object-select').last().select2({
-                placeholder: '- Pilih Objek -',
-                allowClear: true
-            });
             
             objectIndex++;
             updateObjectLabels();
@@ -468,7 +464,6 @@
             updateInsuranceNumbers();
             
             // Re-inisialisasi event listeners
-            initializeSelect2();
             initializeMainCheckboxes();
             initializePercentageValidation();
         }
@@ -666,7 +661,7 @@
                 if (input.classList.contains('d-none')) {
                     selectContainer.classList.add('d-none');
                     input.classList.remove('d-none');
-                    $(select).val(null).trigger('change');
+                    select.value = '';
                     icon.className = 'fa fa-list';
                     toggleBtn.title = 'Pilih dari daftar';
                 } else {
@@ -680,21 +675,7 @@
         });
 
         function initializeSelect2() {
-            $('.insurance-select').select2({
-                placeholder: '- Pilih Asuransi -',
-                allowClear: true
-            });
-            
-            $('.coverage-select').select2({
-                placeholder: '- Pilih Coverage -',
-                allowClear: true
-            });
-
-            // Init Select2 Object (Agar konsisten)
-            $('.object-select').select2({
-                placeholder: '- Pilih Objek -',
-                allowClear: true
-            });
+            // Select2 disabled - using native select elements
         }
 
 
@@ -727,11 +708,6 @@
             
             document.getElementById('coverages-container').insertAdjacentHTML('beforeend', row);
             document.getElementById('coverage-empty-state').style.display = 'none';
-            
-            $('.coverage-select').last().select2({
-                placeholder: '- Pilih Coverage -',
-                allowClear: true
-            });
             
             coverageIndex++;
             updateCoveragePercentageTotal();

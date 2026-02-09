@@ -86,8 +86,8 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="col-md-6 mb-3">
+                    
+                    <div class="col-md-6 mb-3" id="tjh-field-container" style="display: none;">
                         <label class="form-label" for="tjh">Nilai TJH (Rp)</label>
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
@@ -192,6 +192,9 @@
         $(document).ready(function() {
             initCustomSelect2(".create-select2");
 
+            // Check initial occupation value and show/hide TJH field
+            toggleTjhField();
+
             // Add default Interest if no Interests exist
             if ($('#interests-container .interest-row').length === 0) {
                 interestIndex = 1;
@@ -211,6 +214,11 @@
                 allowClear: true
             });
 
+            // Handle occupation change to show/hide TJH field
+            $('#object_occupation_id').on('change', function() {
+                toggleTjhField();
+            });
+
             // Toggle Object Occupation: Select <=> Input
             $('#toggle-object-occupation').on('click', function() {
                 const $select = $('#object_occupation_id');
@@ -226,6 +234,8 @@
                     $button.removeClass('btn-primary').addClass('btn-secondary');
                     $button.html('<i class="fa fa-list"></i> Pilih');
                     $button.attr('title', 'Pilih dari daftar yang ada');
+                    // Hide TJH when creating new occupation
+                    $('#tjh-field-container').hide();
                 } else {
                     // Switch to select mode - Pilih dari Daftar
                     $input.hide().prop('required', false).prop('disabled', true).val('');
@@ -234,6 +244,8 @@
                     $button.removeClass('btn-secondary').addClass('btn-primary');
                     $button.html('<i class="fa fa-plus"></i> Baru');
                     $button.attr('title', 'Tambah objek okupasi baru');
+                    // Check occupation value to show/hide TJH
+                    toggleTjhField();
                 }
             });
 
@@ -402,6 +414,20 @@
                     $deleteBtn.show();
                 }
             });
+        }
+
+        // Toggle TJH Field visibility based on occupation selection
+        function toggleTjhField() {
+            const $select = $('#object_occupation_id');
+            const $input = $('#object_occupation_name');
+            const $tjhContainer = $('#tjh-field-container');
+            
+            // Only show if select is visible and value is 7
+            if ($select.is(':visible') && $select.val() == '7') {
+                $tjhContainer.slideDown();
+            } else {
+                $tjhContainer.slideUp();
+            }
         }
     </script>
 @endpush

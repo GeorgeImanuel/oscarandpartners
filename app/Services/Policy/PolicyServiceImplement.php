@@ -58,21 +58,12 @@ class PolicyServiceImplement extends Service implements PolicyService
     public function createPolicy(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Hitung total coverage percentages
-            $totalCoveragePercentages = 0;
-            if (isset($data['coverage_percentage']) && is_array($data['coverage_percentage'])) {
-                foreach ($data['coverage_percentage'] as $percentage) {
-                    $totalCoveragePercentages += floatval($percentage);
-                }
-            }
-
             // 1. Create Policy Header
             $policy = $this->mainRepository->create([
                 'policy_number' => $data['policy_number'],
                 'currency_code' => $data['currency_code'] ?? null,
                 'started_date' => $data['started_date'],
                 'ended_date' => $data['ended_date'],
-                'coverage_percentages' => $totalCoveragePercentages / 100, // Convert to decimal
             ]);
 
             // 2. Attach Objects (Many-to-Many)
@@ -107,21 +98,12 @@ class PolicyServiceImplement extends Service implements PolicyService
         return DB::transaction(function () use ($id, $data) {
             $policy = $this->mainRepository->findOrFail($id);
 
-            // Hitung total coverage percentages
-            $totalCoveragePercentages = 0;
-            if (isset($data['coverage_percentage']) && is_array($data['coverage_percentage'])) {
-                foreach ($data['coverage_percentage'] as $percentage) {
-                    $totalCoveragePercentages += floatval($percentage);
-                }
-            }
-
             // 1. Update Policy Header
             $policy->update([
                 'policy_number' => $data['policy_number'],
                 'currency_code' => $data['currency_code'] ?? null,
                 'started_date' => $data['started_date'],
                 'ended_date' => $data['ended_date'],
-                'coverage_percentages' => $totalCoveragePercentages / 100, // Convert to decimal
             ]);
 
             // 2. Sync Objects
