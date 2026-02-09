@@ -99,14 +99,6 @@
                 // Show new client form
                 $('#client-form-container').slideDown();
             }
-            // Find the Livewire component and update clientId
-            // var container = document.querySelector('#policy-details-container [wire\\:id]');
-            // if (container && typeof window.Livewire !== 'undefined') {
-            //     var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
-            //     if (livewireComponent) {
-            //         livewireComponent.set('clientId', clientId);
-            //     }
-            // }
         });
     </script>
 @endpush

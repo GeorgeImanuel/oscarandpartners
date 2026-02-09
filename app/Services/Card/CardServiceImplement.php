@@ -100,38 +100,35 @@ class CardServiceImplement extends Service implements CardService
         try {
             DB::beginTransaction();
             //1. Handle Client Creation (if requested)
-            DB::rollBack();
-            return $data;
             $data['client_id'] = $this->findOrCreateClient($data);
 
             // 2. Handle Policy Creation (if requested)
             $data['policy_id'] = $this->findOrCreatePolicy($data);
-
-            // dd($data);
+            DB::rollBack();
+            return $data;
 
             // 5. Create Card
             $card = $this->mainRepository->create([
                 'client_id'             => $data['client_id'],
                 'policy_id'             => $data['policy_id'],
-                'card_type_id'          => $data['card_type_id'] ?? null,
+                'card_type_id'          => $data['card_type_id'],
                 'card_status_id'        => config('constants.card_status.active'),
                 'parent_card_id'        => $data['parent_card_id'] ?? null,
-                'payment_type_id'       => $data['payment_type_id'] ?? config('constants.payment_type.penuh'),
-                'created_by'            => $data['created_by'] ?? auth()->id(),
-                'premi_percentages'     => $data['premi_percentages'] / 100 ?? 0,
-                'commision_percentages' => (float)($data['commision_percentages'] / 100 ?? 0),
+                'payment_type_id'       => $data['payment_type_id'],
+                'created_by'            => auth()->id(),
+                'premi_percentages'     => $data['premi_percentages'] / 100,
+                'commision_percentages' => (float)($data['commision_percentages'] / 100),
                 'object_value'          => (float)($data['object_value']),
-                'policy_fee'            => (float)($data['policy_fee'] ?? 0),
-                'discount_percentages'  => (float)($data['discount_percentage'] / 100 ?? 0),
-                'discount_value'        => (float)($data['discount_value'] ?? 0),
-                'production_value'      => (float)($data['production_value'] ?? 0),
-                'premi_value'           => (float)($data['premi_value'] ?? 0),
-                'commision_bruto'       => (float)($data['commision_bruto'] ?? 0),
-                'commision_netto'       => (float)($data['commision_netto'] ?? 0),
-                'tax'                   => (float)($data['tax'] ?? 0),
-                'discount_agent'        => (float)($data['discount_agent'] ?? 0),
-                'client_pay'            => (float)($data['client_pay'] ?? 0),
-                'insurance_pay'         => (float)($data['insurance_pay'] ?? 0),
+                'policy_fee'            => (float)($data['policy_fee']),
+                'discount_percentages'  => (float)($data['discount_percentage'] / 100),
+                'discount_value'        => (float)($data['discount_value']),
+                'premi_value'           => (float)($data['premi_value']),
+                'commision_bruto'       => (float)($data['commision_bruto']),
+                'commision_netto'       => (float)($data['commision_netto']),
+                'tax'                   => (float)($data['tax']),
+                'discount_agent'        => (float)($data['discount_agent']),
+                'client_pay'            => (float)($data['client_pay']),
+                'insurance_pay'         => (float)($data['insurance_pay']),
             ]);
 
             DB::rollBack();
@@ -279,44 +276,46 @@ class CardServiceImplement extends Service implements CardService
         return $object->id;
     }
 
-
     /**
      * Create new policy with insurances
      */
     private function findOrCreatePolicy(array $data): int
     {
-        $policy = $this->policyRepository->create([
-            'policy_number'       => $data['policy_number'],
-            'currency_code'       => $data['currency_code'],
-            'started_date'        => $data['started_date'],
-            'ended_date'          => $data['ended_date'],
-        ]);
-
-        // Assign coverages
-        foreach ($data['coverage_id'] as $index => $coverageId) {
-            $this->policyRepository->create([
-                'policy_id'    => $policy->id,
-                'coverage_id'  => $this->findOrCreateCoverage($data['coverage_id'][$index]),
-                'percentage'   => $data['coverage_percentage'][$index] / 100,
+        $policy = $this->policyRepository->find($data['policy_id']);
+        if (!$policy) {
+            $policy = $this->policyRepository->create([
+                'policy_number'       => $data['policy_id'],
+                'currency_code'       => $data['currency_code'],
+                'started_date'        => $data['started_date'],
+                'ended_date'          => $data['ended_date'],
             ]);
-        }
 
-        // Assign insurances
-        foreach ($data['insurance_id'] as $index => $insuranceId) {
-            $this->policyInsuranceRepository->create([
-                'policy_id'    => $policy->id,
-                'insurance_id' => $this->findOrCreateInsurance($data['insurance_id'][$index]),
-                'percentage'   => $data['percentage'][$index] / 100,
-                'is_main'      => $data['is_main'],
-            ]);
-        }
+            // Assign coverages
+            foreach ($data['coverage_id'] as $index => $coverageId) {
+                $this->policyRepository->create([
+                    'policy_id'    => $policy->id,
+                    'coverage_id'  => $this->findOrCreateCoverage($data['coverage_id'][$index]),
+                    'percentage'   => $data['coverage_percentage'][$index] / 100,
+                ]);
+            }
 
-        // Assign objects
-        foreach ($data['object_id'] as $index => $objectId) {
-            $this->policyRepository->create([
-                'policy_id'           => $policy->id,
-                'object_id'           => $this->findOrCreateObject($data, $index)
-            ]);
+            // Assign insurances
+            foreach ($data['insurance_id'] as $index => $insuranceId) {
+                $this->policyInsuranceRepository->create([
+                    'policy_id'    => $policy->id,
+                    'insurance_id' => $this->findOrCreateInsurance($data['insurance_id'][$index]),
+                    'percentage'   => $data['percentage'][$index] / 100,
+                    'is_main'      => $data['is_main'],
+                ]);
+            }
+
+            // Assign objects
+            foreach ($data['object_id'] as $index => $objectId) {
+                $this->policyRepository->create([
+                    'policy_id'           => $policy->id,
+                    'object_id'           => $this->findOrCreateObject($data, $index)
+                ]);
+            }
         }
 
         return $policy->id;
