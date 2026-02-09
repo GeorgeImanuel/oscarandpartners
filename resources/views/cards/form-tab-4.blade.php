@@ -315,7 +315,7 @@
             });
 
             // 1. Hapus #discount dari list ini karena ID itu salah & butuh logic khusus
-            $('#object_value, #policy_fee, #premi_percentages, #commision_percentages, #tjh_value, #discount_agent').on('input change', function() {
+            $('#object_value, #policy_fee, #premi_percentages, #commision_percentage, #tjh_value, #discount_agent').on('input change', function() {
                 update_payment();
             });
 

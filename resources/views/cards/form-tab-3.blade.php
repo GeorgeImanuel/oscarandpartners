@@ -208,14 +208,14 @@
                 <label class="form-label">Persentase Total Komisi</label>
                 <div class="input-group">
                     {{-- Tambahkan class 'validate-percentage' dan min/max --}}
-                    <input id="commision_percentages"
+                    <input id="commision_percentage"
                         class="form-control validate-percentage"
-                        name="commision_percentages"
+                        name="commision_percentage"
                         type="number"
                         step="0.01"
                         min="0"
                         max="100"
-                        value="{{ isset($card) ? $card->commision_percentages * 100 : old('commision_percentages', 0) }}"
+                        value="{{ isset($card) ? $card->commision_percentage * 100 : old('commision_percentage', 0) }}"
                         required>
                     <span class="input-group-text">%</span>
                 </div>
@@ -466,14 +466,14 @@
             var object_value = parseFloat(rawValue) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var policy_fee = parseInt($('#policy_fee').val()) || 0;
-            var commision_percentages = parseFloat($('#commision_percentages').val()) || 0;
+            var commision_percentage = parseFloat($('#commision_percentage').val()) || 0;
             var discount = parseInt($('#discount_value').val()) || 0;
             var tjh_value = parseInt($('#tjh_value').val()) || 0;
             var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
             const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
             const premiValue = premi_value(productionValue, policy_fee);
-            const commisionBruto = commision_bruto(productionValue, commision_percentages / 100, discount);
+            const commisionBruto = commision_bruto(productionValue, commision_percentage / 100, discount);
             const taxValue = parseFloat($('#tax').val()) || 0; // Get current tax value from field
             const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
             const clientPay = client_pay(premiValue, discount_agent);
@@ -706,7 +706,7 @@
                 }, 150);
             });
 
-            $('#premi_percentages, #policy_fee, #commision_percentages, #tjh_value, #discount_agent').on('input change blur', function() {
+            $('#premi_percentages, #policy_fee, #commision_percentage, #tjh_value, #discount_agent').on('input change blur', function() {
                 if (typeof update_payment === 'function') update_payment();
             });
 

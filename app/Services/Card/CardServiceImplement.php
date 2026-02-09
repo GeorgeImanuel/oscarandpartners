@@ -123,12 +123,12 @@ class CardServiceImplement extends Service implements CardService
                 'payment_type_id' => $data['payment_type_id'],
                 'created_by'      => auth()->id(),
 
-                'object_value'          => (float)($data['object_value']),
-                'premi_percentages'     => $data['premi_percentages'] / 100,
-                'commision_percentages' => $data['commision_percentages'] / 100,
-                'policy_fee'            => (float)($data['policy_fee']),
-                'discount_percentages'  => (float)($data['discount_percentage'] / 100),
-                'discount_value'        => (float)($data['discount_value']),
+                'object_value'         => (float)($data['object_value']),
+                'premi_percentages'    => $data['premi_percentages'] / 100,
+                'commision_percentage' => $data['commision_percentage'] / 100,
+                'policy_fee'           => (float)($data['policy_fee']),
+                'discount_percentage'  => (float)($data['discount_percentage'] / 100),
+                'discount_value'       => (float)($data['discount_value']),
 
                 'production_value' => (float)($data['production_value']),
                 'premi_value'      => (float)($data['premi_value']),
@@ -340,7 +340,7 @@ class CardServiceImplement extends Service implements CardService
         $object_value   = (float)($data['object_value'] ?? 0);
         $premi_pct      = (float)($data['premi_percentages'] ?? 0) / 100; // Dibagi 100 karena dari form raw (misal 2.5)
         $policy_fee     = (float)($data['policy_fee'] ?? 0);
-        $comm_pct       = (float)($data['commision_percentages'] ?? 0) / 100;
+        $comm_pct       = (float)($data['commision_percentage'] ?? 0) / 100;
         $discount_pct   = (float)($data['discount_percentage'] ?? 0) / 100;
         $discount_value = (float)($data['discount_value'] ?? 0);
         $tjh_value      = (float)($data['tjh_value'] ?? 0);
@@ -387,8 +387,8 @@ class CardServiceImplement extends Service implements CardService
             'object_value'          => $object_value,
             'premi_percentages'     => $premi_pct,
             'policy_fee'            => $policy_fee,
-            'commision_percentages' => $comm_pct,
-            'discount_percentages'  => $discount_pct,
+            'commision_percentage' => $comm_pct,
+            'discount_percentage'  => $discount_pct,
             'discount_value'        => $discount_value,
             'tjh_value'             => $tjh_value, // Jangan lupa field ini
 

@@ -155,7 +155,7 @@
                                             <tr>
                                                 <td class="fw-bold">Persentase Komisi</td>
                                                 <td>:</td>
-                                                <td>{{ number_format($card->commision_percentages * 100, 5, ',', '.') }}%</td>
+                                                <td>{{ number_format($card->commision_percentage * 100, 5, ',', '.') }}%</td>
                                             </tr>
 
                                             {{-- BIAYA & DISKON --}}

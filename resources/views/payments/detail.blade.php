@@ -226,7 +226,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Komisi</td>
-                                                    <td class="fw-bold">: {{ number_format(($card->commision_percentages ?? 0) * 100, 2) }}%</td>
+                                                    <td class="fw-bold">: {{ number_format(($card->commision_percentage ?? 0) * 100, 2) }}%</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -731,7 +731,7 @@
 
                 const currencyCode = "{{ $policy->currency_code }}";
                 
-                const commissionPercent = {{ $card->commision_percentages ?? 0 }};
+                const commissionPercent = {{ $card->commision_percentage ?? 0 }};
                 const totalTax = {{ $card->tax ?? 0 }};
                 
                 // Variabel untuk menghitung persentase pajak per item (jika perlu)
