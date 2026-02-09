@@ -32,6 +32,7 @@
         var confirmTitle = options.confirmTitle || 'Anda Yakin?';
         var confirmMessage = options.confirmMessage || 'Pastikan semua data sudah benar!';
         var showConfirmDialog = options.showConfirmDialog !== undefined ? options.showConfirmDialog : true;
+        var debug = options.debug || false;
 
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
         var forms = document.querySelectorAll(formSelector);
@@ -69,6 +70,9 @@
                             field.nextElementSibling.remove();
                         }
                     });
+                    if (debug) {
+                        console.log('Field validated:', field.name, 'Valid:', field.checkValidity());
+                    }
                 });
 
                 // Run custom validation if provided

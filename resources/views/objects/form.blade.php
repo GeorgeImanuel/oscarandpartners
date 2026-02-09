@@ -60,7 +60,7 @@
                         <label class="form-label" for="object_occupation_id">Objek Okupasi<span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
                             <div class="flex-grow-1">
-                                <select class="form-select add-select2 @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
+                                <select class="form-select create-select2 @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
                                     <option value="">- Pilih Objek Okupasi -</option>
                                     @foreach ($objectOccupations as $occupation)
                                         <option value="{{ $occupation->id }}" {{ isset($object) && $object->object_occupation_id == $occupation->id ? 'selected' : (old('object_occupation_id') == $occupation->id ? 'selected' : '') }}>
@@ -133,7 +133,7 @@
                                             <label class="form-label">Interest {{ $index + 1 }}</label>
                                             <div class="input-group">
                                                 <div class="flex-grow-1">
-                                                    <select class="form-select add-select2 interest-select" name="interest_id[]" style="width: 100%;">
+                                                    <select class="form-select create-select2 interest-select" name="interest_id[]" style="width: 100%;">
                                                         <option value="">- Pilih Interest -</option>
                                                         @foreach($interests as $interest)
                                                             <option value="{{ $interest->id }}" {{ $objectInterest->interest_id == $interest->id ? 'selected' : '' }}>
@@ -190,7 +190,7 @@
         const interestsData = @json($interests);
 
         $(document).ready(function() {
-            initCustomSelect2(".add-select2");
+            initCustomSelect2(".create-select2");
 
             // Add default Interest if no Interests exist
             if ($('#interests-container .interest-row').length === 0) {

@@ -678,7 +678,7 @@
 
                 if (typeof window.attachTaxInputListeners === 'function') window.attachTaxInputListeners();
                 if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
-                console.log('✅ Insurance cloned:', clonedCount, 'items');
+                // console.log('✅ Insurance cloned:', clonedCount, 'items');
                 // console.log('Container HTML after:', $target.html().substring(0, 200));
             };
 

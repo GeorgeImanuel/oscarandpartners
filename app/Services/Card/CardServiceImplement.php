@@ -5,16 +5,18 @@ namespace App\Services\Card;
 use Illuminate\Support\Facades\DB;
 use LaravelEasyRepository\Service;
 use App\Repositories\Card\CardRepository;
-use App\Repositories\Interest\InterestRepository;
+use App\Repositories\Client\ClientRepository;
 use App\Repositories\Object\ObjectRepository;
 use App\Repositories\Policy\PolicyRepository;
 use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\Coverage\CoverageRepository;
-use App\Repositories\ObjectInterest\ObjectInterestRepository;
-use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
-use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
-use App\Repositories\Client\ClientRepository;
+use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Relation\RelationRepository;
+use App\Repositories\Insurance\InsuranceRepository;
+use App\Repositories\ObjectInterest\ObjectInterestRepository;
+use App\Repositories\PolicyCoverage\PolicyCoverageRepository;
+use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
+use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 
 class CardServiceImplement extends Service implements CardService
 {
@@ -45,6 +47,7 @@ class CardServiceImplement extends Service implements CardService
     protected $coverageRepository;
     protected $policyCoverageRepository;
     protected $policyInsuranceRepository;
+    protected $insuranceRepository;
     protected $paymentRepository;
 
     public function __construct(
@@ -57,19 +60,23 @@ class CardServiceImplement extends Service implements CardService
         ObjectInterestRepository $objectInterestRepository,
         PolicyRepository $policyRepository,
         CoverageRepository $coverageRepository,
+        PolicyCoverageRepository $policyCoverageRepository,
         PolicyInsuranceRepository $policyInsuranceRepository,
+        InsuranceRepository $insuranceRepository,
         PaymentRepository $paymentRepository
     ) {
-        $this->mainRepository = $mainRepository;
-        $this->clientRepository = $clientRepository;
-        $this->relationRepository = $relationRepository;
+        $this->mainRepository             = $mainRepository;
+        $this->clientRepository           = $clientRepository;
+        $this->relationRepository         = $relationRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository           = $objectRepository;
         $this->interestRepository         = $interestRepository;
         $this->objectInterestRepository   = $objectInterestRepository;
         $this->policyRepository           = $policyRepository;
         $this->coverageRepository         = $coverageRepository;
+        $this->policyCoverageRepository   = $policyCoverageRepository;
         $this->policyInsuranceRepository  = $policyInsuranceRepository;
+        $this->insuranceRepository        = $insuranceRepository;
         $this->paymentRepository          = $paymentRepository;
     }
 
@@ -96,44 +103,44 @@ class CardServiceImplement extends Service implements CardService
      */
     public function create($data)
     {
-
         try {
             DB::beginTransaction();
             //1. Handle Client Creation (if requested)
             $data['client_id'] = $this->findOrCreateClient($data);
-
+            // DB::rollBack();
+            // return $this->findOrCreatePolicy($data);
+            // return $data;
             // 2. Handle Policy Creation (if requested)
             $data['policy_id'] = $this->findOrCreatePolicy($data);
-            DB::rollBack();
-            return $data;
 
             // 5. Create Card
             $card = $this->mainRepository->create([
-                'client_id'             => $data['client_id'],
-                'policy_id'             => $data['policy_id'],
-                'card_type_id'          => $data['card_type_id'],
-                'card_status_id'        => config('constants.card_status.active'),
-                'parent_card_id'        => $data['parent_card_id'] ?? null,
-                'payment_type_id'       => $data['payment_type_id'],
-                'created_by'            => auth()->id(),
-                'premi_percentages'     => $data['premi_percentages'] / 100,
-                'commision_percentages' => (float)($data['commision_percentages'] / 100),
+                'client_id'       => $data['client_id'],
+                'policy_id'       => $data['policy_id'],
+                'card_type_id'    => $data['card_type_id'],
+                'card_status_id'  => config('constants.card_status.active'),
+                'parent_card_id'  => $data['parent_card_id'] ?? null,
+                'payment_type_id' => $data['payment_type_id'],
+                'created_by'      => auth()->id(),
+
                 'object_value'          => (float)($data['object_value']),
+                'premi_percentages'     => $data['premi_percentages'] / 100,
+                'commision_percentages' => $data['commision_percentages'] / 100,
                 'policy_fee'            => (float)($data['policy_fee']),
                 'discount_percentages'  => (float)($data['discount_percentage'] / 100),
                 'discount_value'        => (float)($data['discount_value']),
-                'premi_value'           => (float)($data['premi_value']),
-                'commision_bruto'       => (float)($data['commision_bruto']),
-                'commision_netto'       => (float)($data['commision_netto']),
-                'tax'                   => (float)($data['tax']),
-                'discount_agent'        => (float)($data['discount_agent']),
-                'client_pay'            => (float)($data['client_pay']),
-                'insurance_pay'         => (float)($data['insurance_pay']),
+
+                'production_value' => (float)($data['production_value']),
+                'premi_value'      => (float)($data['premi_value']),
+                'commision_bruto'  => (float)($data['commision_bruto']),
+                'commision_netto'  => (float)($data['commision_netto']),
+                'tax'              => (float)($data['tax']),
+                'discount_agent'   => (float)($data['discount_agent']),
+                'client_pay'       => (float)($data['client_pay']),
+                'insurance_pay'    => (float)($data['insurance_pay']),
             ]);
 
-            DB::rollBack();
-            return ($card);
-            //Create Payment(s)
+            // Create Payment(s)
             // Check if installments array exists (cicilan/installment)
             if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
                 // Create multiple payments for installments
@@ -188,8 +195,8 @@ class CardServiceImplement extends Service implements CardService
         if (!$client) {
             $client = $this->clientRepository->create([
                 'relation_id' => $this->findOrCreateRelation($data),
-                'name'        => $data['client_id'],
-                'address'     => $data['id_address'] ?? null,
+                'id_name'     => $data['client_id'],
+                'id_address'  => $data['id_address'] ?? null,
             ]);
         }
         return $client->id;
@@ -213,11 +220,11 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new insurance
      */
-    private function findOrCreateInsurance(int $insuranceId): int
+    private function findOrCreateInsurance(int $insuranceId)
     {
-        $insurance = $this->policyInsuranceRepository->find($insuranceId);
+        $insurance = $this->insuranceRepository->find($insuranceId);
         if (!$insurance) {
-            $insurance = $this->policyInsuranceRepository->create([
+            $insurance = $this->insuranceRepository->create([
                 'name' => $insuranceId
             ]);
         }
@@ -279,8 +286,9 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new policy with insurances
      */
-    private function findOrCreatePolicy(array $data): int
+    private function findOrCreatePolicy(array $data)
     {
+        // return $data;
         $policy = $this->policyRepository->find($data['policy_id']);
         if (!$policy) {
             $policy = $this->policyRepository->create([
@@ -292,9 +300,10 @@ class CardServiceImplement extends Service implements CardService
 
             // Assign coverages
             foreach ($data['coverage_id'] as $index => $coverageId) {
-                $this->policyRepository->create([
+                // return $this->findOrCreateCoverage($coverageId);
+                $this->policyCoverageRepository->create([
                     'policy_id'    => $policy->id,
-                    'coverage_id'  => $this->findOrCreateCoverage($data['coverage_id'][$index]),
+                    'coverage_id'  => $this->findOrCreateCoverage($coverageId),
                     'percentage'   => $data['coverage_percentage'][$index] / 100,
                 ]);
             }
@@ -303,9 +312,9 @@ class CardServiceImplement extends Service implements CardService
             foreach ($data['insurance_id'] as $index => $insuranceId) {
                 $this->policyInsuranceRepository->create([
                     'policy_id'    => $policy->id,
-                    'insurance_id' => $this->findOrCreateInsurance($data['insurance_id'][$index]),
-                    'percentage'   => $data['percentage'][$index] / 100,
-                    'is_main'      => $data['is_main'],
+                    'insurance_id' => $this->findOrCreateInsurance($insuranceId),
+                    'percentage'   => $data['insurance_percentage'][$index] / 100,
+                    'is_main'      => $data['is_main'][$index],
                 ]);
             }
 

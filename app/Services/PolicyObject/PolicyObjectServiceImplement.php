@@ -2,10 +2,10 @@
 
 namespace App\Services\PolicyObject;
 
-use LaravelEasyRepository\ServiceApi;
+use LaravelEasyRepository\Service;
 use App\Repositories\PolicyObject\PolicyObjectRepository;
 
-class PolicyObjectServiceImplement extends ServiceApi implements PolicyObjectService{
+class PolicyObjectServiceImplement extends Service implements PolicyObjectService{
 
     /**
      * set title message api for CRUD

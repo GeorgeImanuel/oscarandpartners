@@ -180,20 +180,20 @@
 @push('scripts')
     <script>
         function renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto) {
-            console.log('Rendering Step 5 Table with:', {
-                totalPremi,
-                policyFee,
-                totalKomisi,
-                totalPajak,
-                totalNetto
-            });
+            // console.log('Rendering Step 5 Table with:', {
+            //     totalPremi,
+            //     policyFee,
+            //     totalKomisi,
+            //     totalPajak,
+            //     totalNetto
+            // });
             var tbody = $('#preview-table-body');
             tbody.empty();
 
             // Ambil data asuransi dari DOM di Step 3 (karena user bisa edit pajak per item disana)
             var insuranceItems = $('#insurance-list-container .insurance-item');
             var rowCount = insuranceItems.length;
-            console.log('Found insurance items:', rowCount, insuranceItems);
+            // console.log('Found insurance items:', rowCount, insuranceItems);
 
             if (rowCount === 0) {
                 tbody.html('<tr><td colspan="7" class="text-center">Belum ada data asuransi</td></tr>');
@@ -282,13 +282,13 @@
             $('#prev-total-pajak').text(formatRupiah(sumPajak));
             $('#prev-total-netto').text(formatRupiah(sumNetto));
 
-            console.log('Step 5 Table rendered. Totals:', {
-                premi: sumPremi + policyFee,
-                biaya: policyFee,
-                komisi: sumKomisi,
-                pajak: sumPajak,
-                netto: sumNetto
-            });
+            // console.log('Step 5 Table rendered. Totals:', {
+            //     premi: sumPremi + policyFee,
+            //     biaya: policyFee,
+            //     komisi: sumKomisi,
+            //     pajak: sumPajak,
+            //     netto: sumNetto
+            // });
         }
 
         // Add event listeners to trigger calculation when parameters change

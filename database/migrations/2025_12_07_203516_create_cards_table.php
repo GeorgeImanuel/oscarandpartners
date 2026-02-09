@@ -18,7 +18,6 @@ return new class extends Migration {
             
             $table->bigInteger('object_value')->comment('Harga Asset dari object_component');
             $table->decimal('premi_percentages', 8, 7);
-            $table->decimal('tax_percentages', 8, 7);
             $table->decimal('commision_percentages', 8, 7);
             $table->decimal('policy_fee', 20, 2);
             $table->decimal('discount_percentages', 8, 7);

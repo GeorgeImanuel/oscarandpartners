@@ -11,8 +11,6 @@
                     for="policy_id">Nomor Polis</label>
                 <select id="policy_id"
                     class="form-control create-select2 @error('policy_id') is-invalid @enderror"
-                    data-existing-name="policy_id"
-                    data-new-name="policy_number"
                     data-placeholder="Pilih Polis"
                     name="policy_id"
                     wire:ignore
