@@ -23,7 +23,7 @@
     
     <div class="col-md-6 mb-3">
         <label class="form-label"
-            for="object_keterangan">Alamat <span class="text-danger">*</span></label>
+            for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
             name="object_keterangan[{{ isset($object) ? $object->id : '' }}]"

@@ -302,14 +302,14 @@
                             style="display: none">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"
-                                    for="object_id">Nama Objek <span class="item-count"></span><span class="text-danger">*</span></label>
+                                    for="object_id">Nama Objek (Tertanggung) <span class="item-count"></span><span class="text-danger">*</span></label>
                                 <select class="form-control create-select2 object-select required @error('object_id') is-invalid @enderror"
                                     name="object_id[]"
                                     data-placeholder="Pilih Objek">
                                     <option></option>
                                     @foreach ($objects ?? [] as $object)
                                         <option value="{{ $object->id }}">
-                                            {{ $object->name }}
+                                            {{ $object->name }} - {{ $object->keterangan}}
                                         </option>
                                     @endforeach
                                 </select>
@@ -338,7 +338,7 @@
                                 data-item-index="{{ $index + 1 }}">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek <span class="item-count">{{ $index + 1 }}</span><span class="text-danger">*</span></label>
+                                        for="object_id">Nama Objek (Tertanggung) <span class="item-count">{{ $index + 1 }}</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id[]"
                                         data-placeholder="Pilih Objek"
@@ -347,7 +347,7 @@
                                         @foreach ($objects ?? [] as $object)
                                             <option value="{{ $object->id }}"
                                                 {{ $object->id == $policyObject->object_id ? 'selected' : '' }}>
-                                                {{ $object->name }}
+                                                {{ $object->name }} - {{ $object->keterangan}}
                                             </option>
                                         @endforeach
                                     </select>
@@ -371,7 +371,7 @@
                                 data-item-index="1">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek <span class="item-count">1</span><span class="text-danger">*</span></label>
+                                        for="object_id">Nama Objek (Tertanggung) <span class="item-count">1</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id[]"
                                         data-placeholder="Pilih Objek"
@@ -379,7 +379,7 @@
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
                                             <option value="{{ $object->id }}">
-                                                {{ $object->name }}
+                                                {{ $object->name }} - {{ $object->keterangan}}
                                             </option>
                                         @endforeach
                                     </select>

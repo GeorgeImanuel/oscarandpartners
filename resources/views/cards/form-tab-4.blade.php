@@ -300,7 +300,7 @@
                 update_payment(); // Trigger payment calculation after tax changes
             });
 
-            // Listen to step navigation untuk render Step 5 Table
+            // Listen to step navigation untuk render Step 5 Table dan auto-fill deadline
             $('div.setup-panel div a[href="#step-4"]').on('click', function() {
                 // Tunggu animasi selesai baru render
                 setTimeout(function() {
@@ -311,6 +311,35 @@
                     var totalNetto = parseFloat($('#insurance_pay').val()) || 0;
 
                     renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto);
+                    
+                    // Auto-fill deadline dari policy started_date
+                    var startedDateStr = null;
+                    
+                    // Coba ambil dari dropdown (existing policy)
+                    if ($('#policy_id').val()) {
+                        var selectedOption = $('#policy_id').find('option:selected');
+                        startedDateStr = selectedOption.data('started-date');
+                    }
+                    
+                    // Jika masih undefined, ambil dari input form (new policy)
+                    if (!startedDateStr && $('#started_date').val()) {
+                        startedDateStr = $('#started_date').val();
+                    }
+                    
+                    console.log('Started Date:', startedDateStr);
+                    
+                    if (startedDateStr) {
+                        var startDate = new Date(startedDateStr);
+                        startDate.setDate(startDate.getDate() + 30);
+                        
+                        var year = startDate.getFullYear();
+                        var month = String(startDate.getMonth() + 1).padStart(2, '0');
+                        var day = String(startDate.getDate()).padStart(2, '0');
+                        var deadlineStr = year + '-' + month + '-' + day;
+                        
+                        console.log('Setting deadline to:', deadlineStr);
+                        $('#deadline_at').val(deadlineStr);
+                    }
                 }, 100);
             });
 
@@ -396,18 +425,17 @@
 
                 var currencyLabel = window.currentCurrency || 'Rp';
 
-                // Ambil started_date dari policy
-                var selectedOption = $('#policy_id').find('option:selected');
-                var startedDateStr = selectedOption.data('started-date');
-                var baseDate = startedDateStr ? new Date(startedDateStr) : new Date();
+                // Ambil deadline_at sebagai tanggal angsuran pertama
+                var deadlineStr = $('#deadline_at').val();
+                var baseDate = deadlineStr ? new Date(deadlineStr) : new Date();
 
                 var tbody = $('#installment-inputs-body');
                 tbody.empty();
 
                 for (var i = 0; i < count; i++) {
-                    // Logic Tanggal: +30 hari per termin
+                    // Logic Tanggal: Termin pertama = deadline, termin selanjutnya +30 hari dari termin sebelumnya
                     var d = new Date(baseDate);
-                    d.setDate(d.getDate() + ((i + 1) * 30));
+                    d.setDate(d.getDate() + (i * 30));
                     var dateStr = d.toISOString().split('T')[0];
                     var sequence = i + 1;
 
@@ -525,6 +553,10 @@
 
             // Validate insurance percentage sum before form submission
             $('.needs-validation').on('submit', function(e) {
+                var hasError = false;
+                var errorMessages = [];
+
+                // 1. Validasi Total Persentase Asuransi
                 var totalPercentage = 0;
                 var hasInsurances = false;
 
@@ -540,17 +572,65 @@
                 // Check if new policy form is visible and has insurances
                 if ($('#new-policy').is(':visible') && hasInsurances) {
                     if (totalPercentage < 0 || totalPercentage > 100) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        Swal.fire({
-                            title: 'Validasi Gagal',
-                            text: 'Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                        return false;
+                        hasError = true;
+                        errorMessages.push('Total persentase asuransi harus antara 0-100%. Saat ini: ' + totalPercentage.toFixed(2) + '%');
                     }
+                }
+
+                // 2. Validasi Periode Akhir tidak lebih awal dari Periode Awal
+                var startedDateStr = null;
+                var endedDateStr = $('#ended_date').val();
+
+                // Ambil started_date
+                if ($('#policy_id').val()) {
+                    var selectedOption = $('#policy_id').find('option:selected');
+                    startedDateStr = selectedOption.data('started-date');
+                }
+                if (!startedDateStr && $('#started_date').val()) {
+                    startedDateStr = $('#started_date').val();
+                }
+
+                if (startedDateStr && endedDateStr) {
+                    var startDate = new Date(startedDateStr);
+                    var endDate = new Date(endedDateStr);
+
+                    if (endDate < startDate) {
+                        hasError = true;
+                        errorMessages.push('Periode Akhir Pertanggungan tidak boleh lebih awal dari Periode Awal Pertanggungan');
+                        $('#ended_date').addClass('is-invalid');
+                    } else {
+                        $('#ended_date').removeClass('is-invalid');
+                    }
+                }
+
+                // 3. Validasi Deadline tidak lebih awal dari Periode Awal
+                var deadlineStr = $('#deadline_at').val();
+
+                if (startedDateStr && deadlineStr) {
+                    var startDate = new Date(startedDateStr);
+                    var deadlineDate = new Date(deadlineStr);
+
+                    if (deadlineDate < startDate) {
+                        hasError = true;
+                        errorMessages.push('Tanggal Deadline tidak boleh lebih awal dari Periode Awal Pertanggungan');
+                        $('#deadline_at').addClass('is-invalid');
+                    } else {
+                        $('#deadline_at').removeClass('is-invalid');
+                    }
+                }
+
+                // Tampilkan error jika ada
+                if (hasError) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    Swal.fire({
+                        title: 'Validasi Gagal',
+                        html: errorMessages.join('<br>'),
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return false;
                 }
             });
 
@@ -568,6 +648,86 @@
                 var selectedOption = $('#policy_id').find('option:selected');
                 var currencyCode = selectedOption.data('currency');
                 updateCurrencyLabel(currencyCode);
+            }
+
+            // Auto set deadline_at to +30 days from policy started_date
+            $('#policy_id').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var startedDateStr = selectedOption.data('started-date');
+                
+                if (startedDateStr) {
+                    var startDate = new Date(startedDateStr);
+                    startDate.setDate(startDate.getDate() + 30);
+                    
+                    // Format to YYYY-MM-DD for input type="date"
+                    var year = startDate.getFullYear();
+                    var month = String(startDate.getMonth() + 1).padStart(2, '0');
+                    var day = String(startDate.getDate()).padStart(2, '0');
+                    var deadlineStr = year + '-' + month + '-' + day;
+                    
+                    $('#deadline_at').val(deadlineStr);
+                }
+            });
+
+            // Listen to started_date input change (for new policy form)
+            $(document).on('change', '#started_date', function() {
+                var startedDateStr = $(this).val();
+                
+                if (startedDateStr) {
+                    var startDate = new Date(startedDateStr);
+                    startDate.setDate(startDate.getDate() + 30);
+                    
+                    var year = startDate.getFullYear();
+                    var month = String(startDate.getMonth() + 1).padStart(2, '0');
+                    var day = String(startDate.getDate()).padStart(2, '0');
+                    var deadlineStr = year + '-' + month + '-' + day;
+                    
+                    $('#deadline_at').val(deadlineStr);
+                }
+            });
+
+            // Remove validation error styling when user changes the field
+            $(document).on('change', '#ended_date, #deadline_at', function() {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('.invalid-feedback:not([data-original])').remove();
+            });
+
+            // Real-time validation: Deadline tidak lebih awal dari Periode Awal
+            $(document).on('change', '#deadline_at', function() {
+                var startedDateStr = null;
+                
+                // Ambil started_date dari dropdown atau input
+                if ($('#policy_id').val()) {
+                    var selectedOption = $('#policy_id').find('option:selected');
+                    startedDateStr = selectedOption.data('started-date');
+                }
+                if (!startedDateStr && $('#started_date').val()) {
+                    startedDateStr = $('#started_date').val();
+                }
+
+                var deadlineStr = $(this).val();
+
+                if (startedDateStr && deadlineStr) {
+                    var startDate = new Date(startedDateStr);
+                    var deadlineDate = new Date(deadlineStr);
+
+                    if (deadlineDate < startDate) {
+                        $(this).addClass('is-invalid');
+                        
+                        // Tampilkan pesan error jika belum ada
+                        if (!$(this).siblings('.invalid-feedback').length) {
+                            $(this).after('<div class="invalid-feedback d-block">Tanggal Deadline tidak boleh lebih awal dari Periode Awal Pertanggungan</div>');
+                        }
+                    } else {
+                        $(this).removeClass('is-invalid');
+                        $(this).siblings('.invalid-feedback:not([data-original])').remove();
+                    }
+                }
+            });
+
+            // Trigger on page load if policy already selected
+            if ($('#policy_id').val()) {
+                $('#policy_id').trigger('change');
             }
         });
     </script>
