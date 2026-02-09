@@ -57,15 +57,13 @@
                                 </a>
                             </li>
 
-                            @hasanyrole('owner|admin|finance')
-                                <li>
-                                    <a href="{{ route('cards.reportByObject') }}"
-                                        class="{{ routeActive('cards.reportByObject') }}">
-                                        <i data-feather="file-text"></i>
-                                        <span>Kartu Per Objek</span>
-                                    </a>
-                                </li>
-                            @endhasanyrole
+                            <li>
+                                <a href="{{ route('cards.reportByObject') }}"
+                                    class="{{ routeActive('cards.reportByObject') }}">
+                                    <i data-feather="file-text"></i>
+                                    <span>Kartu Per Objek</span>
+                                </a>
+                            </li>
 
                         </ul>
                     </li>
@@ -94,124 +92,125 @@
                                 </li>
                             </ul>
                         </li>
-
-                        <li class="dropdown">
-                            <a class="nav-link menu-title {{ routeActive('reports.*') }}"
-                                href="javascript:void(0)">
-                                <i data-feather="bar-chart-2"></i>
-                                <span>Laporan</span>
-                            </a>
-                            <ul class="nav-submenu menu-content"
-                                style="display: {{ routeBlock('reports.*') }}">
-                                <li>
-                                    <a href="{{ route('reports.evaluation') }}"
-                                        class="{{ routeActive('reports.evaluation') }}">
-                                        <i data-feather="trending-up"></i>
-                                        <span>Evaluasi Produksi</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('claims.index') }}"
-                                href="{{ route('claims.index') }}"><i data-feather="alert-circle"></i><span>Claim</span></a>
-                        </li>
-
-                        <li class="sidebar-main-title">
-                            <div>
-                                <h6>Polis</h6>
-                            </div>
-                        </li>
-
-                        {{-- 1. GROUP DROPDOWN POLIS (Isinya: Index, Bulan Ini, Bulan Depan) --}}
-                        <li class="dropdown">
-                            <a class="nav-link menu-title {{ routeActive(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}"
-                                href="javascript:void(0)">
-                                <i data-feather="airplay"></i><span>Polis</span>
-                            </a>
-                            
-                            <ul class="nav-submenu menu-content" 
-                                style="display: {{ routeBlock(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}">
-                                
-                                {{-- Item 1: Semua Polis (Index) --}}
-                                <li>
-                                    <a href="{{ route('policies.index') }}" class="{{ routeActive('policies.index') }}">
-                                        <i data-feather="list"></i><span>Semua Polis</span>
-                                    </a>
-                                </li>
-
-                                {{-- Item 2: Bulan Ini --}}
-                                <li>
-                                    <a href="{{ route('policies.thisMonth') }}" class="{{ routeActive('policies.thisMonth') }}">
-                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
-                                    </a>
-                                </li>
-
-                                {{-- Item 3: Bulan Depan --}}
-                                <li>
-                                    <a href="{{ route('policies.nextMonth') }}" class="{{ routeActive('policies.nextMonth') }}">
-                                        <i data-feather="calendar"></i><span> Polis Berakhir Bulan Depan ( {{ $now->copy()->addMonthNoOverflow()->translatedFormat('F Y') }} )</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        {{-- 2. ITEM SENDIRI-SENDIRI (Button Lepasan) --}}
-                        {{-- Mata Uang --}}
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('currencies.index') }}"
-                                href="{{ route('currencies.index') }}">
-                                <i data-feather="dollar-sign"></i><span>Mata Uang</span>
-                            </a>
-                        </li>
-
-                        {{-- Asuransi --}}
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}"
-                                href="{{ route('insurances.index') }}">
-                                <i data-feather="shield"></i><span>Asuransi</span>
-                            </a>
-                        </li>
-
-                        {{-- Coverages --}}
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}"
-                                href="{{ route('coverages.index') }}">
-                                <i data-feather="check-square"></i><span>Coverages</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-main-title">
-                            <div>
-                                <h6>Objek</h6>
-                            </div>
-                        </li>
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}"
-                                href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}"
-                                href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Okupasi</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}"
-                                href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
-                        </li>
                     @endhasanyrole
 
-                    @hasanyrole('owner|admin')
-                        <li class="sidebar-main-title">
-                            <div>
-                                <h6>Pengguna</h6>
-                            </div>
-                        </li>
-                        <li class="dropdown">
-                            <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}"
-                                href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
-                            <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}"
-                                href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi (Grup) Client</span></a>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title {{ routeActive('reports.*') }}"
+                            href="javascript:void(0)">
+                            <i data-feather="bar-chart-2"></i>
+                            <span>Laporan</span>
+                        </a>
+                        <ul class="nav-submenu menu-content"
+                            style="display: {{ routeBlock('reports.*') }}">
+                            <li>
+                                <a href="{{ route('reports.evaluation') }}"
+                                    class="{{ routeActive('reports.evaluation') }}">
+                                    <i data-feather="trending-up"></i>
+                                    <span>Evaluasi Produksi</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('claims.index') }}"
+                            href="{{ route('claims.index') }}"><i data-feather="alert-circle"></i><span>Claim</span></a>
+                    </li>
+
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Polis</h6>
+                        </div>
+                    </li>
+
+                    {{-- 1. GROUP DROPDOWN POLIS (Isinya: Index, Bulan Ini, Bulan Depan) --}}
+                    <li class="dropdown">
+                        <a class="nav-link menu-title {{ routeActive(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}"
+                            href="javascript:void(0)">
+                            <i data-feather="airplay"></i><span>Polis</span>
+                        </a>
+                        
+                        <ul class="nav-submenu menu-content" 
+                            style="display: {{ routeBlock(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}">
+                            
+                            {{-- Item 1: Semua Polis (Index) --}}
+                            <li>
+                                <a href="{{ route('policies.index') }}" class="{{ routeActive('policies.index') }}">
+                                    <i data-feather="list"></i><span>Semua Polis</span>
+                                </a>
+                            </li>
+
+                            {{-- Item 2: Bulan Ini --}}
+                            <li>
+                                <a href="{{ route('policies.thisMonth') }}" class="{{ routeActive('policies.thisMonth') }}">
+                                    <i data-feather="calendar"></i><span> Polis Berakhir Bulan Ini ( {{ $now->translatedFormat('F Y') }} )</span>
+                                </a>
+                            </li>
+
+                            {{-- Item 3: Bulan Depan --}}
+                            <li>
+                                <a href="{{ route('policies.nextMonth') }}" class="{{ routeActive('policies.nextMonth') }}">
+                                    <i data-feather="calendar"></i><span> Polis Berakhir Bulan Depan ( {{ $now->copy()->addMonthNoOverflow()->translatedFormat('F Y') }} )</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{-- 2. ITEM SENDIRI-SENDIRI (Button Lepasan) --}}
+                    {{-- Mata Uang --}}
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('currencies.index') }}"
+                            href="{{ route('currencies.index') }}">
+                            <i data-feather="dollar-sign"></i><span>Mata Uang</span>
+                        </a>
+                    </li>
+
+                    {{-- Asuransi --}}
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('insurances.index') }}"
+                            href="{{ route('insurances.index') }}">
+                            <i data-feather="shield"></i><span>Asuransi</span>
+                        </a>
+                    </li>
+
+                    {{-- Coverages --}}
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('coverages.index') }}"
+                            href="{{ route('coverages.index') }}">
+                            <i data-feather="check-square"></i><span>Coverages</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Objek</h6>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}"
+                            href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}"
+                            href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Okupasi</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}"
+                            href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
+                    </li>
+
+                
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Pengguna</h6>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a class="nav-link menu-title link-nav {{ routeActive('clients.index') }}"
+                            href="{{ route('clients.index') }}"><i data-feather="users"></i><span>Clients</span></a>
+                        <a class="nav-link menu-title link-nav {{ routeActive('relations.index') }}"
+                            href="{{ route('relations.index') }}"><i data-feather="airplay"></i><span>Relasi (Grup) Client</span></a>
+                        @hasanyrole('owner')
                             <a class="nav-link menu-title link-nav {{ routeActive('users.index') }}"
                                 href="{{ route('users.index') }}"><i data-feather="user"></i><span>Staff</span></a>
-                        </li>
-                    @endhasanyrole
+                        @endhasanyrole
+                    </li>
 
                     <li class="sidebar-main-title">
                         <div>
