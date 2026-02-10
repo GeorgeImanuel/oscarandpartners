@@ -28,7 +28,7 @@
 									<option value="">Semua Objek</option>
 									@forelse($objects as $object)
 										<option value="{{ $object->id }}" {{ request('object_id') == $object->id ? 'selected' : '' }}>
-											{{ $object->name ?? 'No Name' }}
+											{{ $object->name }} - {{ $object->keterangan }}
 										</option>
 									@empty
 										<option value="" disabled>Tidak ada data objek</option>

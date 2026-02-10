@@ -62,7 +62,9 @@ $(document).on("click", ".add-item-btn", function () {
         newItem.show();
         // Clear the input fields inside the cloned item
         newItem.find(".form-control, .form-select").val("");
-        newItem.find(".form-control").prop("required", true);
+        newItem.find(".required").each(function () {
+            $(this).prop("required", true).prop("disabled", false);
+        });
         // Update item text title
         newItem.find(".item-count").text(itemCount);
         newItem.attr("data-item-index", itemCount);
@@ -187,14 +189,20 @@ window.renameInputNameByIndex = function ($items) {
                 if (originalName) {
                     // Check if first [] already has an index like [0], [1], etc.
                     var hasIndex = /\[\d+\]/.test(originalName);
-                    
+
                     if (hasIndex) {
                         // Replace existing [number] with new index
-                        var newName = originalName.replace(/\[\d+\]/, "[" + itemIndex + "]");
+                        var newName = originalName.replace(
+                            /\[\d+\]/,
+                            "[" + itemIndex + "]",
+                        );
                         $(this).attr("name", newName);
                     } else {
                         // Replace first [] with [index]
-                        var newName = originalName.replace(/\[\]/, "[" + itemIndex + "]");
+                        var newName = originalName.replace(
+                            /\[\]/,
+                            "[" + itemIndex + "]",
+                        );
                         $(this).attr("name", newName);
                     }
                 }

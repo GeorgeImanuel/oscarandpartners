@@ -74,6 +74,7 @@
                                         type="number"
                                         min="0"
                                         max="100"
+                                        step="0.00001"
                                         name="discount_percentage"
                                         value="{{ isset($card) ? $card->discount_percentage : old('discount_percentage', 0) }}">
                                     <span class="input-group-text">%</span>
@@ -446,49 +447,37 @@
                     // User isi persen, hitung rupiah
                     var disc_pct = parseFloat($('#discount_percentage').val()) || 0;
                     var disc_val = base_premium * (disc_pct / 100);
-                    $('#discount_value').val(disc_val.toFixed(2)); // Update Input Rupiah
+                    $('#discount_value').val(disc_val.toFixed(2)); // Update Input Rupiah (2 desimal)
                 } else if (source === 'value') {
                     // User isi rupiah, hitung persen
                     var disc_val = parseFloat($('#discount_value').val()) || 0;
                     var disc_pct = (disc_val / base_premium) * 100;
-                    $('#discount_percentage').val(disc_pct.toFixed(2)); // Update Input Persen
+                    $('#discount_percentage').val(disc_pct.toFixed(5)); // Update Input Persen (5 desimal)
                 }
             }
         }
 
         function update_payment() {
-            console.log('Updating payment calculations...');
             var rawValue = $('#object_value').val();
             if (typeof rawValue === 'string') {
-                rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.'); // Sesuaikan dengan format locale
+                rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.');
             }
 
             var object_value = parseFloat(rawValue) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var policy_fee = parseInt($('#policy_fee').val()) || 0;
             var commision_percentage = parseFloat($('#commision_percentage').val()) || 0;
-            var discount = parseInt($('#discount_value').val()) || 0;
+            var discount = parseFloat($('#discount_value').val()) || 0;
             var tjh_value = parseInt($('#tjh_value').val()) || 0;
             var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
             const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
             const premiValue = premi_value(productionValue, policy_fee);
             const commisionBruto = commision_bruto(productionValue, commision_percentage / 100, discount);
-            const taxValue = parseFloat($('#tax').val()) || 0; // Get current tax value from field
+            const taxValue = parseFloat($('#tax').val()) || 0;
             const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
             const clientPay = client_pay(premiValue, discount_agent);
             const insurancePay = insurance_pay(premiValue, commisionNetto);
-
-            // console.log('Calculated values:', {
-            //     productionValue,
-            //     discount,
-            //     premiValue,
-            //     commisionBruto,
-            //     taxValue,
-            //     commisionNetto,
-            //     clientPay,
-            //     insurancePay
-            // });
 
             $('#production_value').val(productionValue.toFixed(2));
             $('#premi_value').val(premiValue.toFixed(2));
@@ -691,11 +680,21 @@
 
             // Trigger saat Tab 3 diklik
             $(document).on('click', 'a[href="#step-3"]', function() {
-                // console.log('🔄 Cloning visual from Tab 2...');
+                console.log('🔄 Tab 3 clicked - Syncing from Tab 2...');
                 setTimeout(function() {
-                    // 1. Sync values dulu dari Tab 2 (Object Value & TJH)
-                    if (typeof sumAllObjectValues === 'function') sumAllObjectValues();
-                    if (typeof sumAllTJH === 'function') sumAllTJH();
+                    // 1. Sync values dari Tab 2 (Object Value & TJH)
+                    console.log('📥 Syncing TJH from Tab 2...');
+                    if (typeof sumInputValues === 'function') {
+                        // Sum semua TJH dari Tab 2 - HANYA dari policy-form-container
+                        sumInputValues($('#policy-form-container input[name^="tjh"]'), '#tjh_value');
+                        console.log('✅ TJH synced: ' + $('#tjh_value').val());
+                        
+                        // Sum semua Object Value dari Tab 2 - HANYA dari policy-form-container
+                        sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
+                        console.log('✅ Object Value synced: ' + $('#object_value').val());
+                    } else {
+                        console.error('❌ sumInputValues function not found!');
+                    }
 
                     // 2. Jalankan Kloning Tampilan
                     if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
@@ -722,6 +721,13 @@
             // Initial Load Check (Edit Mode)
             setTimeout(function() {
                 if ($('#step-3').is(':visible')) {
+                    console.log('🔄 Initial load - Tab 3 visible, syncing from Tab 2...');
+                    // Sync TJH dari Tab 2 saat pertama load - HANYA dari policy-form-container
+                    if (typeof sumInputValues === 'function') {
+                        sumInputValues($('#policy-form-container input[name^="tjh"]'), '#tjh_value');
+                        sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
+                    }
+                    
                     if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
                     if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
                     if (typeof update_payment === 'function') update_payment();

@@ -23,12 +23,12 @@ class PolicySeeder extends Seeder
         for ($j = 1; $j <= 20; $j++) {
 
             $policy = Policy::factory()->create();
-
+            $coverages = Coverage::all();  
             // Coverage
             for ($i = 1; $i <= 3; $i++) {
                 PolicyCoverage::create([
                     'policy_id'   => $policy->id,
-                    'coverage_id' => $i,
+                    'coverage_code' => $coverages[$i - 1]->code,
                     'percentage'  => random_int(1, 10) / 100,
                 ]);
             }

@@ -21,7 +21,7 @@
                             data-started-date="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}"
                             value="{{ $policy->id }}"
                             {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
-                            {{ $policy->policy_number }} - {{ $policy->object->name }}
+                            {{ $policy->policy_number }} - {{ $policy->object->name }} - {{ $policy->object->keterangan }}
                         </option>
                     @endforeach
                 </select>
@@ -121,6 +121,12 @@
                     $('input[name="insurance_percentage[]"]').each(function() {
                         $(this).trigger('change');
                     });
+
+                    // Add required on .required inputs inside policy-form-container
+                    $('#policy-form-container .required').each(function() {
+                        $(this).prop("required", true).prop("disabled", false);
+                    });
+
                 }, 300);
 
             });
@@ -134,7 +140,8 @@
             validateValues('input[name^="insurance_percentage"]', '#insurance_percentage_total', 0, 100);
         });
         $(document).on('input change keyup blur', 'input[name^="tjh"]', function() {
-            sumInputValues('input[name^="tjh"]', '#tjh_value', 0, 100);
+            // Sum TJH hanya dari policy-form-container, bukan dari seluruh halaman
+            sumInputValues($('#policy-form-container input[name^="tjh"]'), '#tjh_value');
         });
         $(document).on('input change keyup blur', 'input[name^="interest_value"]', function() {
             var $itemObject = $(this).closest('.item-object');
@@ -143,12 +150,35 @@
             // Sum all interest values in this item
             sumInputValues($itemObject.find('input[name^="interest_value"]'), $objectValueInput);
 
-            // After updating object_value_input, sum all object_value_inputs
-            sumInputValues('input[name="object_value_input"]', '#object_value');
-            
+            // After updating object_value_input, sum all object_value_inputs HANYA dari policy-form-container
+            sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
+
             // Trigger update_payment if it exists
             if (typeof update_payment === 'function') {
                 update_payment();
+            }
+        });
+
+        // Real-time validation: Periode Akhir tidak lebih awal dari Periode Awal
+        $(document).on('change', '#ended_date', function() {
+            var startedDateStr = $('#started_date').val();
+            var endedDateStr = $(this).val();
+
+            if (startedDateStr && endedDateStr) {
+                var startDate = new Date(startedDateStr);
+                var endDate = new Date(endedDateStr);
+
+                if (endDate < startDate) {
+                    $(this).addClass('is-invalid');
+
+                    // Tampilkan pesan error jika belum ada
+                    if (!$(this).next('.invalid-feedback').length) {
+                        $(this).after('<div class="invalid-feedback d-block">Periode Akhir tidak boleh lebih awal dari Periode Awal</div>');
+                    }
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.invalid-feedback').remove();
+                }
             }
         });
     </script>

@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('policy_coverages', function (Blueprint $table) {
             $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
-            $table->foreignId('coverage_id')->constrained('coverages')->onDelete('cascade');
+            $table->string('coverage_code');
+            $table->foreign('coverage_code')->references('code')->on('coverages')->onDelete('cascade');
             $table->decimal('percentage', 8, 7);
-            $table->timestamps();
-            
-            $table->primary(['policy_id', 'coverage_id']);
         });
     }
 

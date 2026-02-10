@@ -20,7 +20,6 @@ class Policy extends Model
         'currency_code',
         'started_date',
         'ended_date',
-        'coverage_percentages',
     ];
 
     protected $casts = [
@@ -45,7 +44,7 @@ class Policy extends Model
             'policy_objects', 
             'policy_id',
             'object_id'       
-        )->withTimestamps();
+        );
     }
 
     public function coverages(): BelongsToMany
