@@ -14,35 +14,59 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $owner = User::create([
-            'username' => 'owner',
-            'name'     => 'Owner User',
-            'email'    => 'owner@example.com',
+        $endang = User::create([
+            'username' => 'endang',
+            'name'     => 'Endang',
+            'email'    => 'endang@example.com',
             'password' => Hash::make('password'),
         ]);
-        $owner->assignRole('owner');
+        $endang->assignRole('finance');
 
-        $admin = User::create([
-            'username' => 'admin',
-            'name'     => 'Administrator',
-            'email'    => 'admin@example.com',
-            'password' => Hash::make('password'),
-        ]); 
-        $admin->assignRole('admin');
-
-        $finance = User::create([
-            'username' => 'finance',
-            'name'     => 'Finance User',
-            'email'    => 'finance@example.com',        
+        $peppy = User::create([
+            'username' => 'peppy',
+            'name'     => 'Peppy',
+            'email'    => 'peppy@example.com',
             'password' => Hash::make('password'),
         ]);
-        $finance->assignRole('finance');
+        $peppy->assignRole('owner');
+
+        $christin = User::create([
+            'username' => 'christin',
+            'name'     => 'Christin',
+            'email'    => 'christin@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $christin->assignRole('admin');
+
+        $joshua = User::create([
+            'username' => 'joshua',
+            'name'     => 'Joshua',
+            'email'    => 'joshua@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $joshua->assignRole('admin');
+
+        $moegi = User::create([
+            'username' => 'moegi',
+            'name'     => 'Moegi',
+            'email'    => 'moegi@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $moegi->assignRole('admin');
+
+        $oscar = User::create([
+            'username' => 'oscar',
+            'name'     => 'Oscar',
+            'email'    => 'oscar@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $oscar->assignRole('owner');
 
         User::factory()
             ->count(10)
             ->create()
             ->each(function ($user) {
-            $user->assignRole('client');
+                $user->assignRole('client');
             });
     }
 }
