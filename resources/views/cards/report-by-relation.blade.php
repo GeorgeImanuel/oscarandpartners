@@ -99,6 +99,11 @@
                         @elseif($shouldShowData)
                             @forelse($objectsByRelation as $relationId => $objects)
                                 @php
+                                    if (request('relation_id') && request('relation_id') != $relationId) {
+                                        continue;
+                                    }
+                                @endphp
+                                @php
                                     $relationName = $relations->firstWhere('id', (int)$relationId)?->name ?? ($relationId == 0 ? 'Tanpa Relasi' : 'Relasi ID: ' . $relationId);
                                     
                                     // LOGIC NAMA CLIENT UNTUK TITLE:

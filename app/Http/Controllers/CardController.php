@@ -185,14 +185,37 @@ class CardController extends Controller
         $objects = $this->objectService->getAllByRelationWithFilter($filters);
 
         // Group objects by relation
-        $objectsByRelation = $objects->groupBy(function ($object) {
-            // Ambil relation_id dari policy pertama
-            $firstPolicy = $object->policies->first();
-            if ($firstPolicy && $firstPolicy->productionCard && $firstPolicy->productionCard->client) {
-                return $firstPolicy->productionCard->client->relation_id ?? 0;
+        $objectsByRelation = $objects->groupBy(function ($object) use ($request) {
+            $targetPolicy = null;
+
+            // 1. Jika User sedang filter Client tertentu, cari polis milik client itu dulu
+            if ($request->filled('client_id')) {
+                $targetPolicy = $object->policies->first(function ($policy) use ($request) {
+                    return $policy->productionCard && $policy->productionCard->client_id == $request->client_id;
+                });
             }
+
+            // 2. Jika tidak ada filter / tidak ketemu, ambil polis TERBARU (berdasarkan tanggal atau ID)
+            // Ini untuk mencegah mengambil data history lama yang relasinya mungkin sudah berubah
+            if (!$targetPolicy) {
+                $targetPolicy = $object->policies->sortByDesc('created_at')->first();
+            }
+
+            // 3. Ambil Relation ID dari polis yang terpilih
+            if ($targetPolicy && $targetPolicy->productionCard && $targetPolicy->productionCard->client) {
+                return $targetPolicy->productionCard->client->relation_id ?? 0;
+            }
+            
             return 0;
         });
+
+        if ($request->filled('relation_id')) {
+            $requestedRelationId = (int) $request->relation_id;
+            
+            $objectsByRelation = $objectsByRelation->filter(function ($value, $key) use ($requestedRelationId) {
+                return $key === $requestedRelationId;
+            });
+        }
 
         $relations = $this->relationService->all();
         $clients = $user->hasRole(['owner', 'admin']) ? $this->clientService->getAllWithRelations() : collect();
