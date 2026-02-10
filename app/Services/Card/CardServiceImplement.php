@@ -107,10 +107,10 @@ class CardServiceImplement extends Service implements CardService
             DB::beginTransaction();
             //1. Handle Client Creation (if requested)
             $data['client_id'] = $this->findOrCreateClient($data);
-            // DB::rollBack();
             // return $this->findOrCreatePolicy($data);
-            // return $data;
             // 2. Handle Policy Creation (if requested)
+            DB::rollBack();
+            return $data;
             $data['policy_id'] = $this->findOrCreatePolicy($data);
 
             // 5. Create Card
@@ -205,16 +205,16 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new coverage
      */
-    private function findOrCreateCoverage(int $coverageId): int
+    private function findOrCreateCoverage(string $coverageCode)
     {
-        $coverage = $this->coverageRepository->find($coverageId);
+        $coverage = $this->coverageRepository->find($coverageCode);
         if (!$coverage) {
             $coverage = $this->coverageRepository->create([
-                'code' => $coverageId,
-                'name' => $coverageId,
+                'code' => $coverageCode,
+                'name' => $coverageCode,
             ]);
         }
-        return $coverage->id;
+        return $coverage->code;
     }
 
     /**
@@ -299,11 +299,12 @@ class CardServiceImplement extends Service implements CardService
             ]);
 
             // Assign coverages
-            foreach ($data['coverage_id'] as $index => $coverageId) {
-                // return $this->findOrCreateCoverage($coverageId);
+            foreach ($data['coverage_code'] as $index => $coverageCode) {
+                // return $coverageCode;
+                // return $this->findOrCreateCoverage($coverageCode);
                 $this->policyCoverageRepository->create([
                     'policy_id'    => $policy->id,
-                    'coverage_id'  => $this->findOrCreateCoverage($coverageId),
+                    'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
                     'percentage'   => $data['coverage_percentage'][$index] / 100,
                 ]);
             }

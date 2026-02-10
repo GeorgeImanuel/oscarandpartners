@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PolicyObject extends Model
 {
+    public $timestamps = false;
     protected $fillable = [
         'policy_id',
         'object_id',

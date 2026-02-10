@@ -79,7 +79,7 @@
                                     <option value="">- Pilih Coverage -</option>
                                     @foreach ($coverages as $coverage)
                                         <option value="{{ $coverage->id }}"
-                                            {{ $coverage->id == $policyCoverage->coverage_id ? 'selected' : '' }}>
+                                            {{ $coverage->code == $policyCoverage->coverage_id ? 'selected' : '' }}>
                                             {{ $coverage->name }}
                                         </option>
                                     @endforeach
@@ -112,11 +112,11 @@
                                 <label class="form-label">Coverage <span class="item-count">1</span></label>
                                 <select class="form-select create-select2 required"
                                     data-placeholder="Pilih Coverage"
-                                    name="coverage_id[]"
+                                    name="coverage_code[]"
                                     style="width: 100%;">
                                     <option value="">- Pilih Coverage -</option>
                                     @foreach ($coverages as $coverage)
-                                        <option value="{{ $coverage->id }}">
+                                        <option value="{{ $coverage->code }}">
                                             {{ $coverage->name }}
                                         </option>
                                     @endforeach
@@ -125,7 +125,7 @@
                             <div class="col-md">
                                 <label class="form-label">Persentase Coverage</label>
                                 <div class="input-group">
-                                    <input class="form-control"
+                                    <input class="form-control required coverage-percentage"
                                         type="number"
                                         name="coverage_percentage[]"
                                         value
@@ -192,7 +192,7 @@
                             <div class="col-md mb-2">
                                 <label class="form-label">Persentase Asuransi</label>
                                 <div class="input-group">
-                                    <input class="form-control"
+                                    <input class="form-control required insurance-percentage"
                                         type="number"
                                         name="insurance_percentage[]"
                                         value="{{ isset($policyInsurance) ? $policyInsurance->percentage * 100 : '' }}"
@@ -303,13 +303,13 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Objek (Tertanggung) <span class="item-count"></span><span class="text-danger">*</span></label>
-                                <select class="form-control create-select2 object-select required @error('object_id') is-invalid @enderror"
+                                <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                     name="object_id[]"
                                     data-placeholder="Pilih Objek">
                                     <option></option>
                                     @foreach ($objects ?? [] as $object)
                                         <option value="{{ $object->id }}">
-                                            {{ $object->name }} - {{ $object->keterangan}}
+                                            {{ $object->name }} - {{ $object->keterangan }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -347,7 +347,7 @@
                                         @foreach ($objects ?? [] as $object)
                                             <option value="{{ $object->id }}"
                                                 {{ $object->id == $policyObject->object_id ? 'selected' : '' }}>
-                                                {{ $object->name }} - {{ $object->keterangan}}
+                                                {{ $object->name }} - {{ $object->keterangan }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -379,7 +379,7 @@
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
                                             <option value="{{ $object->id }}">
-                                                {{ $object->name }} - {{ $object->keterangan}}
+                                                {{ $object->name }} - {{ $object->keterangan }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -421,7 +421,12 @@
 
             if (className) {
                 var $cloneContent = $template.clone();
-
+                // $cloneContent.find('.required').each(function() {
+                //     $(this).attr('required', 'required').prop('disabled', true);
+                // });
+                $cloneContent.find('.required').each(function() {
+                    $(this).prop("required", true).prop("disabled", false);
+                });
                 // Split the class string and find elements that have all these classes
                 var classArray = className.split(' ').filter(c => c.trim() !== '');
                 var selector = '.' + classArray.join('.');
@@ -439,6 +444,8 @@
 
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
+
+
             } else {
                 // console.log('No className found in input[name="class"]');
             }

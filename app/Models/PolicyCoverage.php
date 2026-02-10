@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PolicyCoverage extends Pivot
 {
     protected $table = 'policy_coverages';
-    
+    public $timestamps = false;
     public $incrementing = false;
-    
+
     protected $fillable = [
         'policy_id',
-        'coverage_id',
+        'coverage_code',
         'percentage',
     ];
 
@@ -28,6 +28,6 @@ class PolicyCoverage extends Pivot
 
     public function coverage(): BelongsTo
     {
-        return $this->belongsTo(Coverage::class,'coverage_id','id');
+        return $this->belongsTo(Coverage::class, 'coverage_id', 'id');
     }
 }

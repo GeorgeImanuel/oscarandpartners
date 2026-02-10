@@ -121,6 +121,12 @@
                     $('input[name="insurance_percentage[]"]').each(function() {
                         $(this).trigger('change');
                     });
+
+                    // Add required on .required inputs inside policy-form-container
+                    $('#policy-form-container .required').each(function() {
+                        $(this).prop("required", true).prop("disabled", false);
+                    });
+
                 }, 300);
 
             });
@@ -146,7 +152,7 @@
 
             // After updating object_value_input, sum all object_value_inputs HANYA dari policy-form-container
             sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
-            
+
             // Trigger update_payment if it exists
             if (typeof update_payment === 'function') {
                 update_payment();
@@ -164,7 +170,7 @@
 
                 if (endDate < startDate) {
                     $(this).addClass('is-invalid');
-                    
+
                     // Tampilkan pesan error jika belum ada
                     if (!$(this).next('.invalid-feedback').length) {
                         $(this).after('<div class="invalid-feedback d-block">Periode Akhir tidak boleh lebih awal dari Periode Awal</div>');

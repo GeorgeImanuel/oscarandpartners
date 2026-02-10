@@ -19,6 +19,10 @@
                     allWells.hide();
                     $target.show();
                     $target.find("input:eq(0)").focus();
+                    
+                    // Update button visibility when switching tabs
+                    hidePrevButtonIfFirstStep();
+                    hideNextButtonIfLastStep();
                 }
             }),
                 allNextBtn.click(function () {
