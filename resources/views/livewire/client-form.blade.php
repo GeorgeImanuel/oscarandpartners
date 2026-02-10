@@ -14,8 +14,8 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="coverage_id">Relasi <span class="text-danger">*</span></label>
-        <select class="form-select add-select2 required @error('coverage_id') is-invalid @enderror"
+            for="coverage_code">Relasi <span class="text-danger">*</span></label>
+        <select class="form-select add-select2 required @error('coverage_code') is-invalid @enderror"
             data-placeholder="Pilih Relasi"
             name="relation_id">
             <option value="">- Pilih Relasi -</option>

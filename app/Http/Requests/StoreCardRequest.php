@@ -19,14 +19,14 @@ class StoreCardRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             
             // Step 2: Policy (either existing or new)
-            'policy_id' => 'required_without_all:started_date,ended_date,coverage_id|nullable|exists:policies,id',
+            'policy_id' => 'required_without_all:started_date,ended_date,coverage_code|nullable|exists:policies,id',
             
             // New Policy Fields (conditional)
             'started_date' => 'required_without:policy_id|nullable|date',
             'ended_date' => 'required_without:policy_id|nullable|date|after:started_date',
-            'coverage_id' => 'required_without:policy_id|nullable|exists:coverages,id',
-            'coverage_percentage' => 'required_with:coverage_id|nullable|numeric|min:0|max:100',
-            'insurance_id' => 'required_with:coverage_id|nullable|array|min:1',
+            'coverage_code' => 'required_without:policy_id|nullable|exists:coverages,id',
+            'coverage_percentage' => 'required_with:coverage_code|nullable|numeric|min:0|max:100',
+            'insurance_id' => 'required_with:coverage_code|nullable|array|min:1',
             'insurance_id.*' => 'exists:insurances,id',
             'percentage' => 'required_with:insurance_id|nullable|array',
             'percentage.*' => 'numeric|min:0|max:100',
@@ -84,7 +84,7 @@ class StoreCardRequest extends FormRequest
             'started_date.required_without' => 'Periode awal pertanggungan harus diisi.',
             'ended_date.required_without' => 'Periode akhir pertanggungan harus diisi.',
             'ended_date.after' => 'Periode akhir harus setelah periode awal.',
-            'coverage_id.required_without' => 'Coverage harus dipilih.',
+            'coverage_code.required_without' => 'Coverage harus dipilih.',
             'coverage_percentage.required_with' => 'Persentase coverage harus diisi.',
             'insurance_id.required_with' => 'Minimal satu asuransi harus dipilih.',
             'insurance_id.min' => 'Minimal satu asuransi harus dipilih.',

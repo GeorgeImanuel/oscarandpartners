@@ -34,7 +34,7 @@ class ObjectModel extends Model
             'policy_objects', 
             'object_id',      
             'policy_id'       
-        )->withTimestamps();
+        );
     }
 
     public function objectInterests()

@@ -25,8 +25,8 @@ class StorePoliciesRequest extends FormRequest
             'object_id'   => 'required|array|min:1',
             'object_id.*' => 'required|exists:objects,id',
 
-            'coverage_id' => 'required|array|min:1',
-            'coverage_id.*' => 'required|integer|exists:coverages,id',
+            'coverage_code' => 'required|array|min:1',
+            'coverage_code.*' => 'required|string|exists:coverages,code',
             'coverage_percentage' => 'required|array|min:1',
             'coverage_percentage.*' => 'required|numeric|min:0.0000001|max:100',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
@@ -61,9 +61,9 @@ class StorePoliciesRequest extends FormRequest
             'object_id.required' => 'Objek wajib dipilih minimal satu.',
             'object_id.*.exists' => 'Objek yang dipilih tidak valid.',
 
-            'coverage_id.required' => 'Coverage wajib diisi.',
-            'coverage_id.*.required' => 'Coverage wajib dipilih.',
-            'coverage_id.*.exists' => 'Coverage yang dipilih tidak valid.',
+            'coverage_code.required' => 'Coverage wajib diisi.',
+            'coverage_code.*.required' => 'Coverage wajib dipilih.',
+            'coverage_code.*.exists' => 'Coverage yang dipilih tidak valid.',
 
             'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
             'coverage_percentage.*.required' => 'Persentase Coverage wajib diisi.',

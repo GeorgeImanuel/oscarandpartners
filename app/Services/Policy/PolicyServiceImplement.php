@@ -72,9 +72,9 @@ class PolicyServiceImplement extends Service implements PolicyService
             }
 
             // 3. Attach Coverages with Percentage (Pivot Table)
-            if (isset($data['coverage_id']) && is_array($data['coverage_id'])) {
+            if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
                 $coverageData = [];
-                foreach ($data['coverage_id'] as $index => $coverageId) {
+                foreach ($data['coverage_code'] as $index => $coverageId) {
                     if (!empty($coverageId) && isset($data['coverage_percentage'][$index])) {
                         $coverageData[$coverageId] = [
                             'percentage' => floatval($data['coverage_percentage'][$index]) / 100 // Convert to decimal
@@ -114,9 +114,9 @@ class PolicyServiceImplement extends Service implements PolicyService
             }
 
             // 3. Sync Coverages with Percentage
-            if (isset($data['coverage_id']) && is_array($data['coverage_id'])) {
+            if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
                 $coverageData = [];
-                foreach ($data['coverage_id'] as $index => $coverageId) {
+                foreach ($data['coverage_code'] as $index => $coverageId) {
                     if (!empty($coverageId) && isset($data['coverage_percentage'][$index])) {
                         $coverageData[$coverageId] = [
                             'percentage' => floatval($data['coverage_percentage'][$index]) / 100

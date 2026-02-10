@@ -195,10 +195,10 @@
                                     <div class="row align-items-end">
                                         <div class="col-md-8 mb-2 mb-md-0">
                                             <label class="form-label">Coverage {{ $index + 1 }} <span class="text-danger">*</span></label>
-                                            <select class="form-select coverage-select" name="coverage_id[{{ $index }}]" style="width: 100%;">
+                                            <select class="form-select coverage-select" name="coverage_code[{{ $index }}]" style="width: 100%;">
                                                 <option value="">- Pilih Coverage -</option>
                                                 @foreach($coverages as $cov)
-                                                    <option value="{{ $cov->id }}" {{ $policyCoverage->coverage_id == $cov->id ? 'selected' : '' }}>
+                                                    <option value="{{ $cov->code }}" {{ $policyCoverage->coverage_code == $cov->code ? 'selected' : '' }}>
                                                         {{ $cov->name }}
                                                     </option>
                                                 @endforeach
@@ -688,9 +688,9 @@
                     <div class="row align-items-end">
                         <div class="col-md-8 mb-2 mb-md-0">
                             <label class="form-label">Coverage ${coverageIndex + 1} <span class="text-danger">*</span></label>
-                            <select class="form-select coverage-select" name="coverage_id[${coverageIndex}]" style="width: 100%;">
+                            <select class="form-select coverage-select" name="coverage_code[${coverageIndex}]" style="width: 100%;">
                                 <option value="">- Pilih Coverage -</option>
-                                ${coveragesData.map(cov => `<option value="${cov.id}">${cov.name}</option>`).join('')}
+                                ${coveragesData.map(cov => `<option value="${cov.code}">${cov.name}</option>`).join('')}
                             </select>
                         </div>
                         <div class="col-md-2 mb-2 mb-md-0">

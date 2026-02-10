@@ -74,12 +74,12 @@
                                 <label class="form-label">Coverage <span class="item-count">{{ $index + 1 }}</span></label>
                                 <select class="form-select create-select2 required"
                                     data-placeholder="Pilih Coverage"
-                                    name="coverage_id[]"
+                                    name="coverage_code[]"
                                     style="width: 100%;">
                                     <option value="">- Pilih Coverage -</option>
                                     @foreach ($coverages as $coverage)
-                                        <option value="{{ $coverage->id }}"
-                                            {{ $coverage->code == $policyCoverage->coverage_id ? 'selected' : '' }}>
+                                        <option value="{{ $coverage->code }}"
+                                            {{ $coverage->code == $policyCoverage->coverage_code ? 'selected' : '' }}>
                                             {{ $coverage->name }}
                                         </option>
                                     @endforeach

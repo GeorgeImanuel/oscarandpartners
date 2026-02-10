@@ -530,7 +530,7 @@
                     // console.log('Processing source', index, 'visible:', $(this).is(':visible'));
 
                     // GET TEXT DARI ORIGINAL SEBELUM CLONE
-                    var originalCoverageName = $(this).find('select[name="coverage_id[]"]').find('option:selected').text().trim();
+                    var originalCoverageName = $(this).find('select[name="coverage_code[]"]').find('option:selected').text().trim();
                     // console.log('Coverage Name:', originalCoverageName);
 
                     // CLONE & BERSIHKAN
@@ -547,7 +547,7 @@
                             // console.log('Coverage %:', val);
                         }
 
-                        if ($el.is('select') && $el.attr('name') === 'coverage_id[]') {
+                        if ($el.is('select') && $el.attr('name') === 'coverage_code[]') {
                             // Gunakan text yang sudah diambil dari original
                             $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + originalCoverageName + '" readonly>');
                         } else if ($el.is('select')) {

@@ -49,9 +49,8 @@ class Policy extends Model
 
     public function coverages(): BelongsToMany
     {
-        return $this->belongsToMany(Coverage::class, 'policy_coverages', 'policy_id', 'coverage_id')
+        return $this->belongsToMany(Coverage::class, 'policy_coverages', 'policy_id', 'coverage_code')
             ->withPivot('percentage')
-            ->withTimestamps()
             ->using(PolicyCoverage::class);
     }
 
@@ -73,16 +72,14 @@ class Policy extends Model
     public function insurances(): BelongsToMany
     {
         return $this->belongsToMany(Insurance::class, 'policy_insurances')
-            ->withPivot('is_main', 'percentage')
-            ->withTimestamps();
+            ->withPivot('is_main', 'percentage');
     }
 
     public function mainInsurance(): BelongsToMany
     {
         return $this->belongsToMany(Insurance::class, 'policy_insurances')
             ->wherePivot('is_main', true)
-            ->withPivot('is_main', 'percentage')
-            ->withTimestamps();
+            ->withPivot('is_main', 'percentage');
     }
 
     public function insurance(): BelongsToMany
