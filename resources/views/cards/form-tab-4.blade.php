@@ -300,7 +300,7 @@
                 update_payment(); // Trigger payment calculation after tax changes
             });
 
-            // Listen to step navigation untuk render Step 5 Table dan auto-fill deadline
+            // Listen to step navigation untuk render Step 5 Table
             $('div.setup-panel div a[href="#step-4"]').on('click', function() {
                 // Tunggu animasi selesai baru render
                 setTimeout(function() {
@@ -311,32 +311,6 @@
                     var totalNetto = parseFloat($('#insurance_pay').val()) || 0;
 
                     renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto);
-                    
-                    // Auto-fill deadline dari policy started_date
-                    var startedDateStr = null;
-                    
-                    // Coba ambil dari dropdown (existing policy)
-                    if ($('#policy_id').val()) {
-                        var selectedOption = $('#policy_id').find('option:selected');
-                        startedDateStr = selectedOption.data('started-date');
-                    }
-                    
-                    // Jika masih undefined, ambil dari input form (new policy)
-                    if (!startedDateStr && $('#started_date').val()) {
-                        startedDateStr = $('#started_date').val();
-                    }
-                    
-                    if (startedDateStr) {
-                        var startDate = new Date(startedDateStr);
-                        startDate.setDate(startDate.getDate() + 30);
-                        
-                        var year = startDate.getFullYear();
-                        var month = String(startDate.getMonth() + 1).padStart(2, '0');
-                        var day = String(startDate.getDate()).padStart(2, '0');
-                        var deadlineStr = year + '-' + month + '-' + day;
-                        
-                        $('#deadline_at').val(deadlineStr);
-                    }
                 }, 100);
             });
 
