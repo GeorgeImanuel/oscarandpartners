@@ -51,10 +51,23 @@ class PolicyForm extends Component
     public function loadPolicy($policyId = null)
     {
         $currency = 'Rp';
+        $objectId = null;
+        $coveragePercentage = 0;
+        
         if ($policyId) {
             $this->policyId = $policyId;
             $this->policy = $this->policyService->findWithRelations($policyId);
             $currency = $this->policy->currency_code ?? 'Rp';
+            
+            // Get object_id from first policy object if exists
+            if ($this->policy && $this->policy->policyObjects && $this->policy->policyObjects->isNotEmpty()) {
+                $objectId = $this->policy->policyObjects->first()->object_id;
+            }
+            
+            // Get total coverage percentage
+            if ($this->policy && $this->policy->policyCoverages && $this->policy->policyCoverages->isNotEmpty()) {
+                $coveragePercentage = $this->policy->policyCoverages->sum('percentage');
+            }
         } else {
             $this->policy = null;
         }
@@ -62,7 +75,9 @@ class PolicyForm extends Component
         $this->dispatch(
             'policyLoaded',
             'setCurrencyCode',
-            currencyCode: $currency
+            currencyCode: $currency,
+            objectId: $objectId,
+            coverage_percentage: $coveragePercentage
         );
     }
 

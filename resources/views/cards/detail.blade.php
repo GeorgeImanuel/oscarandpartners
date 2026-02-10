@@ -122,7 +122,7 @@
                                             <tr>
                                                 <td class="fw-bold">Obyek Asuransi</td>
                                                 <td>:</td>
-                                                <td>{{ $card->policy->object->name ?? '-' }}</td>
+                                                <td>{{ $card->policy->object->name }} - {{ $card->policy->object->keterangan }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bold">Periode</td>

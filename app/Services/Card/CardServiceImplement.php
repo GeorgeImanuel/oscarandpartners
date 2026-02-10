@@ -16,6 +16,7 @@ use App\Repositories\Insurance\InsuranceRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\PolicyCoverage\PolicyCoverageRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
+use App\Repositories\PolicyObject\PolicyObjectRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 
 class CardServiceImplement extends Service implements CardService
@@ -47,6 +48,7 @@ class CardServiceImplement extends Service implements CardService
     protected $coverageRepository;
     protected $policyCoverageRepository;
     protected $policyInsuranceRepository;
+    protected $policyObjectRepository;
     protected $insuranceRepository;
     protected $paymentRepository;
 
@@ -62,6 +64,7 @@ class CardServiceImplement extends Service implements CardService
         CoverageRepository $coverageRepository,
         PolicyCoverageRepository $policyCoverageRepository,
         PolicyInsuranceRepository $policyInsuranceRepository,
+        PolicyObjectRepository $policyObjectRepository,
         InsuranceRepository $insuranceRepository,
         PaymentRepository $paymentRepository
     ) {
@@ -76,6 +79,7 @@ class CardServiceImplement extends Service implements CardService
         $this->coverageRepository         = $coverageRepository;
         $this->policyCoverageRepository   = $policyCoverageRepository;
         $this->policyInsuranceRepository  = $policyInsuranceRepository;
+        $this->policyObjectRepository     = $policyObjectRepository;
         $this->insuranceRepository        = $insuranceRepository;
         $this->paymentRepository          = $paymentRepository;
     }
@@ -107,10 +111,8 @@ class CardServiceImplement extends Service implements CardService
             DB::beginTransaction();
             //1. Handle Client Creation (if requested)
             $data['client_id'] = $this->findOrCreateClient($data);
-            // return $this->findOrCreatePolicy($data);
+            
             // 2. Handle Policy Creation (if requested)
-            DB::rollBack();
-            return $data;
             $data['policy_id'] = $this->findOrCreatePolicy($data);
 
             // 5. Create Card
@@ -123,21 +125,21 @@ class CardServiceImplement extends Service implements CardService
                 'payment_type_id' => $data['payment_type_id'],
                 'created_by'      => auth()->id(),
 
-                'object_value'         => (float)($data['object_value']),
-                'premi_percentages'    => $data['premi_percentages'] / 100,
-                'commision_percentage' => $data['commision_percentage'] / 100,
-                'policy_fee'           => (float)($data['policy_fee']),
-                'discount_percentage'  => (float)($data['discount_percentage'] / 100),
-                'discount_value'       => (float)($data['discount_value']),
+                'object_value'         => (float)($data['object_value'] ?? 0),
+                'premi_percentages'    => ($data['premi_percentages'] ?? 0) / 100,
+                'commision_percentage' => ($data['commision_percentage'] ?? 0) / 100,
+                'policy_fee'           => (float)($data['policy_fee'] ?? 0),
+                'discount_percentage'  => (float)(($data['discount_percentage'] ?? 0) / 100),
+                'discount_value'       => (float)($data['discount_value'] ?? 0),
 
-                'production_value' => (float)($data['production_value']),
-                'premi_value'      => (float)($data['premi_value']),
-                'commision_bruto'  => (float)($data['commision_bruto']),
-                'commision_netto'  => (float)($data['commision_netto']),
-                'tax'              => (float)($data['tax']),
-                'discount_agent'   => (float)($data['discount_agent']),
-                'client_pay'       => (float)($data['client_pay']),
-                'insurance_pay'    => (float)($data['insurance_pay']),
+                'production_value' => (float)($data['production_value'] ?? 0),
+                'premi_value'      => (float)($data['premi_value'] ?? 0),
+                'commision_bruto'  => (float)($data['commision_bruto'] ?? 0),
+                'commision_netto'  => (float)($data['commision_netto'] ?? 0),
+                'tax'              => (float)($data['tax'] ?? 0),
+                'discount_agent'   => (float)($data['discount_agent'] ?? 0),
+                'client_pay'       => (float)($data['client_pay'] ?? 0),
+                'insurance_pay'    => (float)($data['insurance_pay'] ?? 0),
             ]);
 
             // Create Payment(s)
@@ -264,20 +266,92 @@ class CardServiceImplement extends Service implements CardService
      */
     private function findOrCreateObject(array $data, $objectIndex): int
     {
+        // If object_id is numeric, it's an existing object ID - return it directly
+        if (isset($data['object_id'][$objectIndex]) && is_numeric($data['object_id'][$objectIndex])) {
+            $existingObject = $this->objectRepository->find($data['object_id'][$objectIndex]);
+            if ($existingObject) {
+                return $existingObject->id;
+            }
+        }
+        
+        // Otherwise, create a new object
+        // Handle both array and single value for object_occupation_id
+        $objectOccupationId = null;
+        if (isset($data['object_occupation_id'])) {
+            if (is_array($data['object_occupation_id']) && isset($data['object_occupation_id'][$objectIndex])) {
+                $objectOccupationId = $data['object_occupation_id'][$objectIndex];
+            } elseif (!is_array($data['object_occupation_id'])) {
+                $objectOccupationId = $data['object_occupation_id'];
+            }
+        }
+        
+        if (!$objectOccupationId) {
+            throw new \Exception("Object occupation ID is required for object index {$objectIndex}");
+        }
+        
+        // Handle both array and single value for object_keterangan
+        $keterangan = null;
+        if (isset($data['object_keterangan'])) {
+            if (is_array($data['object_keterangan']) && isset($data['object_keterangan'][$objectIndex])) {
+                $keterangan = $data['object_keterangan'][$objectIndex];
+            } elseif (!is_array($data['object_keterangan'])) {
+                $keterangan = $data['object_keterangan'];
+            }
+        }
+        if (!$keterangan && isset($data['object_address'])) {
+            if (is_array($data['object_address']) && isset($data['object_address'][$objectIndex])) {
+                $keterangan = $data['object_address'][$objectIndex];
+            } elseif (!is_array($data['object_address'])) {
+                $keterangan = $data['object_address'];
+            }
+        }
+        
+        // Handle both array and single value for tjh
+        $tjh = 0;
+        if (isset($data['tjh'])) {
+            if (is_array($data['tjh']) && isset($data['tjh'][$objectIndex])) {
+                $tjh = (float)$data['tjh'][$objectIndex];
+            } elseif (!is_array($data['tjh'])) {
+                $tjh = (float)$data['tjh'];
+            }
+        }
+        
         // Create object
         $object = $this->objectRepository->create([
-            'object_occupation_id' => $this->findOrCreateObjectOccupation($data['object_occupation_id'][$objectIndex]),
+            'object_occupation_id' => $this->findOrCreateObjectOccupation($objectOccupationId),
             'name'                 => $data['object_id'][$objectIndex],
-            'keterangan'           => $data['object_address'][$objectIndex] ?? null,
+            'keterangan'           => $keterangan,
+            'tjh'                  => $tjh,
         ]);
 
-        // Create object interests
-        foreach ($data['interest_id'][$objectIndex] as $index => $interestId) {
-            $this->objectInterestRepository->create([
-                'object_id'   => $object->id,
-                'interest_id' => $this->findOrCreateInterest($interestId),
-                'value'       => $data['interest_value'][$index] ?? 0,
-            ]);
+        // Create object interests if exists
+        if (isset($data['interest_id']) && is_array($data['interest_id'])) {
+            $interestIds = $data['interest_id'];
+            $interestValues = $data['interest_value'] ?? [];
+            
+            // Ensure interest values is an array
+            if (!is_array($interestValues)) {
+                $interestValues = [$interestValues];
+            }
+            
+            // Filter valid interests and pair them with values
+            $validInterests = [];
+            foreach ($interestIds as $interestId) {
+                if ($interestId && !empty($interestId) && $interestId !== 'null' && $interestId !== null) {
+                    $validInterests[] = $interestId;
+                }
+            }
+            
+            // Create interest records - pair valid interests with values sequentially
+            foreach ($validInterests as $idx => $validInterestId) {
+                $value = isset($interestValues[$idx]) ? (float)$interestValues[$idx] : 0;
+                
+                $this->objectInterestRepository->create([
+                    'object_id'   => $object->id,
+                    'interest_id' => $this->findOrCreateInterest($validInterestId),
+                    'value'       => $value,
+                ]);
+            }
         }
 
         return $object->id;
@@ -288,7 +362,6 @@ class CardServiceImplement extends Service implements CardService
      */
     private function findOrCreatePolicy(array $data)
     {
-        // return $data;
         $policy = $this->policyRepository->find($data['policy_id']);
         if (!$policy) {
             $policy = $this->policyRepository->create([
@@ -300,12 +373,10 @@ class CardServiceImplement extends Service implements CardService
 
             // Assign coverages
             foreach ($data['coverage_code'] as $index => $coverageCode) {
-                // return $coverageCode;
-                // return $this->findOrCreateCoverage($coverageCode);
                 $this->policyCoverageRepository->create([
                     'policy_id'    => $policy->id,
                     'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
-                    'percentage'   => $data['coverage_percentage'][$index] / 100,
+                    'percentage'   => ($data['coverage_percentage'][$index] ?? 0) / 100,
                 ]);
             }
 
@@ -314,17 +385,24 @@ class CardServiceImplement extends Service implements CardService
                 $this->policyInsuranceRepository->create([
                     'policy_id'    => $policy->id,
                     'insurance_id' => $this->findOrCreateInsurance($insuranceId),
-                    'percentage'   => $data['insurance_percentage'][$index] / 100,
-                    'is_main'      => $data['is_main'][$index],
+                    'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
+                    'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
                 ]);
             }
 
             // Assign objects
-            foreach ($data['object_id'] as $index => $objectId) {
-                $this->policyRepository->create([
-                    'policy_id'           => $policy->id,
-                    'object_id'           => $this->findOrCreateObject($data, $index)
-                ]);
+            if (isset($data['object_id']) && is_array($data['object_id'])) {
+                foreach ($data['object_id'] as $index => $objectId) {
+                    // Skip undefined or null entries
+                    if ($index === 'undefined' || $objectId === null) {
+                        continue;
+                    }
+                    
+                    $this->policyObjectRepository->create([
+                        'policy_id'           => $policy->id,
+                        'object_id'           => $this->findOrCreateObject($data, $index)
+                    ]);
+                }
             }
         }
 

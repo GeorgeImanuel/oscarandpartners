@@ -326,8 +326,6 @@
                         startedDateStr = $('#started_date').val();
                     }
                     
-                    console.log('Started Date:', startedDateStr);
-                    
                     if (startedDateStr) {
                         var startDate = new Date(startedDateStr);
                         startDate.setDate(startDate.getDate() + 30);
@@ -337,7 +335,6 @@
                         var day = String(startDate.getDate()).padStart(2, '0');
                         var deadlineStr = year + '-' + month + '-' + day;
                         
-                        console.log('Setting deadline to:', deadlineStr);
                         $('#deadline_at').val(deadlineStr);
                     }
                 }, 100);

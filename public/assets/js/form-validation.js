@@ -53,6 +53,11 @@
                 // Validate each field (built-in HTML5 validation)
                 var fields = form.querySelectorAll('input, select, textarea');
                 fields.forEach(function (field) {
+                    // Skip disabled or hidden fields
+                    if (!field || field.disabled || field.offsetParent === null) {
+                        return;
+                    }
+                    
                     if (!field.checkValidity()) {
                         isValid = false;
 
@@ -61,19 +66,52 @@
                         errorMessage.className = 'error-message';
                         errorMessage.style.color = 'red';
                         errorMessage.textContent = field.validationMessage;
-                        field.insertAdjacentElement('afterend', errorMessage);
+                        
+                        try {
+                            // For Select2 fields, insert after the Select2 container
+                            if (field.classList && field.classList.contains('select2-hidden-accessible')) {
+                                var select2Container = field.nextElementSibling;
+                                if (select2Container && select2Container.classList && select2Container.classList.contains('select2-container')) {
+                                    select2Container.insertAdjacentElement('afterend', errorMessage);
+                                } else if (field.parentElement) {
+                                    field.parentElement.appendChild(errorMessage);
+                                }
+                            } else if (field.parentElement) {
+                                field.insertAdjacentElement('afterend', errorMessage);
+                            }
+                        } catch (e) {
+                            if (debug) {
+                                console.warn('Could not insert error message for field:', field.name, e);
+                            }
+                        }
                         
                         if (debug) {
                             console.warn('Field not valid:', field.name, 'Message:', field.validationMessage);
                         }
                     }
 
-                    // Remove error message on input change
-                    field.addEventListener('input', function () {
-                        if (field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')) {
-                            field.nextElementSibling.remove();
-                        }
-                    });
+                    // Remove error message on input change (only add listener once)
+                    if (!field.hasAttribute('data-error-listener')) {
+                        field.setAttribute('data-error-listener', 'true');
+                        field.addEventListener('input', function () {
+                            var nextEl = field.nextElementSibling;
+                            while (nextEl) {
+                                if (nextEl.classList && nextEl.classList.contains('error-message')) {
+                                    nextEl.remove();
+                                    break;
+                                }
+                                // For Select2, check after the container
+                                if (nextEl.classList && nextEl.classList.contains('select2-container')) {
+                                    var afterSelect2 = nextEl.nextElementSibling;
+                                    if (afterSelect2 && afterSelect2.classList && afterSelect2.classList.contains('error-message')) {
+                                        afterSelect2.remove();
+                                    }
+                                    break;
+                                }
+                                nextEl = nextEl.nextElementSibling;
+                            }
+                        });
+                    }
                 });
 
                 // Run custom validation if provided
@@ -86,13 +124,31 @@
                         // Display custom validation errors
                         customErrors.forEach(function (error) {
                             if (error.field && error.message) {
-                                var field = form.querySelector(error.field);
-                                if (field) {
+                                // Use attribute selector to handle field names with special characters like []
+                                var field = form.querySelector('[name="' + error.field + '"]');
+                                if (field && !field.disabled && field.offsetParent !== null) {
                                     var errorMessage = document.createElement('div');
                                     errorMessage.className = 'error-message';
                                     errorMessage.style.color = 'red';
                                     errorMessage.textContent = error.message;
-                                    field.insertAdjacentElement('afterend', errorMessage);
+                                    
+                                    try {
+                                        // For Select2 fields, insert after the Select2 container
+                                        if (field.classList && field.classList.contains('select2-hidden-accessible')) {
+                                            var select2Container = field.nextElementSibling;
+                                            if (select2Container && select2Container.classList && select2Container.classList.contains('select2-container')) {
+                                                select2Container.insertAdjacentElement('afterend', errorMessage);
+                                            } else if (field.parentElement) {
+                                                field.parentElement.appendChild(errorMessage);
+                                            }
+                                        } else if (field.parentElement) {
+                                            field.insertAdjacentElement('afterend', errorMessage);
+                                        }
+                                    } catch (e) {
+                                        if (debug) {
+                                            console.warn('Could not insert custom error message for field:', error.field, e);
+                                        }
+                                    }
                                 }
                             }
                         });

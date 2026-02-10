@@ -137,26 +137,19 @@ $(document).on("click", ".remove-item-btn", function () {
             var itemClass = $(this).closest(".item").attr("class");
 
             if ($itemList.find(".item").length === 1) {
-                console.log(21);
-
                 return;
             } else {
-                // const container = $multipleItemContainer.find(".item-list:first");
                 $(this).closest(".item").remove();
 
                 const hiddenItems = $itemList
                     .find("." + itemClass)
                     .filter(function () {
-                        console.log(21);
                         return $(this).css("display") === "none";
                     });
-                console.log(22);
                 const hiddenItemCount = hiddenItems.length;
                 const items = $itemList.find(".item");
-                console.log($itemList);
                 items.each(function (index) {
                     var itemCount = index - hiddenItemCount + 1;
-                    console.log(itemCount);
                     $(this).find(".item-count").text(itemCount);
                     $(this).attr("data-item-index", itemCount);
                     $(this).removeClass(function (i, cls) {
@@ -185,6 +178,11 @@ window.renameInputNameByIndex = function ($items) {
         $(this)
             .find("input, select, textarea")
             .each(function () {
+                // Skip fields inside object-interest-item container
+                if ($(this).closest(".object-interest-item").length > 0) {
+                    return; // Skip this field
+                }
+                
                 var originalName = $(this).attr("name");
                 if (originalName) {
                     // Check if first [] already has an index like [0], [1], etc.

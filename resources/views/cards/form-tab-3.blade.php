@@ -53,7 +53,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label mb-1">Nilai TJH</label>
                         <div class="input-group">
-                            <span class="input-group-text currency-label">Rp</span>
+                            <span class="input-group-text">Rp</span>
                             <input id="tjh_value"
                                 class="form-control"
                                 name="tjh_value"
@@ -278,11 +278,11 @@
                                         {{-- Kolom 3: Input Pajak (Rp) --}}
                                         <div class="col-md-4">
                                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
-                                            <div class="input-group">
+                                            <div class="input-group input-group-sm">
                                                 <span class="input-group-text currency-label">Rp</span>
                                                 <input type="number"
                                                     name="insurance_tax[{{ $polIns->insurance_id }}]"
-                                                    class="form-control form-control-sm insurance-tax-per-item"
+                                                    class="form-control insurance-tax-per-item"
                                                     data-insurance-id="{{ $polIns->insurance_id }}"
                                                     placeholder="0"
                                                     value="0">
@@ -667,6 +667,12 @@
 
                 if (typeof window.attachTaxInputListeners === 'function') window.attachTaxInputListeners();
                 if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                
+                // Update currency labels for injected tax inputs
+                if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
+                    updateCurrencyLabel(window.currentCurrency);
+                }
+                
                 // console.log('✅ Insurance cloned:', clonedCount, 'items');
                 // console.log('Container HTML after:', $target.html().substring(0, 200));
             };
@@ -680,27 +686,26 @@
 
             // Trigger saat Tab 3 diklik
             $(document).on('click', 'a[href="#step-3"]', function() {
-                console.log('🔄 Tab 3 clicked - Syncing from Tab 2...');
                 setTimeout(function() {
                     // 1. Sync values dari Tab 2 (Object Value & TJH)
-                    console.log('📥 Syncing TJH from Tab 2...');
                     if (typeof sumInputValues === 'function') {
                         // Sum semua TJH dari Tab 2 - HANYA dari policy-form-container
                         sumInputValues($('#policy-form-container input[name^="tjh"]'), '#tjh_value');
-                        console.log('✅ TJH synced: ' + $('#tjh_value').val());
                         
                         // Sum semua Object Value dari Tab 2 - HANYA dari policy-form-container
                         sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
-                        console.log('✅ Object Value synced: ' + $('#object_value').val());
-                    } else {
-                        console.error('❌ sumInputValues function not found!');
                     }
 
                     // 2. Jalankan Kloning Tampilan
                     if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
                     if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
 
-                    // 3. Hitung Duit
+                    // 3. Update currency labels
+                    if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
+                        updateCurrencyLabel(window.currentCurrency);
+                    }
+
+                    // 4. Hitung Duit
                     if (typeof update_payment === 'function') update_payment();
                 }, 150);
             });
@@ -730,6 +735,12 @@
                     
                     if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
                     if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
+                    
+                    // Update currency labels
+                    if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
+                        updateCurrencyLabel(window.currentCurrency);
+                    }
+                    
                     if (typeof update_payment === 'function') update_payment();
                 }
             }, 800);

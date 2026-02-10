@@ -436,7 +436,19 @@
                     // console.log('Target container found:', $targetContainer);
                     $targetContainer.find('.object-forms-container').html($cloneContent.html());
                     $targetContainer.find('.object-forms-container input, .object-forms-container textarea, .object-forms-container select, .object-forms-container button').prop('disabled', false);
-                    initCustomSelect2($targetContainer.find('.add-select2'));
+                    
+                    // Initialize select2 for all add-select2 elements
+                    $targetContainer.find('.add-select2').each(function() {
+                        var $select = $(this);
+                        if (!$select.hasClass('select2-hidden-accessible')) {
+                            var placeholder = $select.data('placeholder') || 'Pilih Data';
+                            $select.select2({
+                                placeholder: placeholder,
+                                allowClear: true,
+                                width: '100%'
+                            });
+                        }
+                    });
                 } else {
                     // console.log('Target container not found for selector:', selector);
                 }
@@ -569,6 +581,18 @@
                         $(this).select2({
                             placeholder: placeholder,
                             allowClear: true
+                        });
+                    }
+                });
+
+                // Initialize all .add-select2 elements (including interest fields)
+                $('.add-select2').each(function() {
+                    if (!$(this).hasClass('select2-hidden-accessible')) {
+                        var placeholder = $(this).data('placeholder') || 'Pilih Data';
+                        $(this).select2({
+                            placeholder: placeholder,
+                            allowClear: true,
+                            width: '100%'
                         });
                     }
                 });

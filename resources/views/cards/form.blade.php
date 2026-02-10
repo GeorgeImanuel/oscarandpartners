@@ -139,34 +139,85 @@
                 customValidator: function(form, fields) {
                     var errors = [];
 
+                    // Validate select2 fields - ensure they have values before submit
+                    $(form).find('select.add-select2.required, select.create-select2.required').each(function() {
+                        var $select = $(this);
+                        
+                        // Skip disabled or hidden fields
+                        if ($select.is(':disabled') || !$select.is(':visible') || $select[0].offsetParent === null) {
+                            return;
+                        }
+                        
+                        // Skip if inside hidden container
+                        if ($select.closest('.object-forms-container').length && $select.closest('.object-forms-container').is(':hidden')) {
+                            return;
+                        }
+                        
+                        var value = $select.val();
+                        
+                        // If select2 is initialized, get value from select2
+                        if ($select.hasClass('select2-hidden-accessible')) {
+                            value = $select.select2('val');
+                        }
+                        
+                        if (!value || value === '' || value === null) {
+                            var label = $select.closest('.col-md-6, .col-md-5, .col-md-4, .col-md-3, [class*="col-"]')
+                                .find('label').first().text().replace('*', '').trim();
+                            
+                            $select.addClass('is-invalid');
+                            
+                            console.warn('Field validation failed:', $select.attr('name'), '- Label:', label);
+                            
+                            errors.push({
+                                field: $select.attr('name'),
+                                message: (label || 'Field') + ' harus diisi'
+                            });
+                        } else {
+                            $select.removeClass('is-invalid');
+                        }
+                    });
+
                     // Calculate total insurance percentage
                     var totalInsurancePercentage = 0;
+                    var hasVisibleInsurance = false;
                     $(form).find('input[name="insurance_percentage[]"]').each(function() {
-                        var val = parseFloat($(this).val()) || 0;
-                        totalInsurancePercentage += val;
+                        // Only count visible and enabled inputs
+                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
+                            var val = parseFloat($(this).val()) || 0;
+                            totalInsurancePercentage += val;
+                            hasVisibleInsurance = true;
+                        }
                     });
 
                     // Calculate total coverage percentage
                     var totalCoveragePercentage = 0;
+                    var hasVisibleCoverage = false;
                     $(form).find('input[name="coverage_percentage[]"]').each(function() {
-                        var val = parseFloat($(this).val()) || 0;
-                        totalCoveragePercentage += val;
+                        // Only count visible and enabled inputs
+                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
+                            var val = parseFloat($(this).val()) || 0;
+                            totalCoveragePercentage += val;
+                            hasVisibleCoverage = true;
+                        }
                     });
 
-                    // Validate insurance percentage total
-                    if (totalInsurancePercentage !== 100) {
+                    // Validate insurance percentage total (only if new policy form is visible and has insurances)
+                    if ($('#new-policy').is(':visible') && hasVisibleInsurance && totalInsurancePercentage !== 100) {
                         alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
+                        console.warn('Insurance percentage validation failed. Total:', totalInsurancePercentage);
                         errors.push({
                             field: '.insurance-percentage',
                             message: 'Total persentase asuransi harus 100%'
                         });
                     };
 
-                    if (totalCoveragePercentage < 0 || totalCoveragePercentage > 100) {
+                    // Validate coverage percentage total (only if new policy form is visible and has coverages)
+                    if ($('#new-policy').is(':visible') && hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
                         alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(2) + '%', '');
+                        console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
                         errors.push({
                             field: '.coverage-percentage',
-                            message: 'Total persentase coverage harus 100%'
+                            message: 'Total persentase coverage harus antara 0-100%'
                         });
                     };
 
@@ -186,10 +237,22 @@
                     // Only validate if new policy form is visible and has insurance items
                     if ($('#new-policy').is(':visible') && hasInsurances && !hasMainInsurance) {
                         alertWarning('Minimal satu asuransi harus dipilih sebagai asuransi utama', '');
+                        console.warn('Main insurance validation failed');
                         errors.push({
                             field: '.is-main-checkbox',
                             message: 'Minimal satu asuransi harus dipilih sebagai asuransi utama'
                         });
+                    }
+
+                    // Log validation summary
+                    if (errors.length > 0) {
+                        console.group('❌ Validation Failed - ' + errors.length + ' error(s) found:');
+                        errors.forEach(function(error, index) {
+                            console.warn((index + 1) + '. ' + error.field + ': ' + error.message);
+                        });
+                        console.groupEnd();
+                    } else {
+                        console.log('✅ All custom validations passed');
                     }
 
                     return {

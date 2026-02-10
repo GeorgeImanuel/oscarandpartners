@@ -68,8 +68,6 @@ class CardController extends Controller
         $clients      = $this->clientService->getAllWithRelations();
         $cardStatuses = $this->cardStatusService->all();
 
-        // return $cards;
-
         return view('cards.index', compact('cards', 'clients', 'cardStatuses'));
     }
 
@@ -93,9 +91,8 @@ class CardController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
         $card = $this->cardService->create($request->all());
-        return $card;
+        
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }
@@ -108,9 +105,7 @@ class CardController extends Controller
      */
     public function show(Card $productionCard)
     {
-
         $card = $this->cardService->findWithRelation($productionCard->id);
-        // return $card->policy->policyInsurances;
         return view('cards.detail', compact('card'));
     }
 

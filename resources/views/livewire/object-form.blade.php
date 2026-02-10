@@ -3,7 +3,7 @@
     <div class="col-md-6 mb-3">
         <label class="form-label">Objek Occupation<span class="text-danger">*</span></label>
         <select class="form-select required add-select2 @error('object_occupation_id') is-invalid @enderror"
-            name="object_occupation_id[{{ isset($object) ? $object->id : '' }}]"
+            name="object_occupation_id"
             data-placeholder="Pilih Objek Occupation"
             style="width: 100%;"
             {{ $isDisabled ? 'disabled' : '' }}>
@@ -26,7 +26,7 @@
             for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
-            name="object_keterangan[{{ isset($object) ? $object->id : '' }}]"
+            name="object_keterangan"
             rows="3"
             {{ $isDisabled ? 'disabled' : '' }}>{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
         @error('object_keterangan')
@@ -41,7 +41,7 @@
         <div class="input-group mb-3">
             <span class="input-group-text">Rp</span>
             <input class="form-control required @error('tjh') is-invalid @enderror"
-                name="tjh[{{ isset($object) ? $object->id : '' }}]"
+                name="tjh"
                 type="text"
                 value="{{ isset($object) ? $object->tjh : old('tjh', '') }}"
                 {{ $isDisabled ? 'disabled' : '' }} />
@@ -67,7 +67,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Interest <span class="item-count">{{ $index + 1 }}</span></label>
                                 <select class="form-select add-select2 required"
-                                    name="interest_id[][]"
+                                    name="interest_id[]"
                                     data-placeholder="Pilih Interest"
                                     style="width: 100%;"
                                     {{ $isDisabled ? 'disabled' : '' }}>
@@ -83,10 +83,10 @@
                             <div class="col-md-5">
                                 <label class="form-label">Nilai Interest <span class="item-count">{{ $index + 1 }}</span></label>
                                 <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
+                                    
                                     <input type="number"
                                         class="form-control"
-                                        name="interest_value[][]"
+                                        name="interest_value[]"
                                         value="{{ $objectInterest->value ?? 0 }}"
                                         {{ $isDisabled ? 'disabled' : '' }}>
                                 </div>
@@ -108,7 +108,7 @@
                         <div class="col-md-6">
                             <label class="form-label">Interest <span class="item-count">1</span></label>
                             <select class="form-select add-select2 required"
-                                name="interest_id[][]"
+                                name="interest_id[]"
                                 data-placeholder="Pilih Interest"
                                 style="width: 100%;"
                                 {{ $isDisabled ? 'disabled' : '' }}>
@@ -123,10 +123,9 @@
                         <div class="col-md-5">
                             <label class="form-label">Nilai Interest <span class="item-count">1</span></label>
                             <div class="input-group">
-                                <span class="input-group-text">Rp</span>
                                 <input type="number"
                                     class="form-control"
-                                    name="interest_value[][]"
+                                    name="interest_value[]"
                                     {{ $isDisabled ? 'disabled' : '' }}>
                             </div>
                         </div>
@@ -147,7 +146,6 @@
         <label class="form-label"
             for="object_value_input">Harga Pertanggungan <span class="text-danger">*</span></label>
         <div class="input-group mb-3">
-            <span class="input-group-text">Rp</span>
             <input class="form-control required @error('object_value_input') is-invalid @enderror"
                 name="object_value_input"
                 type="number"
@@ -163,7 +161,6 @@
     <script>
         $(document).on('change', 'select[name^="object_occupation_id"]', function() {
             const $item = $(this).closest('.item');
-            console.log($(this).val());
             if ($(this).val() == 7)
                 $item.find('.tjh-input-group').show();
             else {
