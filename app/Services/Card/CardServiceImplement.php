@@ -220,16 +220,24 @@ class CardServiceImplement extends Service implements CardService
     }
 
     /**
-     * Create new insurance
+     * Find or create insurance by ID or name
      */
-    private function findOrCreateInsurance(int $insuranceId)
+    private function findOrCreateInsurance($insuranceIdOrName)
     {
-        $insurance = $this->insuranceRepository->find($insuranceId);
-        if (!$insurance) {
-            $insurance = $this->insuranceRepository->create([
-                'name' => $insuranceId
-            ]);
+        // If numeric, try to find by ID
+        if (is_numeric($insuranceIdOrName)) {
+            $insurance = $this->insuranceRepository->find((int) $insuranceIdOrName);
+            if ($insurance) {
+                return $insurance->id;
+            }
         }
+        
+        // If string or ID not found, create new insurance
+        $insuranceName = is_numeric($insuranceIdOrName) ? "Insurance {$insuranceIdOrName}" : $insuranceIdOrName;
+        $insurance = $this->insuranceRepository->create([
+            'name' => $insuranceName
+        ]);
+        
         return $insurance->id;
     }
 
@@ -381,13 +389,20 @@ class CardServiceImplement extends Service implements CardService
             }
 
             // Assign insurances
-            foreach ($data['insurance_id'] as $index => $insuranceId) {
-                $this->policyInsuranceRepository->create([
-                    'policy_id'    => $policy->id,
-                    'insurance_id' => $this->findOrCreateInsurance($insuranceId),
-                    'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
-                    'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
-                ]);
+            if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                foreach ($data['insurance_id'] as $index => $insuranceId) {
+                    // Skip if insurance_id is empty
+                    if (empty($insuranceId)) {
+                        continue;
+                    }
+                    
+                    $this->policyInsuranceRepository->create([
+                        'policy_id'    => $policy->id,
+                        'insurance_id' => $this->findOrCreateInsurance($insuranceId),
+                        'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
+                        'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
+                    ]);
+                }
             }
 
             // Assign objects

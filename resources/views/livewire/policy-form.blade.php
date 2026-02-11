@@ -221,52 +221,50 @@
                             </div>
                         </div>
                     @empty
-                        <div class="row align-items-end item item-1">
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Asuransi <span class="item-count">1</span></label>
-                                    <select class="form-select create-select2 required"
-                                        data-placeholder="Pilih Asuransi"
-                                        name="insurance_id[]"
-                                        style="width: 100%;">
-                                        <option value="">- Pilih Asuransi -</option>
-                                        @foreach ($insurances as $insurance)
-                                            <option value="{{ $insurance->id }}">
-                                                {{ $insurance->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                        <div class="row align-items-end item item-1 mb-2">
+                            <div class="col-md-5 mb-2">
+                                <label class="form-label">Asuransi <span class="item-count">1</span></label>
+                                <select class="form-select create-select2 required"
+                                    data-placeholder="Pilih Asuransi"
+                                    name="insurance_id[]"
+                                    style="width: 100%;">
+                                    <option value="">- Pilih Asuransi -</option>
+                                    @foreach ($insurances as $insurance)
+                                        <option value="{{ $insurance->id }}">
+                                            {{ $insurance->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md mb-2">
+                                <label class="form-label">Persentase Asuransi</label>
+                                <div class="input-group">
+                                    <input class="form-control required insurance-percentage"
+                                        type="number"
+                                        name="insurance_percentage[]"
+                                        value
+                                        placeholder="0"
+                                        min="0"
+                                        max="100"
+                                        step="0.01">
+                                    <span class="input-group-text">%</span>
                                 </div>
-                                <div class="col-md mb-2">
-                                    <label class="form-label">Persentase Asuransi</label>
-                                    <div class="input-group mb-3">
-                                        <input class="form-control"
-                                            type="number"
-                                            name="insurance_percentage[]"
-                                            value
-                                            placeholder="0"
-                                            min="0"
-                                            max="100"
-                                            step="0.01">
-                                        <span class="input-group-text">%</span>
-                                    </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input is-main-checkbox"
+                                        type="checkbox"
+                                        name="is_main[]"
+                                        value="1">
+                                    <label class="form-check-label">Asuransi Utama</label>
                                 </div>
-                                <div class="col-md-2 mb-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input is-main-checkbox"
-                                            type="checkbox"
-                                            name="is_main[]"
-                                            value="1">
-                                        <label class="form-check-label">Asuransi Utama</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-auto mb-2">
-                                    <button class="btn btn-danger btn-xs remove-item-btn"
-                                        type="button"
-                                        style="display:none">
-                                        <i class="icon-trash me-2"></i> Hapus
-                                    </button>
-                                </div>
+                            </div>
+                            <div class="col-md-auto mb-2">
+                                <button class="btn btn-danger btn-xs remove-item-btn"
+                                    type="button"
+                                    style="display:none">
+                                    <i class="icon-trash me-2"></i> Hapus
+                                </button>
                             </div>
                         </div>
                     @endforelse

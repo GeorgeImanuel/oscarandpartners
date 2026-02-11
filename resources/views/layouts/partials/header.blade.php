@@ -38,65 +38,65 @@
           </div>
         </li> --}}
         <li class="onhover-dropdown">
-          <div class="notification-box">
-            <i data-feather="bell"></i>
-            {{-- Tampilkan dot merah dan jumlah kalau ada data --}}
-            @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
-                <span class="dot-animated"></span>
-                <span class="badge badge-pill badge-danger">{{ $overdueNotifications->count() }}</span>
-            @endif
-          </div>
+            <div class="notification-box">
+                <i data-feather="bell"></i>
+                @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
+                    <span class="dot-animated"></span>
+                    <span class="badge badge-pill badge-danger">{{ $overdueNotifications->count() }}</span>
+                @endif
+            </div>
 
-          <ul class="notification-dropdown onhover-show-div">
-            <li>
-              <p class="f-w-700 mb-0">
-                  You have {{ isset($overdueNotifications) ? $overdueNotifications->count() : 0 }} Overdue Payments
-              </p>
-            </li>
+            {{-- PERUBAHAN ADA DI SINI: style="max-height..." --}}
+            <ul class="notification-dropdown onhover-show-div" style="max-height: 60vh; overflow-y: auto; overflow-x: hidden;">
+                
+                {{-- Header (Tetap ikut scroll, kalau mau diam harus dipisah strukturnya) --}}
+                <li>
+                    <p class="f-w-700 mb-0">
+                        You have {{ isset($overdueNotifications) ? $overdueNotifications->count() : 0 }} Overdue Payments
+                    </p>
+                </li>
 
-            @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
-                @foreach($overdueNotifications->take(10) as $payment)
-                    <li class="noti-danger">
-                        <a href="{{ route('payments.show', $payment->id) }}" style="display: block; text-decoration: none; color: inherit;">
-                            <div class="media">
-                                <span class="notification-bg bg-light-danger"><i data-feather="alert-circle"></i></span>
-                                <div class="media-body">
-                                    {{-- Baris 1: Nama Nasabah (Tertanggung) --}}
-                                    {{-- Mengambil nama client dari relasi card --}}
-                                    <h6 class="mt-0 mb-1 f-12 font-weight-bold">
-                                        {{ $payment->card->client->id_name}}
-                                    </h6>
-                                    
-                                    {{-- Baris 2: Nomor Polis & Info Tagihan --}}
-                                    <p class="mb-1 f-10 text-muted">
-                                        Polis: {{ $payment->card->policy->policy_number ?? '-' }} <br>
-                                        Tagihan #{{ $payment->id }}
-                                    </p>
-                                    
-                                    {{-- Baris 3: Status Telat --}}
-                                    <span class="f-12 text-danger font-weight-bold">
-                                        <i class="fa fa-clock-o me-1"></i>
-                                        Telat {{ intval(\Carbon\Carbon::parse($payment->deadline_at)->diffInDays(now())) }} Hari
-                                    </span>
+                @if(isset($overdueNotifications) && $overdueNotifications->count() > 0)
+                    {{-- Loop Payment --}}
+                    @foreach($overdueNotifications->take(5) as $payment)
+                        <li class="noti-danger">
+                            <a href="{{ route('payments.show', $payment->id) }}" style="display: block; text-decoration: none; color: inherit;">
+                                <div class="media">
+                                    <span class="notification-bg bg-light-danger"><i data-feather="alert-circle"></i></span>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1 f-12 font-weight-bold">
+                                            {{ $payment->card->client->id_name ?? 'Client Unknown' }}
+                                        </h6>
+                                        <p class="mb-1 f-10 text-muted">
+                                            Polis: {{ $payment->card->policy->policy_number ?? '-' }} <br>
+                                            Tagihan #{{ $payment->id }}
+                                        </p>
+                                        <span class="f-12 text-danger font-weight-bold">
+                                            <i class="fa fa-clock-o me-1"></i>
+                                            Telat {{ intval(\Carbon\Carbon::parse($payment->deadline_at)->diffInDays(now())) }} Hari
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
+                        </li>
+                    @endforeach
+
+                    {{-- Footer Tombol Lihat Semua --}}
+                    <li class="text-center p-2"> 
+                        <a class="btn btn-link btn-sm f-w-700" href="{{ route('payments.overdue') }}">
+                            Lihat Semua Tunggakan
                         </a>
                     </li>
-                @endforeach
-
-                <li class="text-center p-2"> 
-                    <a class="btn btn-link btn-sm f-w-700" href="{{ route('payments.overdue') }}">Lihat Semua Tunggakan</a>
-                </li>
-            @else
-                <li>
-                    <div class="media">
-                        <div class="media-body text-center p-3">
-                            <p class="mb-0">Tidak ada tunggakan!</p>
+                @else
+                    <li>
+                        <div class="media">
+                            <div class="media-body text-center p-3">
+                                <p class="mb-0">Tidak ada tunggakan!</p>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            @endif
-          </ul>
+                    </li>
+                @endif
+            </ul>
         </li>
         {{-- <li>
             <div class="mode"><i class="fa fa-moon-o"></i></div>
