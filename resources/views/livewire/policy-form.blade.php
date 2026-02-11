@@ -604,5 +604,29 @@
                 }
             }, 200);
         });
+
+        $(document).on('input keyup change blur', 'input[name="interest_value[]"]', function() {
+            
+            if (typeof window.toggleNegativeWarning === 'function') {
+                window.toggleNegativeWarning(this);
+            }
+
+            var $container = $(this).closest('#new-object'); 
+            var $totalInput = $container.find('input[name="object_value_input"]');
+            
+            setTimeout(function() {
+                if ($totalInput.length > 0 && typeof window.toggleNegativeWarning === 'function') {
+                    $totalInput.each(function() {
+                        window.toggleNegativeWarning(this);
+                    });
+                }
+            }, 100);
+        });
+
+        $('.check-negative').each(function() {
+            if (typeof window.toggleNegativeWarning === 'function') {
+                window.toggleNegativeWarning(this);
+            }
+        });
     </script>
 @endscript

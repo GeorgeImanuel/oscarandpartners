@@ -131,6 +131,57 @@
         <script src="{{ asset('assets/js/form-wizard/form-wizard-two.js') }}"></script>
 
         <script>
+            window.toggleNegativeWarning = function(element) {
+                var val = parseFloat($(element).val()) || 0;
+                
+                // --- LOGIC PENCARIAN ELEMEN WARNING YANG LEBIH KUAT ---
+                // Coba cari warning tepat di sebelah input (jika tidak ada input-group)
+                var $warningMsg = $(element).next('.negative-warning');
+                
+                // Jika tidak ketemu, coba cari di sebelah parentnya (jika ada input-group)
+                if ($warningMsg.length === 0) {
+                    $warningMsg = $(element).parent().next('.negative-warning');
+                }
+                
+                // Jika masih tidak ketemu, cari di dalam container kolom (col-md-...)
+                if ($warningMsg.length === 0) {
+                    $warningMsg = $(element).closest('div[class^="col-"]').find('.negative-warning');
+                }
+                // -------------------------------------------------------
+
+                if (val < 0) {
+                    // Jika Negatif: Tampilkan & beri warna
+                    $warningMsg.stop().slideDown(200);
+                    $(element).addClass('border-warning text-warning fw-bold'); 
+                } else {
+                    // Jika Aman: Sembunyikan
+                    $warningMsg.stop().slideUp(200);
+                    $(element).removeClass('border-warning text-warning fw-bold');
+                }
+            };
+
+            $(document).ready(function() {
+                // 2. Listener Otomatis untuk Input User (Ketik Manual)
+                $(document).on('input keyup change blur', '.check-negative', function() {
+                    window.toggleNegativeWarning(this);
+                });
+
+                $(document).on('input keyup change blur', 'input[name^="interest_value"]', function() {
+                    setTimeout(function() {
+                        var $totalField = $('input[name="object_value_input"]');
+                        if ($totalField.length) {
+                            window.toggleNegativeWarning($totalField);
+                        }
+                    }, 100); 
+                });
+
+                setTimeout(function() {
+                    $('.check-negative').each(function() {
+                        window.toggleNegativeWarning(this);
+                    });
+                }, 500);
+            });
+
             // Initialize create-select2 (complex selects with "create new" functionality)
             initCustomSelect2(".create-select2");
             

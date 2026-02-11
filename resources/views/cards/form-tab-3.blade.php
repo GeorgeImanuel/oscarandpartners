@@ -15,12 +15,16 @@
                     <div class="input-group">
                         <span class="input-group-text currency-label">Rp</span>
                         <input id="object_value"
-                            class="form-control form-control-lg fw-bold"
+                            class="form-control form-control-lg fw-bold check-negative"
                             name="object_value"
                             type="text"
                             value="{{ isset($card) ? number_format($card->policy->getTotalObjectValue(), 0, ',', '.') : '0' }}"
                             readonly
                             style="background-color: #f8f9fa;">
+                    </div>
+
+                    <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                        <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                     </div>
                 </div>
             </div>
@@ -70,7 +74,7 @@
                                 <div class="input-group mb-3">
                                     {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                                     <input id="discount_percentage"
-                                        class="form-control validate-percentage"
+                                        class="form-control validate-percentage check-negative"
                                         type="number"
                                         min="0"
                                         max="100"
@@ -84,16 +88,22 @@
                                     style="display:none;">
                                     <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                                 </div>
+                                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+                                </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text currency-label">Rp</span>
                                     <input id="discount_value"
-                                        class="form-control"
+                                        class="form-control check-negative"
                                         type="number"
                                         name="discount_value"
                                         aria-label="Amount (to the nearest dollar)"
                                         value="{{ isset($card) ? $card->discount_value : old('discount_value', 0) }}">
+                                </div>
+                                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                                 </div>
                             </div>
                         </div>
@@ -116,11 +126,14 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="production_value"
-                        class="form-control bg-light"
+                        class="form-control bg-light check-negative"
                         name="production_value"
                         type="number"
                         value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}"
                         readonly>
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
 
@@ -142,11 +155,14 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="premi_value"
-                        class="form-control fw-bold bg-light"
+                        class="form-control fw-bold bg-light check-negative"
                         name="premi_value"
                         type="number"
                         value="{{ isset($card) ? $card->premi : old('premi', 0) }}"
                         readonly>
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
             <div class="col-md-12 mb-3">
@@ -210,7 +226,7 @@
                 <div class="input-group">
                     {{-- Tambahkan class 'validate-percentage' dan min/max --}}
                     <input id="commision_percentage"
-                        class="form-control validate-percentage"
+                        class="form-control validate-percentage check-negative"
                         name="commision_percentage"
                         type="number"
                         step="0.01"
@@ -225,6 +241,9 @@
                     style="display:none;">
                     <i class="fa fa-exclamation-circle"></i> Nilai harus diantara 0-100
                 </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+                </div>
             </div>
 
             <div class="col-md-12 mb-3">
@@ -232,11 +251,14 @@
                 <div class="input-group">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="commision_bruto"
-                        class="form-control bg-light fw-bold"
+                        class="form-control bg-light fw-bold check-negative"
                         name="commision_bruto"
                         type="number"
                         value="{{ isset($card) ? $card->commision_bruto : old('commision_bruto', 0) }}"
                         readonly>
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
 
@@ -309,11 +331,14 @@
                 <div class="input-group">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="tax"
-                        class="form-control bg-light"
+                        class="form-control bg-light check-negative"
                         name="tax"
                         type="number"
                         value="{{ isset($card) ? $card->tax : old('tax', 0) }}"
                         readonly>
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
 
@@ -322,10 +347,13 @@
                 <div class="input-group">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="discount_agent"
-                        class="form-control"
+                        class="form-control check-negative"
                         name="discount_agent"
                         type="number"
                         value="{{ isset($card) ? $card->discount_agent : old('discount_agent', 0) }}">
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
 
@@ -334,11 +362,14 @@
                 <div class="input-group">
                     <span class="input-group-text currency-label">Rp</span>
                     <input id="commision_netto"
-                        class="form-control bg-light"
+                        class="form-control bg-light check-negative"
                         name="commision_netto"
                         type="number"
                         value="{{ isset($card) ? $card->commision_netto : old('commision_netto', 0) }}"
                         readonly>
+                </div>
+                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                 </div>
             </div>
         </div>
@@ -433,8 +464,13 @@
 
 @push('scripts')
     <script>
+
         function sync_discount(source) {
-            var object_value = parseFloat($('#object_value').val()) || 0;
+            var rawValue = $('#object_value').val();
+            if (typeof rawValue === 'string') {
+                rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.');
+            }
+            var object_value = parseFloat(rawValue) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var tjh_value = parseFloat($('#tjh_value').val()) || 0;
 
@@ -442,17 +478,28 @@
             // Rumus: (Harga Pertanggungan * Tarif) + TJH
             var base_premium = (object_value * (premi_percentages / 100)) + tjh_value;
 
-            if (base_premium > 0) {
+            // Hitung meskipun negatif, asal bukan 0
+            if (base_premium != 0) {
                 if (source === 'percentage') {
                     // User isi persen, hitung rupiah
                     var disc_pct = parseFloat($('#discount_percentage').val()) || 0;
                     var disc_val = base_premium * (disc_pct / 100);
                     $('#discount_value').val(disc_val.toFixed(2)); // Update Input Rupiah (2 desimal)
+                    
+                    // Trigger check negatif untuk discount_value
+                    if (typeof window.toggleNegativeWarning === 'function') {
+                        window.toggleNegativeWarning($('#discount_value')[0]);
+                    }
                 } else if (source === 'value') {
                     // User isi rupiah, hitung persen
                     var disc_val = parseFloat($('#discount_value').val()) || 0;
                     var disc_pct = (disc_val / base_premium) * 100;
                     $('#discount_percentage').val(disc_pct.toFixed(5)); // Update Input Persen (5 desimal)
+                    
+                    // Trigger check negatif untuk discount_percentage
+                    if (typeof window.toggleNegativeWarning === 'function') {
+                        window.toggleNegativeWarning($('#discount_percentage')[0]);
+                    }
                 }
             }
         }
@@ -508,6 +555,31 @@
 
 
         $(document).ready(function() {
+            $(document).on('input change keyup', '.check-negative', function() {
+                toggleNegativeWarning(this);
+                // Tetap jalankan perhitungan
+                if (typeof update_payment === 'function') update_payment();
+                if (typeof calculateTotalTax === 'function') calculateTotalTax(); 
+            });
+
+            $('.check-negative').each(function() {
+                toggleNegativeWarning(this);
+            });
+
+            // Polling untuk monitor readonly fields yang berubah via JS
+            setInterval(function() {
+                $('#step-3 .check-negative[readonly], #step-3 .check-negative.bg-light').each(function() {
+                    var currentValue = $(this).val();
+                    var lastValue = $(this).data('last-checked-value');
+                    
+                    if (currentValue !== lastValue) {
+                        $(this).data('last-checked-value', currentValue);
+                        if (typeof window.toggleNegativeWarning === 'function') {
+                            window.toggleNegativeWarning(this);
+                        }
+                    }
+                });
+            }, 300);
 
             window.copyCoverageToTab3 = function() {
                 // console.log('📋 copyCoverageToTab3 called');
@@ -648,6 +720,9 @@
                                     value="${oldTaxVal}" 
                                     placeholder="0">
                             </div>
+                            <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+                            </div>
                         </div>`;
 
                     // Append ke row yang tepat (handle nested row structure)
@@ -679,6 +754,7 @@
 
             window.attachTaxInputListeners = function() {
                 $('.insurance-tax-per-item').off('input blur keyup').on('input blur keyup', function() {
+                    toggleNegativeWarning(this);
                     if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
                     if (typeof update_payment === 'function') update_payment();
                 });

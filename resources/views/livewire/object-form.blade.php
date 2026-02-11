@@ -85,10 +85,13 @@
                                 <div class="input-group">
                                     
                                     <input type="number"
-                                        class="form-control"
+                                        class="form-control check-negative"
                                         name="interest_value[]"
                                         value="{{ $objectInterest->value ?? 0 }}"
                                         {{ $isDisabled ? 'disabled' : '' }}>
+                                </div>
+                                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                                 </div>
                             </div>
                             <div class="col-md-1 pt-3">
@@ -124,9 +127,12 @@
                             <label class="form-label">Nilai Interest <span class="item-count">1</span></label>
                             <div class="input-group">
                                 <input type="number"
-                                    class="form-control"
+                                    class="form-control check-negative"
                                     name="interest_value[]"
                                     {{ $isDisabled ? 'disabled' : '' }}>
+                            </div>
+                            <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
                             </div>
                         </div>
                         <div class="col-md-1 pt-3">
@@ -143,10 +149,9 @@
         </div>
     </div>
     <div class="col-md-12 mb-3 input-group-solid">
-        <label class="form-label"
-            for="object_value_input">Harga Pertanggungan <span class="text-danger">*</span></label>
+        <label class="form-label" for="object_value_input">Harga Pertanggungan <span class="text-danger">*</span></label>
         <div class="input-group mb-3">
-            <input class="form-control required @error('object_value_input') is-invalid @enderror"
+            <input class="form-control required check-negative @error('object_value_input') is-invalid @enderror"
                 name="object_value_input"
                 type="number"
                 step="0.00001"
@@ -154,11 +159,16 @@
                 readonly
                 value="{{ isset($object) && $object ? $object->object_value ?? 0 : 0 }}" />
         </div>
+        
+        <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+            <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+        </div>
     </div>
 </div>
 
 @script
     <script>
+        // 1. Logic existing untuk Occupation (biarkan saja)
         $(document).on('change', 'select[name^="object_occupation_id"]', function() {
             const $item = $(this).closest('.item');
             if ($(this).val() == 7)
@@ -167,5 +177,36 @@
                 $item.find('.tjh-input-group').hide();
             }
         });
+
+        // 2. Listener Input Manual (Untuk field yang diketik user: Interest, TJH)
+        $(document).on('input keyup change blur', 'input[name="interest_value[]"], input[name="tjh"]', function() {
+            if (typeof window.toggleNegativeWarning === 'function') {
+                window.toggleNegativeWarning(this);
+            }
+        });
+
+        // 3. MONITOR OTOMATIS (Polling) untuk Field Readonly (Harga Pertanggungan)
+        // Ini akan mengecek setiap 300ms apakah nilai berubah negatif/positif
+        // Jauh lebih stabil daripada mengandalkan trigger event manual
+        setInterval(function() {
+            $('input[name="object_value_input"]').each(function() {
+                var currentVal = $(this).val();
+                
+                // Cek apakah fungsi global sudah siap
+                if (typeof window.toggleNegativeWarning === 'function') {
+                    // Panggil fungsi cek negatif
+                    window.toggleNegativeWarning(this);
+                }
+            });
+        }, 300); // Cek setiap 300 milidetik (tidak berat untuk browser)
+
+        // 4. Initial Load Check
+        setTimeout(function() {
+            $('.check-negative').each(function() {
+                if (typeof window.toggleNegativeWarning === 'function') {
+                    window.toggleNegativeWarning(this);
+                }
+            });
+        }, 500);
     </script>
 @endscript
