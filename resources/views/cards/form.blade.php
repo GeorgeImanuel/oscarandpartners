@@ -295,17 +295,6 @@
                         });
                     }
 
-                    // Log validation summary
-                    if (errors.length > 0) {
-                        console.group('❌ Validation Failed - ' + errors.length + ' error(s) found:');
-                        errors.forEach(function(error, index) {
-                            console.warn((index + 1) + '. ' + error.field + ': ' + error.message);
-                        });
-                        console.groupEnd();
-                    } else {
-                        console.log('✅ All custom validations passed');
-                    }
-
                     return {
                         isValid: errors.length === 0,
                         errors: errors

@@ -6,6 +6,39 @@
     'use strict';
 
     /**
+     * Display error message for a field
+     * Handles different field types (input-group, select2, regular fields)
+     * @param {HTMLElement} field - The form field element
+     * @param {string} message - The error message to display
+     */
+    function showFieldError(field, message) {
+        if (!field || !message) return;
+
+        var errorMessage = document.createElement('div');
+        errorMessage.className = 'error-message';
+        errorMessage.style.color = 'red';
+        errorMessage.textContent = message;
+
+        // Check if field has parent .input-group
+        var inputGroup = field.closest('.input-group');
+        if (inputGroup) {
+            inputGroup.insertAdjacentElement('afterend', errorMessage);
+        }
+        // Check if field is select2
+        else if (field.classList.contains('select2-hidden-accessible')) {
+            // Find the select2 container
+            var select2Container = field.nextElementSibling;
+            if (select2Container && select2Container.classList.contains('select2-container')) {
+                select2Container.insertAdjacentElement('afterend', errorMessage);
+            } else {
+                field.insertAdjacentElement('afterend', errorMessage);
+            }
+        } else {
+            field.insertAdjacentElement('afterend', errorMessage);
+        }
+    }
+
+    /**
      * Initialize form validation for margin review forms
      * Applies custom Bootstrap validation styles and error messages
      * @param {Object} options - Configuration options for validation
@@ -53,65 +86,23 @@
                 // Validate each field (built-in HTML5 validation)
                 var fields = form.querySelectorAll('input, select, textarea');
                 fields.forEach(function (field) {
-                    // Skip disabled or hidden fields
-                    if (!field || field.disabled || field.offsetParent === null) {
-                        return;
-                    }
-                    
                     if (!field.checkValidity()) {
                         isValid = false;
 
-                        // Add custom error message
-                        var errorMessage = document.createElement('div');
-                        errorMessage.className = 'error-message';
-                        errorMessage.style.color = 'red';
-                        errorMessage.textContent = field.validationMessage;
-                        
-                        try {
-                            // For Select2 fields, insert after the Select2 container
-                            if (field.classList && field.classList.contains('select2-hidden-accessible')) {
-                                var select2Container = field.nextElementSibling;
-                                if (select2Container && select2Container.classList && select2Container.classList.contains('select2-container')) {
-                                    select2Container.insertAdjacentElement('afterend', errorMessage);
-                                } else if (field.parentElement) {
-                                    field.parentElement.appendChild(errorMessage);
-                                }
-                            } else if (field.parentElement) {
-                                field.insertAdjacentElement('afterend', errorMessage);
-                            }
-                        } catch (e) {
-                            if (debug) {
-                                console.warn('Could not insert error message for field:', field.name, e);
-                            }
-                        }
+                        // Add custom error message using reusable function
+                        showFieldError(field, field.validationMessage);
                         
                         if (debug) {
                             console.warn('Field not valid:', field.name, 'Message:', field.validationMessage);
                         }
                     }
 
-                    // Remove error message on input change (only add listener once)
-                    if (!field.hasAttribute('data-error-listener')) {
-                        field.setAttribute('data-error-listener', 'true');
-                        field.addEventListener('input', function () {
-                            var nextEl = field.nextElementSibling;
-                            while (nextEl) {
-                                if (nextEl.classList && nextEl.classList.contains('error-message')) {
-                                    nextEl.remove();
-                                    break;
-                                }
-                                // For Select2, check after the container
-                                if (nextEl.classList && nextEl.classList.contains('select2-container')) {
-                                    var afterSelect2 = nextEl.nextElementSibling;
-                                    if (afterSelect2 && afterSelect2.classList && afterSelect2.classList.contains('error-message')) {
-                                        afterSelect2.remove();
-                                    }
-                                    break;
-                                }
-                                nextEl = nextEl.nextElementSibling;
-                            }
-                        });
-                    }
+                    // Remove error message on input change
+                    field.addEventListener('input', function () {
+                        if (field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')) {
+                            field.nextElementSibling.remove();
+                        }
+                    });
                 });
 
                 // Run custom validation if provided
@@ -124,31 +115,10 @@
                         // Display custom validation errors
                         customErrors.forEach(function (error) {
                             if (error.field && error.message) {
-                                // Use attribute selector to handle field names with special characters like []
-                                var field = form.querySelector('[name="' + error.field + '"]');
-                                if (field && !field.disabled && field.offsetParent !== null) {
-                                    var errorMessage = document.createElement('div');
-                                    errorMessage.className = 'error-message';
-                                    errorMessage.style.color = 'red';
-                                    errorMessage.textContent = error.message;
-                                    
-                                    try {
-                                        // For Select2 fields, insert after the Select2 container
-                                        if (field.classList && field.classList.contains('select2-hidden-accessible')) {
-                                            var select2Container = field.nextElementSibling;
-                                            if (select2Container && select2Container.classList && select2Container.classList.contains('select2-container')) {
-                                                select2Container.insertAdjacentElement('afterend', errorMessage);
-                                            } else if (field.parentElement) {
-                                                field.parentElement.appendChild(errorMessage);
-                                            }
-                                        } else if (field.parentElement) {
-                                            field.insertAdjacentElement('afterend', errorMessage);
-                                        }
-                                    } catch (e) {
-                                        if (debug) {
-                                            console.warn('Could not insert custom error message for field:', error.field, e);
-                                        }
-                                    }
+                                var field = form.querySelector(error.field);
+                                if (field) {
+                                    // Use reusable function to show error
+                                    showFieldError(field, error.message);
                                 }
                             }
                         });
@@ -194,12 +164,34 @@
         });
     }
 
-    // Export function to global scope for initialization from blade template
+    // Export functions to global scope for use from blade template
     window.initializeFormValidation = initializeFormValidation;
+    window.showFieldError = showFieldError;
 })();
 
 /**
  * USAGE EXAMPLES:
+ * 
+ * =====================================
+ * showFieldError() - Independent Function
+ * =====================================
+ * 
+ * Display error message for any form field independently
+ * Automatically handles input-groups, select2 elements, and regular fields
+ * 
+ * Usage:
+ * var field = document.querySelector('#currency_code');
+ * showFieldError(field, 'Please select a currency');
+ * 
+ * Or with custom validation:
+ * var emailField = document.querySelector('#email');
+ * if (!isValidEmail(emailField.value)) {
+ *     showFieldError(emailField, 'Invalid email format');
+ * }
+ * 
+ * =====================================
+ * initializeFormValidation() - Examples
+ * =====================================
  * 
  * 1. Basic usage with custom submit:
  * initializeFormValidation({

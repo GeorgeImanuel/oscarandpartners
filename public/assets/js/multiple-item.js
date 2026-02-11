@@ -178,11 +178,6 @@ window.renameInputNameByIndex = function ($items) {
         $(this)
             .find("input, select, textarea")
             .each(function () {
-                // Skip fields inside object-interest-item container
-                if ($(this).closest(".object-interest-item").length > 0) {
-                    return; // Skip this field
-                }
-                
                 var originalName = $(this).attr("name");
                 if (originalName) {
                     // Check if first [] already has an index like [0], [1], etc.
