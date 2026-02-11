@@ -82,6 +82,14 @@
                 form.querySelectorAll('.error-message').forEach(function (error) {
                     error.remove();
                 });
+                
+                // Clear error messages that might be under select2 containers
+                form.querySelectorAll('.select2-container').forEach(function (container) {
+                    var nextEl = container.nextElementSibling;
+                    if (nextEl && nextEl.classList.contains('error-message')) {
+                        nextEl.remove();
+                    }
+                });
 
                 // Validate each field (built-in HTML5 validation)
                 var fields = form.querySelectorAll('input, select, textarea');
@@ -99,10 +107,27 @@
 
                     // Remove error message on input change
                     field.addEventListener('input', function () {
+                        // For regular fields
                         if (field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')) {
                             field.nextElementSibling.remove();
                         }
                     });
+                    
+                    // Remove error message on select2 change
+                    if (field.classList.contains('select2-hidden-accessible')) {
+                        $(field).on('select2:select select2:unselect change', function() {
+                            // Remove error after select2 container
+                            var select2Container = field.nextElementSibling;
+                            if (select2Container && select2Container.classList.contains('select2-container')) {
+                                var errorMsg = select2Container.nextElementSibling;
+                                if (errorMsg && errorMsg.classList.contains('error-message')) {
+                                    errorMsg.remove();
+                                }
+                            }
+                            // Remove is-invalid class
+                            $(field).removeClass('is-invalid');
+                        });
+                    }
                 });
 
                 // Run custom validation if provided
