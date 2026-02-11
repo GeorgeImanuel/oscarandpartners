@@ -28,13 +28,12 @@
                 @enderror
             </div>
 
-            <div class="col-md-12 mb-3"
-                wire:ignore>
+            <div class="col-md-12 mb-3">
                 <label class="form-label"
-                    for="currency_code">Mata Uang <span class="text-danger">*</span></label>
+                    for="currency_code">Mata Uang<span class="text-danger">*</span></label>
 
                 <select id="currency_code"
-                    class="form-select required @error('currency_code') is-invalid @enderror"
+                    class="form-select create-select2 required @error('currency_code') is-invalid @enderror"
                     data-placeholder="Pilih Mata Uang"
                     data-selected-value="{{ $policy->currency_code ?? '' }}"
                     name="currency_code">
@@ -434,7 +433,7 @@
                     // console.log('Target container found:', $targetContainer);
                     $targetContainer.find('.object-forms-container').html($cloneContent.html());
                     $targetContainer.find('.object-forms-container input, .object-forms-container textarea, .object-forms-container select, .object-forms-container button').prop('disabled', false);
-                    
+
                     // Initialize select2 for all add-select2 elements
                     $targetContainer.find('.add-select2').each(function() {
                         var $select = $(this);
@@ -489,7 +488,8 @@
                 // Reinitialize currency_code
                 $('#currency_code').select2({
                     placeholder: 'Pilih Mata Uang',
-                    allowClear: true
+                    allowClear: true,
+                    width: '100%'
                 });
                 initCustomSelect2(".create-select2");
             }, 100);
@@ -513,7 +513,8 @@
                             var placeholder = $(this).data('placeholder') || 'Pilih Data';
                             $(this).select2({
                                 placeholder: placeholder,
-                                allowClear: true
+                                allowClear: true,
+                                width: '100%'
                             });
                         }
                     });
@@ -568,7 +569,8 @@
                 if (!$('#currency_code').hasClass('select2-hidden-accessible')) {
                     $('#currency_code').select2({
                         placeholder: 'Pilih Mata Uang',
-                        allowClear: true
+                        allowClear: true,
+                        width: '100%'
                     });
                 }
 
@@ -604,14 +606,14 @@
         });
 
         $(document).on('input keyup change blur', 'input[name="interest_value[]"]', function() {
-            
+
             if (typeof window.toggleNegativeWarning === 'function') {
                 window.toggleNegativeWarning(this);
             }
 
-            var $container = $(this).closest('#new-object'); 
+            var $container = $(this).closest('#new-object');
             var $totalInput = $container.find('input[name="object_value_input"]');
-            
+
             setTimeout(function() {
                 if ($totalInput.length > 0 && typeof window.toggleNegativeWarning === 'function') {
                     $totalInput.each(function() {

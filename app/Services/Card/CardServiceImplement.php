@@ -10,13 +10,14 @@ use App\Repositories\Object\ObjectRepository;
 use App\Repositories\Policy\PolicyRepository;
 use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\Coverage\CoverageRepository;
+use App\Repositories\Currency\CurrencyRepository;
 use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Relation\RelationRepository;
 use App\Repositories\Insurance\InsuranceRepository;
+use App\Repositories\PolicyObject\PolicyObjectRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\PolicyCoverage\PolicyCoverageRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
-use App\Repositories\PolicyObject\PolicyObjectRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 
 class CardServiceImplement extends Service implements CardService
@@ -51,6 +52,7 @@ class CardServiceImplement extends Service implements CardService
     protected $policyObjectRepository;
     protected $insuranceRepository;
     protected $paymentRepository;
+    protected $currencyRepository;
 
     public function __construct(
         CardRepository $mainRepository,
@@ -66,7 +68,8 @@ class CardServiceImplement extends Service implements CardService
         PolicyInsuranceRepository $policyInsuranceRepository,
         PolicyObjectRepository $policyObjectRepository,
         InsuranceRepository $insuranceRepository,
-        PaymentRepository $paymentRepository
+        PaymentRepository $paymentRepository,
+        CurrencyRepository $currencyRepository
     ) {
         $this->mainRepository             = $mainRepository;
         $this->clientRepository           = $clientRepository;
@@ -82,6 +85,7 @@ class CardServiceImplement extends Service implements CardService
         $this->policyObjectRepository     = $policyObjectRepository;
         $this->insuranceRepository        = $insuranceRepository;
         $this->paymentRepository          = $paymentRepository;
+        $this->currencyRepository         = $currencyRepository;
     }
 
     public function findWithRelation($id)
@@ -109,13 +113,11 @@ class CardServiceImplement extends Service implements CardService
     {
         try {
             DB::beginTransaction();
-            //1. Handle Client Creation (if requested)
+            // Handle Client Creation (if requested)
             $data['client_id'] = $this->findOrCreateClient($data);
-            
-            // 2. Handle Policy Creation (if requested)
+            // Handle Policy Creation (if requested)
             $data['policy_id'] = $this->findOrCreatePolicy($data);
-
-            // 5. Create Card
+            // Create Card
             $card = $this->mainRepository->create([
                 'client_id'       => $data['client_id'],
                 'policy_id'       => $data['policy_id'],
@@ -176,13 +178,13 @@ class CardServiceImplement extends Service implements CardService
         }
     }
 
-    private function findOrCreateRelation(array $data): int
+    private function findOrCreateRelation(array $relationId): int
     {
-        $relation = $this->relationRepository->find($data['relation_id']);
+        $relation = $this->relationRepository->find($relationId);
         if (!$relation) {
             $relation = $this->relationRepository->create([
-                'code' => $data['relation_id'],
-                'name' => $data['relation_id'] ?? null,
+                'code' => $relationId,
+                'name' => $relationId,
             ]);
         }
         return $relation->id;
@@ -191,17 +193,32 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new client with optional relation
      */
-    private function findOrCreateClient(array $data): int
+    private function findOrCreateClient(array $data)
     {
         $client = $this->clientRepository->find($data['client_id']);
         if (!$client) {
             $client = $this->clientRepository->create([
-                'relation_id' => $this->findOrCreateRelation($data),
+                'relation_id' => $this->findOrCreateRelation($data['relation_id']),
                 'id_name'     => $data['client_id'],
                 'id_address'  => $data['id_address'] ?? null,
-            ]);
+                ]);
         }
         return $client->id;
+    }
+
+    /**
+     * Create new currency
+     */
+    private function findOrCreateCurrency(string $currencyCode)
+    {
+        $currency = $this->currencyRepository->find($currencyCode);
+        if (!$currency) {
+            $currency = $this->currencyRepository->create([
+                'code' => $currencyCode,
+                'name' => $currencyCode,
+            ]);
+        }
+        return $currency->code;
     }
 
     /**
@@ -231,13 +248,13 @@ class CardServiceImplement extends Service implements CardService
                 return $insurance->id;
             }
         }
-        
+
         // If string or ID not found, create new insurance
         $insuranceName = is_numeric($insuranceIdOrName) ? "Insurance {$insuranceIdOrName}" : $insuranceIdOrName;
         $insurance = $this->insuranceRepository->create([
             'name' => $insuranceName
         ]);
-        
+
         return $insurance->id;
     }
 
@@ -281,7 +298,7 @@ class CardServiceImplement extends Service implements CardService
                 return $existingObject->id;
             }
         }
-        
+
         // Otherwise, create a new object
         // Handle both array and single value for object_occupation_id
         $objectOccupationId = null;
@@ -292,11 +309,11 @@ class CardServiceImplement extends Service implements CardService
                 $objectOccupationId = $data['object_occupation_id'];
             }
         }
-        
+
         if (!$objectOccupationId) {
             throw new \Exception("Object occupation ID is required for object index {$objectIndex}");
         }
-        
+
         // Handle both array and single value for object_keterangan
         $keterangan = null;
         if (isset($data['object_keterangan'])) {
@@ -313,7 +330,7 @@ class CardServiceImplement extends Service implements CardService
                 $keterangan = $data['object_address'];
             }
         }
-        
+
         // Handle both array and single value for tjh
         $tjh = 0;
         if (isset($data['tjh'])) {
@@ -323,7 +340,7 @@ class CardServiceImplement extends Service implements CardService
                 $tjh = (float)$data['tjh'];
             }
         }
-        
+
         // Create object
         $object = $this->objectRepository->create([
             'object_occupation_id' => $this->findOrCreateObjectOccupation($objectOccupationId),
@@ -336,12 +353,12 @@ class CardServiceImplement extends Service implements CardService
         if (isset($data['interest_id']) && is_array($data['interest_id'])) {
             $interestIds = $data['interest_id'];
             $interestValues = $data['interest_value'] ?? [];
-            
+
             // Ensure interest values is an array
             if (!is_array($interestValues)) {
                 $interestValues = [$interestValues];
             }
-            
+
             // Filter valid interests and pair them with values
             $validInterests = [];
             foreach ($interestIds as $interestId) {
@@ -349,11 +366,11 @@ class CardServiceImplement extends Service implements CardService
                     $validInterests[] = $interestId;
                 }
             }
-            
+
             // Create interest records - pair valid interests with values sequentially
             foreach ($validInterests as $idx => $validInterestId) {
                 $value = isset($interestValues[$idx]) ? (float)$interestValues[$idx] : 0;
-                
+
                 $this->objectInterestRepository->create([
                     'object_id'   => $object->id,
                     'interest_id' => $this->findOrCreateInterest($validInterestId),
@@ -374,7 +391,7 @@ class CardServiceImplement extends Service implements CardService
         if (!$policy) {
             $policy = $this->policyRepository->create([
                 'policy_number'       => $data['policy_id'],
-                'currency_code'       => $data['currency_code'],
+                'currency_code'       => $this->findOrCreateCurrency($data['currency_code']),
                 'started_date'        => $data['started_date'],
                 'ended_date'          => $data['ended_date'],
             ]);
@@ -395,7 +412,7 @@ class CardServiceImplement extends Service implements CardService
                     if (empty($insuranceId)) {
                         continue;
                     }
-                    
+
                     $this->policyInsuranceRepository->create([
                         'policy_id'    => $policy->id,
                         'insurance_id' => $this->findOrCreateInsurance($insuranceId),
@@ -412,7 +429,7 @@ class CardServiceImplement extends Service implements CardService
                     if ($index === 'undefined' || $objectId === null) {
                         continue;
                     }
-                    
+
                     $this->policyObjectRepository->create([
                         'policy_id'           => $policy->id,
                         'object_id'           => $this->findOrCreateObject($data, $index)
@@ -422,88 +439,6 @@ class CardServiceImplement extends Service implements CardService
         }
 
         return $policy->id;
-    }
-
-    /**
-     * Update production card
-     */
-    public function updateCard($id, array $data)
-    {
-        // 1. Ambil Input (Gunakan nama field yang sesuai dengan Form Blade)
-        // Parse float/int agar aman kalkulasinya
-        $object_value   = (float)($data['object_value'] ?? 0);
-        $premi_pct      = (float)($data['premi_percentages'] ?? 0) / 100; // Dibagi 100 karena dari form raw (misal 2.5)
-        $policy_fee     = (float)($data['policy_fee'] ?? 0);
-        $comm_pct       = (float)($data['commision_percentage'] ?? 0) / 100;
-        $discount_pct   = (float)($data['discount_percentage'] ?? 0) / 100;
-        $discount_value = (float)($data['discount_value'] ?? 0);
-        $tjh_value      = (float)($data['tjh_value'] ?? 0);
-        $discount_agent     = (float)($data['discount_agent'] ?? 0); // Nama input form: discount_agent
-
-        // 2. Kalkulasi Ulang (Sesuai Logic JavaScript)
-        // Nilai Produksi = (Pertanggungan * %Premi) + TJH
-        $production_value = ($object_value * $premi_pct) + $tjh_value;
-
-        // Total Premi = Produksi + Biaya Polis
-        $premi_value      = $production_value + $policy_fee;
-
-        // Komisi Bruto = Produksi * %Komisi
-        $commision_bruto  = $production_value * $comm_pct;
-
-        // Pajak = Komisi Bruto * %Pajak
-        // (Atau ambil dari input 'tax' jika user input manual pajak per asuransi)
-        $tax = (float)($data['tax'] ?? 0);
-
-        // Komisi Bersih = Bruto - Pajak - Diskon Agen
-        $commision_netto  = $commision_bruto - $tax - $discount_agent;
-
-        // Tagihan Nasabah (Client Pay) = Total Premi - Diskon Nasabah
-        $client_pay       = $premi_value - $discount_value;
-
-        // Bayar Asuransi (Insurance Pay) = Total Premi - Komisi Bersih
-        $insurance_pay    = $premi_value - $commision_netto;
-
-
-        // 3. Mapping ke Kolom Database (HARUS SAMA PERSIS dengan method Create)
-        $mappedData = [
-            // Field Relasi
-            'client_id'      => $data['client_id'],
-            'policy_id'      => $data['policy_id'],
-            'card_type_id'   => $data['card_type_id'] ?? null,
-            'card_status_id' => $data['card_status_id'] ?? config('constants.card_status.active'),
-            'parent_card_id' => $data['parent_card_id'] ?? null,
-
-            // Field Date
-            'start_date' => $data['periode_mulai'] ?? null, // Pastikan name di form 'periode_mulai' atau sesuaikan
-            'end_date'   => $data['periode_akhir'] ?? null,
-
-            // Field Angka (Sesuai nama kolom di DB & method Create)
-            'object_value'          => $object_value,
-            'premi_percentages'     => $premi_pct,
-            'policy_fee'            => $policy_fee,
-            'commision_percentage' => $comm_pct,
-            'discount_percentage'  => $discount_pct,
-            'discount_value'        => $discount_value,
-            'tjh_value'             => $tjh_value, // Jangan lupa field ini
-
-            // Hasil Kalkulasi
-            'production_value'      => $production_value,
-            'premi_value'           => $premi_value,      // DB: premi_value (Bukan premi_amount)
-            'commision_bruto'       => $commision_bruto,  // DB: commision_bruto (Bukan commission_amount)
-            'tax'                   => $tax,              // DB: tax (Bukan tax_amount)
-            'discount_agent'            => $discount_agent,       // DB: discount_agent (Bukan discount_amount)
-            'commision_netto'       => $commision_netto,  // DB: commision_netto
-
-            // Field yang hilang sebelumnya:
-            'client_pay'            => $client_pay,       // DB: client_pay (Bukan client_total)
-            'insurance_pay'         => $insurance_pay,    // DB: insurance_pay (Bukan net_to_insurance)
-
-            // Payment Info
-            'payment_type_id'       => $data['payment_type_id'] ?? null,
-            // 'insurance_payment_status_id' => ... (sesuaikan jika ada)
-        ];
-
-        return $this->mainRepository->update($id, $mappedData);
     }
 
     public function getAllWithFilter(array $data)
