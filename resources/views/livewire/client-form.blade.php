@@ -1,16 +1,5 @@
 <div id="new-client"
     class="row">
-    <div class="col-md-12 mb-3">
-        <label class="form-label"
-            for="ended_date">Nomor Kartu Identitas (NIK/KTP)<span class="text-danger">*</span></label>
-        <input class="form-control required @error('ended_date') is-invalid @enderror"
-            name="id_number"
-            type="text"
-            value="{{ isset($client) ? $client->id_number : old('id_number', '') }}">
-        @error('id_number')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
