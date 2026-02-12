@@ -190,7 +190,10 @@
                 customValidator: function(form, fields) {
                     var errors = [];
 
-                    // Validate select2 fields - ensure they have values before submit
+                    // ============================================================
+                    // 1. VALIDATE SELECT2 FIELDS
+                    // Ensure all required select2 dropdowns have values selected
+                    // ============================================================
                     $(form).find('select.add-select2.required, select.create-select2.required').each(function() {
                         var $select = $(this);
                         
@@ -199,24 +202,23 @@
                             return;
                         }
                         
-                        // Skip if inside hidden container
+                        // Skip if inside hidden container (e.g., object forms)
                         if ($select.closest('.object-forms-container').length && $select.closest('.object-forms-container').is(':hidden')) {
                             return;
                         }
                         
+                        // Get value from select2 or regular select
                         var value = $select.val();
-                        
-                        // If select2 is initialized, get value from select2
                         if ($select.hasClass('select2-hidden-accessible')) {
                             value = $select.select2('val');
                         }
                         
+                        // Validate if value is empty
                         if (!value || value === '' || value === null) {
                             var label = $select.closest('.col-md-6, .col-md-5, .col-md-4, .col-md-3, [class*="col-"]')
                                 .find('label').first().text().replace('*', '').trim();
                             
                             $select.addClass('is-invalid');
-                            
                             console.warn('Field validation failed:', $select.attr('name'), '- Label:', label);
                             
                             errors.push({
@@ -228,11 +230,15 @@
                         }
                     });
 
-                    // Calculate total insurance percentage
+                    // ============================================================
+                    // 2. VALIDATE INSURANCE PERCENTAGE
+                    // Total insurance percentage must equal 100% if new policy form is visible
+                    // ============================================================
                     var totalInsurancePercentage = 0;
                     var hasVisibleInsurance = false;
+                    
                     $(form).find('input[name="insurance_percentage[]"]').each(function() {
-                        // Only count visible and enabled inputs
+                        // Only count visible and enabled insurance percentage inputs
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
                             var val = parseFloat($(this).val()) || 0;
                             totalInsurancePercentage += val;
@@ -240,19 +246,7 @@
                         }
                     });
 
-                    // Calculate total coverage percentage
-                    var totalCoveragePercentage = 0;
-                    var hasVisibleCoverage = false;
-                    $(form).find('input[name="coverage_percentage[]"]').each(function() {
-                        // Only count visible and enabled inputs
-                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
-                            var val = parseFloat($(this).val()) || 0;
-                            totalCoveragePercentage += val;
-                            hasVisibleCoverage = true;
-                        }
-                    });
-
-                    // Validate insurance percentage total (only if new policy form is visible and has insurances)
+                    // Validate total equals 100% (only if new policy form has insurance items)
                     if ($('#new-policy').is(':visible') && hasVisibleInsurance && totalInsurancePercentage !== 100) {
                         alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
                         console.warn('Insurance percentage validation failed. Total:', totalInsurancePercentage);
@@ -260,9 +254,25 @@
                             field: '.insurance-percentage',
                             message: 'Total persentase asuransi harus 100%'
                         });
-                    };
+                    }
 
-                    // Validate coverage percentage total (only if new policy form is visible and has coverages)
+                    // ============================================================
+                    // 3. VALIDATE COVERAGE PERCENTAGE
+                    // Total coverage percentage must be between 0-100%
+                    // ============================================================
+                    var totalCoveragePercentage = 0;
+                    var hasVisibleCoverage = false;
+                    
+                    $(form).find('input[name="coverage_percentage[]"]').each(function() {
+                        // Only count visible and enabled coverage percentage inputs
+                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
+                            var val = parseFloat($(this).val()) || 0;
+                            totalCoveragePercentage += val;
+                            hasVisibleCoverage = true;
+                        }
+                    });
+
+                    // Validate total is within valid range (only if new policy form has coverages)
                     if ($('#new-policy').is(':visible') && hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
                         alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(2) + '%', '');
                         console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
@@ -270,9 +280,12 @@
                             field: '.coverage-percentage',
                             message: 'Total persentase coverage harus antara 0-100%'
                         });
-                    };
+                    }
 
-                    // Check if at least one is-main-checkbox is checked
+                    // ============================================================
+                    // 4. VALIDATE MAIN INSURANCE CHECKBOX
+                    // At least one insurance must be marked as main insurance
+                    // ============================================================
                     var hasMainInsurance = false;
                     var hasInsurances = false;
 
@@ -285,7 +298,7 @@
                         }
                     });
 
-                    // Only validate if new policy form is visible and has insurance items
+                    // Validate main insurance is selected (only if new policy form has insurances)
                     if ($('#new-policy').is(':visible') && hasInsurances && !hasMainInsurance) {
                         alertWarning('Minimal satu asuransi harus dipilih sebagai asuransi utama', '');
                         console.warn('Main insurance validation failed');
@@ -295,17 +308,66 @@
                         });
                     }
 
-                    // Log validation summary
-                    if (errors.length > 0) {
-                        console.group('❌ Validation Failed - ' + errors.length + ' error(s) found:');
-                        errors.forEach(function(error, index) {
-                            console.warn((index + 1) + '. ' + error.field + ': ' + error.message);
-                        });
-                        console.groupEnd();
-                    } else {
-                        console.log('✅ All custom validations passed');
+                    // ============================================================
+                    // 5. VALIDATE DATE FIELDS
+                    // Ensure ended_date and deadline_at are not before started_date
+                    // ============================================================
+                    var startedDateStr = null;
+                    var endedDateStr = $('#ended_date').val();
+                    
+                    // Get started_date from dropdown (existing policy) or input (new policy)
+                    if ($('#policy_id').val()) {
+                        var selectedOption = $('#policy_id').find('option:selected');
+                        startedDateStr = selectedOption.data('started-date');
+                    }
+                    if (!startedDateStr && $('#started_date').val()) {
+                        startedDateStr = $('#started_date').val();
                     }
 
+                    // Validate ended_date is not before started_date
+                    if (startedDateStr && endedDateStr) {
+                        var startDate = new Date(startedDateStr);
+                        var endDate = new Date(endedDateStr);
+
+                        if (endDate < startDate) {
+                            var endedDateField = document.getElementById('ended_date');
+                            if (endedDateField) {
+                                showFieldError(endedDateField, 'Periode Akhir Pertanggungan tidak boleh lebih awal dari Periode Awal Pertanggungan');
+                                $(endedDateField).addClass('is-invalid');
+                            }
+                            console.warn('End date validation failed');
+                            errors.push({
+                                field: '#ended_date',
+                                message: 'Periode Akhir Pertanggungan tidak boleh lebih awal dari Periode Awal Pertanggungan'
+                            });
+                        } else {
+                            $('#ended_date').removeClass('is-invalid');
+                        }
+                    }
+
+                    // Validate deadline_at is not before started_date
+                    var deadlineStr = $('#deadline_at').val();
+                    if (startedDateStr && deadlineStr) {
+                        var startDate = new Date(startedDateStr);
+                        var deadlineDate = new Date(deadlineStr);
+
+                        if (deadlineDate < startDate) {
+                            var deadlineField = document.getElementById('deadline_at');
+                            if (deadlineField) {
+                                showFieldError(deadlineField, 'Tanggal Deadline tidak boleh lebih awal dari Periode Awal Pertanggungan');
+                                $(deadlineField).addClass('is-invalid');
+                            }
+                            console.warn('Deadline validation failed');
+                            errors.push({
+                                field: '#deadline_at',
+                                message: 'Tanggal Deadline tidak boleh lebih awal dari Periode Awal Pertanggungan'
+                            });
+                        } else {
+                            $('#deadline_at').removeClass('is-invalid');
+                        }
+                    }
+
+                    // Return validation result
                     return {
                         isValid: errors.length === 0,
                         errors: errors

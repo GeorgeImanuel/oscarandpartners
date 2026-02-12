@@ -8,3 +8,4 @@ create object name unique per object item ✅
 dan periode akhir tidak boleh kurang dari periode awal ✅
 tanggal di tab 4 berubah lagi ketika berganti tab
 submit button not shown when using tab click ✅
+Coverage tidak muncul saat select policy

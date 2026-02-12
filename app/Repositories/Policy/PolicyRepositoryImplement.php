@@ -35,7 +35,8 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
         return $this->model->with([
             'policyObjects',
             'policyCoverages.coverage',
-            'policyInsurances.insurance'
+            'policyInsurances.insurance',
+            'currency',
         ])->find($policyId);
     }
 
