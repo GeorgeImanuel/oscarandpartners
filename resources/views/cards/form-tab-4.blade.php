@@ -276,7 +276,7 @@
             });
 
             // Update Footer Totals dengan hasil penjumlahan Loop (Lebih presisi)
-            $('#prev-total-premi').text(formatRupiah(sumPremi + policyFee)); // Premi + Biaya
+            $('#prev-total-premi').text(formatRupiah(sumPremi)); // Premi + Biaya
             $('#prev-total-biaya').text(formatRupiah(policyFee));
             $('#prev-total-komisi').text(formatRupiah(sumKomisi));
             $('#prev-total-pajak').text(formatRupiah(sumPajak));
@@ -381,7 +381,11 @@
                 var count = parseInt($('#termin-count').val()) || 2;
 
                 // Ambil Total Tagihan Netto ke Nasabah (Premi + Biaya - Diskon)
-                var totalBill = parseFloat($('#client_pay').val()) || 0;
+                var rawPremi = parseFloat($('#premi_value').val()) || 0;
+                var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
+                
+                // Nilai yang akan dibagi ke termin
+                var totalToSplit = rawPremi - rawPolicyFee;
 
                 if (count < 1) return;
 
@@ -390,7 +394,7 @@
                 var totalPajak = parseFloat($('#tax').val()) || 0;
 
                 // Hitung rata-rata per termin
-                var amountPerItem = totalBill / count;
+                var amountPerItem = totalToSplit / count;
                 var komisiPerItem = totalKomisi / count;
                 var pajakPerItem = totalPajak / count;
 
@@ -506,8 +510,13 @@
                 });
 
                 // Update Total & Selisih Tagihan
-                var totalBill = parseFloat($('#client_pay').val()) || 0;
-                var diff = totalBill - sumAmount;
+                var rawPremi = parseFloat($('#premi_value').val()) || 0;
+                var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
+                
+                // Nilai yang akan dibagi ke termin
+                var totalToSplit = rawPremi - rawPolicyFee;
+
+                var diff = totalToSplit - sumAmount;
 
                 $('#installment-total-display').text(formatRupiah(sumAmount));
 
