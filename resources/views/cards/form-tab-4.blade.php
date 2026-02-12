@@ -180,20 +180,11 @@
 @push('scripts')
     <script>
         function renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto) {
-            // console.log('Rendering Step 5 Table with:', {
-            //     totalPremi,
-            //     policyFee,
-            //     totalKomisi,
-            //     totalPajak,
-            //     totalNetto
-            // });
             var tbody = $('#preview-table-body');
             tbody.empty();
 
-            // Ambil data asuransi dari DOM di Step 3 (karena user bisa edit pajak per item disana)
             var insuranceItems = $('#insurance-list-container .insurance-item');
             var rowCount = insuranceItems.length;
-            // console.log('Found insurance items:', rowCount, insuranceItems);
 
             if (rowCount === 0) {
                 tbody.html('<tr><td colspan="7" class="text-center">Belum ada data asuransi</td></tr>');
@@ -218,33 +209,20 @@
             // Loop setiap baris asuransi dari Step 4
             insuranceItems.each(function(index) {
                 var inputs = $(this).find('input');
-
-                // Ambil data dari input readonly/hidden di Step 4
-                var name = inputs.eq(0).val(); // Nama Asuransi
-                var shareStr = inputs.eq(1).val(); // Share %
+                var name = inputs.eq(0).val();
+                var shareStr = inputs.eq(1).val();
                 var share = parseFloat(shareStr) / 100;
-
-                // PENTING: Ambil nilai pajak spesifik dari input user di baris ini
                 var taxInput = $(this).find('.insurance-tax-per-item');
                 var rowPajak = parseFloat(taxInput.val()) || 0;
-
-                // Hitung Premi per baris
                 var rowPremi = basePremi * share;
-
-                // Biaya polis hanya ditampilkan di baris pertama (untuk visual rowspan)
                 var rowBiaya = (index === 0) ? policyFee : 0;
-
-                // Hitung Komisi per baris (Total Komisi * Share)
-                // Pastikan commision_bruto diambil dari input Step 4
                 var globalKomisi = parseFloat($('#commision_bruto').val()) || 0;
                 var rowKomisi = globalKomisi * share;
 
                 // Hitung Netto per baris
-                // Rumus: (Premi + Biaya) - Komisi + Pajak (Sesuaikan rumus bisnis Anda: Pajak menambah tagihan atau memotong)
-                // Di step 4 sebelumnya: Netto = Premi - Komisi - Pajak + Biaya (Jika pajak memotong hak asuransi)
-                // Atau Netto = Premi - Komisi + Pajak + Biaya (Jika pajak dibayar nasabah dan disetor ke asuransi)
-                // Kita ikuti pola umum: Netto Tagihan ke Asuransi
-                var rowNetto = rowPremi - rowKomisi - rowPajak + rowBiaya;
+                // Rumus: Premi - Komisi + Pajak + Biaya Polis (hanya baris pertama)
+                // Pajak ditambahkan karena dibayar nasabah dan disetor ke asuransi
+                var rowNetto = rowPremi - rowKomisi + rowPajak + rowBiaya;
 
                 // Akumulasi ke Total Footer
                 sumPremi += rowPremi;
@@ -415,8 +393,11 @@
                     var sequence = i + 1;
 
                     // Estimasi Netto per baris = Tagihan - Komisi
-                    // (Disederhanakan untuk visual, real calculation ada di controller/backend)
-                    var nettoPerItem = amountPerItem - komisiPerItem;
+                    // Policy Fee hanya untuk angsuran pertama
+                    var nettoPerItem = amountPerItem - komisiPerItem + pajakPerItem;
+                    if (i === 0) {
+                        nettoPerItem += rawPolicyFee;
+                    }
 
                     var html = `
                             <tr class="installment-row">
@@ -438,6 +419,10 @@
                                                class="form-control form-control-sm installment-amount-input fw-bold text-end" 
                                                value="${amountPerItem.toFixed(2)}" 
                                                step="0.01" required>
+                                        <input type="hidden" 
+                                               name="installments[${i}][netto]" 
+                                               class="installment-netto-input" 
+                                               value="${nettoPerItem.toFixed(2)}">
                                     </div>
                                 </td>
 
@@ -498,15 +483,23 @@
                     // Hitung ulang rincian per baris (Dibagi rata sesuai jumlah row)
                     var rowKomisi = totalKomisi / rowCount;
                     var rowPajak = totalPajak / rowCount;
+                    var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
 
-                    // Netto per baris (Estimasi visual)
-                    var rowNetto = val - rowKomisi;
+                    // Netto per baris = Tagihan - Komisi + Pajak
+                    // Policy Fee hanya untuk angsuran pertama (index 0)
+                    var rowNetto = val - rowKomisi + rowPajak;
+                    if (index === 0) {
+                        rowNetto += rawPolicyFee;
+                    }
 
                     // Update Text di Kolom Rincian masing-masing
                     var $row = $(this).closest('tr');
                     $row.find('.val-komisi').text(formatRupiah(rowKomisi));
                     $row.find('.val-pajak').text(formatRupiah(rowPajak));
                     $row.find('.val-netto').text(formatRupiah(rowNetto));
+                    
+                    // Update hidden input netto
+                    $row.find('.installment-netto-input').val(rowNetto.toFixed(2));
                 });
 
                 // Update Total & Selisih Tagihan

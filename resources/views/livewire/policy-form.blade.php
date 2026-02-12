@@ -94,7 +94,7 @@
                                         placeholder="0"
                                         min="0"
                                         max="100"
-                                        step="0.01">
+                                        step="0.00001">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                                         placeholder="0"
                                         min="0"
                                         max="100"
-                                        step="0.01">
+                                        step="0.00001">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -198,7 +198,7 @@
                                         placeholder="0"
                                         min="0"
                                         max="100"
-                                        step="0.01">
+                                        step="0.00001">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -245,7 +245,7 @@
                                         placeholder="0"
                                         min="0"
                                         max="100"
-                                        step="0.01">
+                                        step="0.00001">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>

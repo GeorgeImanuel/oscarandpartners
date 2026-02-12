@@ -229,7 +229,7 @@
                         class="form-control validate-percentage check-negative"
                         name="commision_percentage"
                         type="number"
-                        step="0.01"
+                        step="0.00001"
                         min="0"
                         max="100"
                         value="{{ isset($card) ? $card->commision_percentage * 100 : old('commision_percentage', 0) }}"
@@ -374,6 +374,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Hidden inputs untuk menyimpan nilai pajak per insurance -->
+    <div id="tax-hidden-inputs-container" style="display:none;"></div>
 
     <!-- Pembayaran Section -->
     <div class="card mb-3 p-3 shadow-sm">
@@ -649,11 +652,18 @@
             };
 
             window.copyInsuranceToTab3 = function() {
-                // console.log('📋 copyInsuranceToTab3 called');
                 var $target = $('#insurance-list-container');
                 var $sources = $('#policy-form-container .item-1');
 
-                // console.log('Target:', $target.length, 'Sources:', $sources.length);
+                // Simpan nilai pajak sebelum clone untuk restore nanti
+                var savedTaxValues = {};
+                $target.find('.insurance-tax-per-item').each(function() {
+                    var insuranceId = $(this).data('insurance-id');
+                    if (insuranceId) {
+                        savedTaxValues[insuranceId] = $(this).val() || 0;
+                    }
+                });
+
                 $target.empty();
 
                 if ($sources.length === 0) {
@@ -708,14 +718,15 @@
                     $cloned.find('.select2-container').remove();
 
                     // INJECT TAX INPUT (KHUSUS TAB 3)
-                    var oldTaxVal = $(`input[name="insurance_tax[${originalInsuranceId}]"]`).val() || 0;
+                    // 🔥 RESTORE NILAI PAJAK DARI SAVED VALUES
+                    var oldTaxVal = savedTaxValues[originalInsuranceId] || 0;
                     var taxHtml = `
                         <div class="col-md-4 mb-2">
                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text currency-label">Rp</span>
                                 <input type="number" 
-                                    name="insurance_tax[${originalInsuranceId}]" 
+                                    data-insurance-id="${originalInsuranceId}"
                                     class="form-control insurance-tax-per-item" 
                                     value="${oldTaxVal}" 
                                     placeholder="0">
@@ -742,8 +753,8 @@
 
                 if (typeof window.attachTaxInputListeners === 'function') window.attachTaxInputListeners();
                 if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                if (typeof window.syncTaxToHiddenInputs === 'function') window.syncTaxToHiddenInputs();
                 
-                // Update currency labels for injected tax inputs
                 if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
                     updateCurrencyLabel(window.currentCurrency);
                 }
@@ -755,8 +766,20 @@
             window.attachTaxInputListeners = function() {
                 $('.insurance-tax-per-item').off('input blur keyup').on('input blur keyup', function() {
                     toggleNegativeWarning(this);
+                    syncTaxToHiddenInputs();
                     if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
                     if (typeof update_payment === 'function') update_payment();
+                });
+            };
+
+            window.syncTaxToHiddenInputs = function() {
+                var $container = $('#tax-hidden-inputs-container');
+                $container.empty();
+                
+                $('.insurance-tax-per-item').each(function() {
+                    var insuranceId = $(this).data('insurance-id');
+                    var value = $(this).val() || 0;
+                    $container.append(`<input type="hidden" name="insurance_tax[${insuranceId}]" value="${value}">`);
                 });
             };
 
@@ -780,6 +803,9 @@
                     if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
                         updateCurrencyLabel(window.currentCurrency);
                     }
+
+                    // 🔥 3.5. SYNC NILAI PAJAK KE HIDDEN INPUTS
+                    if (typeof window.syncTaxToHiddenInputs === 'function') window.syncTaxToHiddenInputs();
 
                     // 4. Hitung Duit
                     if (typeof update_payment === 'function') update_payment();
@@ -816,7 +842,7 @@
                     if (typeof updateCurrencyLabel === 'function' && window.currentCurrency) {
                         updateCurrencyLabel(window.currentCurrency);
                     }
-                    
+                    if (typeof window.syncTaxToHiddenInputs === 'function') window.syncTaxToHiddenInputs();
                     if (typeof update_payment === 'function') update_payment();
                 }
             }, 800);

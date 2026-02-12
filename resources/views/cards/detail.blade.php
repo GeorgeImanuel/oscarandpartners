@@ -348,7 +348,7 @@
                                                     <tfoot>
                                                         <tr class="bg-total">
                                                             <td colspan="2" class="text-center">TOTAL</td>
-                                                            <td class="text-end">{{ $card->policy->currency_code }} {{ number_format($g_premi + $card->policy_fee, 2, ',', '.') }}</td>
+                                                            <td class="text-end">{{ $card->policy->currency_code }} {{ number_format($g_premi, 2, ',', '.') }}</td>
                                                             <td class="text-end">{{ $card->policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}</td>
                                                             <td class="text-end">{{ $card->policy->currency_code }} {{ number_format($g_komisi, 2, ',', '.') }}</td>
                                                             <td class="text-end">{{ $card->policy->currency_code }} {{ number_format($g_pajak, 2, ',', '.') }}</td>
@@ -465,7 +465,7 @@
                                                     @foreach($policyInsurances as $loopIndex => $pi)
                                                         @php
                                                             $share = $pi->percentage;
-                                                            $premi = $pmt->amount * ($share);
+                                                            $premi = $card->production_value/$totalInstallments * ($share);
                                                             
                                                             // Biaya Polis hanya di baris asuransi pertama
                                                             $biayaPolis = 0;
@@ -482,7 +482,7 @@
                                                             // Tax sudah disimpan per asuransi, tinggal dibagi jumlah installment
                                                             $pajak = ($pi->tax ?? 0) / $totalInstallments;
                                                             
-                                                            $netto = $premi - $komisi - $pajak + $biayaPolis;
+                                                            $netto = $premi + $biayaPolis - $komisi + $pajak;
 
                                                             // Accumulate Subtotals
                                                             $subtotalPremi += $premi;

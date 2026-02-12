@@ -309,7 +309,7 @@
                                         <tfoot>
                                             <tr class="bg-total">
                                                 <td colspan="2" class="text-center">TOTAL</td>
-                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_premi + $card->policy_fee, 2, ',', '.') }}</td>
+                                                <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_premi, 2, ',', '.') }}</td>
                                                 <td class="text-end">{{ $policy->currency_code }} {{ number_format($card->policy_fee, 2, ',', '.') }}</td>
                                                 <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_komisi, 2, ',', '.') }}</td>
                                                 <td class="text-end">{{ $policy->currency_code }} {{ number_format($g_pajak, 2, ',', '.') }}</td>
@@ -518,7 +518,7 @@
                                             @foreach($policyInsurances as $loopIndex => $pi)
                                                 @php
                                                     $share = $pi->percentage;
-                                                    $premi = $pmt->amount * ($share);
+                                                    $premi = $card->production_value/$totalInstallments * ($share);
 
                                                     $biayaPolis = 0;
                                                     if ($index == 0 && $loop->first) {
@@ -534,7 +534,7 @@
                                                     // Tax sudah disimpan per asuransi, tinggal dibagi jumlah installment
                                                     $pajak = ($pi->tax ?? 0) / $totalInstallments;
                                                     
-                                                    $netto = $premi - $komisi - $pajak + $biayaPolis;
+                                                    $netto = $premi - $komisi + $pajak + $biayaPolis;
 
                                                     $subtotalPremi += $premi;
                                                     $subtotalBiaya += $biayaPolis;
@@ -574,9 +574,6 @@
                                                             {{-- Wrapper Flex: Agar elemen menumpuk rapi ke bawah --}}
                                                             <div class="d-flex flex-column align-items-center w-100 gap-2">
 
-                                                                {{-- ========================================== --}}
-                                                                {{-- 1. URUSAN NASABAH --}}
-                                                                {{-- ========================================== --}}
                                                                 @if($pmt->payment_status_id != 2)
                                                                     
                                                                     {{-- KONDISI A: BELUM BAYAR (ID: 1, 3, 4) --}}
@@ -604,10 +601,6 @@
                                                                 @endif
 
 
-                                                                {{-- ========================================== --}}
-                                                                {{-- 2. URUSAN ASURANSI --}}
-                                                                {{-- (Hanya muncul jika Nasabah SUDAH Lunas) --}}
-                                                                {{-- ========================================== --}}
                                                                 @if($pmt->payment_status_id == 2)
                                                                     
                                                                     @if($pmt->insurance_payment_status_id != 2)
@@ -676,7 +669,7 @@
                         <div class="mb-3">
                             <label class="form-label">Jumlah Dibayar (Rp) <span class="text-danger">*</span></label>
                             {{-- Default value mengambil total tagihan --}}
-                            <input type="number" name="paid_amount" class="form-control" required value="{{ $payment->amount }}">
+                            <input type="number" name="paid_amount" class="form-control" required value="{{ numberFormat($payment->amount) }}">
                         </div>
                     </div>
                     <div class="modal-footer">

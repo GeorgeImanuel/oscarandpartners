@@ -94,6 +94,39 @@
                 // Validate each field (built-in HTML5 validation)
                 var fields = form.querySelectorAll('input, select, textarea');
                 fields.forEach(function (field) {
+                    // Skip validation for:
+                    // 1. Hidden input fields (type="hidden")
+                    // 2. Disabled fields
+                    // 3. Fields inside hidden containers (display:none or visibility:hidden)
+                    // 4. Readonly fields (optional - uncomment if needed)
+                    
+                    // Check if field is hidden input
+                    if (field.type === 'hidden') {
+                        return; // Skip this field
+                    }
+                    
+                    // Check if field is disabled
+                    if (field.disabled) {
+                        return; // Skip this field
+                    }
+                    
+                    // Check if field or any of its parents are hidden (display:none)
+                    var isFieldVisible = true;
+                    var element = field;
+                    while (element && element !== form) {
+                        var style = window.getComputedStyle(element);
+                        if (style.display === 'none' || style.visibility === 'hidden') {
+                            isFieldVisible = false;
+                            break;
+                        }
+                        element = element.parentElement;
+                    }
+                    
+                    if (!isFieldVisible) {
+                        return; // Skip this field
+                    }
+                    
+                    // Now validate the field
                     if (!field.checkValidity()) {
                         isValid = false;
 

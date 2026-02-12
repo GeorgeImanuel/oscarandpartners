@@ -187,6 +187,11 @@
             
             // Initialize form validation with custom validator
             initializeFormValidation({
+                onSuccess: function(form) {
+                    if (typeof window.syncTaxToHiddenInputs === 'function') {
+                        window.syncTaxToHiddenInputs();
+                    }
+                },
                 customValidator: function(form, fields) {
                     var errors = [];
 
@@ -364,6 +369,33 @@
                             });
                         } else {
                             $('#deadline_at').removeClass('is-invalid');
+                        }
+                    }
+
+                    // ============================================================
+                    // 6. VALIDATE PREMIUM RATE
+                    // Ensure premium rate is not zero
+                    // ============================================================
+                    var premiumRateField = $('#premi_percentages');
+                    
+                    if (premiumRateField.length > 0) {
+                        var premiumRate = parseFloat(premiumRateField.val()) || 0;
+                        
+                        if (premiumRate === 0) {
+                            premiumRateField.addClass('is-invalid');
+                            
+                            if (premiumRateField[0]) {
+                                showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh 0');
+                            }
+                            
+                            alertWarning('Tarif Premi tidak boleh 0', '');
+                            
+                            errors.push({
+                                field: 'premi_percentages',
+                                message: 'Tarif Premi tidak boleh 0'
+                            });
+                        } else {
+                            premiumRateField.removeClass('is-invalid');
                         }
                     }
 

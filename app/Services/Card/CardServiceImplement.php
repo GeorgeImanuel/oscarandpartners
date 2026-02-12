@@ -149,11 +149,15 @@ class CardServiceImplement extends Service implements CardService
             if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
                 // Create multiple payments for installments
                 foreach ($data['installments'] as $installment) {
+                    // Use netto if available (netto = amount - commission + policy fee for first installment)
+                    // Otherwise fallback to amount
+                    $paymentAmount = isset($installment['netto']) ? (float)$installment['netto'] : (float)($installment['amount'] ?? 0);
+                    
                     $this->paymentRepository->create([
                         'card_id'            => $card->id,
                         'sequence'           => $installment['sequence'] ?? 1,
                         'created_by'         => $data['created_by'] ?? auth()->id(),
-                        'amount'             => (float)($installment['amount'] ?? 0),
+                        'amount'             => $paymentAmount,
                         'payment_status_id'  => config('constants.payment_status.pending'),
                         'deadline_at'        => $installment['due_date'] ?? null,
                     ]);
@@ -413,11 +417,19 @@ class CardServiceImplement extends Service implements CardService
                         continue;
                     }
 
+                    // Get tax value for this insurance from insurance_tax array
+                    $taxValue = 0;
+                    if (isset($data['insurance_tax']) && is_array($data['insurance_tax'])) {
+                        // insurance_tax is array with insurance_id as key: insurance_tax[1], insurance_tax[2], etc
+                        $taxValue = $data['insurance_tax'][$insuranceId] ?? 0;
+                    }
+
                     $this->policyInsuranceRepository->create([
                         'policy_id'    => $policy->id,
                         'insurance_id' => $this->findOrCreateInsurance($insuranceId),
                         'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
                         'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
+                        'tax'          => (float)$taxValue,
                     ]);
                 }
             }
