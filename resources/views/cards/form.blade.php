@@ -188,6 +188,10 @@
             // Initialize form validation with custom validator
             initializeFormValidation({
                 onSuccess: function(form) {
+                    // Sync object_value to hidden field for proper submission
+                    var numericValue = parseFloat($('#object_value').val()) || 0;
+                    $('#object_value_raw').val(numericValue);
+                    
                     if (typeof window.syncTaxToHiddenInputs === 'function') {
                         window.syncTaxToHiddenInputs();
                     }

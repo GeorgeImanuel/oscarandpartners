@@ -98,9 +98,9 @@
                                                 <td>
                                                     @if($card->policy && $card->policy->policyInsurances->count() > 0)
                                                         <ul class="list-unstyled mb-0">
-                                                            @foreach($card->policy->policyInsurances->sortByDesc('is_main') as $polIns)
+                                                            @foreach($card->policy->policyInsurances->sortByDesc('percentage') as $polIns)
                                                                 <li>
-                                                                    {{ $polIns->insurance->name ?? '-' }}
+                                                                    {{ $polIns->insurance->name ?? '-' }} ({{ number_format($polIns->percentage * 100, 2) }}%)
                                                                     @if($polIns->is_main)
                                                                         <span class="badge badge-info" style="font-size: 9px; padding: 2px 4px;">Leader</span>
                                                                     @else
@@ -162,7 +162,7 @@
                                             <tr>
                                                 <td class="fw-bold">Nilai TJH</td>
                                                 <td>:</td>
-                                                <td>{{ $currency }} {{ number_format($card->policy->object->tjh ?? 0,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                                <td>{{ $currency }} {{ number_format($card->policy->policyObject->object->tjh ?? 0,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bold">Disc</td>
@@ -314,7 +314,7 @@
                                                             $g_premi = 0; $g_komisi = 0; $g_pajak = 0; $g_netto = 0;
                                                         @endphp
 
-                                                        @foreach($card->policy->policyInsurances as $loopIndex => $pi)
+                                                        @foreach($card->policy->policyInsurances->sortByDesc('percentage') as $loopIndex => $pi)
                                                             @php
                                                                 $share = $pi->percentage;
                                                                 $rowPremi = $basePremi * $share;
@@ -448,7 +448,8 @@
                                                 @php
                                                     // Load relasi payments
                                                     $payments = $card->payments->sortBy('sequence'); 
-                                    $policyInsurances = $card->policy->policyInsurances->sortByDesc('percentage');
+                                                    $policyInsurances = $card->policy->policyInsurances->sortByDesc('percentage');
+                                                @endphp
                                                 @forelse($payments as $pmt)
                                                     @php
                                                         // Reset Subtotal per Payment Row

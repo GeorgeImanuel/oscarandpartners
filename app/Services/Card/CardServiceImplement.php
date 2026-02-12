@@ -186,7 +186,7 @@ class CardServiceImplement extends Service implements CardService
         }
     }
 
-    private function findOrCreateRelation(array $relationId): int
+    private function findOrCreateRelation(string $relationId): int
     {
         $relation = $this->relationRepository->find($relationId);
         if (!$relation) {
@@ -359,12 +359,15 @@ class CardServiceImplement extends Service implements CardService
 
         // Create object interests if exists
         if (isset($data['interest_id']) && is_array($data['interest_id'])) {
-            $interestIds = $data['interest_id'];
-            $interestValues = $data['interest_value'] ?? [];
-
-            // Ensure interest values is an array
-            if (!is_array($interestValues)) {
-                $interestValues = [$interestValues];
+            // Get interest IDs for this specific object index
+            $interestIds = isset($data['interest_id'][$objectIndex]) && is_array($data['interest_id'][$objectIndex])
+                ? $data['interest_id'][$objectIndex]
+                : [];
+            
+            // Get interest values for this specific object index
+            $interestValues = [];
+            if (isset($data['interest_value'][$objectIndex]) && is_array($data['interest_value'][$objectIndex])) {
+                $interestValues = $data['interest_value'][$objectIndex];
             }
 
             // Filter valid interests and pair them with values
@@ -381,7 +384,7 @@ class CardServiceImplement extends Service implements CardService
 
                 $this->objectInterestRepository->create([
                     'object_id'   => $object->id,
-                    'interest_id' => $this->findOrCreateInterest($validInterestId),
+                    'interest_id' => $this->findOrCreateInterest((int)$validInterestId),
                     'value'       => $value,
                 ]);
             }

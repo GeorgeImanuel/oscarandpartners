@@ -214,7 +214,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Total Premi</td>
-                                                    <td class="fw-bold text-primary">: {{ $policy->currency_code }} {{ number_format($card->premi_value ?? 0, 2, ',', '.') }}</td>
+                                                    <td class="fw-bold text-primary">: {{ $policy->currency_code }} {{ number_format($card->production_value ?? 0, 2, ',', '.') }}</td>
                                                 </tr>
                                             </table>
                                         </div>

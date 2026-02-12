@@ -60,8 +60,8 @@ class StoreCardRequest extends FormRequest
             'insurance_pay' => 'required|numeric|min:0',
         ];
 
-        // Conditional: parent_card_id required only if card_type_id is renewal
-        if ($this->input('card_type_id') == config('constants.card_type.renewal')) {
+        // Conditional: parent_card_id required only if card_type_id is endors
+        if ($this->input('card_type_id') == config('constants.card_type.endors')) {
             $rules['parent_card_id'] = 'required|exists:cards,id';
         }
 
@@ -74,7 +74,7 @@ class StoreCardRequest extends FormRequest
             // Card Details
             'card_type_id.required' => 'Tipe kartu harus dipilih.',
             'card_type_id.exists' => 'Tipe kartu tidak valid.',
-            'parent_card_id.required' => 'Kartu produksi sebelumnya harus dipilih untuk tipe Renewal.',
+            'parent_card_id.required' => 'Kartu produksi sebelumnya harus dipilih untuk tipe Endors.',
             'parent_card_id.exists' => 'Kartu produksi sebelumnya tidak valid.',
             'client_id.required' => 'Client harus dipilih.',
             'client_id.exists' => 'Client tidak valid.',

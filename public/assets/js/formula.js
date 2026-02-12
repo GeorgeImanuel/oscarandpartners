@@ -2,6 +2,12 @@ function production_value(object_value, premi_percentage, TJH, discount) {
     return premi_percentage * object_value + TJH - discount;
 }
 
+// Formula khusus untuk Endors: prorate berdasarkan jumlah hari
+function production_value_endors(object_value, premi_percentage, TJH, discount, days) {
+    var daysFactor = days / 365;
+    return (premi_percentage * object_value * daysFactor) + TJH - discount;
+}
+
 function premi_value(production_value, policy_fee) {
     return production_value + policy_fee;
 }
@@ -52,8 +58,7 @@ function calculate_payment(
     const commisionNetto = commision_netto(
         commisionBruto,
         taxValue,
-        discount_agent,
-        discount_agent,
+        discount_agent
     );
     const clientPay = client_pay(premiValue, discount_agent);
     const insurancePay = insurance_pay(premiValue, commisionNetto);

@@ -36,8 +36,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
 
     public function getAllParent()
     {
-        return $this->model->whereDoesntHave('child')
-            ->with([
+        return $this->model->with([
                 'policy.objects' => function($query) {
                     $query->withSum('objectInterests as total_value', 'value');
                 }

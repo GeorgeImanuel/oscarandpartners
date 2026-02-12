@@ -27,6 +27,19 @@
                 @enderror
             </div>
 
+            <div id="endors_type_container"
+                class="col-md-12 mb-3"
+                style="display:none;">
+                <label class="form-label"
+                    for="endors_type">Tipe Endors <small class="text-muted">(hanya untuk perhitungan)</small></label>
+                <select id="endors_type"
+                    class="form-control basic-select2">
+                    <option value="">Pilih Tipe Endors</option>
+                    <option value="kendaraan">Kendaraan</option>
+                    <option value="properti">Properti</option>
+                </select>
+            </div>
+
             <div id="parent_card_container"
                 class="col-md-12 mb-3"
                 style="display:none;">
@@ -43,7 +56,8 @@
                         <option value="{{ $parentCard->id }}"
                             {{ isset($card) ? ($card->parent_card_id == $parentCard->id ? 'selected' : '') : (old('parent_card_id') == $parentCard->id ? 'selected' : '') }}
                             data-client-id="{{ $parentCard->client_id }}"
-                            data-policy-id="{{ $parentCard->policy_id }}">
+                            data-policy-id="{{ $parentCard->policy_id }}"
+                            data-object-value="{{ $parentCard->policy->objects->sum('total_value') ?? 0 }}">
                             {{ $parentCard->policy->policy_number }} -
                             {{ $parentCard->policy->object->name }}
                         </option>
@@ -90,6 +104,106 @@
 
 @push('scripts')
     <script>
+        $(document).ready(function() {
+            // Check card type on page load (for edit mode)
+            toggleParentCardField();
+        });
+
+        // Handle card type change
+        $(document).on('change', '#card_type_id', function() {
+            toggleParentCardField();
+        });
+
+        // Handle endors type change
+        $(document).on('change', '#endors_type', function() {
+            var endorsType = $(this).val();
+            
+            // Store endors type globally for access in other scripts
+            window.endorsType = endorsType;
+            
+            // Toggle parent card field based on endors type
+            if (endorsType === 'properti') {
+                $('#parent_card_container').slideDown();
+                $('#parent_card_id').attr('required', true);
+            } else if (endorsType === 'kendaraan') {
+                $('#parent_card_container').slideUp();
+                $('#parent_card_id').attr('required', false);
+                $('#parent_card_id').val('').trigger('change');
+                // Clear parent object value for kendaraan type
+                if (typeof window.parentObjectValue !== 'undefined') {
+                    window.parentObjectValue = 0;
+                    $('#parent_object_value').val(0);
+                }
+            }
+            
+            console.log('Endors Type Changed:', endorsType);
+            
+            // Trigger recalculation if on step 3
+            if ($('#step-3').is(':visible')) {
+                // Recalculate object value based on new endors type
+                setTimeout(function() {
+                    // Re-sum object values
+                    if (typeof sumInputValues === 'function') {
+                        sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
+                    }
+                    
+                    // Trigger payment recalculation
+                    if (typeof update_payment === 'function') {
+                        update_payment();
+                    }
+                }, 100);
+            }
+        });
+
+        function toggleParentCardField() {
+            var cardTypeId = $('#card_type_id').val();
+            var endorsId = {{ config('constants.card_type.endors') }};
+            
+            // Show endors type dropdown for Endors card type
+            if (cardTypeId == endorsId) {
+                $('#endors_type_container').slideDown();
+                
+                // Check if endors type is already selected
+                var endorsType = $('#endors_type').val();
+                if (endorsType === 'properti') {
+                    $('#parent_card_container').slideDown();
+                    $('#parent_card_id').attr('required', true);
+                } else {
+                    $('#parent_card_container').slideUp();
+                    $('#parent_card_id').attr('required', false);
+                }
+            } else {
+                // Hide both endors type and parent card fields for non-Endors
+                $('#endors_type_container').slideUp();
+                $('#endors_type').val('').trigger('change');
+                
+                $('#parent_card_container').slideUp();
+                $('#parent_card_id').attr('required', false);
+                $('#parent_card_id').val('').trigger('change');
+                
+                // Clear parent object value when switching away from Endors
+                if (typeof window.parentObjectValue !== 'undefined') {
+                    window.parentObjectValue = 0;
+                    $('#parent_object_value').val(0);
+                }
+                
+                // Clear endors type
+                window.endorsType = null;
+            }
+        }
+
+        // Handle parent card selection - store parent object value
+        $(document).on('change', '#parent_card_id', function() {
+            var selectedOption = $(this).find('option:selected');
+            var parentObjectValue = parseFloat(selectedOption.data('object-value')) || 0;
+            
+            // Store in global variable and hidden field
+            window.parentObjectValue = parentObjectValue;
+            $('#parent_object_value').val(parentObjectValue);
+            
+            console.log('Parent Object Value:', parentObjectValue);
+        });
+
         $(document).on('change', '#client_id', function() {
             var clientId = $(this).val();
             if(clientId) {

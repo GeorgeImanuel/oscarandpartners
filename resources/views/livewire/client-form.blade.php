@@ -25,8 +25,7 @@
             for="ended_date">Alamat<span class="text-danger">*</span></label>
         <textarea class="form-control required @error('ended_date') is-invalid @enderror"
             name="id_address"
-            type="text">{{ isset($client) ? $client->id_address : old('id_address', '') }}
-        </textarea>
+            type="text">{{ isset($client) ? $client->id_address : old('id_address', '') }}</textarea>
         @error('id_address')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror

@@ -10,15 +10,22 @@
             {{-- KIRI: Harga Pertanggungan --}}
             <div class="col-md-6">
                 <div class="h-100 d-flex flex-column justify-content">
-                    <label class="form-label fw-bold">Harga Pertanggungan (Total)</label>
+                    <label class="form-label fw-bold">Harga Pertanggungan 
+                        <span id="endorsement-label-properti" style="display:none;">(Selisih dari Parent)</span>
+                    </label>
+
+                    <!-- Hidden field to store parent object value for Endors calculation -->
+                    <input type="hidden" id="parent_object_value" value="0">
+                    
+                    <!-- Hidden field to store raw numeric value for form submission -->
+                    <input type="hidden" id="object_value_raw" name="object_value" value="{{ isset($card) ? $card->policy->getTotalObjectValue() : 0 }}">
 
                     <div class="input-group">
                         <span class="input-group-text currency-label">Rp</span>
                         <input id="object_value"
                             class="form-control form-control-lg fw-bold check-negative"
-                            name="object_value"
-                            type="text"
-                            value="{{ isset($card) ? number_format($card->policy->getTotalObjectValue(), 0, ',', '.') : '0' }}"
+                            type="number"
+                            value="{{ isset($card) ? $card->policy->getTotalObjectValue() : 0 }}"
                             readonly
                             style="background-color: #f8f9fa;">
                     </div>
@@ -467,19 +474,51 @@
 
 @push('scripts')
     <script>
+        // === HELPER FUNCTION: Calculate Days Between Two Dates ===
+        function calculateDaysBetween(startDate, endDate) {
+            if (!startDate || !endDate) return null;
+            var start = new Date(startDate);
+            var end = new Date(endDate);
+            var diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // === HELPER FUNCTION: Get Prorate Factor for Endors ===
+        function getEndorsProrateInfo() {
+            var cardTypeId = $('#card_type_id').val();
+            var endorsId = {{ config('constants.card_type.endors') }};
+            
+            if (cardTypeId != endorsId) {
+                return { isEndors: false, days: null, daysFactor: 1 };
+            }
+            
+            var startedDate = $('#started_date').val() || $('#policy_id').find('option:selected').data('started-date');
+            var endedDate = $('#ended_date').val();
+            var days = calculateDaysBetween(startedDate, endedDate);
+            
+            return {
+                isEndors: true,
+                days: days,
+                daysFactor: days ? days / 365 : 1
+            };
+        }
 
         function sync_discount(source) {
-            var rawValue = $('#object_value').val();
-            if (typeof rawValue === 'string') {
-                rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.');
-            }
-            var object_value = parseFloat(rawValue) || 0;
+            var object_value = parseFloat($('#object_value').val()) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var tjh_value = parseFloat($('#tjh_value').val()) || 0;
 
-            // Hitung Premi Dasar (Sebelum Diskon) untuk basis perhitungan persen
-            // Rumus: (Harga Pertanggungan * Tarif) + TJH
-            var base_premium = (object_value * (premi_percentages / 100)) + tjh_value;
+            // Get prorate info for Endors
+            var prorateInfo = getEndorsProrateInfo();
+            var base_premium;
+            
+            if (prorateInfo.isEndors && prorateInfo.days) {
+                // Use prorated formula: (Harga * Tarif * (hari/365)) + TJH
+                base_premium = (object_value * (premi_percentages / 100) * prorateInfo.daysFactor) + tjh_value;
+            } else {
+                // Regular formula for New and Renewal: (Harga Pertanggungan * Tarif) + TJH
+                base_premium = (object_value * (premi_percentages / 100)) + tjh_value;
+            }
 
             // Hitung meskipun negatif, asal bukan 0
             if (base_premium != 0) {
@@ -508,12 +547,7 @@
         }
 
         function update_payment() {
-            var rawValue = $('#object_value').val();
-            if (typeof rawValue === 'string') {
-                rawValue = rawValue.replace(/\./g, '').replace(/,/g, '.');
-            }
-
-            var object_value = parseFloat(rawValue) || 0;
+            var object_value = parseFloat($('#object_value').val()) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var policy_fee = parseInt($('#policy_fee').val()) || 0;
             var commision_percentage = parseFloat($('#commision_percentage').val()) || 0;
@@ -521,7 +555,21 @@
             var tjh_value = parseInt($('#tjh_value').val()) || 0;
             var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
-            const productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
+            // Get prorate info for Endors calculation
+            var prorateInfo = getEndorsProrateInfo();
+            var productionValue;
+            
+            if (prorateInfo.isEndors && prorateInfo.days) {
+                var endorsType = $('#endors_type').val() || window.endorsType;
+                console.log('Endors Type:', endorsType, '- Days:', prorateInfo.days);
+                
+                // Use endors formula with days proration (works for both properti and kendaraan)
+                productionValue = production_value_endors(object_value, premi_percentages / 100, tjh_value, discount, prorateInfo.days);
+            } else {
+                // Regular formula for New, Renewal, or Endors without dates
+                productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
+            }
+            
             const premiValue = premi_value(productionValue, policy_fee);
             const commisionBruto = commision_bruto(productionValue, commision_percentage / 100, discount);
             const taxValue = parseFloat($('#tax').val()) || 0;
@@ -535,6 +583,11 @@
             $('#commision_netto').val(commisionNetto.toFixed(2));
             $('#client_pay').val(clientPay.toFixed(2));
             $('#insurance_pay').val(insurancePay.toFixed(2));
+
+            // Sync object_value to hidden field
+            if (typeof syncObjectValueToHidden === 'function') {
+                syncObjectValueToHidden();
+            }
 
             $('.lbl-total-premi').text(formatRupiah(premiValue));
             $('.lbl-discount-agent').text(formatRupiah(discount_agent));
@@ -555,7 +608,11 @@
             return totalTax; // Return the value for use in update_payment
         }
 
-
+        // Sync formatted object_value to hidden raw field
+        function syncObjectValueToHidden() {
+            var numericValue = parseFloat($('#object_value').val()) || 0;
+            $('#object_value_raw').val(numericValue);
+        }
 
         $(document).ready(function() {
             $(document).on('input change keyup', '.check-negative', function() {
@@ -815,6 +872,41 @@
                         sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
                     }
 
+                    // 1.5. Calculate difference for Endors type
+                    var cardTypeId = $('#card_type_id').val();
+                    var endorsId = {{ config('constants.card_type.endors') }};
+                    
+                    if (cardTypeId == endorsId) {
+                        var endorsType = $('#endors_type').val() || window.endorsType;
+                        var currentObjectValue = parseFloat($('#object_value').val()) || 0;
+                        var parentObjectValue = parseFloat($('#parent_object_value').val()) || 0;
+                        
+                        if (endorsType === 'properti') {
+                            // PROPERTI: Show label dan hitung selisih (current - parent)
+                            $('#endorsement-label-properti').show();
+                            $('#endorsement-label-kendaraan').hide();
+                            
+                            var difference = currentObjectValue - parentObjectValue;
+                            $('#object_value').val(difference);
+                            
+                            console.log('Endors Properti:', { current: currentObjectValue, parent: parentObjectValue, difference: difference });
+                        } else if (endorsType === 'kendaraan') {
+                            // KENDARAAN: Show label, nilai langsung (tidak dikurangi parent)
+                            $('#endorsement-label-properti').hide();
+                            $('#endorsement-label-kendaraan').show();
+                            
+                            console.log('Endors Kendaraan:', { current: currentObjectValue });
+                        } else {
+                            // No endors type selected yet
+                            $('#endorsement-label-properti').hide();
+                            $('#endorsement-label-kendaraan').hide();
+                        }
+                    } else {
+                        // Hide endorsement labels for other types
+                        $('#endorsement-label-properti').hide();
+                        $('#endorsement-label-kendaraan').hide();
+                    }
+
                     // 2. Jalankan Kloning Tampilan
                     if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
                     if (typeof window.copyInsuranceToTab3 === 'function') window.copyInsuranceToTab3();
@@ -829,20 +921,26 @@
 
                     // 4. Hitung Duit
                     if (typeof update_payment === 'function') update_payment();
+                    
+                    // 5. Sync object_value to hidden field
+                    if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
                 }, 150);
             });
 
             $('#premi_percentages, #policy_fee, #commision_percentage, #tjh_value, #discount_agent').on('input change blur', function() {
                 if (typeof update_payment === 'function') update_payment();
+                if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
             });
 
             $('#discount_percentage').on('input change blur', function() {
                 if (typeof sync_discount === 'function') sync_discount('percentage');
                 if (typeof update_payment === 'function') update_payment();
+                if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
             });
             $('#discount_value').on('input change blur', function() {
                 if (typeof sync_discount === 'function') sync_discount('value');
                 if (typeof update_payment === 'function') update_payment();
+                if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
             });
 
             // Initial Load Check (Edit Mode)
@@ -864,6 +962,7 @@
                     }
                     if (typeof window.syncTaxToHiddenInputs === 'function') window.syncTaxToHiddenInputs();
                     if (typeof update_payment === 'function') update_payment();
+                    if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
                 }
             }, 800);
         });
