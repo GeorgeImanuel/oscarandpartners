@@ -180,6 +180,10 @@
                 <span style="width: 100px; text-align: right;">Asuransi :</span>
                 <span style="margin-left: 10px; width: 200px;">
                     {{ $productionCard->policy->policyInsurances->firstWhere('is_main', true)?->insurance->name ?? '-' }}
+
+                    @if($productionCard->policy->policyInsurances->count() > 1)
+                        <span style="font-weight: bold; margin-left: 5px;">(Co-As)</span>
+                    @endif
                 </span>
             </div>
             
