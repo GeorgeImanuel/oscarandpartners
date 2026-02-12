@@ -121,7 +121,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($policy->policyInsurances as $pi)
+                                    @forelse($policy->policyInsurances->sortByDesc('percentage') as $pi)
                                         <tr>
                                             <td>{{ $pi->insurance->name ?? '-' }}</td>
                                             <td class="text-center">{{ number_format($pi->percentage * 100, 2) }}%</td>

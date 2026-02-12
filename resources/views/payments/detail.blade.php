@@ -210,7 +210,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Object</td>
-                                                    <td class="fw-bold">: {{ $policy->object->name ?? '-' }}</td>
+                                                    <td class="fw-bold">: {{ $policy->object->keterangan ?? '-' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Total Premi</td>
@@ -275,7 +275,7 @@
                                                 $g_premi = 0; $g_komisi = 0; $g_pajak = 0; $g_netto = 0;
                                             @endphp
 
-                                            @foreach($policy->policyInsurances as $loopIndex => $pi)
+                                            @foreach($policy->policyInsurances->sortByDesc('percentage') as $loopIndex => $pi)
                                                 @php
                                                     $share = $pi->percentage;
                                                     $rowPremi = $basePremi * $share;
@@ -369,7 +369,7 @@
                                 @elseif($payment->insurance_payment_status_id != 2)
                                     <button type="button" class="btn btn-info text-white btn-trigger-insurance" 
                                         data-id="{{ $payment->id }}" 
-                                        data-amount="{{ $payment->insurance_paid_amount ?? $payment->amount }}">
+                                        data-amount="{{ $g_netto }}">
                                         <i class="fa fa-bank"></i> Setor ke Asuransi
                                     </button>
                                 
@@ -504,7 +504,7 @@
 
                                         @foreach($allPayments as $index => $pmt)
                                             @php
-                                                $policyInsurances = $pmt->card->policy->policyInsurances;
+                                                $policyInsurances = $pmt->card->policy->policyInsurances->sortByDesc('percentage');
                                                 $insuranceCount = $policyInsurances->count();
                                                 $rowSpanCount = $insuranceCount;
                                                 
@@ -513,6 +513,21 @@
                                                 
                                                 // Jumlah total installment
                                                 $totalInstallments = $allPayments->count();
+                                            @endphp
+
+                                            @php
+                                                // Hitung total netto untuk installment ini (untuk button trigger)
+                                                $installmentNetto = 0;
+                                                $totalBiayaPolis = ($index == 0) ? $card->policy_fee : 0;
+                                                
+                                                foreach($policyInsurances as $pi_calc) {
+                                                    $share_calc = $pi_calc->percentage;
+                                                    $premi_calc = $card->production_value/$totalInstallments * $share_calc;
+                                                    $komisi_calc = ($card->commision_bruto * $share_calc) / $totalInstallments;
+                                                    $pajak_calc = ($pi_calc->tax ?? 0) / $totalInstallments;
+                                                    $installmentNetto += $premi_calc - $komisi_calc + $pajak_calc;
+                                                }
+                                                $installmentNetto += $totalBiayaPolis;
                                             @endphp
 
                                             @foreach($policyInsurances as $loopIndex => $pi)
@@ -609,7 +624,7 @@
                                                                             <button type="button" 
                                                                                 class="btn-dark-green btn-trigger-insurance"
                                                                                 data-id="{{ $pmt->id }}"
-                                                                                data-amount="{{ $pmt->insurance_paid_amount ?? $pmt->amount }}">
+                                                                                data-amount="{{ $installmentNetto }}">
                                                                                 Bayar Asuransi
                                                                             </button>
                                                                         @endif
@@ -669,7 +684,7 @@
                         <div class="mb-3">
                             <label class="form-label">Jumlah Dibayar (Rp) <span class="text-danger">*</span></label>
                             {{-- Default value mengambil total tagihan --}}
-                            <input type="number" name="paid_amount" class="form-control" required value="{{ numberFormat($payment->amount) }}">
+                            <input type="number" name="paid_amount" class="form-control" required value="{{ round($payment->amount) }}" step="1">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -702,7 +717,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Jumlah Disetor (Rp) <span class="text-danger">*</span></label>
-                            <input type="number" name="insurance_paid_amount" class="form-control" required>
+                            <input type="number" name="insurance_paid_amount" class="form-control" required step="1">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -993,7 +1008,7 @@
                     let amount = $(this).data('amount');
                     let url = "{{ route('payments.update_client_pay', ':id') }}".replace(':id', paymentId);
                     $('#modalClientPay form').attr('action', url);
-                    $('#modalClientPay input[name="paid_amount"]').val(amount);
+                    $('#modalClientPay input[name="paid_amount"]').val(Math.round(amount));
                     $('#modalClientPay').modal('show');
                 });
 
@@ -1002,7 +1017,7 @@
                     let amount = $(this).data('amount');
                     let url = "{{ route('payments.update_insurance_pay', ':id') }}".replace(':id', paymentId);
                     $('#modalInsurancePay form').attr('action', url);
-                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(amount);
+                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(Math.round(amount));
                     $('#modalInsurancePay').modal('show');
                 });
             });

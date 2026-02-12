@@ -448,10 +448,7 @@
                                                 @php
                                                     // Load relasi payments
                                                     $payments = $card->payments->sortBy('sequence'); 
-                                                    $policyInsurances = $card->policy->policyInsurances;
-                                                    $insuranceCount = $policyInsurances->count();
-                                                @endphp
-
+                                    $policyInsurances = $card->policy->policyInsurances->sortByDesc('percentage');
                                                 @forelse($payments as $pmt)
                                                     @php
                                                         // Reset Subtotal per Payment Row

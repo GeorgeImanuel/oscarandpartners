@@ -67,7 +67,7 @@
                                             <td>{{ $payment->insured_name }}</td>
                                             
                                             {{-- DATA KOLOM YANG DIBUKA KEMBALI --}}
-                                            <td>{{ $payment->card?->policy?->object?->name ?? '-' }}</td>
+                                            <td>{{ $payment->card?->policy?->object?->keterangan ?? '-' }}</td>
                                             <td class="text-end">{{ number_format($payment->card?->object_value ?? 0, 0, ',', '.') }}</td>
                                             {{-- END DATA KOLOM --}}
                                             

@@ -171,7 +171,7 @@
                     </div>
                 </div>
                 <div class="item-list border rounded mb-2 px-3 py-2">
-                    @forelse ((isset($policy) && $policy ? ($policy->policyInsurances ?? []) : []) as $index => $policyInsurance)
+                    @forelse ((isset($policy) && $policy ? ($policy->policyInsurances->sortByDesc('percentage') ?? []) : []) as $index => $policyInsurance)
                         <div class="row align-items-end item item-1  {{ $index != 0 ? 'border-top py-2' : ' pt-2' }}">
                             <div class="col-md-5 mb-2">
                                 <label class="form-label">Asuransi <span class="item-count">1</span></label>

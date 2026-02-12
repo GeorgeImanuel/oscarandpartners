@@ -274,7 +274,7 @@
                         <div id="insurance-list-container">
                             {{-- Server-side rendered (for edit mode) --}}
                             @if (isset($card->policy) && $card->policy->policyInsurances->count() > 0)
-                                @foreach ($card->policy->policyInsurances as $index => $polIns)
+                                @foreach ($card->policy->policyInsurances->sortByDesc('percentage') as $index => $polIns)
                                     <div class="row g-2 align-items-center mb-3 insurance-item">
                                         {{-- Kolom 1: Nama Asuransi --}}
                                         <div class="col-md-5">
@@ -673,6 +673,7 @@
                 }
 
                 var clonedCount = 0;
+                var itemsToAppend = []; // Array untuk menyimpan items sebelum diurutkan
 
                 $sources.each(function(index) {
                     // console.log('Processing insurance', index, 'visible:', $(this).is(':visible'));
@@ -745,10 +746,29 @@
                         $cloned.append(taxHtml);
                     }
 
-                    $target.append($cloned);
+                    // Ambil nilai persentase untuk sorting
+                    var percentageValue = parseFloat($(this).find('input[name="insurance_percentage[]"]').val()) || 0;
+                    
+                    // Simpan ke array dengan data untuk sorting
+                    itemsToAppend.push({
+                        element: $cloned,
+                        percentage: percentageValue
+                    });
 
-                    if (index < $sources.length - 1) $target.append('<hr class="my-2 text-muted">');
                     clonedCount++;
+                });
+
+                // Urutkan array berdasarkan persentase (terbesar ke terkecil)
+                itemsToAppend.sort(function(a, b) {
+                    return b.percentage - a.percentage;
+                });
+
+                // Append semua items yang sudah terurut
+                itemsToAppend.forEach(function(item, index) {
+                    $target.append(item.element);
+                    if (index < itemsToAppend.length - 1) {
+                        $target.append('<hr class="my-2 text-muted">');
+                    }
                 });
 
                 if (typeof window.attachTaxInputListeners === 'function') window.attachTaxInputListeners();

@@ -149,9 +149,8 @@ class CardServiceImplement extends Service implements CardService
             if (isset($data['installments']) && is_array($data['installments']) && count($data['installments']) > 0) {
                 // Create multiple payments for installments
                 foreach ($data['installments'] as $installment) {
-                    // Use netto if available (netto = amount - commission + policy fee for first installment)
-                    // Otherwise fallback to amount
-                    $paymentAmount = isset($installment['netto']) ? (float)$installment['netto'] : (float)($installment['amount'] ?? 0);
+                    // Payment amount sudah benar dari frontend (amount per cicilan)
+                    $paymentAmount = (float)($installment['amount'] ?? 0);
                     
                     $this->paymentRepository->create([
                         'card_id'            => $card->id,
@@ -164,11 +163,16 @@ class CardServiceImplement extends Service implements CardService
                 }
             } else {
                 // Create single payment for full payment
+                // Payment amount = client_pay - policy_fee
+                $clientPay = (float)($data['client_pay'] ?? 0);
+                $policyFee = (float)($data['policy_fee'] ?? 0);
+                $paymentAmount = $clientPay - $policyFee;
+                
                 $payment = $this->paymentRepository->create([
                     'card_id'            => $card->id,
                     'sequence'           => 1,
                     'created_by'         => $data['created_by'] ?? auth()->id(),
-                    'amount'             => $data['client_pay'] ?? 0,
+                    'amount'             => $paymentAmount,
                     'payment_status_id'  => config('constants.payment_status.pending'),
                     'deadline_at'        => $data['deadline_at'] ?? null,
                 ]);

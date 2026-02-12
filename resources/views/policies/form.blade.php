@@ -246,7 +246,7 @@
                     </div>
                     <div id="insurances-container">
                         @if(isset($policyInsurances) && $policyInsurances->count() > 0)
-                            @foreach($policyInsurances as $index => $policyInsurance)
+                            @foreach($policyInsurances->sortByDesc('percentage') as $index => $policyInsurance)
                                 <div class="insurance-row mb-3 p-3 border rounded" data-index="{{ $index }}">
                                     <div class="row align-items-end">
                                         <div class="col-md-6 mb-2 mb-md-0">
