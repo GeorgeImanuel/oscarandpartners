@@ -1042,7 +1042,7 @@
 
                 var objectName = "{{ strtoupper($policy->policyObjects->first()?->object?->name ?? '-') }}";
                 var policyNo = "{{ $policy->policy_number ?? '-' }}";
-                var clientName = "{{ $client->user->name ?? $client->id_name ?? '-') }}";
+                var clientName = "{{ $client->user->name ?? $client->id_name ?? '-' }}";
                 
                 var win = window.open('', '', 'height=700,width=900');
                 

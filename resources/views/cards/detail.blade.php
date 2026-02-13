@@ -256,7 +256,7 @@
                                             <table class="table table-sm table-borderless mb-0">
                                                 <tr>
                                                     <td>Total Premi</td>
-                                                    <td class="text-end">{{ $currency }} {{ number_format($card->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                                    <td class="text-end">{{ $currency }} {{ number_format($card->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Komisi</td>
@@ -584,7 +584,7 @@
             // --- VARIABEL GLOBAL UNTUK PRINT ---
             var objectName = "{{ strtoupper($card->policy->policyObjects->first()?->object?->name ?? '-') }}";
             var policyNo = "{{ $card->policy->policy_number ?? '-' }}";
-            var clientName = "{{ $card->client->id_name ?? $card->client->user->name ?? '-') }}";
+            var clientName = "{{ $card->client->id_name ?? $card->client->user->name ?? '-' }}";
 
             // --- 1. FUNGSI PRINT PREMI (MASTER) ---
             function printPremi() {

@@ -440,9 +440,9 @@
                         <table class="table table-sm table-borderless mb-0">
                             <tr>
                                 <td>Total Premi</td>
-                                {{-- Class: lbl-total-premi (Sama kayak kiri) --}}
-                                <td class="text-end lbl-total-premi">
-                                    Rp{{ isset($card) ? number_format($card->premi, 0, ',', '.') : '0' }}
+                                {{-- Mengambil nilai dari Netto Tagihan --}}
+                                <td class="text-end lbl-netto-tagihan">
+                                    Rp{{ isset($card) ? number_format($card->client_pay, 0, ',', '.') : '0' }}
                                 </td>
                             </tr>
                             <tr>
@@ -575,7 +575,7 @@
             const taxValue = parseFloat($('#tax').val()) || 0;
             const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
             const clientPay = client_pay(premiValue, discount_agent);
-            const insurancePay = insurance_pay(premiValue, commisionNetto);
+            const insurancePay = insurance_pay(clientPay, commisionNetto); // Netto Bayar = Netto Tagihan - Komisi Bersih
 
             $('#production_value').val(productionValue.toFixed(2));
             $('#premi_value').val(premiValue.toFixed(2));
@@ -591,7 +591,7 @@
 
             $('.lbl-total-premi').text(formatRupiah(premiValue));
             $('.lbl-discount-agent').text(formatRupiah(discount_agent));
-            $('.lbl-netto-tagihan').text(formatRupiah(clientPay));
+            $('.lbl-netto-tagihan').text(formatRupiah(clientPay)); // Update Netto Tagihan di kedua kartu
             $('.lbl-komisi-bersih').text(formatRupiah(commisionNetto));
             $('.lbl-netto-bayar').text(formatRupiah(insurancePay));
         }

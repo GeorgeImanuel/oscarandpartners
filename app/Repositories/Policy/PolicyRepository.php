@@ -10,4 +10,5 @@ interface PolicyRepository extends Repository
     public function allActive();
     public function findWithRelations($policyId);
     public function allByActiveDate($startDate, $endDate);
+    public function findByPolicyNumber($policyNumber);
 }

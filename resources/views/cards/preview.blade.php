@@ -336,7 +336,7 @@
                 <h6 style="margin: 0 0 10px 0; font-weight: bold; text-decoration: underline;">Setor ke Asuransi</h6>
                 <div class="payment-item">
                     <span>Premi Total</span>
-                    <span>{{ $currency }} {{ number_format($productionCard->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item">
                     <span>Komisi</span>

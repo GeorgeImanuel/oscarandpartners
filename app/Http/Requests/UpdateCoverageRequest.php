@@ -23,7 +23,7 @@ class UpdateCoverageRequest extends FormRequest
     {
         return [
             'code' => 'required|string|max:10',
-            'name' => 'required|string|max:10',
+            'name' => 'required|string',
         ];
         }
 
@@ -41,7 +41,6 @@ class UpdateCoverageRequest extends FormRequest
 
             'name.required' => 'Nama harus diisi.',
             'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama maksimal 10 karakter.',
         ];
     }
 }

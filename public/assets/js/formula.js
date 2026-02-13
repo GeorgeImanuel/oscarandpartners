@@ -28,8 +28,8 @@ function client_pay(premi_value, discount_agent) {
     return premi_value - discount_agent;
 }
 
-function insurance_pay(premi_value, commision_netto) {
-    return premi_value - commision_netto;
+function insurance_pay(client_pay, commision_netto) {
+    return client_pay - commision_netto;
 }
 
 function calculate_payment(
@@ -61,7 +61,7 @@ function calculate_payment(
         discount_agent
     );
     const clientPay = client_pay(premiValue, discount_agent);
-    const insurancePay = insurance_pay(premiValue, commisionNetto);
+    const insurancePay = insurance_pay(clientPay, commisionNetto);
 
     return {
         production_value: productionValue,

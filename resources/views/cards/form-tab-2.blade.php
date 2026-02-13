@@ -9,18 +9,21 @@
             <div class="col-md-12 mb-3">
                 <label class="form-label"
                     for="policy_id">Nomor Polis</label>
+                <!-- Note: value contains policy_number (string), not numeric policy ID -->
                 <select id="policy_id"
                     class="form-control create-select2 @error('policy_id') is-invalid @enderror"
                     data-placeholder="Pilih Polis"
                     name="policy_id"
                     wire:ignore
+                    autocomplete="off"
                     required>
                     <option value=""></option>
                     @foreach ($policies as $policy)
                         <option data-currency="{{ $policy->currency_code }}"
                             data-started-date="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}"
-                            value="{{ $policy->id }}"
-                            {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
+                            data-policy-id="{{ $policy->id }}"
+                            value="{{ $policy->policy_number }}"
+                            {{ isset($card) ? ($card->policy->policy_number == $policy->policy_number ? 'selected' : '') : (old('policy_id') == $policy->policy_number ? 'selected' : '') }}>
                             {{ $policy->policy_number }} - {{ $policy->policyObjects->first()?->object?->name ?? 'No Object' }} - {{ $policy->policyObjects->first()?->object?->keterangan ?? '' }}
                         </option>
                     @endforeach
@@ -43,8 +46,8 @@
     <script>
         // Initialize policy-form-container visibility on page load
         $(document).ready(function() {
-            var policyId = $('#policy_id').val();
-            if (policyId) {
+            var policyValue = $('#policy_id').val();
+            if (policyValue) {
                 $('#policy-form-container').slideDown();
             } else {
                 $('#policy-form-container').slideUp();
@@ -53,10 +56,21 @@
 
         // Listen to policy_id dropdown change and update Livewire component
         $(document).on('change', '#policy_id', function() {
-            var policyId = $(this).val();
+            // Force as string - this is policy_number, NOT numeric policy ID
+            var policyValue = String($(this).val() || '');
+            var selectedOption = $(this).find('option:selected');
+            
+            // Check if this is a new tag (user typed a new policy number)
+            var isNewTag = selectedOption.data('select2-tag') === true;
+            
+            // Get actual policy ID from data attribute (for existing policies only)
+            var actualPolicyId = selectedOption.data('policy-id');
+            
+            // Check if this is existing policy (has data-policy-id attribute)
+            var isExistingPolicy = policyValue && actualPolicyId && !isNewTag;
 
             // Toggle policy-form-container visibility
-            if (policyId) {
+            if (policyValue) {
                 $('#policy-form-container').slideDown();
 
                 // Reinitialize select2 after container is shown
@@ -69,7 +83,6 @@
                 $('#policy-form-container').slideUp();
             }
 
-            var selectedOption = $(this).find('option:selected');
             var currencyCode = selectedOption.data('currency');
             updateCurrencyLabel(currencyCode);
             update_payment();
@@ -79,17 +92,29 @@
             if (container && typeof window.Livewire !== 'undefined') {
                 var livewireComponent = window.Livewire.find(container.getAttribute('wire:id'));
                 if (livewireComponent) {
-                    livewireComponent.set('policyId', policyId);
+                    livewireComponent.set('policyId', isExistingPolicy ? actualPolicyId : null);
                 }
             }
-            if (policyId) {
+            
+            // Only load existing policy data, not for new tags
+            if (isExistingPolicy) {
                 Livewire.dispatch('refreshPolicyForm', {
-                    policyId: policyId
+                    policyId: actualPolicyId
                 });
             } else {
+                // Clear form for new policy
                 Livewire.dispatch('refreshPolicyForm', {
                     policyId: null
                 });
+                
+                // Clear all form fields in policy-form-container
+                $('#policy-form-container input[type="date"]').val('');
+                $('#policy-form-container input[type="number"]').val('');
+                $('#policy-form-container select').val('').trigger('change');
+                
+                // Reset totals
+                $('.coverage_percentage_total').text('0.00');
+                $('#insurance_percentage_total').text('0.00');
             }
         });
 
