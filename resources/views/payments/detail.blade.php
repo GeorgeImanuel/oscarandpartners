@@ -183,7 +183,7 @@
 
                         {{-- Info Header Laporan --}}
                         <div class="mb-2">
-                            <h6 class="fw-bold mb-2 text-center">PERHITUNGAN PEMBAYARAN PREMI {{ strtoupper($policy->object->name ?? '') }}</h6>
+                            <h6 class="fw-bold mb-2 text-center">PERHITUNGAN PEMBAYARAN PREMI {{ strtoupper($policy->policyObjects->first()?->object?->name ?? '') }}</h6>
                             <div style="font-size: 11px; text-align: center;">
                                 <strong>NO POLIS :</strong> {{ $policy->policy_number ?? '-' }} / 
                                 {{ $policy->started_date ? $policy->started_date->format('d M Y') : '-' }} - 
@@ -210,7 +210,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Object</td>
-                                                    <td class="fw-bold">: {{ $policy->object->keterangan ?? '-' }}</td>
+                                                    <td class="fw-bold">: {{ $policy->policyObjects->first()?->object?->keterangan ?? '-' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="text-muted">Total Premi</td>
@@ -1040,9 +1040,9 @@
                     return;
                 }
 
-                var objectName = "{{ strtoupper($policy->object->name ?? '-') }}";
+                var objectName = "{{ strtoupper($policy->policyObjects->first()?->object?->name ?? '-') }}";
                 var policyNo = "{{ $policy->policy_number ?? '-' }}";
-                var clientName = "{{ $client->user->name ?? $client->id_name ?? '-' }}";
+                var clientName = "{{ $client->user->name ?? $client->id_name ?? '-') }}";
                 
                 var win = window.open('', '', 'height=700,width=900');
                 

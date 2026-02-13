@@ -122,7 +122,7 @@
                                             <tr>
                                                 <td class="fw-bold">Obyek Asuransi</td>
                                                 <td>:</td>
-                                                <td>{{ $card->policy->object->name }} - {{ $card->policy->object->keterangan }}</td>
+                                                <td>{{ $card->policy->policyObjects->first()?->object?->name ?? '-' }} - {{ $card->policy->policyObjects->first()?->object?->keterangan ?? '-' }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bold">Periode</td>
@@ -582,9 +582,9 @@
     @push('scripts')
         <script>
             // --- VARIABEL GLOBAL UNTUK PRINT ---
-            var objectName = "{{ strtoupper($card->policy->object->name ?? '-') }}";
+            var objectName = "{{ strtoupper($card->policy->policyObjects->first()?->object?->name ?? '-') }}";
             var policyNo = "{{ $card->policy->policy_number ?? '-' }}";
-            var clientName = "{{ $card->client->id_name ?? $card->client->user->name ?? '-' }}";
+            var clientName = "{{ $card->client->id_name ?? $card->client->user->name ?? '-') }}";
 
             // --- 1. FUNGSI PRINT PREMI (MASTER) ---
             function printPremi() {

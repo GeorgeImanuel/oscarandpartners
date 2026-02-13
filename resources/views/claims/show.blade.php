@@ -51,7 +51,7 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Objek</td>
-                                            <td class="fw-bold">: {{ $claim->policy->object->ObjectOccupation->name ?? '-' }}</td>
+                                            <td class="fw-bold">: {{ $claim->policy->policyObjects->first()?->object?->ObjectOccupation?->name ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Periode</td>

@@ -21,7 +21,7 @@
                             data-started-date="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}"
                             value="{{ $policy->id }}"
                             {{ isset($card) ? ($card->policy_id == $policy->id ? 'selected' : '') : (old('policy_id') == $policy->id ? 'selected' : '') }}>
-                            {{ $policy->policy_number }} - {{ $policy->object->name }} - {{ $policy->object->keterangan }}
+                            {{ $policy->policy_number }} - {{ $policy->policyObjects->first()?->object?->name ?? 'No Object' }} - {{ $policy->policyObjects->first()?->object?->keterangan ?? '' }}
                         </option>
                     @endforeach
                 </select>

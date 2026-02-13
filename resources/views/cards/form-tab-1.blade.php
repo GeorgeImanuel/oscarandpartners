@@ -59,7 +59,7 @@
                             data-policy-id="{{ $parentCard->policy_id }}"
                             data-object-value="{{ $parentCard->policy->objects->sum('total_value') ?? 0 }}">
                             {{ $parentCard->policy->policy_number }} -
-                            {{ $parentCard->policy->object->name }}
+                            {{ $parentCard->policy->policyObjects->first()?->object?->name ?? $parentCard->policy->object_names ?? 'No Object' }}
                         </option>
                     @endforeach
                 </select>
