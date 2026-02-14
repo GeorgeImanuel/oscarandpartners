@@ -62,6 +62,7 @@ $(document).on("click", ".add-item-btn", function () {
         newItem.show();
         // Clear the input fields inside the cloned item
         newItem.find(".form-control, .form-select").val("");
+        newItem.find("input[type='checkbox'], input[type='radio']").prop("checked", false);
         newItem.find(".required").each(function () {
             $(this).prop("required", true).prop("disabled", false);
         });
