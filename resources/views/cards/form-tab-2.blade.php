@@ -148,7 +148,7 @@
                     });
 
                     // Add required on .required inputs inside policy-form-container
-                    $('#policy-form-container .required').each(function() {
+                    $('#policy-detail-form .required').each(function() {
                         $(this).prop("required", true).prop("disabled", false);
                     });
 

@@ -1,7 +1,6 @@
 <div id="new-policy">
-    <div class="card mb-3 p-3 shadow-sm">
+    <div id="policy-detail-form" class="card mb-3 p-3 shadow-sm">
         <div class="row">
-
             <div class="col-md-6 mb-3">
                 <label class="form-label"
                     for="started_date">Periode Awal Pertanggungan <span class="text-danger">*</span></label>
@@ -421,12 +420,11 @@
 
             if (className) {
                 var $cloneContent = $template.clone();
+                
                 // $cloneContent.find('.required').each(function() {
-                //     $(this).attr('required', 'required').prop('disabled', true);
+                //     $(this).prop("required", true).prop("disabled", false);
                 // });
-                $cloneContent.find('.required').each(function() {
-                    $(this).prop("required", true).prop("disabled", false);
-                });
+
                 // Split the class string and find elements that have all these classes
                 var classArray = className.split(' ').filter(c => c.trim() !== '');
                 var selector = '.' + classArray.join('.');

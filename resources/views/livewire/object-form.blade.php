@@ -85,7 +85,7 @@
                                 <div class="input-group">
                                     
                                     <input type="number"
-                                        class="form-control check-negative"
+                                        class="form-control required check-negative"
                                         name="interest_value[][]"
                                         value="{{ $objectInterest->value ?? 0 }}"
                                         {{ $isDisabled ? 'disabled' : '' }}>
