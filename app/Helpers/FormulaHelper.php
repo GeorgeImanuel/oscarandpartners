@@ -43,9 +43,9 @@ if(! function_exists('client_pay')){
 }
 
 if(! function_exists('insurance_pay')){
-    function insurance_pay($premi, $tax_value, $discount)
+    function insurance_pay($client_pay, $commision_netto)
     {
-        return $premi + $tax_value - $discount;
+        return $client_pay - $commision_netto;
     }
 }
 
@@ -64,7 +64,7 @@ if(! function_exists('calculate_payment')){
         $taxValue        = tax_value($commisionBruto, $tax_percentage);
         $commisionNetto  = commision_netto($commisionBruto, $taxValue, $discount);
         $clientPay       = client_pay($premiValue, $discount);
-        $insurancePay    = insurance_pay($premiValue, $taxValue, $discount);
+        $insurancePay    = insurance_pay($clientPay, $commisionNetto);
 
         return [
             'production_value' => $productionValue,

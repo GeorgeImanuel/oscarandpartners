@@ -202,7 +202,7 @@
                 <span class="section-number">3</span>
                 <span class="info-label">Obyek Asuransi</span>
                 <span class="info-separator">:</span>
-                <span class="info-value">{{ $productionCard->policy->object->ObjectOccupation->name ?? '-' }} - {{ $productionCard->policy->object->keterangan ?? '-' }}</span>
+                <span class="info-value">{{ $productionCard->policy->policyObjects->first()?->object?->ObjectOccupation?->name ?? '-' }} - {{ $productionCard->policy->policyObjects->first()?->object?->keterangan ?? '-' }}</span>
             </div>
 
             <div class="info-row">
@@ -245,7 +245,7 @@
                         <span style="width: 100px; text-align: right;">TJH</span>
                         <span style="width: 20px; text-align: center;">:</span>
                         <span style="width: 200px; text-align: left;">
-                            {{ $currency }} {{ number_format($productionCard->policy->object->tjh,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
+                            {{ $currency }} {{ number_format($productionCard->policy->policyObjects->first()?->object?->tjh ?? 0,  $currency == 'Rp' ? 0 : 2, ',', '.') }}
                         </span>
                     </div>
 
@@ -336,7 +336,7 @@
                 <h6 style="margin: 0 0 10px 0; font-weight: bold; text-decoration: underline;">Setor ke Asuransi</h6>
                 <div class="payment-item">
                     <span>Premi Total</span>
-                    <span>{{ $currency }} {{ number_format($productionCard->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
+                    <span>{{ $currency }} {{ number_format($productionCard->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</span>
                 </div>
                 <div class="payment-item">
                     <span>Komisi</span>

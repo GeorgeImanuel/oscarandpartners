@@ -42,44 +42,23 @@ class CurrencyController extends Controller
         return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil ditambahkan.');
     }
 
-    public function edit(string $code)
+    public function edit(Currency $currency)
     {
-        // Cari berdasarkan kolom 'code' manual karena service->find() biasanya cari ID
-        $currency = Currency::where('code', $code)->first();
-        
-        if (!$currency) {
-            return redirect()->route('currencies.index')->with('error', 'Mata uang tidak ditemukan.');
-        }
-
         return view('currencies.form', compact('currency'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Currency $currency)
     {
-        // 1. Cari Data (Berdasarkan Code dari URL)
-        $currency = Currency::where('code', $id)->first();
-
-        if (!$currency) {
-            return redirect()->route('currencies.index')->with('error', 'Data tidak ditemukan.');
-        }
-
-        // 2. VALIDASI
         $data = $request->validate([
-            // FIX: Tambahkan parameter ke-4 ',code' 
-            // Artinya: Cek unik di kolom 'code', KECUALI data yang punya 'code' = $currency->code
+            // Validasi Unique mengabaikan code milik currency ini sendiri
             'code'  => 'required|string|max:10|unique:currencies,code,' . $currency->code . ',code', 
             'name'  => 'required|string|max:255',
             'value' => 'required|numeric|min:0',
         ]);
 
         try {
-            // 3. UPDATE MANUAL
-            // Kita update manual field-nya agar lebih aman jika Model tidak mengenali Primary Key
-            Currency::where('code', $id)->update([
-                'code' => $data['code'],
-                'name' => $data['name'],
-                'value' => $data['value'],
-            ]);
+            // Update langsung lewat instance model yang sudah ditemukan
+            $currency->update($data);
 
             return redirect()->route('currencies.index')
                 ->with('success', 'Mata uang berhasil diperbarui.');
@@ -90,12 +69,11 @@ class CurrencyController extends Controller
         }
     }
 
-    public function destroy(string $code)
+    public function destroy(Currency $currency)
     {
-        $currency = Currency::where('code', $code)->first();
-        if ($currency) {
-            $this->currencyService->delete($currency->id);
-        }
-        return redirect()->route('currencies.index')->with('success', 'Mata uang berhasil dihapus.');
+        $this->currencyService->delete($currency->code);
+        
+        return redirect()->route('currencies.index')
+            ->with('success', 'Mata uang berhasil dihapus.');
     }
 }

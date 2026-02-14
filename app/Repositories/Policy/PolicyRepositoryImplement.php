@@ -55,4 +55,9 @@ class PolicyRepositoryImplement extends Eloquent implements PolicyRepository
         ->orderBy('ended_date', 'asc')
         ->get();
     }
+
+    public function findByPolicyNumber($policyNumber)
+    {
+        return $this->model->where('policy_number', $policyNumber)->first();
+    }
 }

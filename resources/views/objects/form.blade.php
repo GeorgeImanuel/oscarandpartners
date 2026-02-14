@@ -80,8 +80,8 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="name">Nama Objek <span class="text-danger">*</span></label>
-                        <input class="form-control @error('name') is-invalid @enderror" id="name" name="name" type="text" value="{{ isset($object) ? $object->name : old('name', '') }}" placeholder="Contoh: Suzuki Ertiga" required />
+                        <label class="form-label" for="name">Nama Tertanggung <span class="text-danger">*</span></label>
+                        <input class="form-control @error('name') is-invalid @enderror" id="name" name="name" type="text" value="{{ isset($object) ? $object->name : old('name', '') }}" placeholder="Contoh: BCA Tbk" required />
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -118,7 +118,7 @@
             <!-- Interests Section -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Komponen Objek (Interests)</h5>
+                    <h5>Komponen Objek (Interest)</h5>
                     <button type="button" class="btn btn-primary btn-sm" id="add-interest-btn">
                         <i class="icon-plus me-2"></i>Tambah Interest
                     </button>

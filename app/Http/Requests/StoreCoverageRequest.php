@@ -22,7 +22,7 @@ class StoreCoverageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:10',
+            'name' => 'required|string',
         ];
     }
 

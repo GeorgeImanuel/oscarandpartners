@@ -163,10 +163,8 @@ class CardServiceImplement extends Service implements CardService
                 }
             } else {
                 // Create single payment for full payment
-                // Payment amount = client_pay - policy_fee
-                $clientPay = (float)($data['client_pay'] ?? 0);
-                $policyFee = (float)($data['policy_fee'] ?? 0);
-                $paymentAmount = $clientPay - $policyFee;
+                // Payment amount = Netto Tagihan (client_pay) yang harus dibayar nasabah
+                $paymentAmount = (float)($data['client_pay'] ?? 0);
                 
                 $payment = $this->paymentRepository->create([
                     'card_id'            => $card->id,
@@ -395,13 +393,19 @@ class CardServiceImplement extends Service implements CardService
 
     /**
      * Create new policy with insurances
+     * Note: policy_id field contains policy_number (string), not numeric ID
      */
     private function findOrCreatePolicy(array $data)
     {
-        $policy = $this->policyRepository->find($data['policy_id']);
+        // Force treat policy_id as string (policy_number), never as numeric ID
+        $policyNumber = (string) $data['policy_id'];
+        
+        // Try to find policy by policy_number, not by ID
+        $policy = $this->policyRepository->findByPolicyNumber($policyNumber);
+        
         if (!$policy) {
             $policy = $this->policyRepository->create([
-                'policy_number'       => $data['policy_id'],
+                'policy_number'       => $policyNumber,
                 'currency_code'       => $this->findOrCreateCurrency($data['currency_code']),
                 'started_date'        => $data['started_date'],
                 'ended_date'          => $data['ended_date'],

@@ -50,9 +50,13 @@
                                             <td>
                                                 <a class="btn btn-warning btn-sm mb-2 me-2" href="{{ route('currencies.edit', $currency->code) }}"><i class="icon-pencil me-2"></i>Edit</a>
                                                 <form action="{{ route('currencies.destroy', $currency->code) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)"><i class="icon-trash me-2"></i>Delete</button>
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    
+                                                    {{-- Type harus button agar tidak auto-submit sebelum dikonfirmasi JS --}}
+                                                    <button type="button" class="btn btn-danger btn-xs" onClick="confirmDelete(this)">
+                                                        <i class="icon-trash me-2"></i>Delete
+                                                    </button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -73,5 +77,14 @@
     @push('scripts')
         <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
         <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+
+        <script>
+            function confirmDelete(button) {
+                if (confirm("Apakah Anda yakin ingin menghapus data mata uang ini?")) {
+                    // Cari form terdekat dari tombol yang diklik, lalu submit
+                    button.closest('form').submit();
+                }
+            }
+        </script>
     @endpush
 @endsection

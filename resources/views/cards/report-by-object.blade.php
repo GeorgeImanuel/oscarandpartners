@@ -80,10 +80,10 @@
                                             </td>
 
                                             {{-- Data Nama Objek --}}
-                                            <td>{{ $card->policy->object->name ?? '-' }}</td>
+                                            <td>{{ $card->policy->policyObjects->first()?->object?->name ?? '-' }}</td>
 
                                             {{-- Data Alamat --}}
-                                            <td>{{ $card->policy->object->keterangan ?? '-' }}</td>
+                                            <td>{{ $card->policy->policyObjects->first()?->object?->keterangan ?? '-' }}</td>
 
                                             <td>{{ $card->client->user->name ?? $card->client->id_name ?? '-' }}</td>
                                             <td>

@@ -9,6 +9,7 @@
                     class="form-control required @error('started_date') is-invalid @enderror"
                     name="started_date"
                     type="date"
+                    autocomplete="off"
                     value="{{ isset($policy) ? $policy->started_date->format('Y-m-d') : old('started_date', '') }}">
                 @error('started_date')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -22,6 +23,7 @@
                     class="form-control required @error('ended_date') is-invalid @enderror"
                     name="ended_date"
                     type="date"
+                    autocomplete="off"
                     value="{{ isset($policy) ? $policy->ended_date->format('Y-m-d') : old('ended_date', '') }}">
                 @error('ended_date')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -36,6 +38,7 @@
                     class="form-select create-select2 required @error('currency_code') is-invalid @enderror"
                     data-placeholder="Pilih Mata Uang"
                     data-selected-value="{{ $policy->currency_code ?? '' }}"
+                    autocomplete="off"
                     name="currency_code">
                     <option value=""></option>
                     @foreach ($currencies as $currency)
