@@ -358,27 +358,23 @@
             function generateSchedule() {
                 var count = parseInt($('#termin-count').val()) || 2;
 
-                // Ambil Total Tagihan Netto ke Nasabah (Premi + Biaya - Diskon)
                 var rawPremi = parseFloat($('#premi_value').val()) || 0;
                 var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
+                var discount_agent = parseFloat($('#discount_agent').val()) || 0;
                 
-                // Nilai yang akan dibagi ke termin
-                var totalToSplit = rawPremi - rawPolicyFee;
+                var baseAmount = rawPremi - rawPolicyFee - discount_agent;
 
                 if (count < 1) return;
 
-                // Ambil parameter total dari Step 4 untuk dibagi rata
                 var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
                 var totalPajak = parseFloat($('#tax').val()) || 0;
 
-                // Hitung rata-rata per termin
-                var amountPerItem = totalToSplit / count;
+                var amountPerItem = baseAmount / count;
                 var komisiPerItem = totalKomisi / count;
                 var pajakPerItem = totalPajak / count;
 
                 var currencyLabel = window.currentCurrency || 'Rp';
 
-                // Ambil deadline_at sebagai tanggal angsuran pertama
                 var deadlineStr = $('#deadline_at').val();
                 var baseDate = deadlineStr ? new Date(deadlineStr) : new Date();
 
@@ -386,18 +382,17 @@
                 tbody.empty();
 
                 for (var i = 0; i < count; i++) {
-                    // Logic Tanggal: Termin pertama = deadline, termin selanjutnya +30 hari dari termin sebelumnya
                     var d = new Date(baseDate);
                     d.setDate(d.getDate() + (i * 30));
                     var dateStr = d.toISOString().split('T')[0];
                     var sequence = i + 1;
 
-                    // Estimasi Netto per baris = Tagihan - Komisi
-                    // Policy Fee hanya untuk angsuran pertama
-                    var nettoPerItem = amountPerItem - komisiPerItem + pajakPerItem;
+                    var paymentAmount = amountPerItem;
                     if (i === 0) {
-                        nettoPerItem += rawPolicyFee;
+                        paymentAmount += rawPolicyFee;
                     }
+
+                    var nettoPerItem = paymentAmount - komisiPerItem + pajakPerItem;
 
                     var html = `
                             <tr class="installment-row">
@@ -417,7 +412,7 @@
                                         <input type="number" 
                                                name="installments[${i}][amount]" 
                                                class="form-control form-control-sm installment-amount-input fw-bold text-end" 
-                                               value="${amountPerItem.toFixed(2)}" 
+                                               value="${paymentAmount.toFixed(2)}" 
                                                step="0.01" required>
                                         <input type="hidden" 
                                                name="installments[${i}][netto]" 
@@ -483,14 +478,10 @@
                     // Hitung ulang rincian per baris (Dibagi rata sesuai jumlah row)
                     var rowKomisi = totalKomisi / rowCount;
                     var rowPajak = totalPajak / rowCount;
-                    var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
 
-                    // Netto per baris = Tagihan - Komisi + Pajak
-                    // Policy Fee hanya untuk angsuran pertama (index 0)
+                    // Netto per baris = Payment Amount - Komisi + Pajak
+                    // Payment Amount untuk row pertama sudah termasuk policy_fee
                     var rowNetto = val - rowKomisi + rowPajak;
-                    if (index === 0) {
-                        rowNetto += rawPolicyFee;
-                    }
 
                     // Update Text di Kolom Rincian masing-masing
                     var $row = $(this).closest('tr');
@@ -503,13 +494,13 @@
                 });
 
                 // Update Total & Selisih Tagihan
-                var rawPremi = parseFloat($('#premi_value').val()) || 0;
-                var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
+                var rawPremi = parseFloat($('#premi_value').val()) || 0; // premi_value = production_value + policy_fee
+                var discount_agent = parseFloat($('#discount_agent').val()) || 0;
                 
-                // Nilai yang akan dibagi ke termin
-                var totalToSplit = rawPremi - rawPolicyFee;
+                // Total yang harus dibayar = premi_value - discount_agent (sesuai client_pay formula)
+                var expectedTotal = rawPremi - discount_agent;
 
-                var diff = totalToSplit - sumAmount;
+                var diff = expectedTotal - sumAmount;
 
                 $('#installment-total-display').text(formatRupiah(sumAmount));
 

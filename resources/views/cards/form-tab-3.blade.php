@@ -659,10 +659,22 @@
                 var clonedCount = 0;
 
                 $sources.each(function(index) {
+                    // SKIP: Item yang tidak visible atau hidden
+                    if ($(this).css('display') === 'none') {
+                        return; // continue to next iteration
+                    }
+                    
                     // console.log('Processing source', index, 'visible:', $(this).is(':visible'));
 
                     // GET TEXT DARI ORIGINAL SEBELUM CLONE
                     var originalCoverageName = $(this).find('select[name="coverage_code[]"]').find('option:selected').text().trim();
+                    var originalCoverageCode = $(this).find('select[name="coverage_code[]"]').val();
+                    
+                    // SKIP: Jika coverage belum dipilih (code kosong)
+                    if (!originalCoverageCode || originalCoverageCode === '' || originalCoverageName === '- Pilih Coverage -') {
+                        return; // continue to next iteration
+                    }
+                    
                     // console.log('Coverage Name:', originalCoverageName);
 
                     // CLONE & BERSIHKAN
@@ -703,6 +715,12 @@
                     }
                 });
 
+                // Cek jika tidak ada item valid ter-clone
+                if (clonedCount === 0) {
+                    $target.html('<div class="text-center text-muted small">Tidak ada data coverage valid.</div>');
+                    return;
+                }
+
                 if (totalPercentage > 0) $('#premi_percentages').val(totalPercentage.toFixed(5));
                 // console.log('✅ Coverage cloned:', clonedCount, 'items, total:', totalPercentage);
                 // console.log('Container HTML after:', $target.html().substring(0, 200));
@@ -733,11 +751,21 @@
                 var itemsToAppend = []; // Array untuk menyimpan items sebelum diurutkan
 
                 $sources.each(function(index) {
-                    // console.log('Processing insurance', index, 'visible:', $(this).is(':visible'));
-
+                    // SKIP: Template (no-print) dan item yang tidak visible
+                    if ($(this).hasClass('no-print') || $(this).css('display') === 'none') {
+                        return; // continue to next iteration
+                    }
+                    
                     // GET TEXT DARI ORIGINAL SEBELUM CLONE
                     var originalInsuranceName = $(this).find('select[name="insurance_id[]"]').find('option:selected').text().trim();
                     var originalInsuranceId = $(this).find('select[name="insurance_id[]"]').val();
+                    
+                    // SKIP: Jika asuransi belum dipilih (ID kosong atau null)
+                    if (!originalInsuranceId || originalInsuranceId === '' || originalInsuranceName === '- Pilih Asuransi -') {
+                        return; // continue to next iteration
+                    }
+                    
+                    // console.log('Processing insurance', index, 'visible:', $(this).is(':visible'));
                     // console.log('Insurance ID:', originalInsuranceId, 'Name:', originalInsuranceName);
 
                     // CLONE
@@ -814,6 +842,12 @@
 
                     clonedCount++;
                 });
+
+                // Cek jika tidak ada item yang valid ter-clone
+                if (clonedCount === 0 || itemsToAppend.length === 0) {
+                    $target.html('<div class="text-center text-muted small">Tidak ada data asuransi valid.</div>');
+                    return;
+                }
 
                 // Urutkan array berdasarkan persentase (terbesar ke terkecil)
                 itemsToAppend.sort(function(a, b) {

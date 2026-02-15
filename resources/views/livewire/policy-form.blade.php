@@ -172,7 +172,58 @@
                         </button>
                     </div>
                 </div>
+                
                 <div class="item-list border rounded mb-2 px-3 py-2">
+                    
+                    {{-- Template tersembunyi untuk cloning - JANGAN DIHAPUS --}}
+                    {{-- Class no-print untuk diabaikan saat print --}}
+                    <div class="row align-items-end item item-1 no-print mb-2" style="display: none;">
+                        <div class="col-md-5 mb-2">
+                            <label class="form-label">Asuransi <span class="item-count">1</span></label>
+                            <select class="form-select create-select2 required"
+                                data-placeholder="Pilih Asuransi"
+                                name="insurance_id[]"
+                                style="width: 100%;">
+                                <option value="">- Pilih Asuransi -</option>
+                                @foreach ($insurances as $insurance)
+                                    <option value="{{ $insurance->id }}">
+                                        {{ $insurance->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md mb-2">
+                            <label class="form-label">Persentase Asuransi</label>
+                            <div class="input-group">
+                                <input class="form-control required insurance-percentage"
+                                    type="number"
+                                    name="insurance_percentage[]"
+                                    value=""
+                                    placeholder="0"
+                                    min="0"
+                                    max="100"
+                                    step="0.00001">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input is-main-checkbox"
+                                    type="checkbox"
+                                    name="is_main_check[]"
+                                    value="1">
+                                <input type="hidden" class="is-main-value" name="is_main[]" value="0">
+                                <label class="form-check-label">Asuransi Utama</label>
+                            </div>
+                        </div>
+                        <div class="col-md-auto mb-2">
+                            <button class="btn btn-danger btn-xs remove-item-btn"
+                                type="button">
+                                <i class="icon-trash me-2"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                    
                     @forelse ((isset($policy) && $policy ? ($policy->policyInsurances->sortByDesc('percentage') ?? []) : []) as $index => $policyInsurance)
                         <div class="row align-items-end item item-1  {{ $index != 0 ? 'border-top py-2' : ' pt-2' }}">
                             <div class="col-md-5 mb-2">
@@ -208,9 +259,10 @@
                                 <div class="form-check">
                                     <input class="form-check-input is-main-checkbox"
                                         type="checkbox"
-                                        name="is_main[]"
+                                        name="is_main_check[]"
                                         value="1"
                                         {{ isset($policyInsurance) && $policyInsurance->is_main ? 'checked' : '' }}>
+                                    <input type="hidden" class="is-main-value" name="is_main[]" value="{{ isset($policyInsurance) && $policyInsurance->is_main ? '1' : '0' }}">
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -255,8 +307,9 @@
                                 <div class="form-check">
                                     <input class="form-check-input is-main-checkbox"
                                         type="checkbox"
-                                        name="is_main[]"
+                                        name="is_main_check[]"
                                         value="1">
+                                    <input type="hidden" class="is-main-value" name="is_main[]" value="0">
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -509,7 +562,9 @@
                 effect
             }) => {
                 setTimeout(() => {
-                    $('.create-select2').each(function() {
+                    $('.create-select2').filter(function() {
+                        return !$(this).closest('.no-print').length;
+                    }).each(function() {
                         if (!$(this).hasClass('select2-hidden-accessible')) {
                             var placeholder = $(this).data('placeholder') || 'Pilih Data';
                             $(this).select2({
@@ -567,6 +622,13 @@
         // Initialize on component load
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
+                // Destroy Select2 on template if accidentally initialized
+                $('.no-print .create-select2, .no-print .add-select2').each(function() {
+                    if ($(this).hasClass('select2-hidden-accessible')) {
+                        $(this).select2('destroy');
+                    }
+                });
+
                 if (!$('#currency_code').hasClass('select2-hidden-accessible')) {
                     $('#currency_code').select2({
                         placeholder: 'Pilih Mata Uang',
@@ -575,8 +637,10 @@
                     });
                 }
 
-                // Initialize all .create-select2 elements
-                $('.create-select2').each(function() {
+                // Initialize all .create-select2 elements KECUALI yang di dalam template (no-print)
+                $('.create-select2').filter(function() {
+                    return !$(this).closest('.no-print').length;
+                }).each(function() {
                     if (!$(this).hasClass('select2-hidden-accessible')) {
                         var placeholder = $(this).data('placeholder') || 'Pilih Data';
                         $(this).select2({
@@ -586,8 +650,10 @@
                     }
                 });
 
-                // Initialize all .add-select2 elements (including interest fields)
-                $('.add-select2').each(function() {
+                // Initialize all .add-select2 elements (including interest fields) KECUALI yang di template (no-print)
+                $('.add-select2').filter(function() {
+                    return !$(this).closest('.no-print').length;
+                }).each(function() {
                     if (!$(this).hasClass('select2-hidden-accessible')) {
                         var placeholder = $(this).data('placeholder') || 'Pilih Data';
                         $(this).select2({
@@ -628,6 +694,184 @@
             if (typeof window.toggleNegativeWarning === 'function') {
                 window.toggleNegativeWarning(this);
             }
+        });
+
+        // Handler khusus untuk item asuransi
+        // Gunakan Native addEventListener dengan capture:true agar jalan lebih dulu
+        document.addEventListener('click', function(e) {
+            // Cek apakah click pada remove button dalam item-1
+            var $target = $(e.target);
+            if (!$target.hasClass('remove-item-btn')) {
+                $target = $target.closest('.remove-item-btn');
+            }
+            
+            if ($target.length === 0) return;
+            
+            var $item = $target.closest('.item');
+            if (!$item.hasClass('item-1')) return; // Hanya handle item-1 (asuransi)
+            
+            // Prevent propagation dan default
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            var $itemList = $item.closest('.item-list');
+            
+            // Jangan hapus item dengan class no-print (template)
+            if ($item.hasClass('no-print') || $item.css('display') === 'none') {
+                return false;
+            }
+            
+            // Hitung jumlah item asuransi yang visible (exclude template)
+            var visibleItems = $itemList.find('.item.item-1').not('.no-print').filter(function() {
+                return $(this).css('display') !== 'none';
+            });
+            
+            // Jika hanya ada 1 item, tidak boleh dihapus
+            if (visibleItems.length <= 1) {
+                Swal.fire({
+                    title: "Tidak dapat menghapus",
+                    text: "Minimal harus ada 1 item asuransi.",
+                    icon: "warning"
+                });
+                return false;
+            }
+            
+            // Jika lebih dari 1, lanjutkan dengan konfirmasi hapus
+            Swal.fire({
+                title: "Anda yakin ingin menghapus?",
+                text: "Data akan dihapus secara permanen.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Yakin",
+                confirmButtonColor: "#ef486a",
+                cancelButtonText: "Batal",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var $multipleItemContainer = $item.closest('.multiple-item-container');
+                    
+                    // Hapus item
+                    $item.remove();
+                    
+                    // Recount semua item asuransi yang visible
+                    var $visibleInsuranceItems = $itemList.find('.item.item-1').filter(function () {
+                        return $(this).css('display') !== 'none' && !$(this).hasClass('no-print');
+                    });
+                    
+                    $visibleInsuranceItems.each(function (index) {
+                        var itemCount = index + 1;
+                        $(this).find('.item-count').text(itemCount);
+                        $(this).attr('data-item-index', itemCount);
+                    });
+                    
+                    // Trigger perhitungan ulang persentase jika ada
+                    if (typeof calculateInsurancePercentages === 'function') {
+                        calculateInsurancePercentages();
+                    }
+                    $itemList.find('input.insurance-percentage').trigger('input');
+                }
+            });
+        }, true); // capture: true - handler ini jalan di capture phase, sebelum bubble phase
+
+        // Handler untuk menambah item asuransi - pastikan Select2 diinit dengan benar
+        $(document).on('click', '.add-item-btn[data-target="item-1"]', function() {
+            var $container = $(this).closest('.multiple-item-container');
+            var $itemList = $container.find('.item-list:first');
+            
+            // Tunggu sebentar untuk multiple-item.js selesai clone dan append
+            setTimeout(function() {
+                // Cari item yang baru ditambahkan (item terakhir yang bukan template/no-print)
+                var $newItems = $itemList.find('.item.item-1').not('.no-print');
+                var $lastItem = $newItems.last();
+                
+                if ($lastItem.length) {
+                    console.log('Initializing Select2 for new insurance item');
+                    
+                    // Pastikan item visible
+                    $lastItem.show();
+                    
+                    // Init Select2 untuk select yang belum diinit di item baru
+                    $lastItem.find('.create-select2').each(function() {
+                        // Destroy dulu jika sudah ada
+                        if ($(this).hasClass('select2-hidden-accessible')) {
+                            $(this).select2('destroy');
+                        }
+                        
+                        var placeholder = $(this).data('placeholder') || 'Pilih Data';
+                        var $select = $(this);
+                        
+                        // Pastikan ada options
+                        if ($select.find('option').length > 0) {
+                            if (typeof initCustomSelect2 === 'function') {
+                                initCustomSelect2($select);
+                            } else {
+                                $select.select2({
+                                    placeholder: placeholder,
+                                    allowClear: true,
+                                    width: '100%'
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Trigger perhitungan ulang persentase
+                    if (typeof calculateInsurancePercentages === 'function') {
+                        calculateInsurancePercentages();
+                    }
+                    
+                    // Sync checkbox dengan hidden input untuk item baru
+                    $lastItem.find('.is-main-checkbox').each(function() {
+                        const $hiddenInput = $(this).siblings('.is-main-value');
+                        $hiddenInput.val(this.checked ? '1' : '0');
+                    });
+                }
+                
+                // Re-init main checkbox handler setelah add
+                if (typeof initializeMainCheckboxes === 'function') {
+                    initializeMainCheckboxes();
+                }
+            }, 250);
+        });
+
+        // Logic Checkbox "Asuransi Utama" (Hanya boleh 1) - dari policies/form.blade
+        function initializeMainCheckboxes() {
+            const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
+            mainCheckboxes.forEach(checkbox => {
+                checkbox.removeEventListener('change', mainCheckboxHandler);
+                checkbox.addEventListener('change', mainCheckboxHandler);
+            });
+        }
+
+        function mainCheckboxHandler() {
+            // Update hidden input value untuk checkbox ini
+            const $checkbox = $(this);
+            const $hiddenInput = $checkbox.siblings('.is-main-value');
+            $hiddenInput.val(this.checked ? '1' : '0');
+            
+            if (this.checked) {
+                // Uncheck semua checkbox lainnya
+                const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
+                mainCheckboxes.forEach(cb => {
+                    if (cb !== this) {
+                        cb.checked = false;
+                        // Update hidden input untuk checkbox yang di-uncheck
+                        $(cb).siblings('.is-main-value').val('0');
+                    }
+                });
+            }
+        }
+
+        // Initialize main checkbox handler
+        $(document).ready(function() {
+            setTimeout(function() {
+                // Sync semua checkbox dengan hidden input saat load
+                $('.is-main-checkbox').each(function() {
+                    const $hiddenInput = $(this).siblings('.is-main-value');
+                    $hiddenInput.val(this.checked ? '1' : '0');
+                });
+                
+                initializeMainCheckboxes();
+            }, 500);
         });
     </script>
 @endscript

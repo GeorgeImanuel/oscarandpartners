@@ -59,6 +59,7 @@ $(document).on("click", ".add-item-btn", function () {
             container.find(".item." + $(this).data("target")).length -
             hiddenItemCount +
             1;
+        
         newItem.show();
         // Clear the input fields inside the cloned item
         newItem.find(".form-control, .form-select").val("");
