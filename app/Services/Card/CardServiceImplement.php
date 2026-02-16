@@ -349,7 +349,7 @@ class CardServiceImplement extends Service implements CardService
 
         // Create object
         $object = $this->objectRepository->create([
-            'object_occupation_id' => $this->findOrCreateObjectOccupation($objectOccupationId),
+            'object_occupation_id' => $this->findOrCreateObjectOccupation((int)$objectOccupationId),
             'name'                 => $data['object_id'][$objectIndex],
             'keterangan'           => $keterangan,
             'tjh'                  => $tjh,
