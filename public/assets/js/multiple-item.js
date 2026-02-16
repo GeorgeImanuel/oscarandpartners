@@ -79,8 +79,9 @@ $(document).on("click", ".add-item-btn", function () {
             $(this).removeClass("select2-hidden-accessible");
             $(this).next("span.select2").remove();
 
-            // Check if it has create-select2 or create-select2 class
-            if ($(this).hasClass("create-select2")) {
+            // Check if it has add-select2 or create-select2 class
+            if ($(this).hasClass("add-select2")) {
+                console.log('Initializing add-select2 for new item');
                 // Get placeholder from data attribute or label
                 var placeholder = $(this).data("placeholder");
                 if (!placeholder) {
@@ -94,6 +95,8 @@ $(document).on("click", ".add-item-btn", function () {
                     allowClear: true,
                 });
             } else if ($(this).hasClass("create-select2")) {
+                console.log('Initializing create-select2 for new item');
+
                 initCustomSelect2($(this));
             } else {
                 // Default select2 initialization

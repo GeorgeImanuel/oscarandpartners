@@ -514,19 +514,16 @@
                 } else {
                     console.warn('Target container not found for selector:', selector);
                 }
-
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
-
-
             } else {
                 console.warn('No className found in input[name="class"]');
             }
-            // setTimeout(function() {
-            //     if (typeof initCustomSelect2 === 'function') {
-            //         initCustomSelect2(".create-select2");
-            //     }
-            // }, 300);
+            setTimeout(function() {
+                if (typeof initCustomSelect2 === 'function') {
+                    initCustomSelect2(".create-select2");
+                }
+            }, 300);
 
             // Replace all input select and textarea name base on item-index
             var $itemObjects = $('#object-item-container').find('.item-object');
