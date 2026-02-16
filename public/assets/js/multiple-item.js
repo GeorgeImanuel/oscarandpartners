@@ -79,8 +79,8 @@ $(document).on("click", ".add-item-btn", function () {
             $(this).removeClass("select2-hidden-accessible");
             $(this).next("span.select2").remove();
 
-            // Check if it has add-select2 or create-select2 class
-            if ($(this).hasClass("add-select2")) {
+            // Check if it has create-select2 or create-select2 class
+            if ($(this).hasClass("create-select2")) {
                 // Get placeholder from data attribute or label
                 var placeholder = $(this).data("placeholder");
                 if (!placeholder) {

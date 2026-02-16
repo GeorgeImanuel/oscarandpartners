@@ -203,7 +203,7 @@
                     // 1. VALIDATE SELECT2 FIELDS
                     // Ensure all required select2 dropdowns have values selected
                     // ============================================================
-                    $(form).find('select.add-select2.required, select.create-select2.required').each(function() {
+                    $(form).find('select.create-select2.required').each(function() {
                         var $select = $(this);
                         
                         // Skip disabled or hidden fields

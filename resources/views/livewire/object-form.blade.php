@@ -2,7 +2,7 @@
     class="row gt-3">
     <div class="col-md-6 mb-3">
         <label class="form-label">Objek Occupation<span class="text-danger">*</span></label>
-        <select class="form-select required add-select2 @error('object_occupation_id') is-invalid @enderror"
+        <select class="form-select required create-select2 @error('object_occupation_id') is-invalid @enderror"
             name="object_occupation_id[]"
             data-placeholder="Pilih Objek Occupation"
             style="width: 100%;"
@@ -66,7 +66,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label class="form-label">Interest <span class="item-count">{{ $index + 1 }}</span></label>
-                                <select class="form-select add-select2 required"
+                                <select class="form-select create-select2 required"
                                     name="interest_id[][]"
                                     data-placeholder="Pilih Interest"
                                     style="width: 100%;"
@@ -110,7 +110,7 @@
                     <div class="row align-items-end">
                         <div class="col-md-6">
                             <label class="form-label">Interest <span class="item-count">1</span></label>
-                            <select class="form-select add-select2 required"
+                            <select class="form-select create-select2 required"
                                 name="interest_id[][]"
                                 data-placeholder="Pilih Interest"
                                 style="width: 100%;"
