@@ -267,7 +267,7 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new object occupation
      */
-    private function findOrCreateObjectOccupation(int $objectOccupationId): int
+    private function findOrCreateObjectOccupation(string $objectOccupationId): int
     {
         $occupation = $this->objectOccupationRepository->find($objectOccupationId);
         if (!$occupation) {
@@ -281,7 +281,7 @@ class CardServiceImplement extends Service implements CardService
     /**
      * Create new interest
      */
-    private function findOrCreateInterest(int $interestId): int
+    private function findOrCreateInterest(string $interestId): int
     {
         $interest = $this->interestRepository->find($interestId);
         if (!$interest) {
