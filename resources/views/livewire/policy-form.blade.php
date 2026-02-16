@@ -1,5 +1,6 @@
 <div id="new-policy">
-    <div id="policy-detail-form" class="card mb-3 p-3 shadow-sm">
+    <div id="policy-detail-form"
+        class="card mb-3 p-3 shadow-sm">
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label"
@@ -172,12 +173,13 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="item-list border rounded mb-2 px-3 py-2">
-                    
+
                     {{-- Template tersembunyi untuk cloning - JANGAN DIHAPUS --}}
                     {{-- Class no-print untuk diabaikan saat print --}}
-                    <div class="row align-items-end item item-1 no-print mb-2" style="display: none;">
+                    <div class="row align-items-end item item-1 no-print mb-2"
+                        style="display: none;">
                         <div class="col-md-5 mb-2">
                             <label class="form-label">Asuransi <span class="item-count">1</span></label>
                             <select class="form-select create-select2 required"
@@ -212,7 +214,10 @@
                                     type="checkbox"
                                     name="is_main_check[]"
                                     value="1">
-                                <input type="hidden" class="is-main-value" name="is_main[]" value="0">
+                                <input type="hidden"
+                                    class="is-main-value"
+                                    name="is_main[]"
+                                    value="0">
                                 <label class="form-check-label">Asuransi Utama</label>
                             </div>
                         </div>
@@ -223,7 +228,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     @forelse ((isset($policy) && $policy ? ($policy->policyInsurances->sortByDesc('percentage') ?? []) : []) as $index => $policyInsurance)
                         <div class="row align-items-end item item-1  {{ $index != 0 ? 'border-top py-2' : ' pt-2' }}">
                             <div class="col-md-5 mb-2">
@@ -262,7 +267,10 @@
                                         name="is_main_check[]"
                                         value="1"
                                         {{ isset($policyInsurance) && $policyInsurance->is_main ? 'checked' : '' }}>
-                                    <input type="hidden" class="is-main-value" name="is_main[]" value="{{ isset($policyInsurance) && $policyInsurance->is_main ? '1' : '0' }}">
+                                    <input type="hidden"
+                                        class="is-main-value"
+                                        name="is_main[]"
+                                        value="{{ isset($policyInsurance) && $policyInsurance->is_main ? '1' : '0' }}">
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -309,7 +317,10 @@
                                         type="checkbox"
                                         name="is_main_check[]"
                                         value="1">
-                                    <input type="hidden" class="is-main-value" name="is_main[]" value="0">
+                                    <input type="hidden"
+                                        class="is-main-value"
+                                        name="is_main[]"
+                                        value="0">
                                     <label class="form-check-label">Asuransi Utama</label>
                                 </div>
                             </div>
@@ -473,7 +484,7 @@
 
             if (className) {
                 var $cloneContent = $template.clone();
-                
+
                 // $cloneContent.find('.required').each(function() {
                 //     $(this).prop("required", true).prop("disabled", false);
                 // });
@@ -504,7 +515,6 @@
                     // console.log('Target container not found for selector:', selector);
                 }
 
-
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
 
@@ -512,6 +522,11 @@
             } else {
                 // console.log('No className found in input[name="class"]');
             }
+            setTimeout(function() {
+                if (typeof initCustomSelect2 === 'function') {
+                    initCustomSelect2(".create-select2");
+                }
+            }, 300);
 
             // Replace all input select and textarea name base on item-index
             var $itemObjects = $('#object-item-container').find('.item-object');
@@ -704,29 +719,29 @@
             if (!$target.hasClass('remove-item-btn')) {
                 $target = $target.closest('.remove-item-btn');
             }
-            
+
             if ($target.length === 0) return;
-            
+
             var $item = $target.closest('.item');
             if (!$item.hasClass('item-1')) return; // Hanya handle item-1 (asuransi)
-            
+
             // Prevent propagation dan default
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
-            
+
             var $itemList = $item.closest('.item-list');
-            
+
             // Jangan hapus item dengan class no-print (template)
             if ($item.hasClass('no-print') || $item.css('display') === 'none') {
                 return false;
             }
-            
+
             // Hitung jumlah item asuransi yang visible (exclude template)
             var visibleItems = $itemList.find('.item.item-1').not('.no-print').filter(function() {
                 return $(this).css('display') !== 'none';
             });
-            
+
             // Jika hanya ada 1 item, tidak boleh dihapus
             if (visibleItems.length <= 1) {
                 Swal.fire({
@@ -736,7 +751,7 @@
                 });
                 return false;
             }
-            
+
             // Jika lebih dari 1, lanjutkan dengan konfirmasi hapus
             Swal.fire({
                 title: "Anda yakin ingin menghapus?",
@@ -749,21 +764,21 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     var $multipleItemContainer = $item.closest('.multiple-item-container');
-                    
+
                     // Hapus item
                     $item.remove();
-                    
+
                     // Recount semua item asuransi yang visible
-                    var $visibleInsuranceItems = $itemList.find('.item.item-1').filter(function () {
+                    var $visibleInsuranceItems = $itemList.find('.item.item-1').filter(function() {
                         return $(this).css('display') !== 'none' && !$(this).hasClass('no-print');
                     });
-                    
-                    $visibleInsuranceItems.each(function (index) {
+
+                    $visibleInsuranceItems.each(function(index) {
                         var itemCount = index + 1;
                         $(this).find('.item-count').text(itemCount);
                         $(this).attr('data-item-index', itemCount);
                     });
-                    
+
                     // Trigger perhitungan ulang persentase jika ada
                     if (typeof calculateInsurancePercentages === 'function') {
                         calculateInsurancePercentages();
@@ -777,29 +792,29 @@
         $(document).on('click', '.add-item-btn[data-target="item-1"]', function() {
             var $container = $(this).closest('.multiple-item-container');
             var $itemList = $container.find('.item-list:first');
-            
+
             // Tunggu sebentar untuk multiple-item.js selesai clone dan append
             setTimeout(function() {
                 // Cari item yang baru ditambahkan (item terakhir yang bukan template/no-print)
                 var $newItems = $itemList.find('.item.item-1').not('.no-print');
                 var $lastItem = $newItems.last();
-                
+
                 if ($lastItem.length) {
                     console.log('Initializing Select2 for new insurance item');
-                    
+
                     // Pastikan item visible
                     $lastItem.show();
-                    
+
                     // Init Select2 untuk select yang belum diinit di item baru
                     $lastItem.find('.create-select2').each(function() {
                         // Destroy dulu jika sudah ada
                         if ($(this).hasClass('select2-hidden-accessible')) {
                             $(this).select2('destroy');
                         }
-                        
+
                         var placeholder = $(this).data('placeholder') || 'Pilih Data';
                         var $select = $(this);
-                        
+
                         // Pastikan ada options
                         if ($select.find('option').length > 0) {
                             if (typeof initCustomSelect2 === 'function') {
@@ -813,19 +828,19 @@
                             }
                         }
                     });
-                    
+
                     // Trigger perhitungan ulang persentase
                     if (typeof calculateInsurancePercentages === 'function') {
                         calculateInsurancePercentages();
                     }
-                    
+
                     // Sync checkbox dengan hidden input untuk item baru
                     $lastItem.find('.is-main-checkbox').each(function() {
                         const $hiddenInput = $(this).siblings('.is-main-value');
                         $hiddenInput.val(this.checked ? '1' : '0');
                     });
                 }
-                
+
                 // Re-init main checkbox handler setelah add
                 if (typeof initializeMainCheckboxes === 'function') {
                     initializeMainCheckboxes();
@@ -847,7 +862,7 @@
             const $checkbox = $(this);
             const $hiddenInput = $checkbox.siblings('.is-main-value');
             $hiddenInput.val(this.checked ? '1' : '0');
-            
+
             if (this.checked) {
                 // Uncheck semua checkbox lainnya
                 const mainCheckboxes = document.querySelectorAll('.is-main-checkbox');
@@ -869,7 +884,7 @@
                     const $hiddenInput = $(this).siblings('.is-main-value');
                     $hiddenInput.val(this.checked ? '1' : '0');
                 });
-                
+
                 initializeMainCheckboxes();
             }, 500);
         });
