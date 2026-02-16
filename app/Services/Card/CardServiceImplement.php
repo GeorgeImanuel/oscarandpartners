@@ -265,31 +265,53 @@ class CardServiceImplement extends Service implements CardService
     }
 
     /**
-     * Create new object occupation
+     * Find or create object occupation by ID or name
      */
-    private function findOrCreateObjectOccupation(string $objectOccupationId): int
+    private function findOrCreateObjectOccupation($objectOccupationId): int
     {
-        $occupation = $this->objectOccupationRepository->find($objectOccupationId);
-        if (!$occupation) {
-            $occupation = $this->objectOccupationRepository->create([
+        // If numeric, find by ID
+        if (is_numeric($objectOccupationId) && intval($objectOccupationId) > 0) {
+            $occupation = $this->objectOccupationRepository->find($objectOccupationId);
+            if (!$occupation) {
+                throw new \Exception("Object occupation with ID {$objectOccupationId} not found.");
+            }
+            return $occupation->id;
+        }
+        
+        // If string, find or create by name
+        if (is_string($objectOccupationId) && !empty($objectOccupationId)) {
+            $occupation = $this->objectOccupationRepository->firstOrCreate([
                 'name' => $objectOccupationId
             ]);
+            return $occupation->id;
         }
-        return $occupation->id;
+        
+        throw new \Exception("Invalid object occupation value: {$objectOccupationId}");
     }
 
     /**
-     * Create new interest
+     * Find or create interest by ID or name
      */
-    private function findOrCreateInterest(string $interestId): int
+    private function findOrCreateInterest($interestId): int
     {
-        $interest = $this->interestRepository->find($interestId);
-        if (!$interest) {
-            $interest = $this->interestRepository->create([
+        // If numeric, find by ID
+        if (is_numeric($interestId) && intval($interestId) > 0) {
+            $interest = $this->interestRepository->find($interestId);
+            if (!$interest) {
+                throw new \Exception("Interest with ID {$interestId} not found.");
+            }
+            return $interest->id;
+        }
+        
+        // If string, find or create by name
+        if (is_string($interestId) && !empty($interestId)) {
+            $interest = $this->interestRepository->firstOrCreate([
                 'name' => $interestId
             ]);
+            return $interest->id;
         }
-        return $interest->id;
+        
+        throw new \Exception("Invalid interest value: {$interestId}");
     }
 
     /**
@@ -349,7 +371,7 @@ class CardServiceImplement extends Service implements CardService
 
         // Create object
         $object = $this->objectRepository->create([
-            'object_occupation_id' => $this->findOrCreateObjectOccupation((int)$objectOccupationId),
+            'object_occupation_id' => $this->findOrCreateObjectOccupation($objectOccupationId),
             'name'                 => $data['object_id'][$objectIndex],
             'keterangan'           => $keterangan,
             'tjh'                  => $tjh,
@@ -382,7 +404,7 @@ class CardServiceImplement extends Service implements CardService
 
                 $this->objectInterestRepository->create([
                     'object_id'   => $object->id,
-                    'interest_id' => $this->findOrCreateInterest((int)$validInterestId),
+                    'interest_id' => $this->findOrCreateInterest($validInterestId),
                     'value'       => $value,
                 ]);
             }
