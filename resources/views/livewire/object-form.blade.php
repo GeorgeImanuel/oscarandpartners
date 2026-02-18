@@ -1,13 +1,13 @@
 <div id="new-object"
     class="row gt-3">
     <div class="col-md-6 mb-3">
-        <label class="form-label">Objek Occupation<span class="text-danger">*</span></label>
+        <label class="form-label">Okupasi<span class="text-danger">*</span></label>
         <select class="form-select required create-select2 @error('object_occupation_id') is-invalid @enderror"
             name="object_occupation_id[]"
-            data-placeholder="Pilih Objek Occupation"
+            data-placeholder="Pilih Okupasi"
             style="width: 100%;"
             {{ $isDisabled ? 'disabled' : '' }}>
-            <option value="">- Pilih Objek Occupation -</option>
+            <option value="">- Pilih Okupasi -</option>
             @foreach ($objectOccupations ?? [] as $objectOccupation)
                 <option value="{{ $objectOccupation->id }}"
                     {{ isset($object) && $object->object_occupation_id == $objectOccupation->id ? 'selected' : (old('object_occupation_id') == $objectOccupation->id ? 'selected' : '') }}>
@@ -23,7 +23,7 @@
     
     <div class="col-md-6 mb-3">
         <label class="form-label"
-            for="object_keterangan">Keterangan <span class="text-danger">*</span></label>
+            for="object_keterangan">Obyek Pertanggungan <span class="text-danger">*</span></label>
         <textarea class="form-control required @error('object_keterangan') is-invalid @enderror"
             id="object_keterangan"
             name="object_keterangan[]"
@@ -52,7 +52,7 @@
     </div>
 
     <div class="col-md-12 mb-3 multiple-item-container">
-        <label>Komponen Objek (Interests)</label>
+        <label>Komponen Obyek (Interests)</label>
         <button type="button"
             class="btn btn-primary btn-sm float-end add-item-btn"
             data-target="object-interest-item"

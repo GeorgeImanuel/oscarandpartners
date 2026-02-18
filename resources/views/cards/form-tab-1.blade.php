@@ -70,14 +70,14 @@
 
             <div class="col-md-12 mb-3">
                 <label class="form-label"
-                    for="client_id">Nama Client</label>
+                    for="client_id">Nama Tertanggung</label>
                 <select id="client_id"
                     class="form-control create-select2 @error('client_id') is-invalid @enderror"
                     data-existing-id="#existing-client"
                     {{-- data-existing-name="client_id" --}}
                     data-new-id="#client-form-container"
                     {{-- data-new-name="client_name" --}}
-                    data-placeholder="Pilih Nama Client"
+                    data-placeholder="Pilih Nama Tertanggung"
                     {{-- --}}
                     name="client_id"
                     required>

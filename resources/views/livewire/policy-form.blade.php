@@ -351,12 +351,12 @@
                 <div id="object-item-container"
                     class="row multiple-item-container">
                     <div class="col-md mt-2 mb-3">
-                        <h5 class="text-primary">Objek Pertanggungan</h5>
+                        <h5 class="text-primary">Obyek Pertanggungan</h5>
                         <hr class="separator">
                     </div>
                     <div class="col-md-auto mt-2 mb-3">
                         <span class="add-item-btn btn btn-primary float-end"
-                            data-target="item-object"><i class="ico icon-plus me-2"></i> Tambah Objek Pertanggungan</span>
+                            data-target="item-object"><i class="ico icon-plus me-2"></i> Tambah Obyek Pertanggungan</span>
                     </div>
 
                     <div class="col-md-12 mb-3 item-list">
@@ -365,10 +365,10 @@
                             style="display: none">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"
-                                    for="object_id">Nama Objek (Tertanggung) <span class="item-count"></span><span class="text-danger">*</span></label>
+                                    for="object_id">Nama Tertanggung - Obyek <span class="item-count"></span><span class="text-danger">*</span></label>
                                 <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                     name="object_id[]"
-                                    data-placeholder="Pilih Objek">
+                                    data-placeholder="Pilih Obyek">
                                     <option></option>
                                     @foreach ($objects ?? [] as $object)
                                         <option value="{{ $object->id }}">
@@ -382,7 +382,7 @@
                             </div>
                             <div class="col-md-6 mb-3 text-end">
                                 <span class="remove-item-btn btn btn-danger btn-xs"
-                                    style="display:none"><i class="ico icon-trash"></i> Hapus Objek</span>
+                                    style="display:none"><i class="ico icon-trash"></i> Hapus Obyek</span>
                             </div>
                             <div id="object-form-livewire"
                                 class="col-md-12 object-forms-container"
@@ -401,10 +401,10 @@
                                 data-item-index="{{ $index + 1 }}">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek (Tertanggung) <span class="item-count">{{ $index + 1 }}</span><span class="text-danger">*</span></label>
+                                        for="object_id">Nama Tertanggung - Obyek <span class="item-count">{{ $index + 1 }}</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id[]"
-                                        data-placeholder="Pilih Objek"
+                                        data-placeholder="Pilih Obyek"
                                         required>
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
@@ -420,7 +420,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3 text-end order-xs-last">
                                     <span class="remove-item-btn btn btn-danger btn-xs">
-                                        <i class="ico icon-trash"></i> Hapus Objek
+                                        <i class="ico icon-trash"></i> Hapus Obyek
                                     </span>
                                 </div>
 
@@ -434,10 +434,10 @@
                                 data-item-index="1">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"
-                                        for="object_id">Nama Objek (Tertanggung) <span class="item-count">1</span><span class="text-danger">*</span></label>
+                                        for="object_id">Nama Tertanggung - Obyek <span class="item-count">1</span><span class="text-danger">*</span></label>
                                     <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                         name="object_id[]"
-                                        data-placeholder="Pilih Objek"
+                                        data-placeholder="Pilih Obyek"
                                         required>
                                         <option value=""></option>
                                         @foreach ($objects ?? [] as $object)
@@ -452,7 +452,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3 text-end">
                                     <span class="remove-item-btn btn btn-danger btn-xs"
-                                        style="display:none"><i class="ico icon-trash"></i> Hapus Objek
+                                        style="display:none"><i class="ico icon-trash"></i> Hapus Obyek
                                     </span>
                                 </div>
 

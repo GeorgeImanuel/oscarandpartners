@@ -3,11 +3,11 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="coverage_code">Relasi <span class="text-danger">*</span></label>
+            for="coverage_code">Group <span class="text-danger">*</span></label>
         <select class="form-select create-select2 required @error('coverage_code') is-invalid @enderror"
-            data-placeholder="Pilih Relasi"
+            data-placeholder="Pilih Group"
             name="relation_id">
-            <option value="">- Pilih Relasi -</option>
+            <option value="">- Pilih Group -</option>
             @foreach ($relations ?? [] as $relation)
                 <option value="{{ $relation->id }}"
                     {{ isset($client) && $relation->id == $client->relation_id ? 'selected' : (old('relation_id') == $relation->id ? 'selected' : '') }}>
@@ -22,7 +22,7 @@
 
     <div class="col-md-12 mb-3">
         <label class="form-label"
-            for="ended_date">Alamat<span class="text-danger">*</span></label>
+            for="ended_date">Alamat Tertanggung<span class="text-danger">*</span></label>
         <textarea class="form-control required @error('ended_date') is-invalid @enderror"
             name="id_address"
             type="text">{{ isset($client) ? $client->id_address : old('id_address', '') }}</textarea>
