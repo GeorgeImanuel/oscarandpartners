@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id();
             $table->string('policy_number');
             $table->string('currency_code')->nullable();
-            $table->foreign('currency_code')->references('code')->on('currencies')->onDelete('set null');
+            $table->foreign('currency_code')->references('code')->on('currencies')->onUpdate('cascade')->onDelete('restrict');
             $table->date('started_date');
             $table->date('ended_date');
             $table->timestamps();

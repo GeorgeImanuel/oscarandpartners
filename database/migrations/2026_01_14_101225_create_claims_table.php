@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('claims', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
+            $table->foreignId('policy_id')->constrained('policies')->onUpdate('cascade')->onDelete('restrict');
             $table->date('incident_date');
             $table->date('insurance_report_date');
             $table->text('chronology');

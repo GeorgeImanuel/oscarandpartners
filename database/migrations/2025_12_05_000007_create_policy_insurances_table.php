@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('policy_insurances', function (Blueprint $table) {
-            $table->foreignId('policy_id')->constrained()->onDelete('cascade');
-            $table->foreignId('insurance_id')->constrained()->onDelete('cascade');
+            $table->foreignId('policy_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('insurance_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
             $table->boolean('is_main')->default(true);
             $table->decimal('percentage', 8, 7)->default(0)->comment('Share percentage dalam desimal (0.60 = 60%)');
             $table->decimal('tax', 15, 2)->default(0)->comment('Pajak per asuransi');

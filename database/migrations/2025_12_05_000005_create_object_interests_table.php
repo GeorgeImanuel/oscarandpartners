@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('object_interests', function (Blueprint $table) {
-            $table->foreignId('object_id')->constrained('objects')->onDelete('cascade');
-            $table->foreignId('interest_id')->constrained('interests')->onDelete('cascade');
+            $table->foreignId('object_id')->constrained('objects')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('interest_id')->constrained('interests')->onUpdate('cascade')->onDelete('restrict');
             $table->decimal('value', 20, 2)->comment('Nilai interest pada object tertentu');
         });
     }
