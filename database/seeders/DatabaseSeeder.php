@@ -2,20 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Policy;
 use App\Models\Currency;
-use Illuminate\Database\Seeder;
+use App\Models\Policy;
+use App\Models\User;
 use Database\Seeders\CardSeeder;
-use Database\Seeders\ObjectSeeder;
-use Database\Seeders\PolicySeeder;
-use Illuminate\Validation\Rules\In;
+use Database\Seeders\CardStatusSeeder;
 use Database\Seeders\CardTypeSeeder;
 use Database\Seeders\CoverageSeeder;
 use Database\Seeders\CurrencySeeder;
 use Database\Seeders\InterestSeeder;
-use Database\Seeders\CardStatusSeeder;
+use Database\Seeders\ObjectSeeder;
+use Database\Seeders\PolicySeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Validation\Rules\In;
 
 class DatabaseSeeder extends Seeder
 {
@@ -40,13 +40,13 @@ class DatabaseSeeder extends Seeder
         // Application Data Seeders
         $this->call(InterestSeeder::class);
         $this->call(CoverageSeeder::class);
-        $this->call(ObjectSeeder::class);
+        // $this->call(ObjectSeeder::class);
         
         $this->call(InsuranceSeeder::class);
-        $this->call(PolicySeeder::class);
+        // $this->call(PolicySeeder::class);
         $this->call(RelationSeeder::class);
         $this->call(ClientSeeder::class);
-        $this->call(CardSeeder::class);        
-        $this->call(PaymentSeeder::class);
+        // $this->call(CardSeeder::class);        
+        // $this->call(PaymentSeeder::class);
     }
 }
