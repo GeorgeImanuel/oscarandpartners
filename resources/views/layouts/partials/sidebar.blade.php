@@ -95,20 +95,27 @@
                     @endhasanyrole
 
                     <li class="dropdown">
-                        <a class="nav-link menu-title {{ routeActive('reports.*') }}"
-                            href="javascript:void(0)">
+                        <a class="nav-link menu-title {{ routeActive('reports.*') }}" href="javascript:void(0)">
                             <i data-feather="bar-chart-2"></i>
                             <span>Laporan</span>
                         </a>
-                        <ul class="nav-submenu menu-content"
-                            style="display: {{ routeBlock('reports.*') }}">
+
+                        <ul class="nav-submenu menu-content" style="display: {{ routeBlock('reports.*') }}">
+                            
                             <li>
-                                <a href="{{ route('reports.evaluation') }}"
-                                    class="{{ routeActive('reports.evaluation') }}">
+                                <a href="{{ route('reports.evaluation') }}" class="{{ routeActive('reports.evaluation') }}">
                                     <i data-feather="trending-up"></i>
                                     <span>Evaluasi Produksi</span>
                                 </a>
                             </li>
+
+                            <li>
+                                <a href="{{ route('reports.claims') }}" class="{{ routeActive('reports.claims') }}">
+                                    <i data-feather="file-text"></i> 
+                                    <span>Laporan Klaim Tahunan</span>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
 

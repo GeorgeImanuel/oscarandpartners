@@ -79,6 +79,8 @@ Route::group(['middleware' => ['auth:web']], function () {
 
     Route::get('/reports/evaluation', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.evaluation');
     Route::get('/reports/evaluation/data', [App\Http\Controllers\ReportController::class, 'evaluation'])->name('reports.data');
+    Route::get('/reports/claims', [ReportController::class, 'indexClaims'])->name('reports.claims');
+    Route::get('/reports/claims/data', [ReportController::class, 'claims'])->name('reports.claims.data');
 });
 
 

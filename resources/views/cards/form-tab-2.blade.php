@@ -113,8 +113,8 @@
                 $('#policy-form-container select').val('').trigger('change');
                 
                 // Reset totals
-                $('.coverage_percentage_total').text('0.00');
-                $('#insurance_percentage_total').text('0.00');
+                $('.coverage_percentage_total').text('0.00000');
+                $('#insurance_percentage_total').text('0.00000');
             }
         });
 

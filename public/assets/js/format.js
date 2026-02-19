@@ -122,9 +122,9 @@ function validateValues(selector, target, min, max) {
             console.warn("Not valid sum for ", selector, ', total: ', total);
         }
         if ($target.is("input")) {
-            $target.val(total.toFixed(2)).trigger("change");
+            $target.val(total.toFixed(5)).trigger("change");
         } else {
-            $target.text(total.toFixed(2));
+            $target.text(total.toFixed(5));
         }
     });
 

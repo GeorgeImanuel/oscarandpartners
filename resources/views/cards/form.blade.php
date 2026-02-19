@@ -257,7 +257,7 @@
 
                     // Validate total equals 100% (only if new policy form has insurance items)
                     if ($('#new-policy').is(':visible') && hasVisibleInsurance && totalInsurancePercentage !== 100) {
-                        alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
+                        alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(5) + '%', '');
                         console.warn('Insurance percentage validation failed. Total:', totalInsurancePercentage);
                         errors.push({
                             field: '.insurance-percentage',
@@ -283,7 +283,7 @@
 
                     // Validate total is within valid range (only if new policy form has coverages)
                     if ($('#new-policy').is(':visible') && hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
-                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(2) + '%', '');
+                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
                         console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
                         errors.push({
                             field: '.coverage-percentage',

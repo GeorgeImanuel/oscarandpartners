@@ -184,8 +184,13 @@ class CardServiceImplement extends Service implements CardService
         }
     }
 
-    private function findOrCreateRelation(string $relationId): int
+    private function findOrCreateRelation(?string $relationId): ?int
     {
+        if (!$relationId) {
+            return null;
+        }
+
+        // 2. Lanjutkan logika pencarian jika ada isinya
         $relation = $this->relationRepository->find($relationId);
         if (!$relation) {
             $relation = $this->relationRepository->create([
