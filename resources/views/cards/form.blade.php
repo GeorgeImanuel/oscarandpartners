@@ -257,7 +257,7 @@
 
                     // Validate total equals 100% (only if new policy form has insurance items)
                     if ($('#new-policy').is(':visible') && hasVisibleInsurance && totalInsurancePercentage !== 100) {
-                        alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(5) + '%', '');
+                        alertWarning('Total persentase asuransi harus 100%. Saat ini: ' + totalInsurancePercentage.toFixed(2) + '%', '');
                         console.warn('Insurance percentage validation failed. Total:', totalInsurancePercentage);
                         errors.push({
                             field: '.insurance-percentage',

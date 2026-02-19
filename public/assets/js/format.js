@@ -52,9 +52,15 @@ function sumInputValues(selector, target) {
  * @param {*} target
  * @param {*} min
  * @param {*} max
+ * @param {*} decimals - number of decimal places (default: 5)
  * @returns
  */
-function validateValues(selector, target, min, max) {
+function validateValues(selector, target, min, max, decimals) {
+    // Default decimals to 5 if not provided
+    if (typeof decimals === 'undefined') {
+        decimals = 5;
+    }
+    
     // Handle selector - can be id, class, or jQuery object
     var $inputs = selector instanceof jQuery ? selector : $(selector);
     var total = 0;
@@ -122,9 +128,9 @@ function validateValues(selector, target, min, max) {
             console.warn("Not valid sum for ", selector, ', total: ', total);
         }
         if ($target.is("input")) {
-            $target.val(total.toFixed(5)).trigger("change");
+            $target.val(total.toFixed(decimals)).trigger("change");
         } else {
-            $target.text(total.toFixed(5));
+            $target.text(total.toFixed(decimals));
         }
     });
 

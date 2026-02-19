@@ -114,7 +114,7 @@
                 
                 // Reset totals
                 $('.coverage_percentage_total').text('0.00000');
-                $('#insurance_percentage_total').text('0.00000');
+                $('#insurance_percentage_total').text('0.00');
             }
         });
 
@@ -159,10 +159,10 @@
 
         // Listen for changes and sum/validate to be between 0-100
         $(document).on('input change keyup blur', 'input[name^="coverage_percentage"]', function() {
-            validateValues('input[name^="coverage_percentage"]', '.coverage_percentage_total', 0, 100);
+            validateValues('input[name^="coverage_percentage"]', '.coverage_percentage_total', 0, 100, 5);
         });
         $(document).on('input change keyup blur', 'input[name^="insurance_percentage"]', function() {
-            validateValues('input[name^="insurance_percentage"]', '#insurance_percentage_total', 0, 100);
+            validateValues('input[name^="insurance_percentage"]', '#insurance_percentage_total', 0, 100, 2);
         });
         $(document).on('input change keyup blur', 'input[name^="tjh"]', function() {
             // Sum TJH hanya dari policy-form-container, bukan dari seluruh halaman
