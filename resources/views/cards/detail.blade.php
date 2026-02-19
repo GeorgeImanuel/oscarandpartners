@@ -58,9 +58,6 @@
             <a href="{{ route('cards.preview', $card) }}" class="btn btn-primary btn-sm text-nowrap">
                 <i class="fa fa-file-text"></i> Preview Kartu
             </a>
-            <a href="{{ route('cards.edit', $card) }}" class="btn btn-warning btn-sm">
-                <i class="fa fa-edit"></i> Edit
-            </a>
         </div>
     </div>
 
