@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('policy_coverages', function (Blueprint $table) {
-            $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
+            $table->foreignId('policy_id')->constrained('policies')->onUpdate('cascade')->onDelete('cascade');
             $table->string('coverage_code');
-            $table->foreign('coverage_code')->references('code')->on('coverages')->onDelete('cascade');
+            $table->foreign('coverage_code')->references('code')->on('coverages')->onUpdate('cascade')->onDelete('restrict');
             $table->decimal('percentage', 8, 7);
         });
     }

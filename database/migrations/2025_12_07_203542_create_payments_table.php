@@ -8,18 +8,18 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('card_id')->constrained('cards')->onDelete('cascade');
+            $table->foreignId('card_id')->constrained('cards')->onUpdate('cascade')->onDelete('restrict');
             $table->integer('sequence')->comment('Urutan Pembayaran');
-            $table->foreignId('created_by')->constrained('users')->comment('Finance yg buat Request');
+            $table->foreignId('created_by')->constrained('users')->onUpdate('cascade')->onDelete('restrict')->comment('Finance yg buat Request');
             $table->decimal('amount', 20, 2);
             
             // CLIENT PAYMENT
-            $table->foreignId('payment_status_id')->constrained('payment_statuses');
+            $table->foreignId('payment_status_id')->constrained('payment_statuses')->onUpdate('cascade')->onDelete('restrict');
             $table->datetime('deadline_at')->comment('tambah dari tanggal start +30');
             $table->datetime('paid_at')->nullable();
             $table->decimal('paid_amount', 20, 2)->nullable()->comment('Jumlah yg dibayar nasabah dalam Rp');            
             // INSURANCE PAYMENT
-            $table->foreignId('insurance_payment_status_id')->nullable()->constrained('payment_statuses');
+            $table->foreignId('insurance_payment_status_id')->nullable()->constrained('payment_statuses')->onUpdate('cascade')->onDelete('restrict');
             $table->datetime('insurance_paid_at')->nullable()->comment('STOP TIMER 24 JAM');
             $table->decimal('insurance_paid_amount', 20, 2)->nullable()->comment('Jumlah yg dibayar nasabah dalam Rp');
             

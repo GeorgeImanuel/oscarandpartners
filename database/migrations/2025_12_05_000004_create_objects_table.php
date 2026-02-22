@@ -10,13 +10,11 @@ return new class extends Migration
     {
         Schema::create('objects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('object_occupation_id')
-                ->constrained('object_occupation')
-                ->onDelete('cascade'); // Jenis Objek
-            $table->string('name'); // Nama Tertanggung
-            $table->integer('tjh_value')->nullable(); // Nilai TJH
-            $table->text('keterangan'); // Alamat / Jenis Kendaraan
-            $table->decimal('tjh', 20, 2)->default(0)->nullable();
+            $table->foreignId('object_occupation_id')->constrained('object_occupation')->onUpdate('cascade')->onDelete('restrict')->comment('Jenis Objek');
+            $table->string('name')->comment('Nama Tertanggung');
+            $table->integer('tjh_value')->nullable()->comment('Nilai TJH'); 
+            $table->text('keterangan')->comment('Alamat / Jenis Kendaraan'); 
+            $table->decimal('tjh', 20, 2)->default(0)->nullable()->comment('TJH');
             $table->timestamps();
         });
     }

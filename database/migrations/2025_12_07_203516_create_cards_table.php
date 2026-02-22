@@ -8,13 +8,13 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('clients');
-            $table->foreignId('policy_id')->constrained('policies')->onDelete('cascade');
-            $table->foreignId('card_type_id')->constrained('card_types');
-            $table->foreignId('card_status_id')->constrained('card_statuses');
-            $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onDelete('set null');
-            $table->foreignId('payment_type_id')->constrained('payment_types');
-            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('client_id')->constrained('clients')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('policy_id')->constrained('policies')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('card_type_id')->constrained('card_types')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('card_status_id')->constrained('card_statuses')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('parent_card_id')->nullable()->constrained('cards')->onUpdate('cascade')->onDelete('set null');
+            $table->foreignId('payment_type_id')->constrained('payment_types')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreignId('created_by')->constrained('users')->onUpdate('cascade')->onDelete('restrict');
             
             $table->bigInteger('object_value')->comment('Harga Asset dari object_component');
             $table->decimal('premi_percentages', 8, 7);
