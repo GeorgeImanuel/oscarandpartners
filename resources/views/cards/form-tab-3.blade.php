@@ -279,54 +279,72 @@
 
                         {{-- Dynamic Insurance List Container --}}
                         <div id="insurance-list-container">
-                            {{-- Server-side rendered (for edit mode) --}}
-                            @if (isset($card->policy) && $card->policy->policyInsurances->count() > 0)
-                                @foreach ($card->policy->policyInsurances->sortByDesc('percentage') as $index => $polIns)
-                                    <div class="row g-2 align-items-center mb-3 insurance-item">
-                                        {{-- Kolom 1: Nama Asuransi --}}
-                                        <div class="col-md-5">
-                                            <label class="small text-muted mb-0">Asuransi</label>
+                        {{-- Server-side rendered (for edit mode) --}}
+                        @if (isset($card->policy) && $card->policy->policyInsurances->count() > 0)
+                            @foreach ($card->policy->policyInsurances->sortByDesc('percentage') as $index => $polIns)
+                                <div class="row g-2 align-items-center mb-3 insurance-item">
+                                    {{-- Kolom 1: Nama Asuransi (Ubah jadi col-md-4) --}}
+                                    <div class="col-md-4">
+                                        <label class="small text-muted mb-0">Asuransi</label>
+                                        <input type="text"
+                                            class="form-control form-control-sm bg-white"
+                                            value="{{ $polIns->insurance->name ?? '-' }}"
+                                            readonly>
+                                    </div>
+
+                                    {{-- Kolom 2: Share % (Tetap col-md-3) --}}
+                                    <div class="col-md-3">
+                                        <label class="small text-muted mb-0">Share</label>
+                                        <div class="input-group input-group-sm">
                                             <input type="text"
-                                                class="form-control form-control-sm bg-white"
-                                                value="{{ $polIns->insurance->name ?? '-' }}"
+                                                class="form-control text-center bg-white"
+                                                value="{{ ($polIns->percentage ?? 0) * 100 }}"
                                                 readonly>
-                                        </div>
-
-                                        {{-- Kolom 2: Share % --}}
-                                        <div class="col-md-3">
-                                            <label class="small text-muted mb-0">Share</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text"
-                                                    class="form-control text-center bg-white"
-                                                    value="{{ ($polIns->percentage ?? 0) * 100 }}"
-                                                    readonly>
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                        </div>
-
-                                        {{-- Kolom 3: Input Pajak (Rp) --}}
-                                        <div class="col-md-4">
-                                            <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text currency-label">Rp</span>
-                                                <input type="number"
-                                                    name="insurance_tax[{{ $polIns->insurance_id }}]"
-                                                    class="form-control insurance-tax-per-item"
-                                                    data-insurance-id="{{ $polIns->insurance_id }}"
-                                                    placeholder="0"
-                                                    value="0">
-                                            </div>
+                                            <span class="input-group-text">%</span>
                                         </div>
                                     </div>
-                                    @if (!$loop->last)
-                                        <hr class="my-2 text-muted">
-                                    @endif
-                                @endforeach
-                            @else
-                                <div class="text-center text-muted small"
-                                    id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>
-                            @endif
-                        </div>
+
+                                    {{-- Kolom 3: Input Pajak Persen & Nominal (Ubah jadi col-md-5) --}}
+                                    <div class="col-md-5">
+                                        <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
+                                        <div class="row g-1">
+                                            <div class="col-5">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" 
+                                                        class="form-control insurance-tax-percent-per-item check-negative" 
+                                                        data-insurance-id="{{ $polIns->insurance_id }}" 
+                                                        placeholder="0" step="0.00001" min="0" max="100">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-7">
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text currency-label">Rp</span>
+                                                    {{-- Value nominal tetap diambil dari database untuk mode Edit --}}
+                                                    <input type="number"
+                                                        name="insurance_tax[{{ $polIns->insurance_id }}]"
+                                                        class="form-control insurance-tax-per-item check-negative"
+                                                        data-insurance-id="{{ $polIns->insurance_id }}"
+                                                        placeholder="0"
+                                                        value="{{ old('insurance_tax.'.$polIns->insurance_id, 0) }}"> {{-- Sesuaikan variabel value ini dengan struktur data pajakmu jika ada --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                                            <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (!$loop->last)
+                                    <hr class="my-2 text-muted">
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="text-center text-muted small"
+                                id="no-insurance-msg">Tidak ada data asuransi terhubung.</div>
+                        @endif
+                    </div>
 
                     </div>
                 </div>
@@ -542,6 +560,50 @@
                     if (typeof window.toggleNegativeWarning === 'function') {
                         window.toggleNegativeWarning($('#discount_percentage')[0]);
                     }
+                }
+            }
+        }
+        
+        // === HELPER FUNCTION: Sync Tax Percentage & Value ===
+        function sync_insurance_tax($row, source) {
+            // 1. Ambil nilai dari Total Komisi (Output)
+            var baseTotal = parseFloat($('#commision_bruto').val()) || 0; 
+            
+            // 2. Ambil Persentase Asuransi (Share) di baris ini (PERBAIKAN SELECTOR)
+            var shareVal = parseFloat($row.find('.col-md-3 input').first().val()) || 0; 
+            
+            // 3. Dasar pengali pajaknya = Total Komisi * (Share % Asuransi)
+            var baseTaxValue = baseTotal * (shareVal / 100); 
+
+            var $percentInput = $row.find('.insurance-tax-percent-per-item');
+            var $valueInput = $row.find('.insurance-tax-per-item');
+
+            if (baseTaxValue !== 0) {
+                if (source === 'percentage') {
+                    // User input %, hitung nominal Rupiah/USD
+                    var pct = parseFloat($percentInput.val()) || 0;
+                    var val = baseTaxValue * (pct / 100);
+                    $valueInput.val(val.toFixed(2)); // Set ke 2 desimal
+                    
+                    if (typeof window.toggleNegativeWarning === 'function') {
+                        window.toggleNegativeWarning($valueInput[0]);
+                    }
+                } else if (source === 'value') {
+                    // User input nominal Rupiah/USD, hitung %
+                    var val = parseFloat($valueInput.val()) || 0;
+                    var pct = (val / baseTaxValue) * 100;
+                    $percentInput.val(pct.toFixed(5)); // Set ke 5 desimal
+                    
+                    if (typeof window.toggleNegativeWarning === 'function') {
+                        window.toggleNegativeWarning($percentInput[0]);
+                    }
+                }
+            } else {
+                // Jika baseTaxValue 0 (Total Komisi 0), set hasil 0
+                if (source === 'percentage') {
+                    $valueInput.val(0);
+                } else {
+                    $percentInput.val(0);
                 }
             }
         }
@@ -779,9 +841,8 @@
                     $cloned.find('.is-main-checkbox').closest('div[class^="col-"]').remove();
 
                     var $colName = $cloned.find('select[name="insurance_id[]"]').closest('div[class^="col-"]');
-                    $colName.removeClass().addClass('col-md-5');
+                    $colName.removeClass().addClass('col-md-4'); 
 
-                    // B. Kolom Share -> Ubah jadi col-md-3
                     var $colShare = $cloned.find('input[name="insurance_percentage[]"]').closest('div[class^="col-"]');
                     $colShare.removeClass().addClass('col-md-3');
 
@@ -803,19 +864,32 @@
                     });
                     $cloned.find('.select2-container').remove();
 
-                    // INJECT TAX INPUT (KHUSUS TAB 3)
-                    // 🔥 RESTORE NILAI PAJAK DARI SAVED VALUES
+                    
                     var oldTaxVal = savedTaxValues[originalInsuranceId] || 0;
                     var taxHtml = `
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-5 mb-2">
                             <label class="small text-muted mb-0 fw-bold">Pajak (Input)</label>
-                            <div class="input-group input-group-sm">
-                                <span class="input-group-text currency-label">Rp</span>
-                                <input type="number" 
-                                    data-insurance-id="${originalInsuranceId}"
-                                    class="form-control insurance-tax-per-item" 
-                                    value="${oldTaxVal}" 
-                                    placeholder="0">
+                            <div class="row g-1">
+                                <div class="col-5">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" 
+                                            class="form-control insurance-tax-percent-per-item check-negative" 
+                                            data-insurance-id="${originalInsuranceId}" 
+                                            placeholder="0" step="0.00001" min="0" max="100">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text currency-label">Rp</span>
+                                        <input type="number" 
+                                            name="insurance_tax[${originalInsuranceId}]"
+                                            data-insurance-id="${originalInsuranceId}"
+                                            class="form-control insurance-tax-per-item check-negative" 
+                                            value="${oldTaxVal}" 
+                                            placeholder="0">
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
                                 <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
@@ -875,8 +949,17 @@
             };
 
             window.attachTaxInputListeners = function() {
-                $('.insurance-tax-per-item').off('input blur keyup').on('input blur keyup', function() {
+                $('.insurance-tax-per-item, .insurance-tax-percent-per-item').off('input blur keyup').on('input blur keyup', function() {
                     toggleNegativeWarning(this);
+                    
+                    var $row = $(this).closest('.insurance-item'); 
+                    
+                    if ($(this).hasClass('insurance-tax-percent-per-item')) {
+                        sync_insurance_tax($row, 'percentage');
+                    } else {
+                        sync_insurance_tax($row, 'value');
+                    }
+
                     syncTaxToHiddenInputs();
                     if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
                     if (typeof update_payment === 'function') update_payment();
