@@ -88,25 +88,4 @@ class UpdatePoliciesRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            // Validasi asuransi
-            $insurances = $this->input('insurance_id', []);
-            $newInsurances = $this->input('insurance_new_name', []);
-            $isMain = $this->input('is_main', []);
-
-            // Cek apakah ada input asuransi (baik ID maupun Nama Baru)
-            $hasInsurance = false;
-            foreach ($insurances as $val) { if (!empty($val)) $hasInsurance = true; }
-            foreach ($newInsurances as $val) { if (!empty($val)) $hasInsurance = true; }
-
-            if ($hasInsurance) {
-                // Validasi manual: Pastikan ada yang dicentang sebagai main
-                if (empty($isMain)) {
-                    $validator->errors()->add('is_main', 'Salah satu asuransi harus dipilih sebagai Asuransi Utama.');
-                }
-            }
-        });
-    }
 }

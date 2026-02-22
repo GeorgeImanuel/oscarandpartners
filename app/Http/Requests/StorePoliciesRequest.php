@@ -86,31 +86,4 @@ class StorePoliciesRequest extends FormRequest
         ];
     }
 
-    /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            // Validasi asuransi
-            $insurances = $this->input('insurance_id', []);
-            $newInsurances = $this->input('insurance_new_name', []);
-            $isMain = $this->input('is_main', []);
-
-            // Cek apakah ada data asuransi yang diinput
-            $hasInsurance = false;
-            foreach ($insurances as $val) { if (!empty($val)) $hasInsurance = true; }
-            foreach ($newInsurances as $val) { if (!empty($val)) $hasInsurance = true; }
-
-            if ($hasInsurance) {
-                // Jika ada asuransi, pastikan ada yang dipilih sebagai utama
-                if (empty($isMain)) {
-                    $validator->errors()->add('is_main', 'Salah satu asuransi harus dipilih sebagai Asuransi Utama.');
-                }
-            }
-        });
-    }
 }

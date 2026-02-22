@@ -581,16 +581,6 @@
                 return false; 
             }
 
-            const mainCheckboxes = document.querySelectorAll('.is-main-checkbox:checked');
-            if (mainCheckboxes.length === 0) {
-                e.preventDefault(); e.stopPropagation();
-                const errorDiv = document.getElementById('percentage-error');
-                errorDiv.textContent = 'Gagal Simpan: Harap pilih salah satu sebagai Asuransi Utama.';
-                errorDiv.style.display = 'block';
-                document.getElementById('percentage-info').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return false;
-            }
-
             const total = updatePercentageTotal(); 
 
             if (total !== 100) {
