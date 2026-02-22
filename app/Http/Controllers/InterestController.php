@@ -89,8 +89,12 @@ class InterestController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->interestService->delete($id);
-        return redirect()->route('interests.index')
-            ->with('success', 'Interest berhasil dihapus.');
+        try {
+            $this->interestService->delete($id);
+            return redirect()->route('interests.index')
+                ->with('success', 'Interest berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

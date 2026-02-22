@@ -31,5 +31,22 @@ class CardTypeServiceImplement extends Service implements CardTypeService
         $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $cardType = $this->mainRepository->find($id);
+        
+        if (!$cardType) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if card type is used in cards
+        if (\App\Models\Card::where('card_type_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

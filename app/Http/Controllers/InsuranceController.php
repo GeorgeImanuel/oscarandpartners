@@ -74,7 +74,11 @@ class InsuranceController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->insuranceService->delete($id);
-        return redirect()->route('insurances.index')->with('success', 'Berhasil menghapus data insurance.');
+        try {
+            $this->insuranceService->delete($id);
+            return redirect()->route('insurances.index')->with('success', 'Berhasil menghapus data insurance.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

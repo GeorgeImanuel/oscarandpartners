@@ -85,7 +85,11 @@ class ClientController extends Controller
      */
     public function destroy(\App\Models\Client $client)
     {
-        $this->clientService->deleteClient($client->id);
-        return redirect()->route('clients.index')->with('success', 'Berhasil menghapus client.');
+        try {
+            $this->clientService->deleteClient($client->id);
+            return redirect()->route('clients.index')->with('success', 'Berhasil menghapus client.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -83,7 +83,12 @@ class ClientServiceImplement extends Service implements ClientService{
         $client = $this->mainRepository->find($id);
         
         if (!$client) {
-            return false;
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if client has cards
+        if (\App\Models\Card::where('client_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
         }
 
         // Delete user (will cascade delete client)

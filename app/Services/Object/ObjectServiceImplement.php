@@ -173,8 +173,18 @@ class ObjectServiceImplement extends Service implements ObjectService
 
     public function delete($id)
     {
-        // Cukup panggil delete pada induknya. 
-        // MySQL akan otomatis menghapus data di 'policies' dan 'object_interests'
+        $object = $this->mainRepository->find($id);
+        
+        if (!$object) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if object is used in policy_objects
+        if (\App\Models\PolicyObject::where('object_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        // MySQL akan otomatis menghapus data di 'object_interests' karena cascade
         return $this->mainRepository->delete($id);
     }
 }

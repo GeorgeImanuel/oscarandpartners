@@ -171,4 +171,43 @@ class PolicyServiceImplement extends Service implements PolicyService
             }
         }
     }
+
+    /**
+     * Delete policy with relationship check
+     */
+    public function delete($id)
+    {
+        $policy = $this->mainRepository->find($id);
+        
+        if (!$policy) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if policy has cards
+        if (\App\Models\Card::where('policy_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        // Check if policy has claims
+        if (\App\Models\Claim::where('policy_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        // Delete related records first
+        DB::transaction(function () use ($policy) {
+            // Delete policy insurances
+            \App\Models\PolicyInsurance::where('policy_id', $policy->id)->delete();
+            
+            // Delete policy coverages
+            \App\Models\PolicyCoverage::where('policy_id', $policy->id)->delete();
+            
+            // Delete policy objects
+            \App\Models\PolicyObject::where('policy_id', $policy->id)->delete();
+            
+            // Delete the policy
+            $policy->delete();
+        });
+
+        return true;
+    }
 }

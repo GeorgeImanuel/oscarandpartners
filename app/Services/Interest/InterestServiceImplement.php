@@ -37,4 +37,23 @@ class InterestServiceImplement extends Service implements InterestService{
     {
         return $this->mainRepository->all();
     }
+
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $interest = $this->mainRepository->find($id);
+        
+        if (!$interest) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if interest is used in object_interests
+        if (\App\Models\ObjectInterest::where('interest_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

@@ -30,5 +30,22 @@ class PaymentTypeServiceImplement extends Service implements PaymentTypeService{
       $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $paymentType = $this->mainRepository->find($id);
+        
+        if (!$paymentType) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if payment type is used in cards
+        if (\App\Models\Card::where('payment_type_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

@@ -30,5 +30,22 @@ class CoverageServiceImplement extends Service implements CoverageService{
       $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $coverage = $this->mainRepository->find($id);
+        
+        if (!$coverage) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if coverage is used in policy_coverages
+        if ($coverage->policyCoverages()->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

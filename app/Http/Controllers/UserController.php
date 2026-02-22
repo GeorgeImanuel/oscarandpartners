@@ -82,8 +82,12 @@ class UserController extends Controller
      */
     public function destroy(\App\Models\User $user)
     {
-        $this->userService->deleteUser($user->id);
-        return redirect()->route('users.index')->with('success', 'Berhasil menghapus user.');
+        try {
+            $this->userService->deleteUser($user->id);
+            return redirect()->route('users.index')->with('success', 'Berhasil menghapus user.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function profile()

@@ -152,8 +152,12 @@ class CardController extends Controller
      */
     public function destroy(Card $productionCard)
     {
-        $this->cardService->delete($productionCard->id);
-        return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
+        try {
+            $this->cardService->delete($productionCard->id);
+            return redirect()->route('cards.index')->with('success', 'Berhasil menghapus kartu produksi.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

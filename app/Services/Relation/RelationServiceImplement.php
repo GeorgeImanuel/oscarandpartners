@@ -31,5 +31,22 @@ class RelationServiceImplement extends Service implements RelationService
         $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $relation = $this->mainRepository->find($id);
+        
+        if (!$relation) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if relation is used in clients
+        if (\App\Models\Client::where('relation_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

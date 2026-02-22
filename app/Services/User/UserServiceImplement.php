@@ -106,6 +106,27 @@ class UserServiceImplement extends Service implements UserService{
      */
     public function deleteUser($id)
     {
+        $user = $this->mainRepository->find($id);
+        
+        if (!$user) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if user has client
+        if ($user->client) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        // Check if user has created cards
+        if (\App\Models\Card::where('created_by', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        // Check if user has created payments
+        if (\App\Models\Payment::where('created_by', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
         return $this->mainRepository->delete($id);
     }
 }

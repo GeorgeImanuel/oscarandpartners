@@ -90,8 +90,12 @@ class ObjectOccupationController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->objectOccupationService->delete($id);
-        return redirect()->route('object-occupations.index')
-            ->with('success', 'Objek occupation berhasil dihapus.');
+        try {
+            $this->objectOccupationService->delete($id);
+            return redirect()->route('object-occupations.index')
+                ->with('success', 'Objek occupation berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

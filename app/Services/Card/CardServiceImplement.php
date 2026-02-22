@@ -495,4 +495,26 @@ class CardServiceImplement extends Service implements CardService
     {
         return $this->mainRepository->getAllWithFilter($data);
     }
+
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $card = $this->mainRepository->find($id);
+        
+        if (!$card) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        $hasPaidPayment = $card->payments()->where('payment_status_id', 2)->exists();
+
+        if ($hasPaidPayment) {
+            throw new \Exception('Tidak bisa hapus data, karena sudah ada riwayat pembayaran yang Lunas.');
+        }
+
+        $card->payments()->delete();
+
+        return $this->mainRepository->delete($id);
+    }
 }

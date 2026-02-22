@@ -30,5 +30,22 @@ class InsuranceServiceImplement extends Service implements InsuranceService{
       $this->mainRepository = $mainRepository;
     }
 
-    // Define your custom methods :)
+    /**
+     * Override delete method to check relationships
+     */
+    public function delete($id)
+    {
+        $insurance = $this->mainRepository->find($id);
+        
+        if (!$insurance) {
+            throw new \Exception('Data tidak ditemukan.');
+        }
+
+        // Check if insurance is used in policy_insurances
+        if (\App\Models\PolicyInsurance::where('insurance_id', $id)->count() > 0) {
+            throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
+        }
+
+        return $this->mainRepository->delete($id);
+    }
 }

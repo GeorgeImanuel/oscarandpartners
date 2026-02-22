@@ -157,9 +157,13 @@ class ObjectController extends Controller
      */
     public function destroy($id)
     {
-        // PASTI-KAN memanggil SERVICE, bukan repository
-        $this->objectService->delete($id); 
-        
-        return redirect()->route('objects.index')->with('success', 'Berhasil dihapus');
+        try {
+            // PASTI-KAN memanggil SERVICE, bukan repository
+            $this->objectService->delete($id); 
+            
+            return redirect()->route('objects.index')->with('success', 'Berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

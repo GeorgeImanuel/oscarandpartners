@@ -71,9 +71,14 @@ class CurrencyController extends Controller
 
     public function destroy(Currency $currency)
     {
-        $this->currencyService->delete($currency->code);
-        
-        return redirect()->route('currencies.index')
-            ->with('success', 'Mata uang berhasil dihapus.');
+        try {
+            $this->currencyService->delete($currency->code);
+            
+            return redirect()->route('currencies.index')
+                ->with('success', 'Mata uang berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
     }
 }

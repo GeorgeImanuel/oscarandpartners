@@ -74,7 +74,11 @@ class RelationController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->relationService->delete($id);
-        return redirect()->route('relations.index')->with('success', 'Berhasil menghapus data relation.');
+        try {
+            $this->relationService->delete($id);
+            return redirect()->route('relations.index')->with('success', 'Berhasil menghapus data relation.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

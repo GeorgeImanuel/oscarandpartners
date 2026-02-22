@@ -74,7 +74,11 @@ class CoverageController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->coverageService->delete($id);
-        return redirect()->route('coverages.index')->with('success', 'Berhasil menghapus data coverage.');
+        try {
+            $this->coverageService->delete($id);
+            return redirect()->route('coverages.index')->with('success', 'Berhasil menghapus data coverage.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }
