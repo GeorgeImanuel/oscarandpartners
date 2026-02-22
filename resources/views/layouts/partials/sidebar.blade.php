@@ -190,14 +190,14 @@
 
                     <li class="sidebar-main-title">
                         <div>
-                            <h6>Objek</h6>
+                            <h6>Obyek</h6>
                         </div>
                     </li>
                     <li class="dropdown">
                         <a class="nav-link menu-title link-nav {{ routeActive('objects.index') }}"
-                            href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Objek</span></a>
+                            href="{{ route('objects.index') }}"><i data-feather="package"></i><span>Obyek</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('object-occupations.index') }}"
-                            href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Objek Okupasi</span></a>
+                            href="{{ route('object-occupations.index') }}"><i data-feather="layers"></i><span>Obyek Okupasi</span></a>
                         <a class="nav-link menu-title link-nav {{ routeActive('interests.index') }}"
                             href="{{ route('interests.index') }}"><i data-feather="box"></i><span>Interest</span></a>
                     </li>

@@ -150,7 +150,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header pb-0">
-                    <h5><i class="fa fa-cube me-2"></i>Daftar Objek & Nilai Pertanggungan (TSI)</h5>
+                    <h5><i class="fa fa-cube me-2"></i>Daftar Obyek & Nilai Pertanggungan (TSI)</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -158,7 +158,7 @@
                             <thead class="bg-light">
                                 <tr class="text-center">
                                     {{-- Lebar kolom disesuaikan karena keterangan sudah pindah ke sini --}}
-                                    <th width="30%">Nama Objek & Keterangan</th>
+                                    <th width="30%">Nama Obyek & Keterangan</th>
                                     <th width="20%">Okupasi</th>
                                     <th width="25%">Interest Pertanggungan</th>
                                     <th width="25%">Nilai Pertanggungan (TSI)</th>

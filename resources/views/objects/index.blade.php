@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title')Objek Asuransi
+@section('title')Obyek Asuransi
 @endsection
 
 @push('css')
@@ -10,9 +10,9 @@
 @section('content')
 	@component('components.breadcrumb')
 	@slot('breadcrumb_title')
-	<h3>Daftar Objek Asuransi</h3>
+	<h3>Daftar Obyek Asuransi</h3>
 	@endslot
-	<li class="breadcrumb-item">Objek</li>
+	<li class="breadcrumb-item">Obyek</li>
 	<li class="breadcrumb-item active">Daftar</li>
 	@endcomponent
 
@@ -22,9 +22,9 @@
 				<div class="card">
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
-							<h5> Daftar Objek Asuransi</h5>
+							<h5> Daftar Obyek Asuransi</h5>
 							<a href="{{ route('objects.create') }}" class="btn btn-primary">
-								<i class="icon-plus me-2"></i>Tambah Objek
+								<i class="icon-plus me-2"></i>Tambah Obyek
 							</a>
 						</div>
 					</div>
@@ -48,7 +48,7 @@
 								<thead>
 									<tr>
 										<th>No</th>
-										<th>Objek Okupasi</th>
+										<th>Obyek Okupasi</th>
 										<th>Nama</th>
 										<th>TJH</th>
 										<th>Keterangan</th>
@@ -83,7 +83,7 @@
 										</tr>
 									@empty
 										<tr>
-											<td colspan="5" class="text-center">Tidak ada data objek</td>
+											<td colspan="5" class="text-center">Tidak ada data obyek</td>
 										</tr>
 									@endforelse
 								</tbody>

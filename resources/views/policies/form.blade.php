@@ -116,16 +116,16 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5>Objek Pertanggungan</h5>
-                        <small class="text-muted">Pilih satu atau lebih objek</small>
+                        <h5>Obyek Pertanggungan</h5>
+                        <small class="text-muted">Pilih satu atau lebih obyek</small>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" id="add-object-btn">
-                        <i class="icon-plus me-2"></i>Tambah Objek
+                        <i class="icon-plus me-2"></i>Tambah Obyek
                     </button>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-primary d-flex justify-content-between align-items-center mb-3" role="alert" id="object-value-info" style="display: none;">
-                        <span>Total Nilai Objek: <strong><span id="total-object-value">0</span></strong></span>
+                        <span>Total Nilai Obyek: <strong><span id="total-object-value">0</span></strong></span>
                     </div>
 
                     <div id="objects-container">
@@ -135,9 +135,9 @@
                                 <div class="object-row mb-3 p-3 border rounded" data-index="{{ $index }}">
                                     <div class="row align-items-end">
                                         <div class="col-md-6 mb-2 mb-md-0">
-                                            <label class="form-label">Objek {{ $index + 1 }} <span class="text-danger">*</span></label>
+                                            <label class="form-label">Obyek {{ $index + 1 }} <span class="text-danger">*</span></label>
                                             <select class="form-select object-select" name="object_id[]" style="width: 100%;" required>
-                                                <option value="">- Pilih Objek -</option>
+                                                <option value="">- Pilih Obyek -</option>
                                                 @foreach($objects as $item)
                                                     {{-- PERBAIKAN 1: Ambil sum value dari objectInterests --}}
                                                     <option value="{{ $item->id }}" 
@@ -149,7 +149,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-2 mb-md-0">
-                                            <label class="form-label">Nilai Objek (Estimasi)</label>
+                                            <label class="form-label">Nilai Obyek (Estimasi)</label>
                                             {{-- PERBAIKAN 2: Tampilkan sum value dari objectInterests --}}
                                             <input type="text" class="form-control object-value-display" 
                                                 value="{{ number_format($obj->objectInterests->sum('value'), 0, ',', '.') }}" 

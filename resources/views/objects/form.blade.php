@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Object')
+@section('title', 'Obyek')
 
 @push('css')
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/select2.css') }}">
@@ -10,9 +10,9 @@
     <div class="d-flex justify-content-between align-items-center">
         @component('components.breadcrumb')
             @slot('breadcrumb_title')
-            <h3>{{ isset($object) ? 'Edit' : 'Tambah'  }} Object</h3>
+            <h3>{{ isset($object) ? 'Edit' : 'Tambah'  }} Obyek</h3>
             @endslot
-            <li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Object</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Obyek</a></li>
             <li class="breadcrumb-item active">{{ isset($object) ? 'Edit' : 'Tambah'  }}</li>
         @endcomponent
         <div class="d-flex gap-2">
@@ -53,15 +53,15 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h5>{{ isset($object) ? 'Edit' : 'Tambah'  }} Object</h5>
+                    <h5>{{ isset($object) ? 'Edit' : 'Tambah'  }} Obyek</h5>
                 </div>
                 <div class="card-body row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="object_occupation_id">Objek Okupasi<span class="text-danger">*</span></label>
+                        <label class="form-label" for="object_occupation_id">Obyek Okupasi<span class="text-danger">*</span></label>
                         <div class="d-flex gap-2">
                             <div class="flex-grow-1">
                                 <select class="form-select create-select2 @error('object_occupation_id') is-invalid @enderror" name="object_occupation_id" id="object_occupation_id" required style="width: 100%;">
-                                    <option value="">- Pilih Objek Okupasi -</option>
+                                    <option value="">- Pilih Obyek Okupasi -</option>
                                     @foreach ($objectOccupations as $occupation)
                                         <option value="{{ $occupation->id }}" {{ isset($object) && $object->object_occupation_id == $occupation->id ? 'selected' : (old('object_occupation_id') == $occupation->id ? 'selected' : '') }}>
                                             {{ $occupation->name }}
@@ -106,8 +106,8 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label" for="kqqqeterangan">Keterangan<span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('keterangan') is-invalid @enderror" id="keterangan" name="keterangan" rows="3" placeholder="Contoh: Jl. Buntu no.12, Jakarta Selatan" required>{{ isset($object) ? $object->keterangan : old('keterangan', '') }}</textarea>
+                        <label class="form-label" for="keterangan">Obyek Pertanggungan<span class="text-danger">*</span></label>
+                        <textarea class="form-control @error('keterangan') is-invalid @enderror" id="keterangan" name="keterangan" rows="3" placeholder="Contoh: &#10;Jl. Buntu no.12, Jakarta Selatan.&#10;Yamaha Gear 125 - H 1234 AB" required>{{ isset($object) ? $object->keterangan : old('keterangan', '') }}</textarea>
                         @error('keterangan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -118,7 +118,7 @@
             <!-- Interests Section -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Komponen Objek (Interest)</h5>
+                    <h5>Komponen Obyek (Interest)</h5>
                     <button type="button" class="btn btn-primary btn-sm" id="add-interest-btn">
                         <i class="icon-plus me-2"></i>Tambah Interest
                     </button>

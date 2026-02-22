@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title')Detail Objek Asuransi
+@section('title')Detail Obyek Asuransi
 @endsection
 
 @push('css')
@@ -10,9 +10,9 @@
 	<div class="d-flex justify-content-between align-items-center">
 		@component('components.breadcrumb')
 			@slot('breadcrumb_title')
-			<h3>Detail Objek Asuransi</h3>
+			<h3>Detail Obyek Asuransi</h3>
 			@endslot
-			<li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Objek</a></li>
+			<li class="breadcrumb-item"><a href="{{ route('objects.index') }}">Obyek</a></li>
 			<li class="breadcrumb-item active">Detail</li>
 		@endcomponent
 		<div class="d-flex gap-2">
@@ -31,7 +31,7 @@
 				<div class="card">
 					<div class="card-header pb-0">
 						<div class="d-flex justify-content-between align-items-center">
-							<h5>Informasi Objek</h5>
+							<h5>Informasi Obyek</h5>
 						</div>
 					</div>
 					<div class="card-body">
@@ -40,11 +40,11 @@
 								<table class="table table-borderless">
 									<tbody>
 										<tr>
-											<th>Objek Okupasi</th>
+											<th>Obyek Okupasi</th>
 											<td>{{ $object->objectOccupation->name ?? '-' }}</td>
 										</tr>
 										<tr>
-											<th>Nama Objek</th>
+											<th>Nama Obyek</th>
 											<td>{{ $object->name }}</td>
 										</tr>
 										<tr>
@@ -65,7 +65,7 @@
 				<!-- Interests Section -->
 				<div class="card">
 					<div class="card-header pb-0">
-						<h5>Komponen Objek (Interests)</h5>
+						<h5>Komponen Obyek (Interests)</h5>
 					</div>
 					<div class="card-body">
 					@if($object->objectInterests && $object->objectInterests->count() > 0)
