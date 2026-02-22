@@ -119,7 +119,15 @@
                                             <tr>
                                                 <td class="fw-bold">Obyek Asuransi</td>
                                                 <td>:</td>
-                                                <td>{{ $card->policy->policyObjects->first()?->object?->name ?? '-' }} - {{ $card->policy->policyObjects->first()?->object?->keterangan ?? '-' }}</td>
+                                                <td>
+                                                    @if($card->policy && $card->policy->policyObjects->count() > 0)
+                                                        @foreach($card->policy->policyObjects as $polObj)
+                                                            {{ $polObj->object->name ?? '-' }} - {{ $polObj->object->keterangan ?? '-' }} <br>
+                                                        @endforeach
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bold">Periode</td>
@@ -578,8 +586,14 @@
 
     @push('scripts')
         <script>
-            // --- VARIABEL GLOBAL UNTUK PRINT ---
-            var objectName = "{{ strtoupper($card->policy->policyObjects->first()?->object?->name ?? '-') }}";
+            @php
+                // Gabungkan semua nama obyek dipisahkan dengan koma
+                $allObjects = $card->policy->policyObjects->map(function($po) {
+                    return $po->object->name ?? '-';
+                })->implode(', ');
+            @endphp
+
+            var objectName = "{{ strtoupper($allObjects ?: '-') }}";
             var policyNo = "{{ $card->policy->policy_number ?? '-' }}";
             var clientName = "{{ $card->client->id_name ?? $card->client->user->name ?? '-' }}";
 

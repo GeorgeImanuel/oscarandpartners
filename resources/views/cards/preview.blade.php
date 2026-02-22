@@ -209,7 +209,17 @@
                 <span class="section-number">3</span>
                 <span class="info-label">Obyek Asuransi</span>
                 <span class="info-separator">:</span>
-                <span class="info-value">{{ $productionCard->policy->policyObjects->first()?->object?->ObjectOccupation?->name ?? '-' }} - {{ $productionCard->policy->policyObjects->first()?->object?->keterangan ?? '-' }}</span>
+                <div class="info-value">
+                    @if($productionCard->policy && $productionCard->policy->policyObjects->count() > 0)
+                        @foreach($productionCard->policy->policyObjects as $polObj)
+                            <div>
+                                {{ $polObj->object->ObjectOccupation->name ?? '-' }} - {{ $polObj->object->keterangan ?? '-' }}
+                            </div>
+                        @endforeach
+                    @else
+                        -
+                    @endif
+                </div>
             </div>
 
             <div class="info-row">
