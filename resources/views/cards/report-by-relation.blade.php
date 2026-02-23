@@ -43,11 +43,11 @@
                     {{-- 1. BAGIAN FILTER (HANYA MUNCUL JIKA USER = INTERNAL) --}}
                     @if($isInternalUser)
                     <div class="card-header pb-0 no-print">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex gap-2">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                            <div class="d-flex flex-wrap gap-3">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <label for="clientFilter" class="mb-0 me-2">Filter Client:</label>
-                                    <select id="clientFilter" class="form-select" style="width: 250px;">
+                                    <label for="clientFilter" class="mb-0 text-nowrap">Filter Client:</label>
+                                    <select id="clientFilter" class="form-select" style="min-width: 200px; max-width: 250px;">
                                         <option value="">Semua Client</option>
                                         @forelse($clients as $client)
                                             <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
@@ -60,8 +60,8 @@
                                 </div>
                                 
                                 <div class="d-flex gap-2 align-items-center">
-                                    <label for="relationFilter" class="mb-0 me-2">Filter Relasi:</label>
-                                    <select id="relationFilter" class="form-select" style="width: 250px;">
+                                    <label for="relationFilter" class="mb-0 text-nowrap">Filter Relasi:</label>
+                                    <select id="relationFilter" class="form-select" style="min-width: 200px; max-width: 250px;">
                                         <option value="">Semua Relasi</option>
                                         @forelse($relations as $relation)
                                             <option value="{{ $relation->id }}" {{ request('relation_id') == $relation->id ? 'selected' : '' }}>

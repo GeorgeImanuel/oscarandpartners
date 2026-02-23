@@ -24,33 +24,31 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header pb-0">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            @if (auth()->user()->hasRole(['owner', 'admin']))
-                                <div class="d-flex gap-2 align-items-center">
-                                    <label for="clientFilter"
-                                        class="mb-0 me-2">Filter Client:</label>
-                                    <select id="clientFilter"
-                                        class="form-select"
-                                        style="width: 250px;">
-                                        <option value="">Semua Client</option>
-                                        @forelse($clients as $client)
-                                            <option value="{{ $client->id }}"
-                                                {{ request('client_id') == $client->id ? 'selected' : '' }}>
-                                                {{ $client->id_name ?? $client->user->name }}
-                                            </option>
-                                        @empty
-                                            <option value=""
-                                                disabled>Tidak ada data client</option>
-                                        @endforelse
-                                    </select>
-                                </div>
-                            @endif
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                            <div class="d-flex flex-wrap align-items-center gap-3">
+                                <label for="clientFilter"
+                                    class="mb-0 text-nowrap">Filter Client:</label>
+                                <select id="clientFilter"
+                                    class="form-select"
+                                    style="min-width: 200px; max-width: 250px;">
+                                    <option value="">Semua Client</option>
+                                    @forelse($clients as $client)
+                                        <option value="{{ $client->id }}"
+                                            {{ request('client_id') == $client->id ? 'selected' : '' }}>
+                                            {{ $client->id_name ?? $client->user->name }}
+                                        </option>
+                                    @empty
+                                        <option value=""
+                                            disabled>Tidak ada data client</option>
+                                    @endforelse
+                                </select>
+                            </div>
                             <div class="d-flex gap-2 align-items-center">
                                 <label for="statusFilter"
-                                    class="mb-0 me-2">Filter Status:</label>
+                                    class="mb-0 text-nowrap">Filter Status:</label>
                                 <select id="statusFilter"
                                     class="form-select"
-                                    style="width: 250px;">
+                                    style="min-width: 200px; max-width: 250px;">
                                     <option value="">Semua Status</option>
                                     @forelse($cardStatuses as $status)
                                         <option value="{{ $status->id }}"
