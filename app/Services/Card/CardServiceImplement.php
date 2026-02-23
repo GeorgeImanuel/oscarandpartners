@@ -145,6 +145,8 @@ class CardServiceImplement extends Service implements CardService
 
                 'agent_asuransi'   => $data['agent_asuransi'] ?? null,
                 'agent_okj'        => $data['agent_okj'] ?? null,
+
+                'note'             => $data['note'] ?? null,
             ]);
 
             // Create Payment(s)

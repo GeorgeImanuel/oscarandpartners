@@ -36,6 +36,7 @@ class Card extends Model
         'client_pay',
         'agent_asuransi',
         'agent_okj',
+        'note',
     ];
 
     protected $casts = [

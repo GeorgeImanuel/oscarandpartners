@@ -297,6 +297,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if(!empty($card->note))
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="mb-2"><i class="fa fa-sticky-note-o me-1"></i>Note</h6>
+                                    <div class="p-3 border" style="white-space: pre-wrap; font-size: 13px;">{{ $card->note }}</div>
+                                </div>
+                            </div>
+                            @endif
+
                         </div>
                     </div>
 

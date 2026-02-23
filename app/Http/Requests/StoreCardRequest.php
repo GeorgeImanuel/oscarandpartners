@@ -61,6 +61,8 @@ class StoreCardRequest extends FormRequest
 
             'agent_asuransi' => 'nullable|string|max:255',
             'agent_okj'      => 'nullable|string|max:255',
+
+            'note' => 'nullable|string',
         ];
 
         // Conditional: parent_card_id required only if card_type_id is endors

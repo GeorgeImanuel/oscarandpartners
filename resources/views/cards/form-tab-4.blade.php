@@ -175,6 +175,25 @@
             </div>
         </div>
     </div>
+
+    <div class="card mb-3 p-3 shadow-sm">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h6 class="fw-bold mb-3">
+                    <i class="fa fa-sticky-note-o"></i> Note / Catatan Tambahan
+                </h6>
+                <textarea class="form-control @error('note') is-invalid @enderror" 
+                          id="note" 
+                          name="note" 
+                          rows="3" 
+                          placeholder="Masukkan catatan jika ada">{{ old('note', isset($card) ? $card->note : '') }}</textarea>
+                @error('note')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @push('scripts')

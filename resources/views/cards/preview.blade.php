@@ -416,7 +416,7 @@
         </div>
 
         <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
-            <p style="margin: 0; font-size: 13px;"><strong>Note :</strong></p>
+            <p style="margin: 0; font-size: 13px;"><strong>Note :</strong> {{ $productionCard->note }}</p>
         </div>
     </div>
 @endsection
