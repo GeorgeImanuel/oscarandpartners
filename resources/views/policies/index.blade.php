@@ -36,6 +36,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>No Polis</th>
+                                        <th>Nama Tertanggung</th> 
                                         <th>Mata Uang</th>
                                         <th>Presentase Coverage</th>
                                         <th>Tanggal Mulai</th>
@@ -48,6 +49,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $policy->policy_number }}</td>
+                                            <td>{{ $policy->productionCard->client->id_name ?? '-' }}</td> 
                                             <td>{{ $policy->currency_code ?? '-' }}</td>
                                             <td>{{ number_format($policy->policyCoverages->sum('percentage') * 100, 7, '.', '') }}</td>
                                             <td data-order="{{ $policy->started_date ? $policy->started_date->format('Y-m-d') : '' }}">{{ $policy->started_date->format('d M Y') }}</td>
@@ -77,9 +79,9 @@
                                         </tr>
 
                                     @empty
-                                        <tr></tr>
-                                        <td colspan="7" class="text-center">No policies found.</td>
-                                        
+                                        <tr>
+                                            <td colspan="8" class="text-center">No policies found.</td> 
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>

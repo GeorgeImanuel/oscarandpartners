@@ -706,6 +706,21 @@
                 if (typeof calculateTotalTax === 'function') calculateTotalTax(); 
             });
 
+            $(document).on('focus', 'input[type="number"]:not([readonly])', function() {
+                // Jika nilainya 0, kosongkan saat diklik
+                if ($(this).val() == '0' || $(this).val() == '0.00' || $(this).val() == '0.00000') {
+                    $(this).val('');
+                }
+            });
+
+            $(document).on('blur', 'input[type="number"]:not([readonly])', function() {
+                // Jika ditinggalkan dalam keadaan kosong, kembalikan ke 0
+                if ($(this).val() === '') {
+                    $(this).val('0');
+                    $(this).trigger('input'); // Trigger event input agar kalkulasi (update_payment) otomatis berjalan
+                }
+            });
+
             $('.check-negative').each(function() {
                 toggleNegativeWarning(this);
             });

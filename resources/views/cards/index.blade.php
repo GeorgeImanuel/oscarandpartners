@@ -98,8 +98,8 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Client</th>
                                         <th>Polis</th>
+                                        <th>Nama Tertanggung</th>
                                         <th>Periode</th>
                                         <th>Premi Bruto</th>
                                         <th>Tipe</th>
@@ -111,8 +111,8 @@
                                     @forelse($cards as $index => $card)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $card->client->id_name ?? $card->client->user->name }}</td>
                                             <td>{{ $card->policy->policy_number ?? '-' }}</td>
+                                            <td>{{ $card->client->id_name ?? $card->client->user->name }}</td>
                                             <td data-order="{{ $card->policy->started_date ? $card->policy->started_date->format('Y-m-d') : '' }}">{{ $card->policy->started_date && $card->policy->started_date ? $card->policy->started_date->format('d M Y') . ' - ' . $card->policy->ended_date->format('d M Y') : '-' }}</td>
                                             <td class="text-end">
                                                 @php
