@@ -349,6 +349,16 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="col-md-12 mb-3">
+                <label class="form-label text-primary fw-bold" for="agent_asuransi">Agent Asuransi</label>
+                <input class="form-control @error('agent_asuransi') is-invalid @enderror" 
+                       id="agent_asuransi" 
+                       name="agent_asuransi" 
+                       type="text" 
+                       value="{{ old('agent_asuransi', isset($card) ? $card->agent_asuransi : '') }}" 
+                       placeholder="Masukkan Nama Agent Asuransi (Opsional)">
+            </div>
 
             {{-- BAGIAN BAWAH: TOTAL PAJAK, DISC, BERSIH (SEJAJAR) --}}
             <div class="col-md-4">
@@ -368,17 +378,29 @@
             </div>
 
             <div class="col-md-4">
-                <label class="form-label">Discount Agent</label>
-                <div class="input-group">
-                    <span class="input-group-text currency-label">Rp</span>
-                    <input id="discount_agent"
-                        class="form-control check-negative"
-                        name="discount_agent"
-                        type="number"
-                        value="{{ isset($card) ? $card->discount_agent : old('discount_agent', 0) }}">
+                <div class="mb-3">
+                    <label class="form-label">Discount Agent</label>
+                    <div class="input-group">
+                        <span class="input-group-text currency-label">Rp</span>
+                        <input id="discount_agent"
+                            class="form-control check-negative"
+                            name="discount_agent"
+                            type="number"
+                            value="{{ isset($card) ? $card->discount_agent : old('discount_agent', 0) }}">
+                    </div>
+                    <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
+                        <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+                    </div>
                 </div>
-                <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
-                    <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
+
+                <div>
+                    <label class="form-label text-primary fw-bold" for="agent_okj">Agent OKJ</label>
+                    <input class="form-control @error('agent_okj') is-invalid @enderror" 
+                           id="agent_okj" 
+                           name="agent_okj" 
+                           type="text" 
+                           value="{{ old('agent_okj', isset($card) ? $card->agent_okj : '') }}" 
+                           placeholder="Masukkan Nama Agent OKJ (Opsional)">
                 </div>
             </div>
 

@@ -39,6 +39,8 @@ class UpdateCardRequest extends FormRequest
             'insurance_evident_file' => 'nullable|string',
             'insurance_evident_number' => 'nullable|string',
             'payment_type_id' => 'required|exists:payment_types,id',
+            'agent_asuransi' => 'nullable|string|max:255',
+            'agent_okj'      => 'nullable|string|max:255',
         ];
     }
 

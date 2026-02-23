@@ -58,6 +58,9 @@ class StoreCardRequest extends FormRequest
             'commision_netto' => 'required|numeric|min:0',
             'tax' => 'required|numeric|min:0',
             'insurance_pay' => 'required|numeric|min:0',
+
+            'agent_asuransi' => 'nullable|string|max:255',
+            'agent_okj'      => 'nullable|string|max:255',
         ];
 
         // Conditional: parent_card_id required only if card_type_id is endors

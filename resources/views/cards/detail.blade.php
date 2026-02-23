@@ -204,14 +204,15 @@
                             </div>
 
                             <h6 class="mb-3 mt-4">Perhitungan Komisi</h6>
-                            <div class="table-responsive">
-                                <table class="table table-bordered text-center">
+                            <div class="table-responsive" style="overflow-x: hidden;">
+                                {{-- TABEL UTAMA (Di dalam kotak) --}}
+                                <table class="table table-bordered text-center mb-0" style="table-layout: fixed; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Komisi Total</th>
-                                            <th>Pajak</th>
-                                            <th>Diskon/Agen</th>
-                                            <th>Komisi Bersih (Diterima)</th>
+                                            <th style="width: 25%;">Komisi Total</th>
+                                            <th style="width: 25%;">Pajak</th>
+                                            <th style="width: 25%;">Diskon/Agen</th>
+                                            <th style="width: 25%;">Komisi Bersih (Diterima)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -220,6 +221,26 @@
                                             <td>{{ $currency }} {{ number_format($card->tax,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                             <td>{{ $currency }} {{ number_format($card->discount_agent,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                                             <td class="fw-bold table-active">{{ $currency }} {{ number_format($card->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                {{-- TABEL AGENT (Di luar kotak, lurus presisi) --}}
+                                <table class="table table-borderless text-center mt-2 mb-0" style="table-layout: fixed; width: 100%;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 25%; padding: 0;"></td>
+                                            <td style="width: 25%; padding: 0;">
+                                                @if($card->agent_asuransi)
+                                                    <strong>( {{ $card->agent_asuransi }} )</strong>
+                                                @endif
+                                            </td>
+                                            <td style="width: 25%; padding: 0;">
+                                                @if($card->agent_okj)
+                                                    <strong>( {{ $card->agent_okj }} )</strong>
+                                                @endif
+                                            </td>
+                                            <td style="width: 25%; padding: 0;"></td>
                                         </tr>
                                     </tbody>
                                 </table>

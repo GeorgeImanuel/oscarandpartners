@@ -308,13 +308,13 @@
                 <span class="section-number">7</span>
                 <span class="info-label" style="font-weight: bold;">Komisi</span>
             </div>
-            <table class="table-custom">
+            <table class="table-custom" style="table-layout: fixed; width: 100%; margin-bottom: 0;">
                 <thead>
                     <tr>
-                        <th>Total</th>
-                        <th>Pajak</th>
-                        <th>Disc/Agen</th>
-                        <th>Komisi Bersih</th>
+                        <th style="width: 25%;">Total</th>
+                        <th style="width: 25%;">Pajak</th>
+                        <th style="width: 25%;">Disc/Agen</th>
+                        <th style="width: 25%;">Komisi Bersih</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -322,7 +322,27 @@
                         <td>{{ $currency }} {{ number_format($productionCard->commision_bruto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                         <td>{{ $currency }} {{ number_format($productionCard->tax,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                         <td>{{ $currency }} {{ number_format($productionCard->discount_agent,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
-                        <td>{{ $currency }} {{ number_format($productionCard->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td style="font-weight: bold;">{{ $currency }} {{ number_format($productionCard->commision_netto,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {{-- TABEL AGENT (Di luar kotak, lurus presisi) --}}
+            <table style="table-layout: fixed; width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 13px;">
+                <tbody>
+                    <tr>
+                        <td style="width: 25%; text-align: center; padding: 0; border: none;"></td>
+                        <td style="width: 25%; text-align: center; padding: 0; border: none;">
+                            @if($productionCard->agent_asuransi)
+                                <strong>( {{ $productionCard->agent_asuransi }} )</strong>
+                            @endif
+                        </td>
+                        <td style="width: 25%; text-align: center; padding: 0; border: none;">
+                            @if($productionCard->agent_okj)
+                                <strong>( {{ $productionCard->agent_okj }} )</strong>
+                            @endif
+                        </td>
+                        <td style="width: 25%; text-align: center; padding: 0; border: none;"></td>
                     </tr>
                 </tbody>
             </table>
@@ -332,7 +352,7 @@
 			<span class="section-number">8</span>
 			<span class="info-label" style="font-weight: bold;">Keterangan Pembayaran</span>
 		</div>
-		<div style="display: flex; gap: 20px; margin-top: 20px;">
+		<div style="display: flex; gap: 20px; margin-top: 5px;">
             <div style="flex: 1; border: 1px solid #000; padding: 10px;">
                 <h6 style="margin: 0 0 10px 0; font-weight: bold; text-decoration: underline;">Tagihan ke Nasabah</h6>
                 <div class="payment-item">

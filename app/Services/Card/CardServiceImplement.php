@@ -142,6 +142,9 @@ class CardServiceImplement extends Service implements CardService
                 'discount_agent'   => (float)($data['discount_agent'] ?? 0),
                 'client_pay'       => (float)($data['client_pay'] ?? 0),
                 'insurance_pay'    => (float)($data['insurance_pay'] ?? 0),
+
+                'agent_asuransi'   => $data['agent_asuransi'] ?? null,
+                'agent_okj'        => $data['agent_okj'] ?? null,
             ]);
 
             // Create Payment(s)
