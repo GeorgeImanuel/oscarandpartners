@@ -136,8 +136,7 @@
                         class="form-control bg-light check-negative"
                         name="production_value"
                         type="number"
-                        value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}"
-                        readonly>
+                        value="{{ isset($card) ? $card->production_value : old('production_value', 0) }}">
                 </div>
                 <div class="text-warning small negative-warning" style="display:none; font-weight: 500;">
                     <i class="fa fa-exclamation-triangle me-1"></i> Nilai Negatif
@@ -632,7 +631,7 @@
             }
         }
 
-        function update_payment() {
+        function update_payment(triggerSource = 'auto') {
             var object_value = parseFloat($('#object_value').val()) || 0;
             var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
             var policy_fee = parseInt($('#policy_fee').val()) || 0;
@@ -641,43 +640,56 @@
             var tjh_value = parseInt($('#tjh_value').val()) || 0;
             var discount_agent = parseInt($('#discount_agent').val()) || 0;
 
-            // Get prorate info for Endors calculation
             var prorateInfo = getEndorsProrateInfo();
-            var productionValue;
+            var $prodInput = $('#production_value'); // Ambil elemen input Nilai Produksi
+            var productionValue = parseFloat($prodInput.val()) || 0;
             
+            // 1. Hitung potensi nilai produksi dari rumus
+            let calculatedProd = 0;
             if (prorateInfo.isEndors && prorateInfo.days) {
                 var endorsType = $('#endors_type').val() || window.endorsType;
-                console.log('Endors Type:', endorsType, '- Days:', prorateInfo.days);
-                
-                // Use endors formula with days proration (works for both properti and kendaraan)
-                productionValue = production_value_endors(object_value, premi_percentages / 100, tjh_value, discount, prorateInfo.days);
+                calculatedProd = production_value_endors(object_value, premi_percentages / 100, tjh_value, discount, prorateInfo.days);
             } else {
-                // Regular formula for New, Renewal, or Endors without dates
-                productionValue = production_value(object_value, premi_percentages / 100, tjh_value, discount);
+                calculatedProd = production_value(object_value, premi_percentages / 100, tjh_value, discount);
             }
-            
+
+            // 2. CEK KONDISI PENGUNCIAN
+            let isZeroParams = (object_value === 0 && premi_percentages === 0 && tjh_value === 0);
+
+            if (triggerSource !== 'manual_production') {
+                if (!isZeroParams) {
+                    // JIKA ADA PARAMETER RUMUS: Kunci kotak, kasih warna abu-abu, pakai hasil rumus
+                    $prodInput.prop('readonly', true).addClass('bg-light');
+                    productionValue = calculatedProd;
+                    $prodInput.val(productionValue.toFixed(2));
+                } else {
+                    // JIKA PARAMETER RUMUS 0: Buka kunci kotak, biarkan nilai manual
+                    $prodInput.prop('readonly', false).removeClass('bg-light');
+                    // Tidak menimpa productionValue, tetap menggunakan angka yang ada di input
+                }
+            }
+
+            // --- 3. Lanjut hitung berantai ke bawah ---
             const premiValue = premi_value(productionValue, policy_fee);
             const commisionBruto = commision_bruto(productionValue, commision_percentage / 100, discount);
             const taxValue = parseFloat($('#tax').val()) || 0;
             const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
             const clientPay = client_pay(premiValue, discount_agent);
-            const insurancePay = insurance_pay(clientPay, commisionNetto); // Netto Bayar = Netto Tagihan - Komisi Bersih
+            const insurancePay = insurance_pay(clientPay, commisionNetto); 
 
-            $('#production_value').val(productionValue.toFixed(2));
             $('#premi_value').val(premiValue.toFixed(2));
             $('#commision_bruto').val(commisionBruto.toFixed(2));
             $('#commision_netto').val(commisionNetto.toFixed(2));
             $('#client_pay').val(clientPay.toFixed(2));
             $('#insurance_pay').val(insurancePay.toFixed(2));
 
-            // Sync object_value to hidden field
             if (typeof syncObjectValueToHidden === 'function') {
                 syncObjectValueToHidden();
             }
 
             $('.lbl-total-premi').text(formatRupiah(premiValue));
             $('.lbl-discount-agent').text(formatRupiah(discount_agent));
-            $('.lbl-netto-tagihan').text(formatRupiah(clientPay)); // Update Netto Tagihan di kedua kartu
+            $('.lbl-netto-tagihan').text(formatRupiah(clientPay)); 
             $('.lbl-komisi-bersih').text(formatRupiah(commisionNetto));
             $('.lbl-netto-bayar').text(formatRupiah(insurancePay));
         }
@@ -703,8 +715,14 @@
         $(document).ready(function() {
             $(document).on('input change keyup', '.check-negative', function() {
                 toggleNegativeWarning(this);
-                // Tetap jalankan perhitungan
-                if (typeof update_payment === 'function') update_payment();
+                
+                // Jika yang diketik adalah kolom Nilai Produksi, beritahu sistem
+                if ($(this).attr('id') === 'production_value') {
+                    if (typeof update_payment === 'function') update_payment('manual_production');
+                } else {
+                    if (typeof update_payment === 'function') update_payment('auto');
+                }
+                
                 if (typeof calculateTotalTax === 'function') calculateTotalTax(); 
             });
 
@@ -1097,6 +1115,15 @@
                 if (typeof sync_discount === 'function') sync_discount('value');
                 if (typeof update_payment === 'function') update_payment();
                 if (typeof syncObjectValueToHidden === 'function') syncObjectValueToHidden();
+            });
+
+            // Trigger KHUSUS untuk Input Manual Nilai Produksi
+            $('#production_value').on('input change blur', function() {
+                // Panggil update_payment dengan flag 'manual_production' 
+                // agar sistem tahu ini diketik manual dan tidak boleh ditimpa rumus
+                update_payment('manual_production'); 
+                
+                if (typeof calculateTotalTax === 'function') calculateTotalTax(); 
             });
 
             // Initial Load Check (Edit Mode)
