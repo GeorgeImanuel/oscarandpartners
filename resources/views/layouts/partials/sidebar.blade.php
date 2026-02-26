@@ -132,17 +132,17 @@
 
                     {{-- 1. GROUP DROPDOWN POLIS (Isinya: Index, Bulan Ini, Bulan Depan) --}}
                     <li class="dropdown">
-                        <a class="nav-link menu-title {{ routeActive(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}"
+                        <a class="nav-link menu-title {{ routeActive(['policies.index','policies.create','policies.update', 'policies.thisMonth', 'policies.nextMonth']) }}"
                             href="javascript:void(0)">
                             <i data-feather="airplay"></i><span>Polis</span>
                         </a>
                         
                         <ul class="nav-submenu menu-content" 
-                            style="display: {{ routeBlock(['policies.index', 'policies.thisMonth', 'policies.nextMonth']) }}">
+                            style="display: {{ routeBlock(['policies.index','policies.create','policies.update', 'policies.thisMonth', 'policies.nextMonth']) }}">
                             
                             {{-- Item 1: Semua Polis (Index) --}}
                             <li>
-                                <a href="{{ route('policies.index') }}" class="{{ routeActive('policies.index') }}">
+                                <a href="{{ route('policies.index') }}" class="{{ routeActive(['policies.index','policies.create','policies.update']) }}">
                                     <i data-feather="list"></i><span>Semua Polis</span>
                                 </a>
                             </li>

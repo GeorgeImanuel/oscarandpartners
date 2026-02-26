@@ -169,7 +169,7 @@ setTimeout(function () {
             });
         });
 
-        initCustomSelect2(".create-select2");
+        // initCustomSelect2(".create-select2");
 
         // Single Search Select
         // $(".js-example-basic-single").select2();

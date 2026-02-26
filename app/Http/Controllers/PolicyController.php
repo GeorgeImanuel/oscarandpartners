@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Policy;
-use App\Models\ObjectModel;
-use App\Models\Insurance;
-use App\Models\PolicyInsurance;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Requests\UpdatePoliciesRequest;
 use App\Http\Requests\StorePoliciesRequest;
-use App\Services\Policy\PolicyService;
+use App\Http\Requests\UpdatePoliciesRequest;
+use App\Models\Insurance;
+use App\Models\ObjectModel;
+use App\Models\Policy;
+use App\Models\PolicyInsurance;
 use App\Services\Coverage\CoverageService;
 use App\Services\Currency\CurrencyService;
-use App\Services\PolicyInsurance\PolicyInsuranceService;
 use App\Services\Insurance\InsuranceService;
+use App\Services\Object\ObjectService;
+use App\Services\Policy\PolicyService;
+use App\Services\PolicyInsurance\PolicyInsuranceService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PolicyController extends Controller
 {
@@ -23,6 +24,7 @@ class PolicyController extends Controller
     private $coverageService;
     private $currencyService;
     private $policyInsuranceService;
+    private $objectService;
     private $insuranceService;
 
     public function __construct(
@@ -30,13 +32,15 @@ class PolicyController extends Controller
         PolicyInsuranceService $policyInsuranceService,
         CoverageService $coverageService,
         CurrencyService $currencyService,
-        InsuranceService $insuranceService
+        InsuranceService $insuranceService,
+        ObjectService $objectService
     ) {
         $this->policyService = $policyService;
         $this->policyInsuranceService = $policyInsuranceService;
         $this->coverageService = $coverageService;
         $this->currencyService = $currencyService;
         $this->insuranceService = $insuranceService;
+        $this->objectService = $objectService;
     }
 
     public function index()
@@ -47,12 +51,10 @@ class PolicyController extends Controller
 
     public function create()
     {
-        $objects = ObjectModel::all();
-        $coverages = $this->coverageService->all();
-        $currencies = $this->currencyService->all();
-        $insurances = $this->insuranceService->all();
+        $policies       = $this->policyService->allActive();
+        $objects = $this->objectService->all();
 
-        return view('policies.form', compact('objects', 'coverages', 'currencies', 'insurances'));
+        return view('policies.form', compact('objects','policies'));
     }
 
     /**

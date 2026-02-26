@@ -1,6 +1,6 @@
 <div id="step-2"
     class="setup-content">
-    <div class="card  mb-3 p-3 shadow-sm">
+    <div class="card mb-3 p-3 shadow-sm">
         <div class="row">
             <div class="col-md-12 mb-3">
                 <h5 class="text-primary">Polis</h5>

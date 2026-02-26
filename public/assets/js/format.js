@@ -57,10 +57,10 @@ function sumInputValues(selector, target) {
  */
 function validateValues(selector, target, min, max, decimals) {
     // Default decimals to 5 if not provided
-    if (typeof decimals === 'undefined') {
+    if (typeof decimals === "undefined") {
         decimals = 5;
     }
-    
+
     // Handle selector - can be id, class, or jQuery object
     var $inputs = selector instanceof jQuery ? selector : $(selector);
     var total = 0;
@@ -125,7 +125,7 @@ function validateValues(selector, target, min, max, decimals) {
                 .closest(".alert")
                 .removeClass("alert-success")
                 .addClass("alert-danger");
-            console.warn("Not valid sum for ", selector, ', total: ', total);
+            console.warn("Not valid sum for ", selector, ", total: ", total);
         }
         if ($target.is("input")) {
             $target.val(total.toFixed(decimals)).trigger("change");
@@ -150,3 +150,34 @@ $(document).on("blur focusout", ".validate-percentage", function () {
     $input.removeClass("is-invalid border-danger");
     $errorMsg.remove();
 });
+
+window.toggleNegativeWarning = function (element) {
+    var val = parseFloat($(element).val()) || 0;
+
+    // --- LOGIC PENCARIAN ELEMEN WARNING YANG LEBIH KUAT ---
+    // Coba cari warning tepat di sebelah input (jika tidak ada input-group)
+    var $warningMsg = $(element).next(".negative-warning");
+
+    // Jika tidak ketemu, coba cari di sebelah parentnya (jika ada input-group)
+    if ($warningMsg.length === 0) {
+        $warningMsg = $(element).parent().next(".negative-warning");
+    }
+
+    // Jika masih tidak ketemu, cari di dalam container kolom (col-md-...)
+    if ($warningMsg.length === 0) {
+        $warningMsg = $(element)
+            .closest('div[class^="col-"]')
+            .find(".negative-warning");
+    }
+    // -------------------------------------------------------
+
+    if (val < 0) {
+        // Jika Negatif: Tampilkan & beri warna
+        $warningMsg.stop().slideDown(200);
+        $(element).addClass("border-warning text-warning fw-bold");
+    } else {
+        // Jika Aman: Sembunyikan
+        $warningMsg.stop().slideUp(200);
+        $(element).removeClass("border-warning text-warning fw-bold");
+    }
+};

@@ -529,7 +529,9 @@
             var $itemObjects = $('#object-item-container').find('.item-object');
             renameInputNameByIndex($itemObjects);
             sumInputValues('input[name="object_value_input"]', '#object_value');
-            update_payment(); // Trigger calculation when policy is loaded
+            if (typeof update_payment === 'function') {
+                update_payment();
+            }
         });
 
         // Listen for currency code update event
