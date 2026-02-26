@@ -180,6 +180,7 @@ $(document).on("click", ".remove-item-btn", function () {
 window.renameInputNameByIndex = function ($items) {
     $items.each(function () {
         var itemIndex = $(this).data("item-index");
+        console.log("Renaming inputs for item index: ", itemIndex);
         $(this)
             .find("input, select, textarea")
             .each(function () {
