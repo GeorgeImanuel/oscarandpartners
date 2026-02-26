@@ -8,7 +8,7 @@ return [
     | This value is the version of your application.
     | [flow update].[feature update].[bug fix update]
     */
-    'version' => '0.2.5',
+    'version' => '0.2.6',
     /*
     |--------------------------------------------------------------------------
     | Card Status IDs
