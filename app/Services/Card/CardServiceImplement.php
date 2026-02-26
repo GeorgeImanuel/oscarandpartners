@@ -2,23 +2,23 @@
 
 namespace App\Services\Card;
 
-use Illuminate\Support\Facades\DB;
-use LaravelEasyRepository\Service;
 use App\Repositories\Card\CardRepository;
 use App\Repositories\Client\ClientRepository;
-use App\Repositories\Object\ObjectRepository;
-use App\Repositories\Policy\PolicyRepository;
-use App\Repositories\Payment\PaymentRepository;
 use App\Repositories\Coverage\CoverageRepository;
 use App\Repositories\Currency\CurrencyRepository;
-use App\Repositories\Interest\InterestRepository;
-use App\Repositories\Relation\RelationRepository;
 use App\Repositories\Insurance\InsuranceRepository;
-use App\Repositories\PolicyObject\PolicyObjectRepository;
+use App\Repositories\Interest\InterestRepository;
+use App\Repositories\Object\ObjectRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
+use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
+use App\Repositories\Payment\PaymentRepository;
+use App\Repositories\Policy\PolicyRepository;
 use App\Repositories\PolicyCoverage\PolicyCoverageRepository;
 use App\Repositories\PolicyInsurance\PolicyInsuranceRepository;
-use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
+use App\Repositories\PolicyObject\PolicyObjectRepository;
+use App\Repositories\Relation\RelationRepository;
+use Illuminate\Support\Facades\DB;
+use LaravelEasyRepository\Service;
 
 class CardServiceImplement extends Service implements CardService
 {
@@ -111,6 +111,7 @@ class CardServiceImplement extends Service implements CardService
      */
     public function create($data)
     {
+        // return $data;
         try {
             DB::beginTransaction();
             // Handle Client Creation (if requested)
@@ -349,7 +350,7 @@ class CardServiceImplement extends Service implements CardService
         }
 
         if (!$objectOccupationId) {
-            throw new \Exception("Object occupation ID is required for object index {$objectIndex}");
+            throw new \Exception("Object occupation ID is required for object index {$objectOccupationId}");
         }
 
         // Handle both array and single value for object_keterangan

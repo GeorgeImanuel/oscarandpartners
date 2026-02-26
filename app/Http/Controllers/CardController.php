@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateCardRequest;
 use App\Models\Card;
-use Illuminate\Http\Request;
 use App\Services\Card\CardService;
+use App\Services\CardStatus\CardStatusService;
+use App\Services\CardType\CardTypeService;
 use App\Services\Client\ClientService;
 use App\Services\Object\ObjectService;
-use App\Services\Policy\PolicyService;
-use App\Http\Requests\UpdateCardRequest;
-use App\Services\CardType\CardTypeService;
-use App\Services\Relation\RelationService;
-use App\Services\CardStatus\CardStatusService;
-use App\Services\PaymentType\PaymentTypeService;
 use App\Services\PaymentStatus\PaymentStatusService;
+use App\Services\PaymentType\PaymentTypeService;
+use App\Services\Policy\PolicyService;
+use App\Services\Relation\RelationService;
+use Illuminate\Http\Request;
 
 class CardController extends Controller
 {
@@ -92,6 +92,7 @@ class CardController extends Controller
     public function store(Request $request)
     {
         $card = $this->cardService->create($request->all());
+        return $card;
         if (!$card) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambah kartu produksi.');
         }

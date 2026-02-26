@@ -40,13 +40,15 @@ class DatabaseSeeder extends Seeder
         // Application Data Seeders
         $this->call(InterestSeeder::class);
         $this->call(CoverageSeeder::class);
-        // $this->call(ObjectSeeder::class);
         
         $this->call(InsuranceSeeder::class);
-        // $this->call(PolicySeeder::class);
         $this->call(RelationSeeder::class);
         $this->call(ClientSeeder::class);
-        // $this->call(CardSeeder::class);        
-        // $this->call(PaymentSeeder::class);
+        if(env('APP_ENV') === 'local') {
+            $this->call(ObjectSeeder::class);
+            $this->call(PolicySeeder::class);
+            $this->call(CardSeeder::class);        
+            $this->call(PaymentSeeder::class);
+        }
     }
 }
