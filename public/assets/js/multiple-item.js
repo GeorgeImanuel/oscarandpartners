@@ -140,7 +140,7 @@ $(document).on("click", ".remove-item-btn", function () {
                 ".multiple-item-container",
             );
             var itemClass = $(this).closest(".item").attr("class");
-
+            
             if ($itemList.find(".item").length === 1) {
                 return;
             } else {

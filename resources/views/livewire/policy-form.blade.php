@@ -388,8 +388,8 @@
                                 class="col-md-12 object-forms-container"
                                 style="display:none;">
                                 <input type="hidden"
-                                    value=""
-                                    name="class">
+                                    value=""name="class"
+                                    disabled>
                                 @livewire('object-form', ['objectId' => null, 'isDisabled' => true], key('object-form-template-' . uniqid()))
                             </div>
                         </div>
@@ -481,15 +481,13 @@
         Livewire.on('objectLoaded', (event) => {
             var $template = $('#object-form-livewire');
             var className = $template.find('input[name="class"]').val();
-            console.log('Object loaded with class:', className);
-            // Clone the object after loaded
+
             if (className) {
                 var $cloneContent = $template.clone();
 
-                // Enable all required fields in the cloned content
-                $cloneContent.find('.required').each(function() {
-                    $(this).prop("required", true).prop("disabled", false);
-                });
+                // $cloneContent.find('.required').each(function() {
+                //     $(this).prop("required", true).prop("disabled", false);
+                // });
 
                 // Split the class string and find elements that have all these classes
                 var classArray = className.split(' ').filter(c => c.trim() !== '');
@@ -497,12 +495,21 @@
                 var $targetContainer = $('#object-item-container').find(selector).first();
 
                 if ($targetContainer.length) {
+                    // console.log('Target container found:', $targetContainer);
                     $targetContainer.find('.object-forms-container').html($cloneContent.html());
-                    $targetContainer.find('.object-forms-container *').prop('disabled', false);
+                    $targetContainer.find('.object-forms-container input, .object-forms-container textarea, .object-forms-container select, .object-forms-container button').prop('disabled', false);
 
-                    // Initialize Select2 for any new select elements in the cloned content
-                    $targetContainer.find('.create-select2').each(function() {
-                        initCustomSelect2($(this));
+                    // Initialize select2 for all add-select2 elements
+                    $targetContainer.find('.add-select2').each(function() {
+                        var $select = $(this);
+                        if (!$select.hasClass('select2-hidden-accessible')) {
+                            var placeholder = $select.data('placeholder') || 'Pilih Data';
+                            $select.select2({
+                                placeholder: placeholder,
+                                allowClear: true,
+                                width: '100%'
+                            });
+                        }
                     });
                 } else {
                     console.warn('Target container not found for selector:', selector);
@@ -512,13 +519,13 @@
             } else {
                 console.warn('No className found in input[name="class"]');
             }
-            // setTimeout(function() {
-            //     if (typeof initCustomSelect2 === 'function') {
-            //         initCustomSelect2(".create-select2");
-            //     }
-            // }, 300);
-            
-            // Update name attributes based on data-item-index item-object
+            setTimeout(function() {
+                if (typeof initCustomSelect2 === 'function') {
+                    initCustomSelect2(".create-select2");
+                }
+            }, 300);
+
+            // Replace all input select and textarea name base on item-index
             var $itemObjects = $('#object-item-container').find('.item-object');
             renameInputNameByIndex($itemObjects);
             sumInputValues('input[name="object_value_input"]', '#object_value');

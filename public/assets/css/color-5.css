@@ -4317,7 +4317,7 @@ table tbody .border-bottom-warning td {
 .page-wrapper .page-body-wrapper {
   background-color: #f5f7fb; }
   .page-wrapper .page-body-wrapper .page-body {
-    min-height: calc(100vh - 76px);
+    min-height: calc(100vh - 140px);
     margin-top: 76px;
     padding: 0 15px 0 15px;
     position: relative;
@@ -30816,7 +30816,7 @@ span.twitter-typeahead .tt-suggestion {
     float: right;
     margin-right: 0; }
   .rtl .page-wrapper .page-body-wrapper .page-body {
-    min-height: calc(100vh - 60px); }
+    min-height: calc(100vh - 140px); }
   .rtl .page-wrapper .page-main-header {
     margin-right: 0; }
     .rtl .page-wrapper .page-main-header .main-header-right > .mobile-toggle {
