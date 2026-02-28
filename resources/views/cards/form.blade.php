@@ -199,6 +199,13 @@
                 customValidator: function(form, fields) {
                     var errors = [];
 
+                    var isTravelPro = false;
+                    $(form).find('select[name^="object_occupation_id"] option:selected').each(function() {
+                        if ($(this).text().trim() === 'TravelPro Ins') {
+                            isTravelPro = true;
+                        }
+                    });
+
                     // ============================================================
                     // 1. VALIDATE SELECT2 FIELDS
                     // Ensure all required select2 dropdowns have values selected
@@ -214,6 +221,13 @@
                         // Skip if inside hidden container (e.g., object forms)
                         if ($select.closest('.object-forms-container').length && $select.closest('.object-forms-container').is(':hidden')) {
                             return;
+                        }
+
+                        if (isTravelPro) {
+                            if (fieldName === 'coverage_code[]' || fieldName === 'interest_id[]') {
+                                $select.removeClass('is-invalid');
+                                return; // Lewati pengecekan "harus diisi" di bawah
+                            }
                         }
                         
                         // Get value from select2 or regular select
@@ -273,7 +287,6 @@
                     var hasVisibleCoverage = false;
                     
                     $(form).find('input[name="coverage_percentage[]"]').each(function() {
-                        // Only count visible and enabled coverage percentage inputs
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
                             var val = parseFloat($(this).val()) || 0;
                             totalCoveragePercentage += val;
@@ -281,14 +294,28 @@
                         }
                     });
 
-                    // Validate total is within valid range (only if new policy form has coverages)
-                    if ($('#new-policy').is(':visible') && hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
-                        alertWarning('Total persentase coverage harus antara 0-100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
-                        console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
-                        errors.push({
-                            field: '.coverage-percentage',
-                            message: 'Total persentase coverage harus antara 0-100%'
-                        });
+                    // === PERBAIKAN LOGIKA KHUSUS NON-TRAVELPRO ===
+                    // Jika BUKAN TravelPro dan form input polis baru sedang terbuka
+                    if (!isTravelPro && $('#new-policy').is(':visible')) {
+                        
+                        // Skenario 1: User menghapus semua baris coverage (kosong sama sekali)
+                        if (!hasVisibleCoverage) {
+                            alertWarning('Minimal harus ada 1 Rincian Coverage!', '');
+                            console.warn('Coverage validation failed: No coverage added.');
+                            errors.push({
+                                field: '.coverage-item',
+                                message: 'Minimal harus ada 1 Rincian Coverage'
+                            });
+                        } 
+                        // Skenario 2: Baris coverage ada, tapi total persentasenya 0 (atau minus)
+                        else if (totalCoveragePercentage <= 0 || totalCoveragePercentage > 100) {
+                            alertWarning('Total persentase coverage harus LEBIH DARI 0% dan maksimal 100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
+                            console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
+                            errors.push({
+                                field: '.coverage-percentage',
+                                message: 'Total persentase coverage tidak valid'
+                            });
+                        }
                     }
 
                     // ============================================================
@@ -375,31 +402,46 @@
                             $('#deadline_at').removeClass('is-invalid');
                         }
                     }
-
+                    
                     // ============================================================
                     // 6. VALIDATE PREMIUM RATE
-                    // Ensure premium rate is not zero
+                    // Ensure premium rate is not negative
                     // ============================================================
                     var premiumRateField = $('#premi_percentages');
                     
                     if (premiumRateField.length > 0) {
                         var premiumRate = parseFloat(premiumRateField.val()) || 0;
                         
-                        if (premiumRate === 0) {
-                            premiumRateField.addClass('is-invalid');
-                            
-                            if (premiumRateField[0]) {
-                                showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh 0');
+                        if (!isTravelPro) {
+                            // JIKA BUKAN TRAVELPRO: Tolak jika 0 atau minus (<= 0)
+                            if (premiumRate <= 0) {
+                                premiumRateField.addClass('is-invalid');
+                                if (premiumRateField[0]) {
+                                    showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh 0');
+                                }
+                                alertWarning('Tarif Premi harus lebih dari 0 untuk objek ini!', '');
+                                errors.push({
+                                    field: 'premi_percentages',
+                                    message: 'Tarif Premi tidak boleh 0'
+                                });
+                            } else {
+                                premiumRateField.removeClass('is-invalid');
                             }
-                            
-                            alertWarning('Tarif Premi tidak boleh 0', '');
-                            
-                            errors.push({
-                                field: 'premi_percentages',
-                                message: 'Tarif Premi tidak boleh 0'
-                            });
                         } else {
-                            premiumRateField.removeClass('is-invalid');
+                            // JIKA TRAVELPRO: Boleh 0, hanya tolak jika minus (< 0)
+                            if (premiumRate < 0) { 
+                                premiumRateField.addClass('is-invalid');
+                                if (premiumRateField[0]) {
+                                    showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh minus');
+                                }
+                                alertWarning('Tarif Premi tidak boleh minus', '');
+                                errors.push({
+                                    field: 'premi_percentages',
+                                    message: 'Tarif Premi tidak boleh minus'
+                                });
+                            } else {
+                                premiumRateField.removeClass('is-invalid');
+                            }
                         }
                     }
 

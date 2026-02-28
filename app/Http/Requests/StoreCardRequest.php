@@ -70,6 +70,49 @@ class StoreCardRequest extends FormRequest
             $rules['parent_card_id'] = 'required|exists:cards,id';
         }
 
+        $isTravelPro = false;
+        
+        // Ambil input object_occupation_id (jika form mengirim array, kita cek is_array)
+        $occupationInput = $this->input('object_occupation_id');
+        
+        if ($occupationInput) {
+            // Sesuaikan nama Model dengan model Okupasi aslimu (berdasarkan rules, namanya ObjectOccupation)
+            if (is_array($occupationInput)) {
+                $isTravelPro = \App\Models\ObjectOccupation::whereIn('id', $occupationInput)
+                                ->where('name', 'TravelPro Ins')
+                                ->exists();
+            } else {
+                $occupation = \App\Models\ObjectOccupation::find($occupationInput);
+                if ($occupation && $occupation->name === 'TravelPro Ins') {
+                    $isTravelPro = true;
+                }
+            }
+        }
+
+        // Jika okupasi adalah TravelPro, timpa rules aslinya
+        if ($isTravelPro) {
+            // 1. Hapus 'coverage_code' dari syarat required_without_all policy_id
+            $rules['policy_id'] = 'required_without_all:started_date,ended_date|nullable|exists:policies,id';
+            
+            // 2. Jadikan coverage_code dan persentasenya bebas kosong / nol (min:0)
+            $rules['coverage_code'] = 'nullable|exists:coverages,id';
+            $rules['coverage_percentage'] = 'nullable|numeric|min:0|max:100'; 
+            
+            // 3. Asuransi
+            $rules['insurance_id'] = 'required_without:policy_id|nullable|array|min:1';
+
+            // 4. Premi persentase bebas 0 (min:0)
+            $rules['premi_percentages'] = 'required|numeric|min:0|max:100'; 
+        } else {
+            // JIKA BUKAN TRAVELPRO: Kunci ketat harus lebih dari 0 (gt:0)
+            $rules['coverage_code'] = 'required_without:policy_id|nullable|exists:coverages,id';
+            $rules['coverage_percentage'] = 'required_with:coverage_code|nullable|numeric|gt:0|max:100'; 
+            $rules['insurance_id'] = 'required_with:coverage_code|nullable|array|min:1';
+            
+            // Premi persentase harus lebih dari 0 (gt:0)
+            $rules['premi_percentages'] = 'required|numeric|gt:0|max:100'; 
+        }
+
         return $rules;
     }
 

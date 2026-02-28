@@ -445,12 +445,18 @@ class CardServiceImplement extends Service implements CardService
             ]);
 
             // Assign coverages
-            foreach ($data['coverage_code'] as $index => $coverageCode) {
-                $this->policyCoverageRepository->create([
-                    'policy_id'    => $policy->id,
-                    'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
-                    'percentage'   => ($data['coverage_percentage'][$index] ?? 0) / 100,
-                ]);
+            if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
+                foreach ($data['coverage_code'] as $index => $coverageCode) {
+                    if (empty($coverageCode)) {
+                        continue; 
+                    }
+
+                    $this->policyCoverageRepository->create([
+                        'policy_id'    => $policy->id,
+                        'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
+                        'percentage'   => ($data['coverage_percentage'][$index] ?? 0) / 100,
+                    ]);
+                }
             }
 
             // Assign insurances
