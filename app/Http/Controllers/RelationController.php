@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\Relation\RelationService;
-use App\Http\Requests\storeRelationRequest;
+use App\Http\Requests\StoreRelationRequest;
 use App\Http\Requests\UpdateRelationRequest;
+use App\Services\Relation\RelationService;
+use Illuminate\Http\Request;
 
 class RelationController extends Controller
 {
