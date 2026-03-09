@@ -90,7 +90,7 @@
                                     @forelse($policy->policyCoverages as $pc)
                                         <tr>
                                             <td>{{ $pc->coverage->name ?? '-' }}</td>
-                                            <td class="text-center">{{ number_format($pc->percentage * 100, 2) }}%</td>
+                                            <td class="text-center">{{ number_format($pc->percentage * 100, 5) }}%</td>
                                         </tr>
                                     @empty
                                         <tr>
