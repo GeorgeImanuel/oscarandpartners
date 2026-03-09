@@ -28,7 +28,7 @@
             id="object_keterangan"
             name="object_keterangan[]"
             rows="3"
-            {{ $isDisabled ? 'disabled' : '' }}>{{ isset($object) ? $object->keterangan : old('object_keterangan', '') }}</textarea>
+            {{ $isDisabled ? 'disabled' : '' }}>{{ isset($object) ? $object->keterangan : (is_array(old('object_keterangan')) ? '' : old('object_keterangan', '')) }}</textarea>
         @error('object_keterangan')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -43,7 +43,7 @@
             <input class="form-control required @error('tjh') is-invalid @enderror"
                 name="tjh[]"
                 type="text"
-                value="{{ isset($object) ? $object->tjh : old('tjh', '') }}"
+                value="{{ isset($object) ? $object->tjh : (is_array(old('tjh')) ? '' : old('tjh', '')) }}"
                 {{ $isDisabled ? 'disabled' : '' }} />
             @error('tjh')
                 <div class="invalid-feedback">{{ $message }}</div>

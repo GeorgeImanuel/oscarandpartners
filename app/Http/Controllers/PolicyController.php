@@ -65,8 +65,25 @@ class PolicyController extends Controller
         try {
             $this->policyService->createPolicy($request->validated());
 
+            // Handle AJAX request
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Polis berhasil dibuat.',
+                    'redirect' => route('policies.index')
+                ]);
+            }
+
             return redirect()->route('policies.index')->with('success', 'Polis berhasil dibuat.');
         } catch (\Exception $e) {
+            // Handle AJAX request
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal membuat polis: ' . $e->getMessage()
+                ], 422);
+            }
+
             return redirect()->back()->with('error', 'Gagal membuat polis: ' . $e->getMessage())->withInput();
         }
     }
@@ -99,8 +116,25 @@ class PolicyController extends Controller
         try {
             $this->policyService->updatePolicy($id, $request->validated());
 
+            // Handle AJAX request
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Polis berhasil diperbarui.',
+                    'redirect' => route('policies.index')
+                ]);
+            }
+
             return redirect()->route('policies.index')->with('success', 'Polis berhasil diperbarui.');
         } catch (\Exception $e) {
+            // Handle AJAX request
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal update polis: ' . $e->getMessage()
+                ], 422);
+            }
+
             return redirect()->back()->with('error', 'Gagal update polis: ' . $e->getMessage())->withInput();
         }
     }

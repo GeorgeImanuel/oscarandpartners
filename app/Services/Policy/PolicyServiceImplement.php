@@ -85,6 +85,8 @@ class PolicyServiceImplement extends Service implements PolicyService
             }
 
             // 4. Process Insurances
+            // Delete any existing insurances first (in case of retry/duplicate)
+            PolicyInsurance::where('policy_id', $policy->id)->delete();
             if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
                 $this->processInsurances($policy->id, $data);
             }
@@ -144,13 +146,15 @@ class PolicyServiceImplement extends Service implements PolicyService
         $isMains = $data['is_main'] ?? [];
         $percentages = $data['percentage'] ?? [];
 
+        // Track processed insurance IDs to avoid duplicates
+        $processedInsuranceIds = [];
+
         foreach ($data['insurance_id'] as $index => $insuranceId) {
             $newName = $newNames[$index] ?? null;
 
             if (!empty($insuranceId) || !empty($newName)) {
-                // Fix: Checkbox hanya kirim key yang checked
-                // Kita cek apakah index ini ada di array is_main
-                $isMain = in_array($index, array_keys($isMains)) ? 1 : 0;
+                // Check is_main value for this index
+                $isMain = isset($isMains[$index]) && $isMains[$index] == '1' ? 1 : 0;
                 
                 $percentage = isset($percentages[$index]) ? floatval($percentages[$index]) : 0;
 
@@ -161,12 +165,26 @@ class PolicyServiceImplement extends Service implements PolicyService
                 }
 
                 if ($insuranceId) {
-                    PolicyInsurance::create([
-                        'policy_id' => $policyId,
-                        'insurance_id' => $insuranceId,
-                        'is_main' => $isMain,
-                        'percentage' => $percentage / 100, // Convert % to decimal (15 -> 0.15)
-                    ]);
+                    // Check if this insurance_id was already processed
+                    if (in_array($insuranceId, $processedInsuranceIds)) {
+                        \Log::warning("Duplicate insurance_id detected: {$insuranceId} for policy {$policyId}, skipping...");
+                        continue;
+                    }
+
+                    // Use updateOrCreate to handle duplicates gracefully
+                    PolicyInsurance::updateOrCreate(
+                        [
+                            'policy_id' => $policyId,
+                            'insurance_id' => $insuranceId,
+                        ],
+                        [
+                            'is_main' => $isMain,
+                            'percentage' => $percentage / 100, // Convert % to decimal (15 -> 0.15)
+                        ]
+                    );
+
+                    // Mark this insurance as processed
+                    $processedInsuranceIds[] = $insuranceId;
                 }
             }
         }

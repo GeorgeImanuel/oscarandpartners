@@ -74,7 +74,7 @@
                         <div class="row align-items-end item item-coverage {{ $index != 0 ? 'border-top py-2' : ' pt-2' }}">
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Coverage <span class="item-count">{{ $index + 1 }}</span></label>
-                                <select class="form-select create-select2 required"
+                                <select class="form-select create-select2"
                                     data-placeholder="Pilih Coverage"
                                     name="coverage_code[]"
                                     style="width: 100%;">
@@ -112,7 +112,7 @@
                         <div class="row align-items-end item item-coverage mb-2">
                             <div class="col-md-6">
                                 <label class="form-label">Coverage <span class="item-count">1</span></label>
-                                <select class="form-select create-select2 required"
+                                <select class="form-select create-select2"
                                     data-placeholder="Pilih Coverage"
                                     name="coverage_code[]"
                                     style="width: 100%;">
@@ -185,6 +185,7 @@
                             <select class="form-select create-select2 required"
                                 data-placeholder="Pilih Asuransi"
                                 name="insurance_id[]"
+                                disabled
                                 style="width: 100%;">
                                 <option value="">- Pilih Asuransi -</option>
                                 @foreach ($insurances as $insurance)
@@ -199,8 +200,9 @@
                             <div class="input-group">
                                 <input class="form-control required insurance-percentage"
                                     type="number"
-                                    name="insurance_percentage[]"
+                                    name="percentage[]"
                                     value=""
+                                    disabled
                                     placeholder="0"
                                     min="0"
                                     max="100"
@@ -213,10 +215,12 @@
                                 <input class="form-check-input is-main-checkbox"
                                     type="checkbox"
                                     name="is_main_check[]"
+                                    disabled
                                     value="1">
                                 <input type="hidden"
                                     class="is-main-value"
                                     name="is_main[]"
+                                    disabled
                                     value="0">
                                 <label class="form-check-label">Asuransi Utama</label>
                             </div>
@@ -233,7 +237,7 @@
                         <div class="row align-items-end item item-1  {{ $index != 0 ? 'border-top py-2' : ' pt-2' }}">
                             <div class="col-md-5 mb-2">
                                 <label class="form-label">Asuransi <span class="item-count">1</span></label>
-                                <select class="form-select create-select2 required"
+                                <select class="form-select create-select2"
                                     data-placeholder="Pilih Asuransi"
                                     name="insurance_id[]"
                                     style="width: 100%;">
@@ -251,7 +255,7 @@
                                 <div class="input-group">
                                     <input class="form-control required insurance-percentage"
                                         type="number"
-                                        name="insurance_percentage[]"
+                                        name="percentage[]"
                                         value="{{ isset($policyInsurance) ? $policyInsurance->percentage * 100 : '' }}"
                                         placeholder="0"
                                         min="0"
@@ -285,7 +289,7 @@
                         <div class="row align-items-end item item-1 mb-2">
                             <div class="col-md-5 mb-2">
                                 <label class="form-label">Asuransi <span class="item-count">1</span></label>
-                                <select class="form-select create-select2 required"
+                                <select class="form-select create-select2"
                                     data-placeholder="Pilih Asuransi"
                                     name="insurance_id[]"
                                     style="width: 100%;">
@@ -302,7 +306,7 @@
                                 <div class="input-group">
                                     <input class="form-control required insurance-percentage"
                                         type="number"
-                                        name="insurance_percentage[]"
+                                        name="percentage[]"
                                         value
                                         placeholder="0"
                                         min="0"
@@ -362,13 +366,15 @@
                     <div class="col-md-12 mb-3 item-list">
                         {{-- Start Item Object Template --}}
                         <div class="row align-items-end item item-object item-template border border-primary py-3 mx-0 mb-3"
-                            style="display: none">
+                            style="display: none"
+                            data-item-index="">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"
                                     for="object_id">Nama Tertanggung - Obyek <span class="item-count"></span><span class="text-danger">*</span></label>
                                 <select class="form-control create-select2 object-select @error('object_id') is-invalid @enderror"
                                     name="object_id[]"
-                                    data-placeholder="Pilih Obyek">
+                                    data-placeholder="Pilih Obyek"
+                                    disabled>
                                     <option></option>
                                     @foreach ($objects ?? [] as $object)
                                         <option value="{{ $object->id }}">
@@ -516,9 +522,8 @@
                 }
                 // Clear the class value
                 $template.find('input[name="class"]').val('');
-            } else {
-                console.warn('No className found in input[name="class"]');
             }
+            // Note: className is only used for template cloning, not for existing/new items
             setTimeout(function() {
                 if (typeof initCustomSelect2 === 'function') {
                     initCustomSelect2(".create-select2");
@@ -526,7 +531,11 @@
             }, 300);
 
             // Replace all input select and textarea name base on item-index
-            var $itemObjects = $('#object-item-container').find('.item-object');
+            // Skip template items (item-template class or hidden items)
+            var $itemObjects = $('#object-item-container').find('.item-object').not('.item-template').filter(function() {
+                return $(this).css('display') !== 'none';
+            });
+            console.log('✅ Processing ' + $itemObjects.length + ' object items for rename');
             renameInputNameByIndex($itemObjects);
             sumInputValues('input[name="object_value_input"]', '#object_value');
             if (typeof update_payment === 'function') {
@@ -598,7 +607,7 @@
             var $itemContainer = $select.closest('.item-object');
             var $formContainer = $itemContainer.find('.object-forms-container');
 
-            if (selectedValue) {
+                if (selectedValue) {
                 $formContainer.show();
 
                 // Find the livewire component inside this container
@@ -611,11 +620,7 @@
                     }
                 }
 
-                if ($itemContainer.hasClass('item-template')) {
-                    $class = $itemContainer.attr('class');
-                    // console.log('Setting class value:', $class);
-                    $('#object-form-livewire').find('input[name="class"]').val($class);
-                }
+                // Note: className logic is handled by objectLoaded event for templates only
 
             } else {
                 $formContainer.hide();

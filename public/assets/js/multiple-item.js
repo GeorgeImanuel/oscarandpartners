@@ -64,14 +64,18 @@ $(document).on("click", ".add-item-btn", function () {
         // Clear the input fields inside the cloned item
         newItem.find(".form-control, .form-select").val("");
         newItem.find("input[type='checkbox'], input[type='radio']").prop("checked", false);
-        newItem.find(".required").each(function () {
-            $(this).prop("required", true).prop("disabled", false);
-        });
+        
+        // Enable all form fields (they might be disabled in template)
+        newItem.find("input, select, textarea, button").prop("disabled", false);
+        
+        // Set required back for fields that need it
+        newItem.find(".required").prop("required", true);
+        
         // Update item text title
         newItem.find(".item-count").text(itemCount);
         newItem.attr("data-item-index", itemCount);
         newItem.addClass("item-" + itemCount);
-        newItem.removeClass("no-print");
+        newItem.removeClass("no-print item-template");
 
         // Remove select2 & Reinit the select2
         var selects = newItem.find("select");
@@ -179,9 +183,22 @@ $(document).on("click", ".remove-item-btn", function () {
 
 window.renameInputNameByIndex = function ($items) {
     $items.each(function () {
-        var itemIndex = $(this).data("item-index");
-        console.log("Renaming inputs for item index: ", itemIndex);
-        $(this)
+        var $item = $(this);
+        
+        // Skip template items
+        if ($item.hasClass('item-template') || $item.css('display') === 'none') {
+            return; // Skip silently
+        }
+        
+        var itemIndex = $item.data("item-index");
+        
+        // Skip if no valid index (gracefully, without warning)
+        if (itemIndex === undefined || itemIndex === null || itemIndex === '') {
+            return; // Skip silently
+        }
+        
+        console.log("✅ Renaming inputs for item index:", itemIndex);
+        $item
             .find("input, select, textarea")
             .each(function () {
                 var originalName = $(this).attr("name");
