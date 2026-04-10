@@ -44,6 +44,20 @@
 
 @push('scripts')
     <script>
+        function syncCurrencyFromTab2() {
+            // Priority 1: Currency selected in new policy form (Tab 2)
+            var currencyFromForm = $('#currency_code').val();
+
+            // Priority 2: Currency from selected existing policy option
+            var currencyFromPolicy = $('#policy_id').find('option:selected').data('currency');
+
+            var currencyCode = currencyFromForm || currencyFromPolicy || 'Rp';
+
+            if (typeof updateCurrencyLabel === 'function') {
+                updateCurrencyLabel(currencyCode);
+            }
+        }
+
         // Initialize policy-form-container visibility on page load
         $(document).ready(function() {
             var policyValue = $('#policy_id').val();
@@ -52,6 +66,9 @@
             } else {
                 $('#policy-form-container').slideUp();
             }
+
+            // Ensure currency labels in Tab 3/4 reflect current Tab 2 selection on first load
+            syncCurrencyFromTab2();
         });
 
         // Listen to policy_id dropdown change and update Livewire component
@@ -83,8 +100,7 @@
                 $('#policy-form-container').slideUp();
             }
 
-            var currencyCode = selectedOption.data('currency');
-            updateCurrencyLabel(currencyCode);
+            syncCurrencyFromTab2();
             update_payment();
 
             // Find the Livewire component and update policyId
@@ -142,8 +158,8 @@
                         $(this).trigger('change');
                     });
 
-                    // Trigger change on all insurance_percentage[] inputs
-                    $('input[name="insurance_percentage[]"]').each(function() {
+                    // Trigger change on all insurance percentage inputs
+                    $('input[name="percentage[]"], input[name^="percentage["] , .insurance-percentage').each(function() {
                         $(this).trigger('change');
                     });
 
@@ -161,8 +177,8 @@
         $(document).on('input change keyup blur', 'input[name^="coverage_percentage"]', function() {
             validateValues('input[name^="coverage_percentage"]', '.coverage_percentage_total', 0, 100, 5);
         });
-        $(document).on('input change keyup blur', 'input[name^="insurance_percentage"]', function() {
-            validateValues('input[name^="insurance_percentage"]', '#insurance_percentage_total', 0, 100, 2);
+        $(document).on('input change keyup blur', '.insurance-percentage, input[name="percentage[]"], input[name^="percentage["]', function() {
+            validateValues('.insurance-percentage', '#insurance_percentage_total', 0, 100, 2);
         });
         $(document).on('input change keyup blur', 'input[name^="tjh"]', function() {
             // Sum TJH hanya dari policy-form-container, bukan dari seluruh halaman
@@ -182,6 +198,27 @@
             if (typeof update_payment === 'function') {
                 update_payment();
             }
+        });
+
+        // Currency change in New Policy form should immediately update labels in Tab 3/4
+        $(document).on('change change.select2 select2:select', '#currency_code', function() {
+            syncCurrencyFromTab2();
+            if (typeof update_payment === 'function') {
+                update_payment();
+            }
+        });
+
+        // Recalculate insurance total on first load and after dynamic add/remove item actions
+        $(document).ready(function() {
+            setTimeout(function() {
+                validateValues('.insurance-percentage', '#insurance_percentage_total', 0, 100, 2);
+            }, 300);
+        });
+
+        $(document).on('click', '.add-item-btn[data-target="item-1"], .remove-item-btn', function() {
+            setTimeout(function() {
+                validateValues('.insurance-percentage', '#insurance_percentage_total', 0, 100, 2);
+            }, 350);
         });
 
         // Real-time validation: Periode Akhir tidak lebih awal dari Periode Awal

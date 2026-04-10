@@ -296,7 +296,7 @@
                                         <label class="small text-muted mb-0">Share</label>
                                         <div class="input-group input-group-sm">
                                             <input type="text"
-                                                class="form-control text-center bg-white"
+                                                class="form-control text-center bg-white insurance-share-value"
                                                 value="{{ ($polIns->percentage ?? 0) * 100 }}"
                                                 readonly>
                                             <span class="input-group-text">%</span>
@@ -592,8 +592,17 @@
             // 1. Ambil nilai dari Total Komisi (Output)
             var baseTotal = parseNumber($('#commision_bruto').val()) || 0; 
             
-            // 2. Ambil Persentase Asuransi (Share) di baris ini (PERBAIKAN SELECTOR)
-            var shareVal = parseNumber($row.find('.col-md-3 input').first().val()) || 0; 
+            // 2. Ambil Persentase Asuransi (Share) dengan selector yang tahan perubahan layout
+            var $shareInput = $row.find('.insurance-share-value').first();
+            if ($shareInput.length === 0) {
+                $shareInput = $row.find('input[readonly]')
+                    .not('.insurance-tax-percent-per-item, .insurance-tax-per-item')
+                    .eq(1);
+            }
+            if ($shareInput.length === 0) {
+                $shareInput = $row.find('.col-md-3 input').first();
+            }
+            var shareVal = parseNumber($shareInput.val()) || 0; 
             
             // 3. Dasar pengali pajaknya = Total Komisi * (Share % Asuransi)
             var baseTaxValue = baseTotal * (shareVal / 100); 
@@ -900,7 +909,7 @@
                     var $colName = $cloned.find('select[name="insurance_id[]"]').closest('div[class^="col-"]');
                     $colName.removeClass().addClass('col-md-4'); 
 
-                    var $colShare = $cloned.find('input[name="insurance_percentage[]"]').closest('div[class^="col-"]');
+                    var $colShare = $cloned.find('input[name="insurance_percentage[]"], input[name="percentage[]"]').closest('div[class^="col-"]');
                     $colShare.removeClass().addClass('col-md-3');
 
                     // 4. TRANSFORM INPUT (Ubah Select jadi Text Readonly)
@@ -913,6 +922,9 @@
                             var text = $el.find('option:selected').text().trim();
                             $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + text + '" readonly>');
                         } else {
+                            if ($el.attr('name') === 'insurance_percentage[]' || $el.attr('name') === 'percentage[]') {
+                                $el.addClass('insurance-share-value');
+                            }
                             $el.attr('readonly', true)
                                 .addClass('bg-white')
                                 .removeAttr('name')
@@ -963,7 +975,7 @@
                     }
 
                     // Ambil nilai persentase untuk sorting
-                    var percentageValue = parseNumber($(this).find('input[name="insurance_percentage[]"]').val()) || 0;
+                    var percentageValue = parseNumber($(this).find('input[name="insurance_percentage[]"], input[name="percentage[]"]').val()) || 0;
                     
                     // Simpan ke array dengan data untuk sorting
                     itemsToAppend.push({
@@ -1022,6 +1034,25 @@
                     if (typeof update_payment === 'function') update_payment();
                 });
             };
+
+            // Delegated handlers: ensure dynamic rows always respond immediately
+            $(document).on('input change', '.insurance-tax-percent-per-item', function() {
+                toggleNegativeWarning(this);
+                var $row = $(this).closest('.insurance-item');
+                sync_insurance_tax($row, 'percentage');
+                syncTaxToHiddenInputs();
+                if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                if (typeof update_payment === 'function') update_payment();
+            });
+
+            $(document).on('input change', '.insurance-tax-per-item', function() {
+                toggleNegativeWarning(this);
+                var $row = $(this).closest('.insurance-item');
+                sync_insurance_tax($row, 'value');
+                syncTaxToHiddenInputs();
+                if (typeof window.calculateTotalTax === 'function') window.calculateTotalTax();
+                if (typeof update_payment === 'function') update_payment();
+            });
 
             window.syncTaxToHiddenInputs = function() {
                 var $container = $('#tax-hidden-inputs-container');
