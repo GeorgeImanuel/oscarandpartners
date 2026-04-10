@@ -290,14 +290,14 @@
                     <tr>
                         <th>Nilai Produksi</th>
                         <th>Biaya Polis</th>
-                        <th>Total Tagihan</th>
+                        <th>Total Premi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>{{ $currency }} {{ number_format($productionCard->production_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                         <td>{{ $currency }} {{ number_format($productionCard->policy_fee,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
-                        <td>{{ $currency }} {{ number_format($productionCard->client_pay,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
+                        <td>{{ $currency }} {{ number_format($productionCard->premi_value,  $currency == 'Rp' ? 0 : 2, ',', '.') }}</td>
                     </tr>
                 </tbody>
             </table>

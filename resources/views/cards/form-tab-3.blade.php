@@ -545,9 +545,9 @@
         }
 
         function sync_discount(source) {
-            var object_value = parseFloat($('#object_value').val()) || 0;
-            var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
-            var tjh_value = parseFloat($('#tjh_value').val()) || 0;
+            var object_value = parseNumber($('#object_value').val()) || 0;
+            var premi_percentages = parseNumber($('#premi_percentages').val()) || 0;
+            var tjh_value = parseNumber($('#tjh_value').val()) || 0;
 
             // Get prorate info for Endors
             var prorateInfo = getEndorsProrateInfo();
@@ -565,7 +565,7 @@
             if (base_premium != 0) {
                 if (source === 'percentage') {
                     // User isi persen, hitung rupiah
-                    var disc_pct = parseFloat($('#discount_percentage').val()) || 0;
+                    var disc_pct = parseNumber($('#discount_percentage').val()) || 0;
                     var disc_val = base_premium * (disc_pct / 100);
                     $('#discount_value').val(disc_val.toFixed(2)); // Update Input Rupiah (2 desimal)
                     
@@ -575,7 +575,7 @@
                     }
                 } else if (source === 'value') {
                     // User isi rupiah, hitung persen
-                    var disc_val = parseFloat($('#discount_value').val()) || 0;
+                    var disc_val = parseNumber($('#discount_value').val()) || 0;
                     var disc_pct = (disc_val / base_premium) * 100;
                     $('#discount_percentage').val(disc_pct.toFixed(5)); // Update Input Persen (5 desimal)
                     
@@ -590,10 +590,10 @@
         // === HELPER FUNCTION: Sync Tax Percentage & Value ===
         function sync_insurance_tax($row, source) {
             // 1. Ambil nilai dari Total Komisi (Output)
-            var baseTotal = parseFloat($('#commision_bruto').val()) || 0; 
+            var baseTotal = parseNumber($('#commision_bruto').val()) || 0; 
             
             // 2. Ambil Persentase Asuransi (Share) di baris ini (PERBAIKAN SELECTOR)
-            var shareVal = parseFloat($row.find('.col-md-3 input').first().val()) || 0; 
+            var shareVal = parseNumber($row.find('.col-md-3 input').first().val()) || 0; 
             
             // 3. Dasar pengali pajaknya = Total Komisi * (Share % Asuransi)
             var baseTaxValue = baseTotal * (shareVal / 100); 
@@ -604,7 +604,7 @@
             if (baseTaxValue !== 0) {
                 if (source === 'percentage') {
                     // User input %, hitung nominal Rupiah/USD
-                    var pct = parseFloat($percentInput.val()) || 0;
+                    var pct = parseNumber($percentInput.val()) || 0;
                     var val = baseTaxValue * (pct / 100);
                     $valueInput.val(val.toFixed(2)); // Set ke 2 desimal
                     
@@ -613,7 +613,7 @@
                     }
                 } else if (source === 'value') {
                     // User input nominal Rupiah/USD, hitung %
-                    var val = parseFloat($valueInput.val()) || 0;
+                    var val = parseNumber($valueInput.val()) || 0;
                     var pct = (val / baseTaxValue) * 100;
                     $percentInput.val(pct.toFixed(5)); // Set ke 5 desimal
                     
@@ -632,17 +632,17 @@
         }
 
         function update_payment(triggerSource = 'auto') {
-            var object_value = parseFloat($('#object_value').val()) || 0;
-            var premi_percentages = parseFloat($('#premi_percentages').val()) || 0;
-            var policy_fee = parseInt($('#policy_fee').val()) || 0;
-            var commision_percentage = parseFloat($('#commision_percentage').val()) || 0;
-            var discount = parseFloat($('#discount_value').val()) || 0;
-            var tjh_value = parseInt($('#tjh_value').val()) || 0;
-            var discount_agent = parseInt($('#discount_agent').val()) || 0;
+            var object_value = parseNumber($('#object_value').val()) || 0;
+            var premi_percentages = parseNumber($('#premi_percentages').val()) || 0;
+            var policy_fee = parseNumber($('#policy_fee').val()) || 0;
+            var commision_percentage = parseNumber($('#commision_percentage').val()) || 0;
+            var discount = parseNumber($('#discount_value').val()) || 0;
+            var tjh_value = parseNumber($('#tjh_value').val()) || 0;
+            var discount_agent = parseNumber($('#discount_agent').val()) || 0;
 
             var prorateInfo = getEndorsProrateInfo();
             var $prodInput = $('#production_value'); // Ambil elemen input Nilai Produksi
-            var productionValue = parseFloat($prodInput.val()) || 0;
+            var productionValue = parseNumber($prodInput.val()) || 0;
             
             // 1. Hitung potensi nilai produksi dari rumus
             let calculatedProd = 0;
@@ -672,7 +672,7 @@
             // --- 3. Lanjut hitung berantai ke bawah ---
             const premiValue = premi_value(productionValue, policy_fee);
             const commisionBruto = commision_bruto(productionValue, commision_percentage / 100, discount);
-            const taxValue = parseFloat($('#tax').val()) || 0;
+            const taxValue = parseNumber($('#tax').val()) || 0;
             const commisionNetto = commision_netto(commisionBruto, taxValue, discount_agent);
             const clientPay = client_pay(premiValue, discount_agent);
             const insurancePay = insurance_pay(clientPay, commisionNetto); 
@@ -698,7 +698,7 @@
         function calculateTotalTax() {
             var totalTax = 0;
             $('.insurance-tax-per-item').each(function() {
-                var value = parseFloat($(this).val()) || 0;
+                var value = parseNumber($(this).val()) || 0;
                 totalTax += value;
             });
             $('#tax').val(totalTax.toFixed(2));
@@ -708,7 +708,7 @@
 
         // Sync formatted object_value to hidden raw field
         function syncObjectValueToHidden() {
-            var numericValue = parseFloat($('#object_value').val()) || 0;
+            var numericValue = parseNumber($('#object_value').val()) || 0;
             $('#object_value_raw').val(numericValue);
         }
 
@@ -805,7 +805,7 @@
                         var $el = $(this);
 
                         if ($el.attr('name') === 'coverage_percentage[]') {
-                            var val = parseFloat($el.val()) || 0;
+                            var val = parseNumber($el.val()) || 0;
                             totalPercentage += val;
                             // console.log('Coverage %:', val);
                         }
@@ -963,7 +963,7 @@
                     }
 
                     // Ambil nilai persentase untuk sorting
-                    var percentageValue = parseFloat($(this).find('input[name="insurance_percentage[]"]').val()) || 0;
+                    var percentageValue = parseNumber($(this).find('input[name="insurance_percentage[]"]').val()) || 0;
                     
                     // Simpan ke array dengan data untuk sorting
                     itemsToAppend.push({
@@ -1052,8 +1052,8 @@
                     
                     if (cardTypeId == endorsId) {
                         var endorsType = $('#endors_type').val() || window.endorsType;
-                        var currentObjectValue = parseFloat($('#object_value').val()) || 0;
-                        var parentObjectValue = parseFloat($('#parent_object_value').val()) || 0;
+                        var currentObjectValue = parseNumber($('#object_value').val()) || 0;
+                        var parentObjectValue = parseNumber($('#parent_object_value').val()) || 0;
                         
                         if (endorsType === 'properti') {
                             // PROPERTI: Show label dan hitung selisih (current - parent)

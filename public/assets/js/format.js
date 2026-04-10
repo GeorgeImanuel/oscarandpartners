@@ -1,6 +1,38 @@
+// Robust parsing helper that accepts formatted numbers like "1.234,56" or "1,234.56"
+function parseNumber(value) {
+    if (value === null || value === undefined || value === '') return 0;
+    if (typeof value === 'number') return value;
+
+    var s = String(value).trim();
+    // Remove currency symbols, spaces and non numeric except .,,-
+    s = s.replace(/[^0-9.,-]/g, '');
+
+    var lastDot = s.lastIndexOf('.');
+    var lastComma = s.lastIndexOf(',');
+
+    if (lastDot > -1 && lastComma > -1) {
+        // Both present: the rightmost separator is the decimal separator
+        if (lastComma > lastDot) {
+            // Indonesian style: dots are thousands, comma is decimal
+            s = s.replace(/\./g, '').replace(/,/g, '.');
+        } else {
+            // US style: commas are thousands, dot is decimal
+            s = s.replace(/,/g, '');
+        }
+    } else if (lastComma > -1) {
+        // Only comma present: treat comma as decimal separator
+        s = s.replace(/,/g, '.');
+    } else {
+        // Only dot or no separator present: keep as-is (dots are decimal)
+    }
+
+    var n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+}
+
 // Format number to Rupiah
 function formatRupiah(value) {
-    var number = parseFloat(value);
+    var number = parseNumber(value);
     if (isNaN(number)) {
         number = 0;
     }
@@ -31,7 +63,7 @@ function sumInputValues(selector, target) {
 
     $selectors.each(function () {
         if (!$(this).is(":disabled")) {
-            var val = parseFloat($(this).val()) || 0;
+            var val = parseNumber($(this).val()) || 0;
             sum += val;
         }
     });
@@ -67,7 +99,7 @@ function validateValues(selector, target, min, max, decimals) {
 
     $inputs.each(function () {
         // console.info("Validating input:", $(this).attr("name"), $(this).val());
-        var value = parseFloat($(this).val()) || 0;
+        var value = parseNumber($(this).val()) || 0;
         var $input = $(this);
         var $inputGroup =
             $input.closest(".input-group").length > 0
@@ -152,7 +184,7 @@ $(document).on("blur focusout", ".validate-percentage", function () {
 });
 
 window.toggleNegativeWarning = function (element) {
-    var val = parseFloat($(element).val()) || 0;
+    var val = parseNumber($(element).val()) || 0;
 
     // --- LOGIC PENCARIAN ELEMEN WARNING YANG LEBIH KUAT ---
     // Coba cari warning tepat di sebelah input (jika tidak ada input-group)

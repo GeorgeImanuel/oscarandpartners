@@ -132,7 +132,7 @@
 
         <script>
             window.toggleNegativeWarning = function(element) {
-                var val = parseFloat($(element).val()) || 0;
+                var val = parseNumber($(element).val()) || 0;
                 
                 // --- LOGIC PENCARIAN ELEMEN WARNING YANG LEBIH KUAT ---
                 // Coba cari warning tepat di sebelah input (jika tidak ada input-group)
@@ -189,7 +189,7 @@
             initializeFormValidation({
                 onSuccess: function(form) {
                     // Sync object_value to hidden field for proper submission
-                    var numericValue = parseFloat($('#object_value').val()) || 0;
+                    var numericValue = parseNumber($('#object_value').val()) || 0;
                     $('#object_value_raw').val(numericValue);
                     
                     if (typeof window.syncTaxToHiddenInputs === 'function') {
@@ -263,7 +263,7 @@
                     $(form).find('input[name="insurance_percentage[]"]').each(function() {
                         // Only count visible and enabled insurance percentage inputs
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
-                            var val = parseFloat($(this).val()) || 0;
+                            var val = parseNumber($(this).val()) || 0;
                             totalInsurancePercentage += val;
                             hasVisibleInsurance = true;
                         }
@@ -288,7 +288,7 @@
                     
                     $(form).find('input[name="coverage_percentage[]"]').each(function() {
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
-                            var val = parseFloat($(this).val()) || 0;
+                            var val = parseNumber($(this).val()) || 0;
                             totalCoveragePercentage += val;
                             hasVisibleCoverage = true;
                         }
@@ -410,7 +410,7 @@
                     var premiumRateField = $('#premi_percentages');
                     
                     if (premiumRateField.length > 0) {
-                        var premiumRate = parseFloat(premiumRateField.val()) || 0;
+                        var premiumRate = parseNumber(premiumRateField.val()) || 0;
                         
                         if (!isTravelPro) {
                             // JIKA BUKAN TRAVELPRO: Tolak jika 0 atau minus (<= 0)

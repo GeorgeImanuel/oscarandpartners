@@ -79,7 +79,7 @@ function updatePercentageTotal(percentageClass, totalId, infoId) {
     var totalPercentage = 0;
     $(percentageClass).each(function () {
         if ($(this).closest(".item").is(":visible")) {
-            var value = parseFloat($(this).val()) || 0;
+            var value = parseNumber($(this).val()) || 0;
             totalPercentage += value;
         }
     });

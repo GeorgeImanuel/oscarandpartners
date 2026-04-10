@@ -230,12 +230,12 @@
                 var inputs = $(this).find('input');
                 var name = inputs.eq(0).val();
                 var shareStr = inputs.eq(1).val();
-                var share = parseFloat(shareStr) / 100;
+                var share = parseNumber(shareStr) / 100;
                 var taxInput = $(this).find('.insurance-tax-per-item');
-                var rowPajak = parseFloat(taxInput.val()) || 0;
+                var rowPajak = parseNumber(taxInput.val()) || 0;
                 var rowPremi = basePremi * share;
                 var rowBiaya = (index === 0) ? policyFee : 0;
-                var globalKomisi = parseFloat($('#commision_bruto').val()) || 0;
+                var globalKomisi = parseNumber($('#commision_bruto').val()) || 0;
                 var rowKomisi = globalKomisi * share;
 
                 // Hitung Netto per baris
@@ -253,7 +253,7 @@
                 var html = '<tr>';
                 // Kolom 1-3: Asuransi
                 html += '<td class="ps-3">' + name + '</td>';
-                html += '<td class="text-center">' + parseFloat(shareStr).toFixed(2) + '%</td>';
+                html += '<td class="text-center">' + parseNumber(shareStr).toFixed(2) + '%</td>';
                 html += '<td class="text-end pe-3">' + formatRupiah(rowPremi) + '</td>';
 
                 // Kolom 4: Biaya Polis (Rowspan)
@@ -300,12 +300,12 @@
             // Listen to step navigation untuk render Step 5 Table
             $('div.setup-panel div a[href="#step-4"]').on('click', function() {
                 // Tunggu animasi selesai baru render
-                setTimeout(function() {
-                    var totalPremi = parseFloat($('#premi_value').val()) || 0;
-                    var policyFee = parseFloat($('#policy_fee').val()) || 0;
-                    var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
-                    var totalPajak = parseFloat($('#tax').val()) || 0;
-                    var totalNetto = parseFloat($('#insurance_pay').val()) || 0;
+                    setTimeout(function() {
+                    var totalPremi = parseNumber($('#premi_value').val()) || 0;
+                    var policyFee = parseNumber($('#policy_fee').val()) || 0;
+                    var totalKomisi = parseNumber($('#commision_bruto').val()) || 0;
+                    var totalPajak = parseNumber($('#tax').val()) || 0;
+                    var totalNetto = parseNumber($('#insurance_pay').val()) || 0;
 
                     renderStep5Table(totalPremi, policyFee, totalKomisi, totalPajak, totalNetto);
                 }, 100);
@@ -377,16 +377,16 @@
             function generateSchedule() {
                 var count = parseInt($('#termin-count').val()) || 2;
 
-                var rawPremi = parseFloat($('#premi_value').val()) || 0;
-                var rawPolicyFee = parseFloat($('#policy_fee').val()) || 0;
-                var discount_agent = parseFloat($('#discount_agent').val()) || 0;
+                var rawPremi = parseNumber($('#premi_value').val()) || 0;
+                var rawPolicyFee = parseNumber($('#policy_fee').val()) || 0;
+                var discount_agent = parseNumber($('#discount_agent').val()) || 0;
                 
                 var baseAmount = rawPremi - rawPolicyFee - discount_agent;
 
                 if (count < 1) return;
 
-                var totalKomisi = parseFloat($('#commision_bruto').val()) || 0;
-                var totalPajak = parseFloat($('#tax').val()) || 0;
+                var totalKomisi = parseNumber($('#commision_bruto').val()) || 0;
+                var totalPajak = parseNumber($('#tax').val()) || 0;
 
                 var amountPerItem = baseAmount / count;
                 var komisiPerItem = totalKomisi / count;
@@ -491,7 +491,7 @@
                 var rowCount = $('.installment-amount-input').length;
 
                 $('.installment-amount-input').each(function(index) {
-                    var val = parseFloat($(this).val()) || 0;
+                    var val = parseNumber($(this).val()) || 0;
                     sumAmount += val;
 
                     // Hitung ulang rincian per baris (Dibagi rata sesuai jumlah row)
@@ -513,8 +513,8 @@
                 });
 
                 // Update Total & Selisih Tagihan
-                var rawPremi = parseFloat($('#premi_value').val()) || 0; // premi_value = production_value + policy_fee
-                var discount_agent = parseFloat($('#discount_agent').val()) || 0;
+                var rawPremi = parseNumber($('#premi_value').val()) || 0; // premi_value = production_value + policy_fee
+                var discount_agent = parseNumber($('#discount_agent').val()) || 0;
                 
                 // Total yang harus dibayar = premi_value - discount_agent (sesuai client_pay formula)
                 var expectedTotal = rawPremi - discount_agent;
