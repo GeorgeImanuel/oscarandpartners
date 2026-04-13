@@ -432,9 +432,30 @@ class CardServiceImplement extends Service implements CardService
     {
         // Force treat policy_id as string (policy_number), never as numeric ID
         $policyNumber = (string) $data['policy_id'];
-        
-        // Try to find policy by policy_number, not by ID
         $policy = $this->policyRepository->findByPolicyNumber($policyNumber);
+
+        $hasPolicyHeaderInput = !empty($data['currency_code'])
+            && !empty($data['started_date'])
+            && !empty($data['ended_date']);
+
+        // For all card types: if policy header in input changed, persist as a new policy record.
+        if ($policy && $hasPolicyHeaderInput) {
+            $existingCurrency = (string) ($policy->currency_code ?? '');
+            $existingStartedDate = $policy->started_date ? $policy->started_date->format('Y-m-d') : null;
+            $existingEndedDate = $policy->ended_date ? $policy->ended_date->format('Y-m-d') : null;
+
+            $inputCurrency = (string) $data['currency_code'];
+            $inputStartedDate = (string) $data['started_date'];
+            $inputEndedDate = (string) $data['ended_date'];
+
+            $hasPolicyHeaderChanged = $existingCurrency !== $inputCurrency
+                || $existingStartedDate !== $inputStartedDate
+                || $existingEndedDate !== $inputEndedDate;
+
+            if ($hasPolicyHeaderChanged) {
+                $policy = null;
+            }
+        }
         
         if (!$policy) {
             $policy = $this->policyRepository->create([

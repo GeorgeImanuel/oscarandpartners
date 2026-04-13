@@ -22,7 +22,7 @@ class UpdateCoverageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|max:10',
+            'code' => 'required|string',
             'name' => 'required|string',
         ];
         }
@@ -37,8 +37,6 @@ class UpdateCoverageRequest extends FormRequest
         return [
             'code.required' => 'Kode harus diisi.',
             'code.string' => 'Kode harus berupa teks.',
-            'code.max' => 'Kode maksimal 10 karakter.',
-
             'name.required' => 'Nama harus diisi.',
             'name.string' => 'Nama harus berupa teks.',
         ];

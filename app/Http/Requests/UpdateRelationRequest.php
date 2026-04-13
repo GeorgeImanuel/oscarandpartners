@@ -22,8 +22,8 @@ class UpdateRelationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|max:10|unique:relations,code,' . $this->route('relation'),
-            'name' => 'required|string|max:255',
+            'code' => 'required|string|unique:relations,code,' . $this->route('relation'),
+            'name' => 'required|string',
         ];
         }
 
@@ -37,11 +37,9 @@ class UpdateRelationRequest extends FormRequest
         return [
             'code.required' => 'Kode harus diisi.',
             'code.string' => 'Kode harus berupa teks.',
-            'code.max' => 'Kode maksimal 10 karakter.',
             'code.unique' => 'Kode sudah digunakan.',
             'name.required' => 'Nama harus diisi.',
             'name.string' => 'Nama harus berupa teks.',
-            'name.max' => 'Nama maksimal 255 karakter.',
         ];
     }
 }

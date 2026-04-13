@@ -684,7 +684,7 @@
                         <div class="mb-3">
                             <label class="form-label">Jumlah Dibayar (Rp) <span class="text-danger">*</span></label>
                             {{-- Default value mengambil total tagihan --}}
-                            <input type="number" name="paid_amount" class="form-control" required value="{{ round($payment->amount) }}" step="1">
+                            <input type="number" name="paid_amount" class="form-control" required value="{{ $payment->amount }}" step="0.01">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -717,7 +717,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Jumlah Disetor (Rp) <span class="text-danger">*</span></label>
-                            <input type="number" name="insurance_paid_amount" class="form-control" required step="1">
+                            <input type="number" name="insurance_paid_amount" class="form-control" required step="0.01">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -1008,7 +1008,8 @@
                     let amount = $(this).data('amount');
                     let url = "{{ route('payments.update_client_pay', ':id') }}".replace(':id', paymentId);
                     $('#modalClientPay form').attr('action', url);
-                    $('#modalClientPay input[name="paid_amount"]').val(Math.round(amount));
+                    const clientAmount = parseFloat(amount);
+                    $('#modalClientPay input[name="paid_amount"]').val(Number.isFinite(clientAmount) ? clientAmount : 0);
                     $('#modalClientPay').modal('show');
                 });
 
@@ -1017,7 +1018,8 @@
                     let amount = $(this).data('amount');
                     let url = "{{ route('payments.update_insurance_pay', ':id') }}".replace(':id', paymentId);
                     $('#modalInsurancePay form').attr('action', url);
-                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(Math.round(amount));
+                    const insuranceAmount = parseFloat(amount);
+                    $('#modalInsurancePay input[name="insurance_paid_amount"]').val(Number.isFinite(insuranceAmount) ? insuranceAmount : 0);
                     $('#modalInsurancePay').modal('show');
                 });
             });
