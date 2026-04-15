@@ -65,9 +65,12 @@ class StoreCardRequest extends FormRequest
             'note' => 'nullable|string',
         ];
 
-        // Conditional: parent_card_id required only if card_type_id is endors
+        // Conditional rules for Endors card type
         if ($this->input('card_type_id') == config('constants.card_type.endors')) {
-            $rules['parent_card_id'] = 'required|exists:cards,id';
+            $rules['endors_type'] = 'required|in:kendaraan,properti,personal-accident';
+            $rules['parent_card_id'] = $this->input('endors_type') === 'properti'
+                ? 'required|exists:cards,id'
+                : 'nullable|exists:cards,id';
         }
 
         $isTravelPro = false;
@@ -104,13 +107,13 @@ class StoreCardRequest extends FormRequest
             // 4. Premi persentase bebas 0 (min:0)
             $rules['premi_percentages'] = 'required|numeric|min:0|max:100'; 
         } else {
-            // JIKA BUKAN TRAVELPRO: Kunci ketat harus lebih dari 0 (gt:0)
+            // JIKA BUKAN TRAVELPRO: izinkan default 0 selama masih dalam rentang valid
             $rules['coverage_code'] = 'required_without:policy_id|nullable|exists:coverages,id';
-            $rules['coverage_percentage'] = 'required_with:coverage_code|nullable|numeric|gt:0|max:100'; 
+            $rules['coverage_percentage'] = 'required_with:coverage_code|nullable|numeric|min:0|max:100'; 
             $rules['insurance_id'] = 'required_with:coverage_code|nullable|array|min:1';
             
-            // Premi persentase harus lebih dari 0 (gt:0)
-            $rules['premi_percentages'] = 'required|numeric|gt:0|max:100'; 
+            // Premi persentase boleh 0 sebagai default
+            $rules['premi_percentages'] = 'required|numeric|min:0|max:100'; 
         }
 
         return $rules;
@@ -122,7 +125,9 @@ class StoreCardRequest extends FormRequest
             // Card Details
             'card_type_id.required' => 'Tipe kartu harus dipilih.',
             'card_type_id.exists' => 'Tipe kartu tidak valid.',
-            'parent_card_id.required' => 'Kartu produksi sebelumnya harus dipilih untuk tipe Endors.',
+            'endors_type.required' => 'Tipe endors harus dipilih.',
+            'endors_type.in' => 'Tipe endors tidak valid.',
+            'parent_card_id.required' => 'Kartu produksi sebelumnya wajib dipilih untuk tipe Endors Properti.',
             'parent_card_id.exists' => 'Kartu produksi sebelumnya tidak valid.',
             'client_id.required' => 'Client harus dipilih.',
             'client_id.exists' => 'Client tidak valid.',
@@ -174,21 +179,40 @@ class StoreCardRequest extends FormRequest
                 }
             }
             
-            // Validate at least one main insurance when creating new policy
-            if ($this->filled('insurance_id') && $this->filled('is_main')) {
-                $hasMainInsurance = false;
-                foreach ($this->is_main ?? [] as $isMain) {
-                    if ($isMain == 1) {
-                        $hasMainInsurance = true;
-                        break;
+            // Wajib leader hanya jika jumlah asuransi lebih dari satu.
+            if ($this->filled('insurance_id')) {
+                $insuranceIds = (array) ($this->insurance_id ?? []);
+                $insuranceNewNames = (array) ($this->insurance_new_name ?? []);
+                $insuranceIndexes = array_unique(array_merge(array_keys($insuranceIds), array_keys($insuranceNewNames)));
+
+                $validInsuranceRows = 0;
+                foreach ($insuranceIndexes as $index) {
+                    $insuranceId = $insuranceIds[$index] ?? null;
+                    $insuranceNewName = trim((string) ($insuranceNewNames[$index] ?? ''));
+
+                    $hasValidInsuranceId = !in_array($insuranceId, [null, '', 'undefined', 'null'], true);
+                    $hasValidNewName = $insuranceNewName !== '';
+
+                    if ($hasValidInsuranceId || $hasValidNewName) {
+                        $validInsuranceRows++;
                     }
                 }
-                
-                if (!$hasMainInsurance) {
-                    $validator->errors()->add(
-                        'is_main', 
-                        'Minimal satu asuransi harus dipilih sebagai asuransi utama'
-                    );
+
+                if ($validInsuranceRows > 1) {
+                    $hasMainInsurance = false;
+                    foreach ((array)($this->is_main ?? []) as $isMain) {
+                        if ((int)$isMain === 1) {
+                            $hasMainInsurance = true;
+                            break;
+                        }
+                    }
+
+                    if (!$hasMainInsurance) {
+                        $validator->errors()->add(
+                            'is_main',
+                            'Minimal satu asuransi harus dipilih sebagai asuransi utama'
+                        );
+                    }
                 }
             }
             

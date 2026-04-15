@@ -482,6 +482,8 @@ class CardServiceImplement extends Service implements CardService
 
             // Assign insurances
             if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                $insuranceRows = [];
+
                 foreach ($data['insurance_id'] as $index => $insuranceId) {
                     // Skip if insurance_id is empty
                     if (empty($insuranceId)) {
@@ -495,13 +497,40 @@ class CardServiceImplement extends Service implements CardService
                         $taxValue = $data['insurance_tax'][$insuranceId] ?? 0;
                     }
 
-                    $this->policyInsuranceRepository->create([
+                    // Support both insurance_percentage[] (legacy) and percentage[] (current form).
+                    $percentageInput = 0;
+                    if (isset($data['insurance_percentage']) && is_array($data['insurance_percentage'])) {
+                        $percentageInput = $data['insurance_percentage'][$index]
+                            ?? $data['insurance_percentage'][$insuranceId]
+                            ?? 0;
+                    } elseif (isset($data['percentage']) && is_array($data['percentage'])) {
+                        $percentageInput = $data['percentage'][$index]
+                            ?? $data['percentage'][$insuranceId]
+                            ?? 0;
+                    }
+
+                    $isMainInput = null;
+                    if (isset($data['is_main'])) {
+                        if (is_array($data['is_main'])) {
+                            $isMainInput = $data['is_main'][$index]
+                                ?? $data['is_main'][$insuranceId]
+                                ?? null;
+                        } else {
+                            $isMainInput = $data['is_main'];
+                        }
+                    }
+
+                    $insuranceRows[] = [
                         'policy_id'    => $policy->id,
                         'insurance_id' => $this->findOrCreateInsurance($insuranceId),
-                        'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
-                        'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
+                        'percentage'   => ((float) $percentageInput) / 100,
+                        'is_main'      => $this->toBooleanInt($isMainInput),
                         'tax'          => (float)$taxValue,
-                    ]);
+                    ];
+                }
+
+                foreach ($insuranceRows as $insuranceRow) {
+                    $this->policyInsuranceRepository->create($insuranceRow);
                 }
             }
 
@@ -522,6 +551,23 @@ class CardServiceImplement extends Service implements CardService
         }
 
         return $policy->id;
+    }
+
+    private function toBooleanInt($value): int
+    {
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
+        if (is_numeric($value)) {
+            return ((int) $value) === 1 ? 1 : 0;
+        }
+
+        if (is_string($value)) {
+            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true) ? 1 : 0;
+        }
+
+        return 0;
     }
 
     public function getAllWithFilter(array $data)

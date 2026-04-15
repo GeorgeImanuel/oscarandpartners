@@ -25,7 +25,7 @@ class UpdatePoliciesRequest extends FormRequest
             'coverage_code' => 'required|array|min:1',
             'coverage_code.*' => 'required|string|exists:coverages,code',
             'coverage_percentage' => 'required|array|min:1',
-            'coverage_percentage.*' => 'required|numeric|min:0.0000001|max:100',
+            'coverage_percentage.*' => 'required|numeric|min:0|max:100',
             'currency_code' => 'nullable|string|exists:currencies,code',
             'policy_number' => [
                 'required',
@@ -46,7 +46,7 @@ class UpdatePoliciesRequest extends FormRequest
             'is_main' => 'nullable|array', 
             
             'percentage' => 'required|array|min:1',
-            'percentage.*' => 'required|numeric|min:0.0000001|max:100',
+            'percentage.*' => 'required|numeric|min:0|max:100',
         ];
     }
 
@@ -65,7 +65,7 @@ class UpdatePoliciesRequest extends FormRequest
             'coverage_percentage.required' => 'Persentase Coverage wajib diisi.',
             'coverage_percentage.*.required' => 'Persentase Coverage wajib diisi.',
             'coverage_percentage.*.numeric' => 'Persentase Coverage harus berupa angka.',
-            'coverage_percentage.*.min' => 'Persentase Coverage minimal 0.0000001.',
+            'coverage_percentage.*.min' => 'Persentase Coverage minimal 0.',
             'coverage_percentage.*.max' => 'Persentase Coverage maksimal 100.',
             
             'policy_number.required' => 'Policy number is required.',

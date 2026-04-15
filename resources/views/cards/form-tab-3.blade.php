@@ -640,6 +640,9 @@
             }
         }
 
+        // Default: ikut formula. Begitu user edit Nilai Produksi, mode jadi manual.
+        window.isProductionValueManual = false;
+
         function update_payment(triggerSource = 'auto') {
             var object_value = parseNumber($('#object_value').val()) || 0;
             var premi_percentages = parseNumber($('#premi_percentages').val()) || 0;
@@ -652,6 +655,10 @@
             var prorateInfo = getEndorsProrateInfo();
             var $prodInput = $('#production_value'); // Ambil elemen input Nilai Produksi
             var productionValue = parseNumber($prodInput.val()) || 0;
+
+            if (triggerSource === 'manual_production') {
+                window.isProductionValueManual = true;
+            }
             
             // 1. Hitung potensi nilai produksi dari rumus
             let calculatedProd = 0;
@@ -662,21 +669,14 @@
                 calculatedProd = production_value(object_value, premi_percentages / 100, tjh_value, discount);
             }
 
-            // 2. CEK KONDISI PENGUNCIAN
-            let isZeroParams = (object_value === 0 && premi_percentages === 0 && tjh_value === 0);
-
-            if (triggerSource !== 'manual_production') {
-                if (!isZeroParams) {
-                    // JIKA ADA PARAMETER RUMUS: Kunci kotak, kasih warna abu-abu, pakai hasil rumus
-                    $prodInput.prop('readonly', true).addClass('bg-light');
-                    productionValue = calculatedProd;
-                    $prodInput.val(productionValue.toFixed(2));
-                } else {
-                    // JIKA PARAMETER RUMUS 0: Buka kunci kotak, biarkan nilai manual
-                    $prodInput.prop('readonly', false).removeClass('bg-light');
-                    // Tidak menimpa productionValue, tetap menggunakan angka yang ada di input
-                }
+            // 2. Default tetap formula. Setelah user edit manual, jangan ditimpa lagi.
+            if (!window.isProductionValueManual) {
+                productionValue = calculatedProd;
+                $prodInput.val(productionValue.toFixed(2));
             }
+
+            // Nilai Produksi bisa diedit manual di semua kondisi.
+            $prodInput.prop('readonly', false).removeClass('bg-light');
 
             // --- 3. Lanjut hitung berantai ke bawah ---
             const premiValue = premi_value(productionValue, policy_fee);
@@ -1095,12 +1095,12 @@
                             $('#object_value').val(difference);
                             
                             console.log('Endors Properti:', { current: currentObjectValue, parent: parentObjectValue, difference: difference });
-                        } else if (endorsType === 'kendaraan') {
-                            // KENDARAAN: Show label, nilai langsung (tidak dikurangi parent)
+                        } else if (endorsType === 'kendaraan' || endorsType === 'personal-accident') {
+                            // KENDARAAN/PERSONAL ACCIDENT: nilai langsung (tidak dikurangi parent)
                             $('#endorsement-label-properti').hide();
                             $('#endorsement-label-kendaraan').show();
-                            
-                            console.log('Endors Kendaraan:', { current: currentObjectValue });
+
+                            console.log('Endors Non-Properti:', { type: endorsType, current: currentObjectValue });
                         } else {
                             // No endors type selected yet
                             $('#endorsement-label-properti').hide();
