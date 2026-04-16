@@ -285,6 +285,7 @@
                     // ============================================================
                     var totalCoveragePercentage = 0;
                     var hasVisibleCoverage = false;
+                    var hasObjectCoverage = false;
                     
                     $(form).find('input[name="coverage_percentage[]"]').each(function() {
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
@@ -294,21 +295,30 @@
                         }
                     });
 
+                    $(form).find('input[name^="object_coverage_percentage"]').each(function() {
+                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
+                            var val = parseNumber($(this).val()) || 0;
+                            if (val > 0) {
+                                hasObjectCoverage = true;
+                            }
+                        }
+                    });
+
                     // === PERBAIKAN LOGIKA KHUSUS NON-TRAVELPRO ===
                     // Jika BUKAN TravelPro dan form input polis baru sedang terbuka
                     if (!isTravelPro && $('#new-policy').is(':visible')) {
                         
                         // Skenario 1: User menghapus semua baris coverage (kosong sama sekali)
-                        if (!hasVisibleCoverage) {
-                            alertWarning('Minimal harus ada 1 Rincian Coverage!', '');
+                        if (!hasVisibleCoverage && !hasObjectCoverage) {
+                            alertWarning('Minimal harus ada 1 Rincian Coverage (di polis atau per obyek)!', '');
                             console.warn('Coverage validation failed: No coverage added.');
                             errors.push({
                                 field: '.coverage-item',
-                                message: 'Minimal harus ada 1 Rincian Coverage'
+                                message: 'Minimal harus ada 1 Rincian Coverage di polis atau per obyek'
                             });
                         } 
                         // Skenario 2: Baris coverage ada, valid jika total 0-100
-                        else if (totalCoveragePercentage < 0 || totalCoveragePercentage > 100) {
+                        else if (hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
                             alertWarning('Total persentase coverage harus di antara 0% sampai 100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
                             console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
                             errors.push({

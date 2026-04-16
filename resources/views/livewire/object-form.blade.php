@@ -148,6 +148,107 @@
             @endif
         </div>
     </div>
+
+    <div class="col-md-12 mb-3 multiple-item-container object-coverage-section"
+        style="{{ $policyCoverageExists ? 'display:none;' : '' }}">
+        <label>Coverage Per Obyek</label>
+        <button type="button"
+            class="btn btn-primary btn-sm float-end add-item-btn"
+            data-target="object-coverage-item"
+            {{ $isDisabled ? 'disabled' : '' }}>
+            <i class="icon-plus me-2"></i>Tambah Coverage
+        </button>
+        <div class="item-list pt-2">
+            @if (isset($object) && $object && $object->objectCoverages && $object->objectCoverages->count() > 0)
+                @foreach ($object->objectCoverages as $index => $objectCoverage)
+                    <div class="mt-2 px-3 py-3 border rounded item object-coverage-item">
+                        <div class="row align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label">Coverage <span class="item-count">{{ $index + 1 }}</span></label>
+                                <select class="form-select create-select2"
+                                    name="object_coverage_code[][]"
+                                    data-placeholder="Pilih Coverage"
+                                    style="width: 100%;"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
+                                    <option value=""></option>
+                                    @foreach ($coverages as $coverage)
+                                        <option value="{{ $coverage->code }}"
+                                            {{ $objectCoverage->coverage_code == $coverage->code ? 'selected' : '' }}>
+                                            {{ $coverage->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Persentase Coverage <span class="item-count">{{ $index + 1 }}</span></label>
+                                <div class="input-group">
+                                    <input type="number"
+                                        class="form-control object-coverage-percentage"
+                                        name="object_coverage_percentage[][]"
+                                        step="0.00001"
+                                        min="0"
+                                        max="100"
+                                        value="{{ ($objectCoverage->percentage ?? 0) * 100 }}"
+                                        {{ $isDisabled ? 'disabled' : '' }}>
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-1 pt-3">
+                                <button type="button"
+                                    class="btn btn-danger btn-xs remove-item-btn"
+                                    style="{{ $index == 0 ? 'display:none;' : '' }}"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
+                                    <i class="icon-trash me-2"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="mt-2 px-3 py-3 border rounded item object-coverage-item">
+                    <div class="row align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label">Coverage <span class="item-count">1</span></label>
+                            <select class="form-select create-select2"
+                                name="object_coverage_code[][]"
+                                data-placeholder="Pilih Coverage"
+                                style="width: 100%;"
+                                {{ $isDisabled ? 'disabled' : '' }}>
+                                <option value=""></option>
+                                @foreach ($coverages as $coverage)
+                                    <option value="{{ $coverage->code }}">
+                                        {{ $coverage->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">Persentase Coverage <span class="item-count">1</span></label>
+                            <div class="input-group">
+                                <input type="number"
+                                    class="form-control object-coverage-percentage"
+                                    name="object_coverage_percentage[][]"
+                                    step="0.00001"
+                                    min="0"
+                                    max="100"
+                                    {{ $isDisabled ? 'disabled' : '' }}>
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-1 pt-3">
+                            <button type="button"
+                                class="btn btn-danger btn-xs remove-item-btn"
+                                style="display:none;"
+                                {{ $isDisabled ? 'disabled' : '' }}>
+                                <i class="icon-trash me-2"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <div class="col-md-12 mb-3 input-group-solid">
         <label class="form-label" for="object_value_input">Harga Pertanggungan <span class="text-danger">*</span></label>
         <div class="input-group mb-3">
@@ -168,6 +269,54 @@
 
 @script
     <script>
+        function isPolicyCoverageFilled() {
+            let filled = false;
+
+            function toNum(raw) {
+                if (typeof parseNumber === 'function') {
+                    return parseNumber(raw);
+                }
+                if (raw === null || raw === undefined || raw === '') {
+                    return 0;
+                }
+                const n = parseFloat(String(raw).replace(',', '.'));
+                return isNaN(n) ? 0 : n;
+            }
+
+            $('#policy-detail-form .item-coverage').not('.no-print').each(function() {
+                if ($(this).css('display') === 'none') {
+                    return;
+                }
+
+                const code = $(this).find('select[name="coverage_code[]"]').val();
+                const percentage = toNum($(this).find('input[name="coverage_percentage[]"]').val());
+
+                if ((code && String(code).trim() !== '') || percentage > 0) {
+                    filled = true;
+                    return false;
+                }
+            });
+
+            return filled;
+        }
+
+        function toggleObjectCoverageSection() {
+            const policyCoverageExists = isPolicyCoverageFilled();
+
+            $('.object-coverage-section').each(function() {
+                const $section = $(this);
+                const $inputs = $section.find('input, select, textarea, button');
+
+                if (policyCoverageExists) {
+                    $section.hide();
+                    $inputs.prop('disabled', true);
+                } else {
+                    $section.show();
+                    $inputs.prop('disabled', false);
+                }
+            });
+        }
+
         // 1. Logic existing untuk Occupation (biarkan saja)
         $(document).on('change', 'select[name^="object_occupation_id"]', function() {
             const $item = $(this).closest('.item');
@@ -207,6 +356,26 @@
                     window.toggleNegativeWarning(this);
                 }
             });
+
+            toggleObjectCoverageSection();
         }, 500);
+
+        $(document).on('input change keyup blur', '#policy-detail-form input[name="coverage_percentage[]"]', function() {
+            toggleObjectCoverageSection();
+        });
+
+        $(document).on('change select2:select select2:clear', '#policy-detail-form select[name="coverage_code[]"]', function() {
+            toggleObjectCoverageSection();
+        });
+
+        $(document).on('click', '#policy-detail-form .add-item-btn[data-target="item-coverage"], #policy-detail-form .item-coverage .remove-item-btn', function() {
+            setTimeout(function() {
+                toggleObjectCoverageSection();
+            }, 250);
+        });
+
+        document.addEventListener('policyCoverageVisibilityChanged', function() {
+            toggleObjectCoverageSection();
+        });
     </script>
 @endscript

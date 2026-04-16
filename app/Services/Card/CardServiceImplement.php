@@ -9,6 +9,7 @@ use App\Repositories\Currency\CurrencyRepository;
 use App\Repositories\Insurance\InsuranceRepository;
 use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Object\ObjectRepository;
+use App\Repositories\ObjectCoverage\ObjectCoverageRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\Payment\PaymentRepository;
@@ -43,6 +44,7 @@ class CardServiceImplement extends Service implements CardService
     protected $relationRepository;
     protected $objectOccupationRepository;
     protected $objectRepository;
+    protected $objectCoverageRepository;
     protected $interestRepository;
     protected $objectInterestRepository;
     protected $policyRepository;
@@ -60,6 +62,7 @@ class CardServiceImplement extends Service implements CardService
         RelationRepository $relationRepository,
         ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
+        ObjectCoverageRepository $objectCoverageRepository,
         InterestRepository $interestRepository,
         ObjectInterestRepository $objectInterestRepository,
         PolicyRepository $policyRepository,
@@ -76,6 +79,7 @@ class CardServiceImplement extends Service implements CardService
         $this->relationRepository         = $relationRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository           = $objectRepository;
+        $this->objectCoverageRepository   = $objectCoverageRepository;
         $this->interestRepository         = $interestRepository;
         $this->objectInterestRepository   = $objectInterestRepository;
         $this->policyRepository           = $policyRepository;
@@ -417,6 +421,29 @@ class CardServiceImplement extends Service implements CardService
                     'object_id'   => $object->id,
                     'interest_id' => $this->findOrCreateInterest($validInterestId),
                     'value'       => $value,
+                ]);
+            }
+        }
+
+        // Create object coverages if exists
+        if (isset($data['object_coverage_code']) && is_array($data['object_coverage_code'])) {
+            $coverageCodes = isset($data['object_coverage_code'][$objectIndex]) && is_array($data['object_coverage_code'][$objectIndex])
+                ? $data['object_coverage_code'][$objectIndex]
+                : [];
+
+            $coveragePercentages = isset($data['object_coverage_percentage'][$objectIndex]) && is_array($data['object_coverage_percentage'][$objectIndex])
+                ? $data['object_coverage_percentage'][$objectIndex]
+                : [];
+
+            foreach ($coverageCodes as $coverageIndex => $coverageCode) {
+                if (empty($coverageCode)) {
+                    continue;
+                }
+
+                $this->objectCoverageRepository->create([
+                    'object_id'      => $object->id,
+                    'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
+                    'percentage'     => ((float)($coveragePercentages[$coverageIndex] ?? 0)) / 100,
                 ]);
             }
         }

@@ -354,6 +354,9 @@
             <div class="col-md-12 mb-3">
                 <div id="object-item-container"
                     class="row multiple-item-container">
+                    @php
+                        $policyCoverageExists = isset($policy) && $policy && $policy->policyCoverages && $policy->policyCoverages->isNotEmpty();
+                    @endphp
                     <div class="col-md mt-2 mb-3">
                         <h5 class="text-primary">Obyek Pertanggungan</h5>
                         <hr class="separator">
@@ -396,7 +399,7 @@
                                 <input type="hidden"
                                     value=""name="class"
                                     disabled>
-                                @livewire('object-form', ['objectId' => null, 'isDisabled' => true], key('object-form-template-' . uniqid()))
+                                @livewire('object-form', ['objectId' => null, 'isDisabled' => true, 'policyCoverageExists' => $policyCoverageExists], key('object-form-template-' . uniqid()))
                             </div>
                         </div>
                         {{-- End Item Object Template --}}
@@ -432,7 +435,7 @@
 
                                 {{-- Object Form --}}
                                 <div class="col-md-12 object-forms-container">
-                                    @livewire('object-form', ['objectId' => $policyObject->object_id ?? null], key('object-form-existing-' . $index . '-' . ($policyObject->id ?? uniqid())))
+                                    @livewire('object-form', ['objectId' => $policyObject->object_id ?? null, 'policyCoverageExists' => $policyCoverageExists], key('object-form-existing-' . $index . '-' . ($policyObject->id ?? uniqid())))
                                 </div>
                             </div>
                         @empty
@@ -465,7 +468,7 @@
                                 {{-- Object Form --}}
                                 <div class="col-md-12 object-forms-container"
                                     style="display:none;">
-                                    @livewire('object-form', ['objectId' => null], key('object-form-empty-' . uniqid()))
+                                    @livewire('object-form', ['objectId' => null, 'policyCoverageExists' => $policyCoverageExists], key('object-form-empty-' . uniqid()))
                                 </div>
                             </div>
                         @endforelse
@@ -483,6 +486,58 @@
 
 @script
     <script>
+        window.syncObjectCoverageVisibilityFromPolicy = function() {
+            var hasPolicyCoverageValue = false;
+
+            function toNum(raw) {
+                if (typeof parseNumber === 'function') {
+                    return parseNumber(raw);
+                }
+                if (raw === null || raw === undefined || raw === '') {
+                    return 0;
+                }
+                var n = parseFloat(String(raw).replace(',', '.'));
+                return isNaN(n) ? 0 : n;
+            }
+
+            $('#policy-detail-form .item-coverage').not('.no-print').each(function() {
+                if ($(this).css('display') === 'none') {
+                    return;
+                }
+
+                var coverageCode = $(this).find('select[name="coverage_code[]"]').val();
+                var percentageRaw = $(this).find('input[name="coverage_percentage[]"]').val();
+                var percentageVal = toNum(percentageRaw);
+
+                // Coverage polis dianggap terisi jika coverage dipilih atau persentasenya > 0.
+                if ((coverageCode && String(coverageCode).trim() !== '') || percentageVal > 0) {
+                    hasPolicyCoverageValue = true;
+                    return false;
+                }
+            });
+
+            $('.object-coverage-section').each(function() {
+                var $section = $(this);
+                var $inputs = $section.find('input, select, textarea, button');
+
+                if (hasPolicyCoverageValue) {
+                    $section.hide();
+                    $inputs.prop('disabled', true);
+                } else {
+                    $section.show();
+                    $inputs.prop('disabled', false);
+                }
+            });
+
+            document.dispatchEvent(new CustomEvent('policyCoverageVisibilityChanged', {
+                detail: {
+                    hasPolicyCoverageValue: hasPolicyCoverageValue
+                }
+            }));
+
+            return hasPolicyCoverageValue;
+        }
+
         // Listen for objectLoaded event
         Livewire.on('objectLoaded', (event) => {
             var $template = $('#object-form-livewire');
@@ -541,6 +596,8 @@
             if (typeof update_payment === 'function') {
                 update_payment();
             }
+
+            syncObjectCoverageVisibilityFromPolicy();
         });
 
         // Listen for currency code update event
@@ -597,6 +654,10 @@
                             });
                         }
                     });
+
+                    if (typeof window.syncObjectCoverageVisibilityFromPolicy === 'function') {
+                        window.syncObjectCoverageVisibilityFromPolicy();
+                    }
                 }, 150);
             });
         });
@@ -713,6 +774,30 @@
             if (typeof window.toggleNegativeWarning === 'function') {
                 window.toggleNegativeWarning(this);
             }
+        });
+
+        $(document).ready(function() {
+            setTimeout(function() {
+                syncObjectCoverageVisibilityFromPolicy();
+            }, 200);
+        });
+
+        $(document).on('input change keyup blur', '#policy-detail-form input[name="coverage_percentage[]"]', function() {
+            syncObjectCoverageVisibilityFromPolicy();
+        });
+
+        $(document).on('change select2:select select2:clear', '#policy-detail-form select[name="coverage_code[]"]', function() {
+            syncObjectCoverageVisibilityFromPolicy();
+        });
+
+        $(document).on('click', '#policy-detail-form .add-item-btn[data-target="item-coverage"], #policy-detail-form .item-coverage .remove-item-btn', function() {
+            setTimeout(function() {
+                syncObjectCoverageVisibilityFromPolicy();
+            }, 300);
+        });
+
+        $(document).on('change', '#policy-detail-form .item-coverage :input', function() {
+            syncObjectCoverageVisibilityFromPolicy();
         });
 
         // Handler khusus untuk item asuransi

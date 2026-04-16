@@ -25,7 +25,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             // Kita gunakan function untuk menambahkan withSum
             'policy.objects' => function($query) {
                 // Load detail interest
-                $query->with('objectInterests.interest');
+                $query->with(['objectInterests.interest', 'objectCoverages.coverage']);
                 // Hitung total value (akan muncul atribut 'total_value' di tiap object)
                 $query->withSum('objectInterests as total_value', 'value');
             },
@@ -38,7 +38,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
     {
         return $this->model->with([
                 'policy.objects' => function($query) {
-                    $query->withSum('objectInterests as total_value', 'value');
+                    $query->with(['objectCoverages.coverage'])->withSum('objectInterests as total_value', 'value');
                 }
             ])->get();
     }
@@ -50,7 +50,7 @@ class CardRepositoryImplement extends Eloquent implements CardRepository
             'policy' => function($q) {
                 // Load objects beserta total nilainya
                 $q->with(['objects' => function($subQ) {
-                    $subQ->withSum('objectInterests as total_value', 'value');
+                    $subQ->with(['objectCoverages.coverage'])->withSum('objectInterests as total_value', 'value');
                 }]);
             },
             'cardStatus',

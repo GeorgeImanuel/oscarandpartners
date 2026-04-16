@@ -40,6 +40,41 @@
 
 @php
     $currency = $card->policy->currency_code ?? 'Rp';
+    $policyCoverageTotal = (float) ($card->policy?->policyCoverages?->sum('percentage') ?? 0);
+    $useObjectCoverageFallback = $policyCoverageTotal <= 0;
+
+    $objectCoverageRows = collect();
+    $hasAnyObjectCoverage = false;
+
+    if ($useObjectCoverageFallback && $card->policy && $card->policy->objects && $card->policy->objects->count() > 0) {
+        foreach ($card->policy->objects as $policyObject) {
+            $coverages = ($policyObject->objectCoverages ?? collect())
+                ->filter(function ($objectCoverage) {
+                    return !empty($objectCoverage->coverage_code);
+                })
+                ->map(function ($objectCoverage) {
+                    $coverageName = $objectCoverage->coverage->name ?? $objectCoverage->coverage_code ?? '-';
+                    $percentage = ((float) ($objectCoverage->percentage ?? 0)) * 100;
+
+                    return $coverageName . ' (' . number_format($percentage, 5, ',', '.') . '%)';
+                })
+                ->values();
+
+            $coverageText = '-';
+            if ($coverages->isNotEmpty()) {
+                $coverageText = $coverages->implode(', ');
+                $hasAnyObjectCoverage = true;
+            }
+
+            $objectCoverageRows->push([
+                'object_name' => $policyObject->name ?? '-',
+                'object_description' => $policyObject->keterangan ?? '-',
+                'coverage_text' => $coverageText,
+            ]);
+        }
+    }
+
+    $showObjectCoverageOnPremiPercentage = ((float) ($card->premi_percentages ?? 0) <= 0) && $hasAnyObjectCoverage;
 @endphp
 
 @section('content')
@@ -120,9 +155,13 @@
                                                 <td class="fw-bold">Obyek Asuransi</td>
                                                 <td>:</td>
                                                 <td>
-                                                    @if($card->policy && $card->policy->policyObjects->count() > 0)
+                                                    @if($useObjectCoverageFallback && $objectCoverageRows->isNotEmpty())
+                                                        @foreach($objectCoverageRows as $row)
+                                                            {{ $row['object_name'] }} - {{ $row['object_description'] }}<br>
+                                                        @endforeach
+                                                    @elseif($card->policy && $card->policy->policyObjects->count() > 0)
                                                         @foreach($card->policy->policyObjects as $polObj)
-                                                            {{ $polObj->object->name ?? '-' }} - {{ $polObj->object->keterangan ?? '-' }} <br>
+                                                            {{ $polObj->object->name ?? '-' }} - {{ $polObj->object->keterangan ?? '-' }}<br>
                                                         @endforeach
                                                     @else
                                                         -
@@ -155,7 +194,17 @@
                                             <tr>
                                                 <td class="fw-bold">Persentase Premi</td>
                                                 <td>:</td>
-                                                <td>{{ number_format($card->premi_percentages * 100, 5, ',', '.') }}%</td>
+                                                <td>
+                                                    @if($showObjectCoverageOnPremiPercentage)
+                                                        @foreach($objectCoverageRows as $row)
+                                                            @if($row['coverage_text'] !== '-')
+                                                                {{ $row['object_description'] }}: {{ $row['coverage_text'] }}<br>
+                                                            @endif
+                                                        @endforeach
+                                                    @else
+                                                        {{ number_format($card->premi_percentages * 100, 5, ',', '.') }}%
+                                                    @endif
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td class="fw-bold">Persentase Komisi</td>
@@ -180,7 +229,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body p-4">
                             <h6 class="mb-3">Perhitungan Premi</h6>

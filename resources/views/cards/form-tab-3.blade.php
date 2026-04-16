@@ -207,6 +207,54 @@
                                         <hr class="my-2 text-muted">
                                     @endif
                                 @endforeach
+                            @elseif (isset($card->policy) && $card->policy->objects && $card->policy->objects->count() > 0)
+                                @php
+                                    $flatObjectCoverages = collect();
+                                    foreach ($card->policy->objects as $policyObject) {
+                                        if (!$policyObject->objectCoverages || $policyObject->objectCoverages->isEmpty()) {
+                                            continue;
+                                        }
+
+                                        foreach ($policyObject->objectCoverages as $objectCoverage) {
+                                            $flatObjectCoverages->push([
+                                                'object_name' => $policyObject->name ?? '-',
+                                                'coverage_name' => $objectCoverage->coverage->name ?? '-',
+                                                'percentage' => ($objectCoverage->percentage ?? 0) * 100,
+                                            ]);
+                                        }
+                                    }
+                                @endphp
+
+                                @if ($flatObjectCoverages->isNotEmpty())
+                                    @foreach ($flatObjectCoverages as $row)
+                                        <div class="row g-2 align-items-center mb-3 coverage-item">
+                                            <div class="col-md-8">
+                                                <label class="small text-muted mb-0">Coverage ({{ $row['object_name'] }})</label>
+                                                <input type="text"
+                                                    class="form-control form-control-sm bg-white"
+                                                    value="{{ $row['coverage_name'] }}"
+                                                    readonly>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="small text-muted mb-0">Persentase</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text"
+                                                        class="form-control text-center bg-white"
+                                                        value="{{ $row['percentage'] }}"
+                                                        readonly>
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (!$loop->last)
+                                            <hr class="my-2 text-muted">
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <div class="text-center text-muted small"
+                                        id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
+                                @endif
                             @else
                                 <div class="text-center text-muted small"
                                     id="no-coverage-msg">Tidak ada data coverage terhubung.</div>
@@ -544,6 +592,52 @@
             };
         }
 
+        function getObjectCoverageProductionBase(prorateInfo) {
+            var totalBase = 0;
+            var hasObjectCoverage = false;
+
+            $('#policy-form-container .item-object').not('.item-template, .no-print').each(function() {
+                var $objectItem = $(this);
+                if ($objectItem.css('display') === 'none') {
+                    return;
+                }
+
+                var objectValue = parseNumber($objectItem.find('input[name^="object_value_input"]').first().val()) || 0;
+                var objectCoveragePercentage = 0;
+                var objectHasCoverage = false;
+
+                $objectItem.find('.object-coverage-item').each(function() {
+                    if ($(this).css('display') === 'none') {
+                        return;
+                    }
+
+                    var coverageCode = $(this).find('select[name^="object_coverage_code"]').val();
+                    var coveragePercentage = parseNumber($(this).find('input[name^="object_coverage_percentage"]').val()) || 0;
+
+                    if (!coverageCode || coverageCode === '') {
+                        return;
+                    }
+
+                    objectHasCoverage = true;
+                    objectCoveragePercentage += coveragePercentage;
+                });
+
+                if (objectHasCoverage) {
+                    hasObjectCoverage = true;
+                    totalBase += (objectValue * (objectCoveragePercentage / 100));
+                }
+            });
+
+            if (hasObjectCoverage && prorateInfo && prorateInfo.isEndors && prorateInfo.days) {
+                totalBase = totalBase * prorateInfo.daysFactor;
+            }
+
+            return {
+                hasObjectCoverage: hasObjectCoverage,
+                value: totalBase,
+            };
+        }
+
         function sync_discount(source) {
             var object_value = parseNumber($('#object_value').val()) || 0;
             var premi_percentages = parseNumber($('#premi_percentages').val()) || 0;
@@ -552,6 +646,13 @@
             // Get prorate info for Endors
             var prorateInfo = getEndorsProrateInfo();
             var base_premium;
+
+            var objectCoverageBase = getObjectCoverageProductionBase(prorateInfo);
+            if (objectCoverageBase.hasObjectCoverage) {
+                base_premium = objectCoverageBase.value + tjh_value;
+            } else if (premi_percentages === 0) {
+                base_premium = 0;
+            } else
             
             if (prorateInfo.isEndors && prorateInfo.days) {
                 // Use prorated formula: (Harga * Tarif * (hari/365)) + TJH
@@ -662,7 +763,12 @@
             
             // 1. Hitung potensi nilai produksi dari rumus
             let calculatedProd = 0;
-            if (prorateInfo.isEndors && prorateInfo.days) {
+            var objectCoverageBase = getObjectCoverageProductionBase(prorateInfo);
+            if (objectCoverageBase.hasObjectCoverage) {
+                calculatedProd = objectCoverageBase.value + tjh_value - discount;
+            } else if (premi_percentages === 0) {
+                calculatedProd = 0;
+            } else if (prorateInfo.isEndors && prorateInfo.days) {
                 var endorsType = $('#endors_type').val() || window.endorsType;
                 calculatedProd = production_value_endors(object_value, premi_percentages / 100, tjh_value, discount, prorateInfo.days);
             } else {
@@ -770,88 +876,108 @@
             }, 300);
 
             window.copyCoverageToTab3 = function() {
-                // console.log('📋 copyCoverageToTab3 called');
                 var $target = $('#coverage-list-container');
-                var $sources = $('#policy-form-container .item-coverage');
-
-                // console.log('Target:', $target.length, 'Sources:', $sources.length);
                 $target.empty();
 
-                if ($sources.length === 0) {
-                    $target.html('<div class="text-center text-muted small">Tidak ada data coverage.</div>');
-                    // console.log('❌ No sources found');
+                var policyRows = [];
+                $('#policy-form-container .item-coverage').each(function() {
+                    if ($(this).css('display') === 'none') {
+                        return;
+                    }
+
+                    var coverageCode = $(this).find('select[name="coverage_code[]"]').val();
+                    var coverageName = $(this).find('select[name="coverage_code[]"] option:selected').text().trim();
+                    var percentage = parseNumber($(this).find('input[name="coverage_percentage[]"]').val()) || 0;
+
+                    if (!coverageCode || coverageName === '- Pilih Coverage -') {
+                        return;
+                    }
+
+                    policyRows.push({
+                        label: 'Coverage',
+                        name: coverageName,
+                        percentage: percentage,
+                    });
+                });
+
+                var rowsToRender = [];
+                var finalPremiPercentage = 0;
+
+                if (policyRows.length > 0) {
+                    rowsToRender = policyRows;
+                    finalPremiPercentage = policyRows.reduce(function(sum, row) {
+                        return sum + (row.percentage || 0);
+                    }, 0);
+                } else {
+                    $('#policy-form-container .item-object').not('.item-template, .no-print').each(function(objectIndex) {
+                        var $objectItem = $(this);
+                        if ($objectItem.css('display') === 'none') {
+                            return;
+                        }
+
+                        var objectLabel = $objectItem.find('select[name="object_id[]"] option:selected').text().trim();
+                        if (!objectLabel) {
+                            objectLabel = 'Obyek ' + (objectIndex + 1);
+                        }
+
+                        var objectValue = parseNumber($objectItem.find('input[name^="object_value_input"]').first().val()) || 0;
+                        var objectCoverageTotal = 0;
+                        var hasObjectCoverage = false;
+
+                        $objectItem.find('.object-coverage-item').each(function() {
+                            if ($(this).css('display') === 'none') {
+                                return;
+                            }
+
+                            var coverageCode = $(this).find('select[name^="object_coverage_code"]').val();
+                            var coverageName = $(this).find('select[name^="object_coverage_code"] option:selected').text().trim();
+                            var percentage = parseNumber($(this).find('input[name^="object_coverage_percentage"]').val()) || 0;
+
+                            if (!coverageCode || coverageName === '') {
+                                return;
+                            }
+
+                            hasObjectCoverage = true;
+                            objectCoverageTotal += percentage;
+
+                            rowsToRender.push({
+                                label: 'Coverage (' + objectLabel + ')',
+                                name: coverageName,
+                                percentage: percentage,
+                            });
+                        });
+                    });
+                }
+
+                if (rowsToRender.length === 0) {
+                    $target.html('<div class="text-center text-muted small">Tidak ada data coverage terhubung.</div>');
+                    $('#premi_percentages').val('0.00000');
                     return;
                 }
 
-                var totalPercentage = 0;
-                var clonedCount = 0;
+                rowsToRender.forEach(function(row, index) {
+                    var html = '' +
+                        '<div class="row g-2 align-items-center mb-3 coverage-item">' +
+                        '  <div class="col-md-8">' +
+                        '    <label class="small text-muted mb-0">' + row.label + '</label>' +
+                        '    <input type="text" class="form-control form-control-sm bg-white" value="' + (row.name || '-') + '" readonly>' +
+                        '  </div>' +
+                        '  <div class="col-md-4">' +
+                        '    <label class="small text-muted mb-0">Persentase</label>' +
+                        '    <div class="input-group input-group-sm">' +
+                        '      <input type="text" class="form-control text-center bg-white" value="' + ((row.percentage || 0).toFixed(5)) + '" readonly>' +
+                        '      <span class="input-group-text">%</span>' +
+                        '    </div>' +
+                        '  </div>' +
+                        '</div>';
 
-                $sources.each(function(index) {
-                    // SKIP: Item yang tidak visible atau hidden
-                    if ($(this).css('display') === 'none') {
-                        return; // continue to next iteration
-                    }
-                    
-                    // console.log('Processing source', index, 'visible:', $(this).is(':visible'));
-
-                    // GET TEXT DARI ORIGINAL SEBELUM CLONE
-                    var originalCoverageName = $(this).find('select[name="coverage_code[]"]').find('option:selected').text().trim();
-                    var originalCoverageCode = $(this).find('select[name="coverage_code[]"]').val();
-                    
-                    // SKIP: Jika coverage belum dipilih (code kosong)
-                    if (!originalCoverageCode || originalCoverageCode === '' || originalCoverageName === '- Pilih Coverage -') {
-                        return; // continue to next iteration
-                    }
-                    
-                    // console.log('Coverage Name:', originalCoverageName);
-
-                    // CLONE & BERSIHKAN
-                    var $cloned = $(this).clone();
-                    $cloned.find('.remove-item-btn').closest('.col-md-auto').remove();
-
-                    // TRANSFORM INPUT
-                    $cloned.find('input, select').each(function() {
-                        var $el = $(this);
-
-                        if ($el.attr('name') === 'coverage_percentage[]') {
-                            var val = parseNumber($el.val()) || 0;
-                            totalPercentage += val;
-                            // console.log('Coverage %:', val);
-                        }
-
-                        if ($el.is('select') && $el.attr('name') === 'coverage_code[]') {
-                            // Gunakan text yang sudah diambil dari original
-                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + originalCoverageName + '" readonly>');
-                        } else if ($el.is('select')) {
-                            var text = $el.find('option:selected').text().trim();
-                            $el.replaceWith('<input class="form-control form-control-sm bg-white" value="' + text + '" readonly>');
-                        } else {
-                            $el.attr('readonly', true)
-                                .addClass('bg-white')
-                                .removeAttr('name')
-                                .removeAttr('id');
-                        }
-                    });
-                    $cloned.find('.select2-container').remove();
-
-                    // APPEND
-                    $target.append($cloned);
-                    clonedCount++;
-
-                    if (index < $sources.length - 1) {
+                    $target.append(html);
+                    if (index < rowsToRender.length - 1) {
                         $target.append('<hr class="my-2 text-muted">');
                     }
                 });
 
-                // Cek jika tidak ada item valid ter-clone
-                if (clonedCount === 0) {
-                    $target.html('<div class="text-center text-muted small">Tidak ada data coverage valid.</div>');
-                    return;
-                }
-
-                if (totalPercentage > 0) $('#premi_percentages').val(totalPercentage.toFixed(5));
-                // console.log('✅ Coverage cloned:', clonedCount, 'items, total:', totalPercentage);
-                // console.log('Container HTML after:', $target.html().substring(0, 200));
+                $('#premi_percentages').val((finalPremiPercentage || 0).toFixed(5));
             };
 
             window.copyInsuranceToTab3 = function() {
@@ -1156,6 +1282,38 @@
                 
                 if (typeof calculateTotalTax === 'function') calculateTotalTax(); 
             });
+
+            $(document).on('input change keyup blur',
+                '#policy-form-container input[name="coverage_percentage[]"], #policy-form-container input[name^="object_coverage_percentage"]',
+                function() {
+                    if ($('#step-3').is(':visible')) {
+                        if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
+                        if (typeof update_payment === 'function') update_payment();
+                    }
+                }
+            );
+
+            $(document).on('change select2:select select2:clear',
+                '#policy-form-container select[name="coverage_code[]"], #policy-form-container select[name^="object_coverage_code"]',
+                function() {
+                    if ($('#step-3').is(':visible')) {
+                        if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
+                        if (typeof update_payment === 'function') update_payment();
+                    }
+                }
+            );
+
+            $(document).on('click',
+                '#policy-form-container .add-item-btn[data-target="item-coverage"], #policy-form-container .add-item-btn[data-target="object-coverage-item"], #policy-form-container .item-coverage .remove-item-btn, #policy-form-container .object-coverage-item .remove-item-btn',
+                function() {
+                    setTimeout(function() {
+                        if ($('#step-3').is(':visible')) {
+                            if (typeof window.copyCoverageToTab3 === 'function') window.copyCoverageToTab3();
+                            if (typeof update_payment === 'function') update_payment();
+                        }
+                    }, 300);
+                }
+            );
 
             // Initial Load Check (Edit Mode)
             setTimeout(function() {

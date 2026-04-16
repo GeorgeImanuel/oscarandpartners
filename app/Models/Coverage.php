@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\PolicyCoverage;
+use App\Models\ObjectCoverage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -29,5 +30,10 @@ class Coverage extends Model
     public function policyCoverages(): HasMany
     {
         return $this->hasMany(PolicyCoverage::class);
+    }
+
+    public function objectCoverages(): HasMany
+    {
+        return $this->hasMany(ObjectCoverage::class, 'coverage_code', 'code');
     }
 }

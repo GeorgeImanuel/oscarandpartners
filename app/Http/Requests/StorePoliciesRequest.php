@@ -25,10 +25,16 @@ class StorePoliciesRequest extends FormRequest
             'object_id'   => 'required|array|min:1',
             'object_id.*' => 'required|exists:objects,id',
 
-            'coverage_code' => 'required|array|min:1',
-            'coverage_code.*' => 'required|string|exists:coverages,code',
-            'coverage_percentage' => 'required|array|min:1',
-            'coverage_percentage.*' => 'required|numeric|min:0.0000001|max:100',
+            'coverage_code' => 'nullable|array',
+            'coverage_code.*' => 'nullable|string|exists:coverages,code',
+            'coverage_percentage' => 'nullable|array',
+            'coverage_percentage.*' => 'nullable|numeric|min:0|max:100',
+            'object_coverage_code' => 'nullable|array',
+            'object_coverage_code.*' => 'nullable|array',
+            'object_coverage_code.*.*' => 'nullable|string|exists:coverages,code',
+            'object_coverage_percentage' => 'nullable|array',
+            'object_coverage_percentage.*' => 'nullable|array',
+            'object_coverage_percentage.*.*' => 'nullable|numeric|min:0|max:100',
             'policy_number' => 'required|string|max:255|unique:policies,policy_number',
             'started_date' => 'required|date',
             'ended_date' => 'required|date|after_or_equal:started_date',
@@ -84,6 +90,41 @@ class StorePoliciesRequest extends FormRequest
             'percentage.*.min' => 'Persentase Asuransi minimal 0.',
             'percentage.*.max' => 'Persentase Asuransi maksimal 100.',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $hasPolicyCoverage = false;
+            foreach ((array) $this->input('coverage_code', []) as $coverageCode) {
+                if (!empty($coverageCode)) {
+                    $hasPolicyCoverage = true;
+                    break;
+                }
+            }
+
+            $hasObjectCoverage = false;
+            $objectCoverageCodes = (array) $this->input('object_coverage_code', []);
+            foreach ($objectCoverageCodes as $rows) {
+                if (!is_array($rows)) {
+                    continue;
+                }
+
+                foreach ($rows as $coverageCode) {
+                    if (!empty($coverageCode)) {
+                        $hasObjectCoverage = true;
+                        break 2;
+                    }
+                }
+            }
+
+            if (!$hasPolicyCoverage && !$hasObjectCoverage) {
+                $validator->errors()->add(
+                    'coverage_code',
+                    'Coverage polis atau coverage per obyek wajib diisi minimal satu.'
+                );
+            }
+        });
     }
 
 }

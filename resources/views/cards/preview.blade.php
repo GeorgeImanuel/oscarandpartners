@@ -128,6 +128,41 @@
 
 @php
     $currency = $productionCard->policy->currency_code ?? 'Rp';
+    $policyCoverageTotal = (float) ($productionCard->policy?->policyCoverages?->sum('percentage') ?? 0);
+    $useObjectCoverageFallback = $policyCoverageTotal <= 0;
+
+    $objectCoverageRows = collect();
+    $hasAnyObjectCoverage = false;
+
+    if ($useObjectCoverageFallback && $productionCard->policy && $productionCard->policy->objects && $productionCard->policy->objects->count() > 0) {
+        foreach ($productionCard->policy->objects as $policyObject) {
+            $coverages = ($policyObject->objectCoverages ?? collect())
+                ->filter(function ($objectCoverage) {
+                    return !empty($objectCoverage->coverage_code);
+                })
+                ->map(function ($objectCoverage) {
+                    $coverageName = $objectCoverage->coverage->name ?? $objectCoverage->coverage_code ?? '-';
+                    $percentage = ((float) ($objectCoverage->percentage ?? 0)) * 100;
+
+                    return $coverageName . ' (' . number_format($percentage, 5, ',', '.') . '%)';
+                })
+                ->values();
+
+            $coverageText = '-';
+            if ($coverages->isNotEmpty()) {
+                $coverageText = $coverages->implode(', ');
+                $hasAnyObjectCoverage = true;
+            }
+
+            $objectCoverageRows->push([
+                'object_name' => $policyObject->name ?? '-',
+                'object_description' => $policyObject->keterangan ?? '-',
+                'coverage_text' => $coverageText,
+            ]);
+        }
+    }
+
+    $showObjectCoverageOnPremiPercentage = ((float) ($productionCard->premi_percentages ?? 0) <= 0) && $hasAnyObjectCoverage;
 @endphp
 
 @section('content')
@@ -210,7 +245,13 @@
                 <span class="info-label">Obyek Asuransi</span>
                 <span class="info-separator">:</span>
                 <div class="info-value">
-                    @if($productionCard->policy && $productionCard->policy->policyObjects->count() > 0)
+                    @if($useObjectCoverageFallback && $objectCoverageRows->isNotEmpty())
+                        @foreach($objectCoverageRows as $row)
+                            <div>
+                                {{ $row['object_name'] }} - {{ $row['object_description'] }}
+                            </div>
+                        @endforeach
+                    @elseif($productionCard->policy && $productionCard->policy->policyObjects->count() > 0)
                         @foreach($productionCard->policy->policyObjects as $polObj)
                             <div>
                                 {{ $polObj->object->ObjectOccupation->name ?? '-' }} - {{ $polObj->object->keterangan ?? '-' }}
@@ -252,7 +293,15 @@
                         <span style="width: 20px; text-align: center;">:</span>
                         {{-- Value --}}
                         <span style="width: 200px; text-align: left;">
-                            {{ number_format($productionCard->premi_percentages * 100, 5, ',', '.') }}%
+                            @if($showObjectCoverageOnPremiPercentage)
+                                @foreach($objectCoverageRows as $row)
+                                    @if($row['coverage_text'] !== '-')
+                                        {{ $row['object_description'] }}: {{ $row['coverage_text'] }}<br>
+                                    @endif
+                                @endforeach
+                            @else
+                                {{ number_format($productionCard->premi_percentages * 100, 5, ',', '.') }}%
+                            @endif
                         </span>
                     </div>
 
