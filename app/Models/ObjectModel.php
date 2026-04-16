@@ -42,6 +42,17 @@ class ObjectModel extends Model
         return $this->hasMany(ObjectInterest::class, 'object_id');
     }
 
+    public function objectCoverages(): HasMany
+    {
+        return $this->hasMany(ObjectCoverage::class, 'object_id');
+    }
+
+    public function coverages(): BelongsToMany
+    {
+        return $this->belongsToMany(Coverage::class, 'object_coverages', 'object_id', 'coverage_code')
+            ->withPivot('percentage');
+    }
+
     public function getObjectValue()
     {
         return $this->objectInterests()->sum('value');

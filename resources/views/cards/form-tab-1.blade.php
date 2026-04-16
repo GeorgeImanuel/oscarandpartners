@@ -33,10 +33,12 @@
                 <label class="form-label"
                     for="endors_type">Tipe Endors <small class="text-muted">(hanya untuk perhitungan)</small></label>
                 <select id="endors_type"
-                    class="form-control basic-select2">
+                    class="form-control basic-select2"
+                    name="endors_type">
                     <option value="">Pilih Tipe Endors</option>
                     <option value="kendaraan">Kendaraan</option>
                     <option value="properti">Properti</option>
+                    <option value="personal-accident">Personal Accident</option>
                 </select>
             </div>
 
@@ -122,14 +124,14 @@
             window.endorsType = endorsType;
             
             // Toggle parent card field based on endors type
-            if (endorsType === 'properti') {
+            if (isParentPolicyRequiredForEndors(endorsType)) {
                 $('#parent_card_container').slideDown();
                 $('#parent_card_id').attr('required', true);
-            } else if (endorsType === 'kendaraan') {
+            } else {
                 $('#parent_card_container').slideUp();
                 $('#parent_card_id').attr('required', false);
                 $('#parent_card_id').val('').trigger('change');
-                // Clear parent object value for kendaraan type
+                // Clear parent object value for non-properti type
                 if (typeof window.parentObjectValue !== 'undefined') {
                     window.parentObjectValue = 0;
                     $('#parent_object_value').val(0);
@@ -158,19 +160,28 @@
         function toggleParentCardField() {
             var cardTypeId = $('#card_type_id').val();
             var endorsId = {{ config('constants.card_type.endors') }};
-            
+
+            function resetParentCardValue() {
+                $('#parent_card_id').val('').trigger('change');
+                if (typeof window.parentObjectValue !== 'undefined') {
+                    window.parentObjectValue = 0;
+                    $('#parent_object_value').val(0);
+                }
+            }
+
             // Show endors type dropdown for Endors card type
             if (cardTypeId == endorsId) {
                 $('#endors_type_container').slideDown();
                 
                 // Check if endors type is already selected
                 var endorsType = $('#endors_type').val();
-                if (endorsType === 'properti') {
+                if (isParentPolicyRequiredForEndors(endorsType)) {
                     $('#parent_card_container').slideDown();
                     $('#parent_card_id').attr('required', true);
                 } else {
                     $('#parent_card_container').slideUp();
                     $('#parent_card_id').attr('required', false);
+                    resetParentCardValue();
                 }
             } else {
                 // Hide both endors type and parent card fields for non-Endors
@@ -179,17 +190,15 @@
                 
                 $('#parent_card_container').slideUp();
                 $('#parent_card_id').attr('required', false);
-                $('#parent_card_id').val('').trigger('change');
-                
-                // Clear parent object value when switching away from Endors
-                if (typeof window.parentObjectValue !== 'undefined') {
-                    window.parentObjectValue = 0;
-                    $('#parent_object_value').val(0);
-                }
+                resetParentCardValue();
                 
                 // Clear endors type
                 window.endorsType = null;
             }
+        }
+
+        function isParentPolicyRequiredForEndors(endorsType) {
+            return endorsType === 'properti';
         }
 
         // Handle parent card selection - store parent object value

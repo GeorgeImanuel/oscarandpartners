@@ -260,7 +260,7 @@
                     var totalInsurancePercentage = 0;
                     var hasVisibleInsurance = false;
                     
-                    $(form).find('input[name="insurance_percentage[]"]').each(function() {
+                    $(form).find('input[name="insurance_percentage[]"], input[name="percentage[]"]').each(function() {
                         // Only count visible and enabled insurance percentage inputs
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
                             var val = parseNumber($(this).val()) || 0;
@@ -285,6 +285,7 @@
                     // ============================================================
                     var totalCoveragePercentage = 0;
                     var hasVisibleCoverage = false;
+                    var hasObjectCoverage = false;
                     
                     $(form).find('input[name="coverage_percentage[]"]').each(function() {
                         if ($(this).is(':visible') && !$(this).is(':disabled')) {
@@ -294,22 +295,31 @@
                         }
                     });
 
+                    $(form).find('input[name^="object_coverage_percentage"]').each(function() {
+                        if ($(this).is(':visible') && !$(this).is(':disabled')) {
+                            var val = parseNumber($(this).val()) || 0;
+                            if (val > 0) {
+                                hasObjectCoverage = true;
+                            }
+                        }
+                    });
+
                     // === PERBAIKAN LOGIKA KHUSUS NON-TRAVELPRO ===
                     // Jika BUKAN TravelPro dan form input polis baru sedang terbuka
                     if (!isTravelPro && $('#new-policy').is(':visible')) {
                         
                         // Skenario 1: User menghapus semua baris coverage (kosong sama sekali)
-                        if (!hasVisibleCoverage) {
-                            alertWarning('Minimal harus ada 1 Rincian Coverage!', '');
+                        if (!hasVisibleCoverage && !hasObjectCoverage) {
+                            alertWarning('Minimal harus ada 1 Rincian Coverage (di polis atau per obyek)!', '');
                             console.warn('Coverage validation failed: No coverage added.');
                             errors.push({
                                 field: '.coverage-item',
-                                message: 'Minimal harus ada 1 Rincian Coverage'
+                                message: 'Minimal harus ada 1 Rincian Coverage di polis atau per obyek'
                             });
                         } 
-                        // Skenario 2: Baris coverage ada, tapi total persentasenya 0 (atau minus)
-                        else if (totalCoveragePercentage <= 0 || totalCoveragePercentage > 100) {
-                            alertWarning('Total persentase coverage harus LEBIH DARI 0% dan maksimal 100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
+                        // Skenario 2: Baris coverage ada, valid jika total 0-100
+                        else if (hasVisibleCoverage && (totalCoveragePercentage < 0 || totalCoveragePercentage > 100)) {
+                            alertWarning('Total persentase coverage harus di antara 0% sampai 100%. Saat ini: ' + totalCoveragePercentage.toFixed(5) + '%', '');
                             console.warn('Coverage percentage validation failed. Total:', totalCoveragePercentage);
                             errors.push({
                                 field: '.coverage-percentage',
@@ -323,19 +333,19 @@
                     // At least one insurance must be marked as main insurance
                     // ============================================================
                     var hasMainInsurance = false;
-                    var hasInsurances = false;
+                    var visibleInsuranceCount = 0;
 
                     $('#new-policy .is-main-checkbox').each(function() {
                         if ($(this).closest('.item').is(':visible')) {
-                            hasInsurances = true;
+                            visibleInsuranceCount++;
                             if ($(this).is(':checked')) {
                                 hasMainInsurance = true;
                             }
                         }
                     });
 
-                    // Validate main insurance is selected (only if new policy form has insurances)
-                    if ($('#new-policy').is(':visible') && hasInsurances && !hasMainInsurance) {
+                    // Wajib leader hanya jika asuransi lebih dari satu.
+                    if ($('#new-policy').is(':visible') && visibleInsuranceCount > 1 && !hasMainInsurance) {
                         alertWarning('Minimal satu asuransi harus dipilih sebagai asuransi utama', '');
                         console.warn('Main insurance validation failed');
                         errors.push({
@@ -403,48 +413,6 @@
                         }
                     }
                     
-                    // ============================================================
-                    // 6. VALIDATE PREMIUM RATE
-                    // Ensure premium rate is not negative
-                    // ============================================================
-                    var premiumRateField = $('#premi_percentages');
-                    
-                    if (premiumRateField.length > 0) {
-                        var premiumRate = parseNumber(premiumRateField.val()) || 0;
-                        
-                        if (!isTravelPro) {
-                            // JIKA BUKAN TRAVELPRO: Tolak jika 0 atau minus (<= 0)
-                            if (premiumRate <= 0) {
-                                premiumRateField.addClass('is-invalid');
-                                if (premiumRateField[0]) {
-                                    showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh 0');
-                                }
-                                alertWarning('Tarif Premi harus lebih dari 0 untuk objek ini!', '');
-                                errors.push({
-                                    field: 'premi_percentages',
-                                    message: 'Tarif Premi tidak boleh 0'
-                                });
-                            } else {
-                                premiumRateField.removeClass('is-invalid');
-                            }
-                        } else {
-                            // JIKA TRAVELPRO: Boleh 0, hanya tolak jika minus (< 0)
-                            if (premiumRate < 0) { 
-                                premiumRateField.addClass('is-invalid');
-                                if (premiumRateField[0]) {
-                                    showFieldError(premiumRateField[0], 'Tarif Premi tidak boleh minus');
-                                }
-                                alertWarning('Tarif Premi tidak boleh minus', '');
-                                errors.push({
-                                    field: 'premi_percentages',
-                                    message: 'Tarif Premi tidak boleh minus'
-                                });
-                            } else {
-                                premiumRateField.removeClass('is-invalid');
-                            }
-                        }
-                    }
-
                     // Return validation result
                     return {
                         isValid: errors.length === 0,

@@ -145,10 +145,17 @@
                 var rate = parseFloat(coveragePercentage) * 100;
                 $('#premi_percentages').val(rate).trigger('change');
 
-                update_payment();
-
                 // Reinitialize select2 after policy objects are loaded
                 setTimeout(function() {
+                    if (typeof sumInputValues === 'function') {
+                        sumInputValues($('#policy-form-container input[name^="tjh"]'), '#tjh_value');
+                        sumInputValues($('#policy-form-container input[name="object_value_input"]'), '#object_value');
+                    }
+
+                    if (typeof update_payment === 'function') {
+                        update_payment();
+                    }
+
                     if (typeof initCustomSelect2 === 'function') {
                         initCustomSelect2(".create-select2");
                     }

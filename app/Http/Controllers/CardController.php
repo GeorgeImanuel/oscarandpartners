@@ -113,7 +113,7 @@ class CardController extends Controller
      */
     public function preview(Card $productionCard)
     {
-        $productionCard = $this->cardService->find($productionCard->id);
+        $productionCard = $this->cardService->findWithRelation($productionCard->id);
 
         return view('cards.preview', compact('productionCard'));
     }

@@ -41,8 +41,8 @@ class CoverageServiceImplement extends Service implements CoverageService{
             throw new \Exception('Data tidak ditemukan.');
         }
 
-        // Check if coverage is used in policy_coverages
-        if ($coverage->policyCoverages()->count() > 0) {
+        // Check if coverage is used in policy_coverages or object_coverages
+        if ($coverage->policyCoverages()->count() > 0 || $coverage->objectCoverages()->count() > 0) {
             throw new \Exception('Tidak bisa hapus data, data sudah digunakan di data lain.');
         }
 

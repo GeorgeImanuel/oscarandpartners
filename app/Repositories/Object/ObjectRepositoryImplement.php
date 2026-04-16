@@ -21,7 +21,10 @@ class ObjectRepositoryImplement extends Eloquent implements ObjectRepository{
 
     public function find($id)
     {
-        return $this->model->with(['objectOccupation', 'objectInterests.interest'])->withSum('objectInterests as object_value', 'value')->find($id);
+        return $this->model
+            ->with(['objectOccupation', 'objectInterests.interest', 'objectCoverages.coverage'])
+            ->withSum('objectInterests as object_value', 'value')
+            ->find($id);
     }
     
     /**

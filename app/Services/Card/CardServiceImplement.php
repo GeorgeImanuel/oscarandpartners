@@ -9,6 +9,7 @@ use App\Repositories\Currency\CurrencyRepository;
 use App\Repositories\Insurance\InsuranceRepository;
 use App\Repositories\Interest\InterestRepository;
 use App\Repositories\Object\ObjectRepository;
+use App\Repositories\ObjectCoverage\ObjectCoverageRepository;
 use App\Repositories\ObjectInterest\ObjectInterestRepository;
 use App\Repositories\ObjectOccupation\ObjectOccupationRepository;
 use App\Repositories\Payment\PaymentRepository;
@@ -43,6 +44,7 @@ class CardServiceImplement extends Service implements CardService
     protected $relationRepository;
     protected $objectOccupationRepository;
     protected $objectRepository;
+    protected $objectCoverageRepository;
     protected $interestRepository;
     protected $objectInterestRepository;
     protected $policyRepository;
@@ -60,6 +62,7 @@ class CardServiceImplement extends Service implements CardService
         RelationRepository $relationRepository,
         ObjectOccupationRepository $objectOccupationRepository,
         ObjectRepository $objectRepository,
+        ObjectCoverageRepository $objectCoverageRepository,
         InterestRepository $interestRepository,
         ObjectInterestRepository $objectInterestRepository,
         PolicyRepository $policyRepository,
@@ -76,6 +79,7 @@ class CardServiceImplement extends Service implements CardService
         $this->relationRepository         = $relationRepository;
         $this->objectOccupationRepository = $objectOccupationRepository;
         $this->objectRepository           = $objectRepository;
+        $this->objectCoverageRepository   = $objectCoverageRepository;
         $this->interestRepository         = $interestRepository;
         $this->objectInterestRepository   = $objectInterestRepository;
         $this->policyRepository           = $policyRepository;
@@ -421,6 +425,29 @@ class CardServiceImplement extends Service implements CardService
             }
         }
 
+        // Create object coverages if exists
+        if (isset($data['object_coverage_code']) && is_array($data['object_coverage_code'])) {
+            $coverageCodes = isset($data['object_coverage_code'][$objectIndex]) && is_array($data['object_coverage_code'][$objectIndex])
+                ? $data['object_coverage_code'][$objectIndex]
+                : [];
+
+            $coveragePercentages = isset($data['object_coverage_percentage'][$objectIndex]) && is_array($data['object_coverage_percentage'][$objectIndex])
+                ? $data['object_coverage_percentage'][$objectIndex]
+                : [];
+
+            foreach ($coverageCodes as $coverageIndex => $coverageCode) {
+                if (empty($coverageCode)) {
+                    continue;
+                }
+
+                $this->objectCoverageRepository->create([
+                    'object_id'      => $object->id,
+                    'coverage_code'  => $this->findOrCreateCoverage($coverageCode),
+                    'percentage'     => ((float)($coveragePercentages[$coverageIndex] ?? 0)) / 100,
+                ]);
+            }
+        }
+
         return $object->id;
     }
 
@@ -482,6 +509,8 @@ class CardServiceImplement extends Service implements CardService
 
             // Assign insurances
             if (isset($data['insurance_id']) && is_array($data['insurance_id'])) {
+                $insuranceRows = [];
+
                 foreach ($data['insurance_id'] as $index => $insuranceId) {
                     // Skip if insurance_id is empty
                     if (empty($insuranceId)) {
@@ -495,13 +524,40 @@ class CardServiceImplement extends Service implements CardService
                         $taxValue = $data['insurance_tax'][$insuranceId] ?? 0;
                     }
 
-                    $this->policyInsuranceRepository->create([
+                    // Support both insurance_percentage[] (legacy) and percentage[] (current form).
+                    $percentageInput = 0;
+                    if (isset($data['insurance_percentage']) && is_array($data['insurance_percentage'])) {
+                        $percentageInput = $data['insurance_percentage'][$index]
+                            ?? $data['insurance_percentage'][$insuranceId]
+                            ?? 0;
+                    } elseif (isset($data['percentage']) && is_array($data['percentage'])) {
+                        $percentageInput = $data['percentage'][$index]
+                            ?? $data['percentage'][$insuranceId]
+                            ?? 0;
+                    }
+
+                    $isMainInput = null;
+                    if (isset($data['is_main'])) {
+                        if (is_array($data['is_main'])) {
+                            $isMainInput = $data['is_main'][$index]
+                                ?? $data['is_main'][$insuranceId]
+                                ?? null;
+                        } else {
+                            $isMainInput = $data['is_main'];
+                        }
+                    }
+
+                    $insuranceRows[] = [
                         'policy_id'    => $policy->id,
                         'insurance_id' => $this->findOrCreateInsurance($insuranceId),
-                        'percentage'   => ($data['insurance_percentage'][$index] ?? 0) / 100,
-                        'is_main'      => isset($data['is_main'][$index]) && $data['is_main'][$index] ? 1 : 0,
+                        'percentage'   => ((float) $percentageInput) / 100,
+                        'is_main'      => $this->toBooleanInt($isMainInput),
                         'tax'          => (float)$taxValue,
-                    ]);
+                    ];
+                }
+
+                foreach ($insuranceRows as $insuranceRow) {
+                    $this->policyInsuranceRepository->create($insuranceRow);
                 }
             }
 
@@ -522,6 +578,23 @@ class CardServiceImplement extends Service implements CardService
         }
 
         return $policy->id;
+    }
+
+    private function toBooleanInt($value): int
+    {
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+
+        if (is_numeric($value)) {
+            return ((int) $value) === 1 ? 1 : 0;
+        }
+
+        if (is_string($value)) {
+            return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true) ? 1 : 0;
+        }
+
+        return 0;
     }
 
     public function getAllWithFilter(array $data)

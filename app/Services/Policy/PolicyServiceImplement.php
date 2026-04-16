@@ -6,6 +6,7 @@ use LaravelEasyRepository\Service;
 use App\Repositories\Policy\PolicyRepository;
 use Illuminate\Support\Facades\DB;
 use App\Models\Insurance;
+use App\Models\ObjectCoverage;
 use App\Models\PolicyInsurance;
 
 class PolicyServiceImplement extends Service implements PolicyService
@@ -71,6 +72,8 @@ class PolicyServiceImplement extends Service implements PolicyService
                 $policy->objects()->sync(array_filter($data['object_id']));
             }
 
+            $this->syncObjectCoverages($policy->id, $data);
+
             // 3. Attach Coverages with Percentage (Pivot Table)
             if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
                 $coverageData = [];
@@ -114,6 +117,8 @@ class PolicyServiceImplement extends Service implements PolicyService
             } else {
                 $policy->objects()->detach();
             }
+
+            $this->syncObjectCoverages($policy->id, $data);
 
             // 3. Sync Coverages with Percentage
             if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
@@ -190,6 +195,68 @@ class PolicyServiceImplement extends Service implements PolicyService
         }
     }
 
+    private function syncObjectCoverages(int $policyId, array $data): void
+    {
+        $objectIds = DB::table('policy_objects')
+            ->where('policy_id', $policyId)
+            ->pluck('object_id')
+            ->toArray();
+
+        if (empty($objectIds)) {
+            return;
+        }
+
+        $hasPolicyCoverage = false;
+        if (isset($data['coverage_code']) && is_array($data['coverage_code'])) {
+            foreach ($data['coverage_code'] as $coverageCode) {
+                if (!empty($coverageCode)) {
+                    $hasPolicyCoverage = true;
+                    break;
+                }
+            }
+        }
+
+        // Policy-level coverage takes priority for premium calculation.
+        // Keep object-level data intact to avoid unintended data loss.
+        if ($hasPolicyCoverage) {
+            return;
+        }
+
+        foreach ($objectIds as $objectId) {
+            ObjectCoverage::where('object_id', $objectId)->delete();
+        }
+
+        if (!isset($data['object_id']) || !is_array($data['object_id'])) {
+            return;
+        }
+
+        foreach ($data['object_id'] as $index => $objectId) {
+            if (empty($objectId)) {
+                continue;
+            }
+
+            $coverageCodes = isset($data['object_coverage_code'][$index]) && is_array($data['object_coverage_code'][$index])
+                ? $data['object_coverage_code'][$index]
+                : [];
+
+            $coveragePercentages = isset($data['object_coverage_percentage'][$index]) && is_array($data['object_coverage_percentage'][$index])
+                ? $data['object_coverage_percentage'][$index]
+                : [];
+
+            foreach ($coverageCodes as $coverageIndex => $coverageCode) {
+                if (empty($coverageCode)) {
+                    continue;
+                }
+
+                ObjectCoverage::create([
+                    'object_id' => (int) $objectId,
+                    'coverage_code' => $coverageCode,
+                    'percentage' => ((float) ($coveragePercentages[$coverageIndex] ?? 0)) / 100,
+                ]);
+            }
+        }
+    }
+
     /**
      * Delete policy with relationship check
      */
@@ -221,7 +288,7 @@ class PolicyServiceImplement extends Service implements PolicyService
             
             // Delete policy objects
             \App\Models\PolicyObject::where('policy_id', $policy->id)->delete();
-            
+
             // Delete the policy
             $policy->delete();
         });
