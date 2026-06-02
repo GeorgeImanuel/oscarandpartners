@@ -534,6 +534,7 @@
                                                     // Load relasi payments
                                                     $payments = $card->payments->sortBy('sequence'); 
                                                     $policyInsurances = $card->policy->policyInsurances->sortByDesc('percentage');
+                                                    $insuranceCount = $policyInsurances->count();
                                                 @endphp
                                                 @forelse($payments as $pmt)
                                                     @php
