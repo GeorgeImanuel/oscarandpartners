@@ -2,6 +2,29 @@
   "$schema": "https://schema.railpack.com",
   "provider": "php",
   "packages": {
-    "php": "8.4.1"
-  }
+    "php": "8.4.19"
+  },
+  "buildAptPackages": [
+    "build-essential",
+    "autoconf",
+    "bison",
+    "re2c",
+    "pkg-config",
+    "libxml2-dev",
+    "libssl-dev",
+    "libsqlite3-dev",
+    "zlib1g-dev",
+    "libcurl4-openssl-dev",
+    "libonig-dev",
+    "libzip-dev",
+    "libpng-dev",
+    "libjpeg-dev",
+    "libwebp-dev",
+    "libfreetype6-dev",
+    "libicu-dev",
+    "libreadline-dev",
+    "libxslt1-dev",
+    "libsodium-dev",
+    "libargon2-dev"
+  ]
 }
