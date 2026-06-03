@@ -25,6 +25,7 @@
     "libreadline-dev",
     "libxslt1-dev",
     "libsodium-dev",
-    "libargon2-dev"
+    "libargon2-dev",
+    "libgd-dev"
   ]
 }
