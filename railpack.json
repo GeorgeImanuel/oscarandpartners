@@ -26,6 +26,12 @@
     "libxslt1-dev",
     "libsodium-dev",
     "libargon2-dev",
-    "libgd-dev"
-  ]
+    "libgd-dev",
+    "libpq-dev"
+  ],
+  "deploy": {
+    "aptPackages": [
+      "libpq-dev"
+    ]
+  }
 }
