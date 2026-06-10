@@ -51,13 +51,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="checkbox">
+                                <!-- <div class="checkbox">
                                     <input id="checkbox1"
                                         type="checkbox"
                                         name="remember" />
                                     <label class="text-muted"
                                         for="checkbox1">Remember password</label>
-                                </div>
+                                </div> -->
                                 {{-- <a class="link" href="{{ route('forget-password') }}">Forgot password?</a> --}}
                             </div>
                             <div class="form-group">
